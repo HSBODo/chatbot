@@ -36,13 +36,13 @@ public class KakaoRestAPI {
             System.out.println(  "cont"+ weatherapiservice.selectShortTermWeather());
             String rtnStr = "";
             switch (utter){
-                case "고민1" : rtnStr = "챗봇으로 무엇을 만들까?";
+                case "기능1" : rtnStr = "오늘날씨";
                     break;
-                case "고민2" : rtnStr = "카페 알바생 너무 이쁘다...";
+                case "기능2" : rtnStr = "오늘토픽뉴스";
                     break;
-                case "고민3" : rtnStr = "오늘 어디 운동이냐?";
+                case "기능3" : rtnStr = "";
                     break;
-                default: rtnStr = "한수빈 개발 챗봇입니다... 현재는 개발중입니다...";
+                default: rtnStr = "한수빈 개발 챗봇입니다 현재는 개발중입니다";
             }
 
             List<HashMap<String,Object>> outputs = new ArrayList<>();
