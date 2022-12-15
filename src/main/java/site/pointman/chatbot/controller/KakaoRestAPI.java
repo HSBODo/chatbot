@@ -3,9 +3,12 @@ package site.pointman.chatbot.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import site.pointman.chatbot.service.serviceimpl.weatherApiServiceImpl;
-import site.pointman.chatbot.service.weatherApiService;
+
+import site.pointman.chatbot.service.KakaoApiService;
+import site.pointman.chatbot.service.WeatherApiService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,26 +20,24 @@ import java.util.Map;
 
 @RestController
 public class KakaoRestAPI {
+    @Autowired
+    private WeatherApiService weatherapiservice;
+    @Autowired
+    private KakaoApiService kakaoApiService;
 
-    @RequestMapping(value = "/kkoChat/v1" , method= {RequestMethod.POST , RequestMethod.GET },headers = {"Accept=application/json"})
+    @RequestMapping(value = "/kkoChat/v1" , method= {RequestMethod.POST , RequestMethod.GET },headers = {"Accept=application/json; UTF-8"})
     public HashMap<String, Object> callAPI(@RequestBody Map<String,Object> params, HttpServletRequest request, HttpServletResponse response){
         HashMap<String,Object> resultJson = new HashMap<>();
         try {
-            weatherApiService weatherapiservice = new weatherApiServiceImpl() ;
-
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonInString = mapper.writeValueAsString(params);
-            System.out.println(jsonInString);
-            HashMap<String,Object> userRequest =  (HashMap<String,Object>)params.get("userRequest");
-            String utter = userRequest.get("utterance").toString().replace("\n","");
-            if(utter=="현재의 날씨"){
-                weatherapiservice.selectShortTermWeather();
-            }
-
-            System.out.println(  "cont"+ weatherapiservice.selectShortTermWeather());
+            String utter = kakaoApiService.selectUtter(params);
+            System.out.println("utter="+utter);
             String rtnStr = "";
             switch (utter){
-                case "기능1" : rtnStr = "오늘날씨";
+                case "현재의 날씨" :
+
+                    System.out.println("CON"+      weatherapiservice.selectShortTermWeather());
+
+                    rtnStr = "오늘날씨";
                     break;
                 case "기능2" : rtnStr = "오늘토픽뉴스";
                     break;
@@ -61,7 +62,7 @@ public class KakaoRestAPI {
 
 
         }catch (Exception e){
-
+            System.out.println(e);
         }
         return resultJson;
     }

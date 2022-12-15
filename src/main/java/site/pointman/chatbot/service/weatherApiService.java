@@ -3,13 +3,13 @@ package site.pointman.chatbot.service;
 
 
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
 
 
+public interface WeatherApiService {
 
+    Map<String,String> selectShortTermWeather ();
 
-public interface weatherApiService {
-    @Autowired
-    JSONObject selectShortTermWeather ();
 
 }

@@ -4,8 +4,8 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 
-import site.pointman.chatbot.domain.weatherReqVo;
-import site.pointman.chatbot.service.weatherApiService;
+import site.pointman.chatbot.domain.WeatherReqVo;
+import site.pointman.chatbot.service.WeatherApiService;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -14,20 +14,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Map;
+
 
 @Service
-public class weatherApiServiceImpl implements weatherApiService {
-
+public class WeatherApiServiceImpl implements WeatherApiService {
     @Override
-    public JSONObject selectShortTermWeather() {
-        JSONObject response = new JSONObject();
-
-        weatherReqVo weatherReq = new weatherReqVo();
+    public Map<String, String> selectShortTermWeather() {
+        Map<String,String> response = new HashMap<>();
+        WeatherReqVo weatherReq = new WeatherReqVo();
         weatherReq.setServiceKey("9gnt6hr%2FHUiuAFBAUa0tmYIksePfXZfo9sDFe8Nw7oySE15LFBR2mZ%2BsEPsITToh1s4up2xzcbrtPfVCZUoGFg%3D%3D");
         weatherReq.setNumOfRows("11");
         weatherReq.setPageNo("1");
         weatherReq.setDataType("JSON");
-        weatherReq.setBase_date("20221211");
+        weatherReq.setBase_date("20221214");
         weatherReq.setBase_time("0500");
         weatherReq.setNx("55");
         weatherReq.setNy("127");
@@ -60,17 +60,26 @@ public class weatherApiServiceImpl implements weatherApiService {
             }
             rd.close();
             conn.disconnect();
+
             JSONObject jsonObject = new JSONObject(sb.toString());
             JSONObject jsonResponse = jsonObject.getJSONObject("response");
             JSONObject jsonHeader =  jsonResponse.getJSONObject("header");
             JSONObject jsonBody=  jsonResponse.getJSONObject("body");
             JSONObject jsonItems=  jsonBody.getJSONObject("items");
+            JSONArray jsonArray = jsonItems.optJSONArray("item");
 
-            response =jsonItems ;
+            Map<String,String> elementMap = new HashMap<>();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject element = (JSONObject) jsonArray.opt(i);
+                elementMap.put(element.optString("category"),element.optString("fcstValue"));
+            }
+            response = elementMap ;
         } catch ( Exception e) {
           System.out.println(e);
         }
         return response;
-
     }
+
+
 }
