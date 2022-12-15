@@ -13,18 +13,57 @@ import java.net.HttpURLConnection;
 
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 @Service
 public class WeatherApiServiceImpl implements WeatherApiService {
     @Override
+    public Map<String, String> WeatherCodeFindByName(Map<String, String> param) {
+        Map<String,String> result = new HashMap<>();
+        Map<String,String> findBySkyVal = new HashMap<String,String>(){{
+            put("1","맑음");
+            put("3","구름많음");
+            put("4","흐림");
+        }};
+
+        String POP = param.get("POP"); //강수확률
+        String PTY = param.get("PTY"); //강수형태
+        String PCP = param.get("PCP"); //1시간 강수량
+        String REH = param.get("REH"); //습도
+        String SNO = param.get("SNO"); //1시간 적설
+        String skyCode = param.get("SKY"); //하늘상태
+        String TMP = param.get("TMP"); //1시간 기온
+        String TMN = param.get("TMN"); //일 최저기온
+        String TMX = param.get("TMX"); //일 최고기온
+        String UUU = param.get("UUU"); //풍속(동서성분)
+        String VVV = param.get("VVV"); //풍속(남북성분)
+        String WAV = param.get("WAV"); //파고
+        String VEC = param.get("VEC"); //풍향
+        String WSD = param.get("WSD"); //풍속
+
+        result.put("SKY",findBySkyVal.get(skyCode));
+        result.put("POP",POP);
+        result.put("PTY",PTY);
+        result.put("PCP",PCP);
+        result.put("REH",REH);
+        result.put("SNO",SNO);
+        result.put("TMP",TMP);
+        result.put("UUU",UUU);
+        result.put("WSD",WSD);
+        System.out.println(result);
+        return result;
+    }
+
+    @Override
     public Map<String, String> selectShortTermWeather() {
         Map<String,String> response = new HashMap<>();
         WeatherReqVo weatherReq = new WeatherReqVo();
         weatherReq.setServiceKey("9gnt6hr%2FHUiuAFBAUa0tmYIksePfXZfo9sDFe8Nw7oySE15LFBR2mZ%2BsEPsITToh1s4up2xzcbrtPfVCZUoGFg%3D%3D");
-        weatherReq.setNumOfRows("11");
+        weatherReq.setNumOfRows("12");
         weatherReq.setPageNo("1");
         weatherReq.setDataType("JSON");
         weatherReq.setBase_date("20221214");
@@ -67,7 +106,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
             JSONObject jsonBody=  jsonResponse.getJSONObject("body");
             JSONObject jsonItems=  jsonBody.getJSONObject("items");
             JSONArray jsonArray = jsonItems.optJSONArray("item");
-
+            System.out.println(jsonArray.toString());
             Map<String,String> elementMap = new HashMap<>();
 
             for (int i = 0; i < jsonArray.length(); i++) {

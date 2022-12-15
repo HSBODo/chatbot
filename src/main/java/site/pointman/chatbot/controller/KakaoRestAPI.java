@@ -30,14 +30,11 @@ public class KakaoRestAPI {
         HashMap<String,Object> resultJson = new HashMap<>();
         try {
             String utter = kakaoApiService.selectUtter(params);
-            System.out.println("utter="+utter);
+
             String rtnStr = "";
             switch (utter){
                 case "현재의 날씨" :
-
-                    System.out.println("CON"+      weatherapiservice.selectShortTermWeather());
-
-                    rtnStr = "오늘날씨";
+                    rtnStr = kakaoApiService.RtnStr(weatherapiservice.selectShortTermWeather());
                     break;
                 case "기능2" : rtnStr = "오늘토픽뉴스";
                     break;
