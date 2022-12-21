@@ -29,31 +29,36 @@ public class KakaoRestAPI {
     public HashMap<String, Object> callAPI(@RequestBody Map<String,Object> params, HttpServletRequest request, HttpServletResponse response){
         HashMap<String,Object> resultJson = new HashMap<>();
         try {
-            String utter = kakaoApiService.selectUtter(params);
+            HashMap<String,Object> template = new HashMap<>();
+            List<HashMap<String,Object>> outputs = new ArrayList<>();
 
+            String utter = kakaoApiService.selectUtter(params);
+            Map<String,String> weatherCode = weatherapiservice.selectShortTermWeather();
             String rtnStr = "";
             switch (utter){
-                case "현재의 날씨" :
-                    rtnStr = kakaoApiService.RtnStr(weatherapiservice.selectShortTermWeather());
+                case "오늘의 날씨" :
+
+                    HashMap<String, Object> simpleText;
+                    simpleText = kakaoApiService.createSimpleText(weatherapiservice.WeatherCodeFindByName(weatherCode));
+                    outputs.add(simpleText);
                     break;
-                case "기능2" : rtnStr = "오늘토픽뉴스";
+                case "기능2" :
+
+                    HashMap<String, Object> basicCard;
+                    basicCard = kakaoApiService.createBasicCard(weatherapiservice.WeatherCodeFindByName(weatherCode));
+                    outputs.add(basicCard);
                     break;
                 case "기능3" : rtnStr = "";
                     break;
                 default: rtnStr = "한수빈 개발 챗봇입니다 현재는 개발중입니다";
             }
 
-            List<HashMap<String,Object>> outputs = new ArrayList<>();
-            HashMap<String,Object> template = new HashMap<>();
-            HashMap<String, Object> simpleText = new HashMap<>();
-            HashMap<String, Object> text = new HashMap<>();
 
-            text.put("text",rtnStr);
-            simpleText.put("simpleText",text);
-            outputs.add(simpleText);
+
+
+
 
             template.put("outputs",outputs);
-
             resultJson.put("version","2.0");
             resultJson.put("template",template);
 
