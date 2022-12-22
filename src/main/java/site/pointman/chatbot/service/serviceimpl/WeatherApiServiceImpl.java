@@ -96,6 +96,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
 
         System.out.println("time:::"+formatedTime);
 
+
         weatherReq.setServiceKey("9gnt6hr%2FHUiuAFBAUa0tmYIksePfXZfo9sDFe8Nw7oySE15LFBR2mZ%2BsEPsITToh1s4up2xzcbrtPfVCZUoGFg%3D%3D");
         weatherReq.setNumOfRows("12");
         weatherReq.setPageNo("1");
