@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -84,18 +85,23 @@ public class WeatherApiServiceImpl implements WeatherApiService {
 
         WeatherReqVo weatherReq = new WeatherReqVo();
         // 현재 날짜
-        LocalDate today =  LocalDate.now();
+        LocalDate nowDate =  LocalDate.now();
+        LocalTime nowTime =  LocalTime.now();
         // 포맷 정의
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmm");
         // 포맷 적용
-        String formatedToday = today.format(formatter);
+        String formatedDate = nowDate.format(dateFormatter);
+        String formatedTime = nowTime.format(timeFormatter);
+
+        System.out.println("time:::"+formatedTime);
 
         weatherReq.setServiceKey("9gnt6hr%2FHUiuAFBAUa0tmYIksePfXZfo9sDFe8Nw7oySE15LFBR2mZ%2BsEPsITToh1s4up2xzcbrtPfVCZUoGFg%3D%3D");
         weatherReq.setNumOfRows("12");
         weatherReq.setPageNo("1");
         weatherReq.setDataType("JSON");
-        weatherReq.setBase_date(formatedToday);
-        weatherReq.setBase_time("0200");
+        weatherReq.setBase_date(formatedDate);
+        weatherReq.setBase_time("0800");
         weatherReq.setNx("55");
         weatherReq.setNy("127");
         try {
@@ -142,7 +148,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
                 JSONObject element = (JSONObject) jsonArray.opt(i);
                 elementMap.put(element.optString("category"),element.optString("fcstValue"));
             }
-            elementMap.put("baseDate",today.toString());
+            elementMap.put("baseDate",nowDate.toString());
             response = elementMap ;
         } catch ( Exception e) {
           System.out.println(e);

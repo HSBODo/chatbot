@@ -33,39 +33,30 @@ public class KakaoRestAPI {
             List<HashMap<String,Object>> outputs = new ArrayList<>();
 
             String utter = kakaoApiService.selectUtter(params);
-            Map<String,String> weatherCode = weatherapiservice.selectShortTermWeather();
+
             String rtnStr = "";
             switch (utter){
                 case "오늘의 날씨" :
-
-                    HashMap<String, Object> simpleText;
-                    simpleText = kakaoApiService.createSimpleText(weatherapiservice.WeatherCodeFindByName(weatherCode));
-                    outputs.add(simpleText);
-                    break;
-                case "기능2" :
-
+                    Map<String,String> weatherCode = weatherapiservice.selectShortTermWeather();
                     HashMap<String, Object> basicCard;
                     basicCard = kakaoApiService.createBasicCard(weatherapiservice.WeatherCodeFindByName(weatherCode));
                     outputs.add(basicCard);
+                    break;
+                case "오늘의 토픽" :
+
                     break;
                 case "기능3" : rtnStr = "";
                     break;
                 default: rtnStr = "한수빈 개발 챗봇입니다 현재는 개발중입니다";
             }
 
-
-
-
-
-
             template.put("outputs",outputs);
             resultJson.put("version","2.0");
             resultJson.put("template",template);
-
-
         }catch (Exception e){
             System.out.println(e);
         }
+        System.out.println("resultJson::: "+resultJson);
         return resultJson;
     }
 

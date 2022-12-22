@@ -13,8 +13,7 @@ import java.util.Map;
 @Service
 public class KakaoApiServiceImpl implements KakaoApiService {
 
-    @Autowired
-    private WeatherApiService weatherapiservice;
+;
 
     @Override
     public String selectUtter(Map<String,Object> params) throws Exception{
@@ -25,48 +24,52 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     }
 
     @Override
-    public HashMap<String, Object> createBasicCard(Map<String, String> weatherMap) throws Exception {
+    public HashMap<String, Object> createBasicCard(Map<String, String> param) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        HashMap<String, String> buttons = createButtons(param);
+
+        HashMap<String, Object> SimpleText = createSimpleText(param);
+        Map<String, String> text = objectMapper.convertValue(SimpleText.get("simpleText"), Map.class);
+
         HashMap<String, Object> basicCard = new HashMap<>();
         HashMap<String, String> imageUrl = new HashMap<>();
         HashMap<String, Object> cardProp = new HashMap<>();
 
-        imageUrl.put("imageUrl","sdasdasdasdas");
+        imageUrl.put("imageUrl","https://cdn.pixabay.com/photo/2022/11/24/02/28/clouds-7613361__340.png");
         cardProp.put("title","오늘의 날씨");
-        cardProp.put("description","테스트");
+        cardProp.put("description",text.get("text"));
         cardProp.put("thumbnail",imageUrl);
+       // basicCard.put("buttons",buttons);
         basicCard.put("basicCard",cardProp);
-
 
         return basicCard;
     }
 
     @Override
-    public HashMap<String, Object> createButtons(Map<String, String> param) throws Exception {
-        HashMap<String, Object> buttons = new HashMap<>();
+    public HashMap<String, String> createButtons(Map<String, String> param) throws Exception {
         HashMap<String, String> buttonProp = new HashMap<>();
 
         buttonProp.put("label","테스트");
         buttonProp.put("action","테스트");
         buttonProp.put("messageText","테스트");
-
-        buttons.put("buttons",buttonProp);
-        return null;
+        return buttonProp;
     }
 
     @Override
-    public  HashMap<String, Object>createSimpleText(Map<String, String> weatherCode) throws Exception {
+    public  HashMap<String, Object>createSimpleText(Map<String, String> param) throws Exception {
         HashMap<String, Object> simpleText = new HashMap<>();
         HashMap<String, Object> text = new HashMap<>();
         String rtnStr =
-                weatherCode.get("baseDate")+"오늘의 날씨"+"\n"+
-                "하늘상태: "    + weatherCode.get("SKY")+"\n"+
-                "기온: "       + weatherCode.get("TMP")+"˚C"+"\n"+
-                "습도: "       + weatherCode.get("REH")+"%"+"\n"+
-                "바람: "       + weatherCode.get("WSD")+"\n"+
-                "강수형태: "    + weatherCode.get("PTY")+"\n"+
-                "강수확률: "    + weatherCode.get("POP")+"%"+"\n"+
-                "강수량: "      + weatherCode.get("PCP")+"\n"+
-                "적설량: "      + weatherCode.get("SNO")
+                param.get("baseDate")+"\n"+
+                "하늘상태: "    + param.get("SKY")+"\n"+
+                "기온: "       + param.get("TMP")+"˚C"+"\n"+
+                "습도: "       + param.get("REH")+"%"+"\n"+
+                "바람: "       + param.get("WSD")+"\n"+
+                "강수형태: "    + param.get("PTY")+"\n"+
+                "강수확률: "    + param.get("POP")+"%"+"\n"+
+                "강수량: "      + param.get("PCP")+"\n"+
+                "적설량: "      + param.get("SNO")
                 ;
 
         text.put("text",rtnStr);
