@@ -4,6 +4,8 @@ package site.pointman.chatbot.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,7 @@ import java.util.Map;
 
 @RestController
 public class KakaoRestAPI {
+    Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private WeatherApiService weatherapiservice;
     @Autowired
@@ -56,7 +59,7 @@ public class KakaoRestAPI {
         }catch (Exception e){
             System.out.println(e);
         }
-        System.out.println("resultJson::: "+resultJson);
+        logger.info("resultJson::: "+resultJson);
         return resultJson;
     }
 

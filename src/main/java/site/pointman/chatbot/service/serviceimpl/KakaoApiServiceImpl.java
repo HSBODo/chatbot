@@ -13,8 +13,6 @@ import java.util.Map;
 @Service
 public class KakaoApiServiceImpl implements KakaoApiService {
 
-;
-
     @Override
     public String selectUtter(Map<String,Object> params) throws Exception{
         ObjectMapper mapper = new ObjectMapper();

@@ -1,6 +1,8 @@
 package site.pointman.chatbot.service.serviceimpl;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 
@@ -19,8 +21,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
+
 @Service
 public class WeatherApiServiceImpl implements WeatherApiService {
+    Logger logger = LoggerFactory.getLogger(getClass());
     @Override
     public Map<String, String> WeatherCodeFindByName(Map<String, String> param) {
         Map<String,String> result = new HashMap<>();
@@ -75,7 +79,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         result.put("TMP",TMP);
         result.put("UUU",UUU);
         result.put("WSD",WSD);
-        System.out.println("codeToName"+result);
+        logger.info("codeToName"+result);
         return result;
     }
 
@@ -89,20 +93,38 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         LocalTime nowTime =  LocalTime.now();
         // 포맷 정의
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmm");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH");
         // 포맷 적용
         String formatedDate = nowDate.format(dateFormatter);
-        String formatedTime = nowTime.format(timeFormatter);
+        int formatedTime = Integer.parseInt(nowTime.format(timeFormatter));
 
-        System.out.println("time:::"+formatedTime);
-
-
+        String basTime;
+        if(formatedTime>=2 && formatedTime<=4){
+            basTime = "0200";
+        } else if (formatedTime>=5 && formatedTime<=7) {
+            basTime = "0500";
+        } else if (formatedTime>=8 && formatedTime<=10) {
+            basTime = "0800";
+        } else if (formatedTime>=11 && formatedTime<=13) {
+            basTime = "1100";
+        } else if (formatedTime>=14 && formatedTime<=16) {
+            basTime = "1400";
+        } else if (formatedTime>=17 && formatedTime<=19) {
+            basTime = "1700";
+        } else if (formatedTime>=20 && formatedTime<=22) {
+            basTime = "2000";
+        } else if (formatedTime>=23) {
+            basTime = "2300";
+        }else {
+            formatedDate = nowDate.minusDays(1).format(dateFormatter);
+            basTime = "2300";
+        }
         weatherReq.setServiceKey("9gnt6hr%2FHUiuAFBAUa0tmYIksePfXZfo9sDFe8Nw7oySE15LFBR2mZ%2BsEPsITToh1s4up2xzcbrtPfVCZUoGFg%3D%3D");
         weatherReq.setNumOfRows("12");
         weatherReq.setPageNo("1");
         weatherReq.setDataType("JSON");
         weatherReq.setBase_date(formatedDate);
-        weatherReq.setBase_time("0800");
+        weatherReq.setBase_time(basTime);
         weatherReq.setNx("55");
         weatherReq.setNy("127");
         try {
@@ -120,7 +142,6 @@ public class WeatherApiServiceImpl implements WeatherApiService {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Content-type", "application/json");
-            System.out.println("Response code: " + conn.getResponseCode());
             BufferedReader rd;
             if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
                 rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -132,7 +153,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
             while ((line = rd.readLine()) != null) {
                 sb.append(line);
             }
-            System.out.println("response::: "+sb);
+            logger.info("response::: "+sb);
             rd.close();
             conn.disconnect();
 
