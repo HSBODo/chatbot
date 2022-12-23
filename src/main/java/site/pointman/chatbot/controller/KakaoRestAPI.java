@@ -40,10 +40,12 @@ public class KakaoRestAPI {
             String rtnStr = "";
             switch (utter){
                 case "오늘의 날씨" :
+                    logger.info("--------------------- 오늘의 날씨 start --------------------");
                     Map<String,String> weatherCode = weatherapiservice.selectShortTermWeather();
                     HashMap<String, Object> basicCard;
                     basicCard = kakaoApiService.createBasicCard(weatherapiservice.WeatherCodeFindByName(weatherCode));
                     outputs.add(basicCard);
+                    logger.info("--------------------- 오늘의 날씨 end --------------------");
                     break;
                 case "오늘의 토픽" :
 
@@ -59,7 +61,7 @@ public class KakaoRestAPI {
         }catch (Exception e){
             System.out.println(e);
         }
-        logger.info("resultJson::: "+resultJson);
+        logger.info("final resultJson::: "+resultJson);
         return resultJson;
     }
 
