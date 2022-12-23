@@ -97,7 +97,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         // 포맷 적용
         String formatedDate = nowDate.format(dateFormatter);
         int formatedTime = Integer.parseInt(nowTime.format(timeFormatter));
-
+        logger.info("time::: "+formatedTime);
         String basTime;
         if(formatedTime>=2 && formatedTime<=4){
             basTime = "0200";
