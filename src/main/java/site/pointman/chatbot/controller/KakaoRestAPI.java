@@ -29,30 +29,23 @@ public class KakaoRestAPI {
     private WeatherApiService weatherapiservice;
     @Autowired
     private KakaoApiService kakaoApiService;
+
     @ResponseBody
-    @RequestMapping(value = "chat" , method= {RequestMethod.POST , RequestMethod.GET },headers = {"Accept=application/json; UTF-8"})
+    @RequestMapping(value = "chat" , method= {RequestMethod.POST},headers = {"Accept=application/json; UTF-8"})
     public HashMap<String, Object> callAPI(@RequestBody Map<String,Object> params, HttpServletRequest request, HttpServletResponse response){
         HashMap<String,Object> resultJson = new HashMap<>();
         try {
             HashMap<String,Object> template = new HashMap<>();
             List<HashMap<String,Object>> outputs = new ArrayList<>();
-
+            logger.info("request"+params);
             String utter = kakaoApiService.selectUtter(params);
-
             String rtnStr = "";
             switch (utter){
                 case "오늘의 날씨" :
-                    logger.info("--------------------- 오늘의 날씨 start --------------------");
-                    Map<String,Double> latXlngY = weatherapiservice.convertGRID_GPS(0,37.566535,126.9779692);
-                    logger.info("XY"+latXlngY.toString());
-                    Map<String,String> weatherCode = weatherapiservice.selectShortTermWeather(latXlngY.get("X").toString(),latXlngY.get("Y").toString());
-                    HashMap<String, Object> basicCard;
-                    basicCard = kakaoApiService.createBasicCard(weatherapiservice.WeatherCodeFindByName(weatherCode));
-                    outputs.add(basicCard);
-                    logger.info("--------------------- 오늘의 날씨 end --------------------");
+                    rtnStr = "";
                     break;
                 case "오늘의 토픽" :
-
+                    rtnStr = "";
                     break;
                 case "기능3" : rtnStr = "";
                     break;
@@ -68,10 +61,41 @@ public class KakaoRestAPI {
         logger.info("final resultJson::: "+resultJson);
         return resultJson;
     }
-    @GetMapping("xy")
-    public String XY(){
+    @ResponseBody
+    @RequestMapping(value = "weatherInfo" , method= {RequestMethod.POST},headers = {"Accept=application/json; UTF-8"})
+    public HashMap<String, Object> weatherInfo(@RequestBody Map<String,Double> params, HttpServletRequest request, HttpServletResponse response){
+        HashMap<String,Object> resultJson = new HashMap<>();
+        try {
+            HashMap<String,Object> template = new HashMap<>();
+            List<HashMap<String,Object>> outputs = new ArrayList<>();
+            logger.info("request"+params);
+            double latitude = params.get("latitude");
+            double longitude = params.get("longitude");
+            logger.info("--------------------- 오늘의 날씨 start --------------------");
+            Map<String,Double> latXlngY = weatherapiservice.convertGRID_GPS(0,latitude,longitude);
+            int x = (int)Math.round(latXlngY.get("X"));
+            int y = (int)Math.round(latXlngY.get("Y"));
+            Map<String,String> weatherCode = weatherapiservice.selectShortTermWeather(Integer.toString(x),Integer.toString(y));
+            HashMap<String, Object> basicCard;
+            basicCard = kakaoApiService.createBasicCard(weatherapiservice.WeatherCodeFindByName(weatherCode));
+            outputs.add(basicCard);
+            logger.info("--------------------- 오늘의 날씨 end --------------------");
+
+            template.put("outputs",outputs);
+            resultJson.put("version","2.0");
+            resultJson.put("template",template);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        logger.info("final resultJson::: "+resultJson);
+        return resultJson;
+    }
+
+    @GetMapping("locationAgree")
+    public String locationAgree(){
         return "test";
     }
+
 
 
 

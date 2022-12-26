@@ -84,9 +84,10 @@ public class WeatherApiServiceImpl implements WeatherApiService {
 
 
     @Override
-    public Map<String, String> selectShortTermWeather(String X, String Y) {
+    public Map<String, String> selectShortTermWeather(String x, String y) {
         Map<String,String> response = new HashMap<>();
-
+        logger.info("x"+x);
+        logger.info("y"+y);
         WeatherReqVo weatherReq = new WeatherReqVo();
         // 현재 날짜
         LocalDate nowDate =  LocalDate.now();
@@ -126,8 +127,8 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         weatherReq.setDataType("JSON");
         weatherReq.setBase_date(formatedDate);
         weatherReq.setBase_time(basTime);
-        weatherReq.setNx(X);
-        weatherReq.setNy(Y);
+        weatherReq.setNx(x);
+        weatherReq.setNy(y);
         try {
 
             StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); /*URL*/
