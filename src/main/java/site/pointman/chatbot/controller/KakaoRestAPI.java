@@ -42,6 +42,16 @@ public class KakaoRestAPI {
             String rtnStr = "";
             switch (utter){
                 case "오늘의 날씨" :
+                    logger.info("--------------------- 오늘의 날씨 start --------------------");
+                    Map<String,Double> latXlngY = weatherapiservice.convertGRID_GPS(0,37.4758682,126.8350464);
+                    int x = (int)Math.round(latXlngY.get("X"));
+                    int y = (int)Math.round(latXlngY.get("Y"));
+                    Map<String,String> weatherCode = weatherapiservice.selectShortTermWeather(Integer.toString(x),Integer.toString(y));
+                    HashMap<String, Object> basicCard;
+                    basicCard = kakaoApiService.createBasicCard(weatherapiservice.WeatherCodeFindByName(weatherCode));
+                    outputs.add(basicCard);
+                    logger.info("--------------------- 오늘의 날씨 end --------------------");
+
                     rtnStr = "";
                     break;
                 case "오늘의 토픽" :
@@ -93,7 +103,7 @@ public class KakaoRestAPI {
 
     @GetMapping("locationAgree")
     public String locationAgree(){
-        return "test";
+        return "locationAgree";
     }
 
 
