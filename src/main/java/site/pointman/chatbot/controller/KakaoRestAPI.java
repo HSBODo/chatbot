@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import site.pointman.chatbot.service.KakaoApiService;
@@ -20,15 +21,16 @@ import java.util.List;
 import java.util.Map;
 
 
-@RestController
+@Controller
+@RequestMapping(value = "/kkoChat/v1/*")
 public class KakaoRestAPI {
     Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private WeatherApiService weatherapiservice;
     @Autowired
     private KakaoApiService kakaoApiService;
-
-    @RequestMapping(value = "/kkoChat/v1" , method= {RequestMethod.POST , RequestMethod.GET },headers = {"Accept=application/json; UTF-8"})
+    @ResponseBody
+    @RequestMapping(value = "chat" , method= {RequestMethod.POST , RequestMethod.GET },headers = {"Accept=application/json; UTF-8"})
     public HashMap<String, Object> callAPI(@RequestBody Map<String,Object> params, HttpServletRequest request, HttpServletResponse response){
         HashMap<String,Object> resultJson = new HashMap<>();
         try {
@@ -41,7 +43,9 @@ public class KakaoRestAPI {
             switch (utter){
                 case "오늘의 날씨" :
                     logger.info("--------------------- 오늘의 날씨 start --------------------");
-                    Map<String,String> weatherCode = weatherapiservice.selectShortTermWeather();
+                    Map<String,Double> latXlngY = weatherapiservice.convertGRID_GPS(0,37.566535,126.9779692);
+                    logger.info("XY"+latXlngY.toString());
+                    Map<String,String> weatherCode = weatherapiservice.selectShortTermWeather(latXlngY.get("X").toString(),latXlngY.get("Y").toString());
                     HashMap<String, Object> basicCard;
                     basicCard = kakaoApiService.createBasicCard(weatherapiservice.WeatherCodeFindByName(weatherCode));
                     outputs.add(basicCard);
@@ -64,7 +68,10 @@ public class KakaoRestAPI {
         logger.info("final resultJson::: "+resultJson);
         return resultJson;
     }
-
+    @GetMapping("xy")
+    public String XY(){
+        return "test";
+    }
 
 
 
