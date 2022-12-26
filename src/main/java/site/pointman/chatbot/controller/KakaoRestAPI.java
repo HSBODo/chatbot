@@ -63,14 +63,14 @@ public class KakaoRestAPI {
     }
     @ResponseBody
     @RequestMapping(value = "weatherInfo" , method= {RequestMethod.POST},headers = {"Accept=application/json; UTF-8"})
-    public HashMap<String, Object> weatherInfo(@RequestBody Map<String,Double> params, HttpServletRequest request, HttpServletResponse response){
+    public HashMap<String, Object> weatherInfo(@RequestBody Map<String,Object> params, HttpServletRequest request, HttpServletResponse response){
         HashMap<String,Object> resultJson = new HashMap<>();
         try {
             HashMap<String,Object> template = new HashMap<>();
             List<HashMap<String,Object>> outputs = new ArrayList<>();
             logger.info("request"+params);
-            double latitude = params.get("latitude");
-            double longitude = params.get("longitude");
+            double latitude = (double)params.get("latitude");
+            double longitude = (double)params.get("longitude");
             logger.info("--------------------- 오늘의 날씨 start --------------------");
             Map<String,Double> latXlngY = weatherapiservice.convertGRID_GPS(0,latitude,longitude);
             int x = (int)Math.round(latXlngY.get("X"));
