@@ -15,8 +15,7 @@ import java.net.HttpURLConnection;
 
 import java.net.URL;
 import java.net.URLEncoder;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -90,13 +89,14 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         WeatherReqVo weatherReq = new WeatherReqVo();
         // 현재 날짜
         LocalDate nowDate =  LocalDate.now();
-        LocalTime nowTime =  LocalTime.now();
+        ZonedDateTime nowUTC = ZonedDateTime.now(ZoneId.of("UTC"));
+        LocalDateTime nowSeoul = nowUTC.withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
         // 포맷 정의
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH");
         // 포맷 적용
         String formatedDate = nowDate.format(dateFormatter);
-        int formatedTime = Integer.parseInt(nowTime.format(timeFormatter));
+        int formatedTime = Integer.parseInt(nowSeoul.format(timeFormatter));
         logger.info("time::: "+formatedTime);
         String basTime;
         if(formatedTime>=2 && formatedTime<=4){
