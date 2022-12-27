@@ -52,7 +52,11 @@ public class KakaoRestAPI {
                     rtnStr = "";
                     break;
                 case "오늘의 토픽" :
-                    rtnStr = "";
+                    HashMap<String, Object> simpletext;
+                    Map<String,String> text = new HashMap<>();
+                    text.put("SKY","맑음");
+                    simpletext = kakaoApiService.createSimpleText(text);
+                    outputs.add(simpletext);
                     break;
                 case "기능3" : rtnStr = "";
                     break;
