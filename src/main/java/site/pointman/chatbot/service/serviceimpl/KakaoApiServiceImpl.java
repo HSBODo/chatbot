@@ -58,17 +58,17 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     public  HashMap<String, Object>createSimpleText(Map<String, String> param) throws Exception {
         HashMap<String, Object> simpleText = new HashMap<>();
         HashMap<String, Object> text = new HashMap<>();
-        String rtnStr =
-                param.get("baseDate")+"\n"+
-                "하늘상태: "    + param.get("SKY")+"\n"+
-                "기온: "       + param.get("TMP")+"˚C"+"\n"+
-                "습도: "       + param.get("REH")+"%"+"\n"+
-                "바람: "       + param.get("WSD")+"\n"+
-                "강수형태: "    + param.get("PTY")+"\n"+
-                "강수확률: "    + param.get("POP")+"%"+"\n"+
-                "강수량: "      + param.get("PCP")+"\n"+
-                "적설량: "      + param.get("SNO")
-                ;
+        String rtnStr = "테스트";
+//                param.get("baseDate")+"\n"+
+//                "하늘상태: "    + param.get("SKY")+"\n"+
+//                "기온: "       + param.get("TMP")+"˚C"+"\n"+
+//                "습도: "       + param.get("REH")+"%"+"\n"+
+//                "바람: "       + param.get("WSD")+"\n"+
+//                "강수형태: "    + param.get("PTY")+"\n"+
+//                "강수확률: "    + param.get("POP")+"%"+"\n"+
+//                "강수량: "      + param.get("PCP")+"\n"+
+//                "적설량: "      + param.get("SNO")
+//                ;
 
         text.put("text",rtnStr);
         simpleText.put("simpleText",text);
