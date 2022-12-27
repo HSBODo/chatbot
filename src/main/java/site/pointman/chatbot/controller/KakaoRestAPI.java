@@ -29,8 +29,6 @@ public class KakaoRestAPI {
     private WeatherApiService weatherapiservice;
     @Autowired
     private KakaoApiService kakaoApiService;
-
-    @ResponseBody
     @RequestMapping(value = "chat" , method= {RequestMethod.POST},headers = {"Accept=application/json; UTF-8"})
     public HashMap<String, Object> callAPI(@RequestBody Map<String,Object> params, HttpServletRequest request, HttpServletResponse response){
         HashMap<String,Object> resultJson = new HashMap<>();
