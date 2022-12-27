@@ -72,7 +72,7 @@ public class KakaoRestAPI {
         logger.info("final resultJson::: "+resultJson);
         return resultJson;
     }
-    @ResponseBody
+
     @RequestMapping(value = "weatherInfo" , method= {RequestMethod.POST},headers = {"Accept=application/json; UTF-8"})
     public HashMap<String, Object> weatherInfo(@RequestBody Map<String,Object> params, HttpServletRequest request, HttpServletResponse response){
         HashMap<String,Object> resultJson = new HashMap<>();
