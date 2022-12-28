@@ -42,17 +42,13 @@ public class KakaoRestAPI {
             switch (utter){
                 case "오늘의 날씨" :
                     logger.info("--------------------- 오늘의 날씨 start --------------------");
-                    List<HashMap<String,Object>> buttons ;
                     HashMap<String, Object> basicCard;
 
                     Map<String,Double> latXlngY = weatherapiservice.convertGRID_GPS(0,37.4758682,126.8350464);
                     int x = (int)Math.round(latXlngY.get("X"));
                     int y = (int)Math.round(latXlngY.get("Y"));
                     Map<String,String> weatherCode = weatherapiservice.selectShortTermWeather(Integer.toString(x),Integer.toString(y));
-
                     basicCard = kakaoApiService.createBasicCard(weatherapiservice.WeatherCodeFindByName(weatherCode));
-                    buttons = kakaoApiService.createButtons(weatherCode);
-                    //basicCard.put("buttons",buttons);
                     outputs.add(basicCard);
                     logger.info("--------------------- 오늘의 날씨 end --------------------");
 
