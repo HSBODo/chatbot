@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 
-@RestController
+@Controller
 @RequestMapping(value = "/kkoChat/v1/*")
 public class KakaoRestAPI {
     Logger logger = LoggerFactory.getLogger(getClass());
@@ -29,6 +29,7 @@ public class KakaoRestAPI {
     private WeatherApiService weatherapiservice;
     @Autowired
     private KakaoApiService kakaoApiService;
+    @ResponseBody
     @RequestMapping(value = "chat" , method= {RequestMethod.POST},headers = {"Accept=application/json; UTF-8"})
     public HashMap<String, Object> callAPI(@RequestBody Map<String,Object> params, HttpServletRequest request, HttpServletResponse response){
         HashMap<String,Object> resultJson = new HashMap<>();
@@ -72,7 +73,7 @@ public class KakaoRestAPI {
         logger.info("final resultJson::: "+resultJson);
         return resultJson;
     }
-
+    @ResponseBody
     @RequestMapping(value = "weatherInfo" , method= {RequestMethod.POST},headers = {"Accept=application/json; UTF-8"})
     public HashMap<String, Object> weatherInfo(@RequestBody Map<String,Object> params, HttpServletRequest request, HttpServletResponse response){
         HashMap<String,Object> resultJson = new HashMap<>();
