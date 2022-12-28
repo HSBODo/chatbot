@@ -34,13 +34,13 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         HashMap<String, Object> basicCard = new HashMap<>();
         HashMap<String, String> imageUrl = new HashMap<>();
         HashMap<String, Object> cardProp = new HashMap<>();
-        List<HashMap<String,Object>> button = createButtons(param);
+        List<HashMap<String,Object>> buttons = createButtons(param);
         imageUrl.put("imageUrl","https://cdn.pixabay.com/photo/2022/11/24/02/28/clouds-7613361__340.png");
         cardProp.put("title","오늘의 날씨");
 //        cardProp.put("description",text.get("text"));
         cardProp.put("description","위치정보 제공 동의");
         cardProp.put("thumbnail",imageUrl);
-        cardProp.put("button",button);
+        cardProp.put("buttons",buttons);
         basicCard.put("basicCard",cardProp);
         return basicCard;
     }
