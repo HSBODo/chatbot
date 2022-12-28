@@ -1,18 +1,21 @@
 package site.pointman.chatbot.service.serviceimpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.WeatherApiService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class KakaoApiServiceImpl implements KakaoApiService {
-
+    Logger logger = LoggerFactory.getLogger(getClass());
     @Override
     public String selectUtter(Map<String,Object> params) throws Exception{
         ObjectMapper mapper = new ObjectMapper();
@@ -24,8 +27,9 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public HashMap<String, Object> createBasicCard(Map<String, String> param) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-
-        HashMap<String, String> buttons = createButtons(param);
+        Map test = new HashMap<>();
+        test.put("1","1");
+        List<HashMap<String,Object>> buttons = createButtons(test);
 
         HashMap<String, Object> SimpleText = createSimpleText(param);
         Map<String, String> text = objectMapper.convertValue(SimpleText.get("simpleText"), Map.class);
@@ -38,20 +42,26 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         cardProp.put("title","오늘의 날씨");
         cardProp.put("description",text.get("text"));
         cardProp.put("thumbnail",imageUrl);
-       // basicCard.put("buttons",buttons);
+
+        basicCard.put("buttons",buttons);
         basicCard.put("basicCard",cardProp);
 
         return basicCard;
     }
 
     @Override
-    public HashMap<String, String> createButtons(Map<String, String> param) throws Exception {
-        HashMap<String, String> buttonProp = new HashMap<>();
+    public  List<HashMap<String,Object>> createButtons(Map<String, String> param) throws Exception {
+        HashMap<String, Object> buttonProp = new HashMap<>();
+        List<HashMap<String,Object>> buttons = new ArrayList<>();
 
-        buttonProp.put("label","테스트");
-        buttonProp.put("action","테스트");
-        buttonProp.put("messageText","테스트");
-        return buttonProp;
+        buttonProp.put("label","날씨");
+        buttonProp.put("action","webLink");
+        buttonProp.put("webLinkUrl","http://54.248.24.34:8080/kkoChat/v1/locationAgree");
+        buttons.add(buttonProp);
+
+        logger.info("buttons"+buttons);
+
+        return buttons;
     }
 
     @Override

@@ -49,6 +49,7 @@ public class KakaoRestAPI {
                     HashMap<String, Object> basicCard;
                     basicCard = kakaoApiService.createBasicCard(weatherapiservice.WeatherCodeFindByName(weatherCode));
                     outputs.add(basicCard);
+
                     logger.info("--------------------- 오늘의 날씨 end --------------------");
                     rtnStr = "";
                     break;
