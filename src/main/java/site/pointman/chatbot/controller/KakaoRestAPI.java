@@ -42,16 +42,20 @@ public class KakaoRestAPI {
             switch (utter){
                 case "오늘의 날씨" :
                     logger.info("--------------------- 오늘의 날씨 start --------------------");
+                    List<HashMap<String,Object>> buttons ;
+                    HashMap<String, Object> basicCard;
+
                     Map<String,Double> latXlngY = weatherapiservice.convertGRID_GPS(0,37.4758682,126.8350464);
                     int x = (int)Math.round(latXlngY.get("X"));
                     int y = (int)Math.round(latXlngY.get("Y"));
                     Map<String,String> weatherCode = weatherapiservice.selectShortTermWeather(Integer.toString(x),Integer.toString(y));
-                    HashMap<String, Object> basicCard;
-                    basicCard = kakaoApiService.createBasicCard(weatherapiservice.WeatherCodeFindByName(weatherCode));
-                    outputs.add(basicCard);
 
+                    basicCard = kakaoApiService.createBasicCard(weatherapiservice.WeatherCodeFindByName(weatherCode));
+                    buttons = kakaoApiService.createButtons(weatherCode);
+                    //basicCard.put("buttons",buttons);
+                    outputs.add(basicCard);
                     logger.info("--------------------- 오늘의 날씨 end --------------------");
-                    rtnStr = "";
+
                     break;
                 case "오늘의 토픽" :
                     HashMap<String, Object> simpletext;
@@ -60,7 +64,7 @@ public class KakaoRestAPI {
                     simpletext = kakaoApiService.createSimpleText(text);
                     outputs.add(simpletext);
                     break;
-                case "기능3" : rtnStr = "";
+                case "기능3" :
                     break;
                 default: rtnStr = "한수빈 개발 챗봇입니다 현재는 개발중입니다";
             }
@@ -104,8 +108,10 @@ public class KakaoRestAPI {
         return resultJson;
     }
 
-    @GetMapping("locationAgree")
+
+    @RequestMapping(value = "locationAgree" , method= {RequestMethod.POST,RequestMethod.GET},headers = {"Accept=application/json; UTF-8"})
     public String locationAgree(){
+        logger.info("-----------위치정보 동의---------");
         return "locationAgree";
     }
 

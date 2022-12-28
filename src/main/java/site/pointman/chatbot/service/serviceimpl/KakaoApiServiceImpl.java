@@ -27,9 +27,6 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public HashMap<String, Object> createBasicCard(Map<String, String> param) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        Map test = new HashMap<>();
-        test.put("1","1");
-        List<HashMap<String,Object>> buttons = createButtons(test);
 
         HashMap<String, Object> SimpleText = createSimpleText(param);
         Map<String, String> text = objectMapper.convertValue(SimpleText.get("simpleText"), Map.class);
@@ -43,9 +40,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         cardProp.put("description",text.get("text"));
         cardProp.put("thumbnail",imageUrl);
 
-        basicCard.put("buttons",buttons);
         basicCard.put("basicCard",cardProp);
-
         return basicCard;
     }
 
