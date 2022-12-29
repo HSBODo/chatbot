@@ -66,7 +66,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         List<HashMap<String,Object>> quickButtons = new ArrayList<>();
 
         quickButtonProp.put("messageText","서울");
-        quickButtonProp.put("action","messageText");
+        quickButtonProp.put("action","message");
         quickButtonProp.put("label","서울");
         quickButtons.add(quickButtonProp);
 
