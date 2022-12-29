@@ -36,9 +36,11 @@ public class KakaoRestAPI {
         try {
             HashMap<String,Object> template = new HashMap<>();
             List<HashMap<String,Object>> outputs = new ArrayList<>();
+            List<HashMap<String,Object>> quikButtons = new ArrayList<>();
+            HashMap<String, Object> simpletext;
             logger.info("request"+params);
             String utter = kakaoApiService.selectUtter(params);
-            String rtnStr = "";
+            Map<String,String> text = new HashMap<>();
             switch (utter){
                 case "오늘의 날씨" :
                     logger.info("--------------------- 오늘의 날씨 start --------------------");
@@ -54,15 +56,21 @@ public class KakaoRestAPI {
 
                     break;
                 case "오늘의 토픽" :
-                    HashMap<String, Object> simpletext;
-                    Map<String,String> text = new HashMap<>();
                     text.put("SKY","맑음");
                     simpletext = kakaoApiService.createSimpleText(text);
                     outputs.add(simpletext);
                     break;
-                case "기능3" :
+                case "퀵" :
+
+                    logger.info("--------------------- 오늘의 날씨 start --------------------");
+                    text.put("text","지역을 선택하세요");
+                    simpletext = kakaoApiService.createSimpleText(text);
+                    outputs.add(simpletext);
+                    quikButtons =kakaoApiService.quickButtons(text);
+                    template.put("quickReplies",quikButtons);
+                    logger.info("--------------------- 오늘의 날씨 end --------------------");
                     break;
-                default: rtnStr = "한수빈 개발 챗봇입니다 현재는 개발중입니다";
+                default:
             }
 
             template.put("outputs",outputs);

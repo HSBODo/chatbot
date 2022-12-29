@@ -10,5 +10,5 @@ public interface KakaoApiService {
 
     HashMap<String, Object> createBasicCard(Map<String,String> param) throws  Exception;
     List<HashMap<String,Object>> createButtons(Map<String,String> param) throws  Exception;
-
+    List<HashMap<String,Object>> quickButtons(Map<String,String> param) throws  Exception;
 }
