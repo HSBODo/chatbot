@@ -15,10 +15,7 @@ import site.pointman.chatbot.service.WeatherApiService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Controller
@@ -42,7 +39,7 @@ public class KakaoRestAPI {
             String utter = kakaoApiService.selectUtter(params);
             Map<String,String> text = new HashMap<>();
             switch (utter){
-                case "오늘의 날씨" :
+                case "테스트" :
                     logger.info("--------------------- 오늘의 날씨 start --------------------");
                     HashMap<String, Object> basicCard;
 
@@ -60,13 +57,13 @@ public class KakaoRestAPI {
                     simpletext = kakaoApiService.createSimpleText(text);
                     outputs.add(simpletext);
                     break;
-                case "퀵" :
-
+                case "오늘의 날씨" :
                     logger.info("--------------------- 오늘의 날씨 start --------------------");
-                    text.put("text","지역을 선택하세요");
+                    text.put("text","현재 위치하신 지역을 선택하세요.");
                     simpletext = kakaoApiService.createSimpleText(text);
                     outputs.add(simpletext);
-                    quikButtons =kakaoApiService.quickButtons(text);
+                    ArrayList labes = new ArrayList<>(Arrays.asList("서울","부산","경기"));
+                    quikButtons =kakaoApiService.quickButtons(labes);
                     template.put("quickReplies",quikButtons);
                     logger.info("--------------------- 오늘의 날씨 end --------------------");
                     break;

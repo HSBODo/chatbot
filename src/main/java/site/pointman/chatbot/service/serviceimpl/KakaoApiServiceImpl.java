@@ -61,17 +61,21 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     }
 
     @Override
-    public List<HashMap<String, Object>> quickButtons(Map<String, String> param) throws Exception {
-        HashMap<String, Object> quickButtonProp = new HashMap<>();
-        List<HashMap<String,Object>> quickButtons = new ArrayList<>();
+    public List<HashMap<String, Object>> quickButtons(ArrayList<String> param) throws Exception {
 
-        quickButtonProp.put("messageText","서울");
-        quickButtonProp.put("action","message");
-        quickButtonProp.put("label","서울");
-        quickButtons.add(quickButtonProp);
+        List<HashMap<String,Object>> quickButtons = new ArrayList<>();
+        logger.info("arraylist"+param);
+        for ( String i : param){
+            HashMap<String, Object> quickButtonProp = new HashMap<>();
+            logger.info(i);
+            quickButtonProp.put("messageText",i);
+            quickButtonProp.put("action","message");
+            quickButtonProp.put("label",i);
+            quickButtons.add(quickButtonProp);
+            logger.info(quickButtons.toString());
+        }
 
         logger.info("quickButtons"+quickButtons);
-
         return quickButtons;
     }
 
