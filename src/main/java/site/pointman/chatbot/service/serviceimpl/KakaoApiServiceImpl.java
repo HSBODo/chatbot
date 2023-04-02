@@ -27,18 +27,17 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public HashMap<String, Object> createBasicCard(Map<String, String> param) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String, Object> basicCard = new HashMap<>();
+        HashMap<String, String> imageUrl = new HashMap<>();
+        HashMap<String, Object> cardProp = new HashMap<>();
 
         HashMap<String, Object> SimpleText = createSimpleText(param);
         Map<String, String> text = objectMapper.convertValue(SimpleText.get("simpleText"), Map.class);
 
-        HashMap<String, Object> basicCard = new HashMap<>();
-        HashMap<String, String> imageUrl = new HashMap<>();
-        HashMap<String, Object> cardProp = new HashMap<>();
         List<HashMap<String,Object>> buttons = createButtons(param);
         imageUrl.put("imageUrl","https://cdn.pixabay.com/photo/2022/11/24/02/28/clouds-7613361__340.png");
         cardProp.put("title","오늘의 날씨");
         cardProp.put("description",text.get("text"));
-       // cardProp.put("description","위치정보 제공 동의");
         cardProp.put("thumbnail",imageUrl);
         cardProp.put("buttons",buttons);
         basicCard.put("basicCard",cardProp);
@@ -53,8 +52,8 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         buttonProp.put("label","날씨");
         buttonProp.put("action","webLink");
         buttonProp.put("webLinkUrl","http://54.248.24.34:8080/kkoChat/v1/locationAgree");
-        buttons.add(buttonProp);
 
+        buttons.add(buttonProp);
         logger.info("buttons"+buttons);
 
         return buttons;
