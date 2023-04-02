@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class WeatherReqVo {
+public class WeatherReq {
     private String serviceKey;
     private String numOfRows;
     private String pageNo;

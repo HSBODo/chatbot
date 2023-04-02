@@ -2,12 +2,8 @@ package site.pointman.chatbot.domain;
 
 import lombok.Getter;
 
-import java.lang.reflect.Array;
-import java.util.HashMap;
-import java.util.Map;
-
 @Getter
-public class WeatherElementVo {
+public class WeatherElement {
 
     private String sky;
     private String pop;

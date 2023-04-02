@@ -2,13 +2,11 @@ package site.pointman.chatbot.service.serviceimpl;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 
 import site.pointman.chatbot.domain.LocationXY;
-import site.pointman.chatbot.domain.WeatherReqVo;
+import site.pointman.chatbot.domain.WeatherReq;
 import site.pointman.chatbot.service.WeatherApiService;
 
 import java.io.BufferedReader;
@@ -93,7 +91,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         String y = convertXY.getY();
         log.info("convertX = {}, convertY = {}",x,y);
 
-        WeatherReqVo weatherReq = new WeatherReqVo();
+        WeatherReq weatherReq = new WeatherReq();
         // 현재 날짜
         LocalDate nowDate =  LocalDate.now();
         ZonedDateTime nowUTC = ZonedDateTime.now(ZoneId.of("UTC"));
