@@ -6,16 +6,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONArray;
+
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import site.pointman.chatbot.domain.KakaoUser;
+import site.pointman.chatbot.domain.KakaoUserLocation;
 import site.pointman.chatbot.domain.KakaoUserRequest;
 import site.pointman.chatbot.domain.LocationXY;
+import site.pointman.chatbot.repository.KakaoUserLocationRepository;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.WeatherApiService;
 
@@ -26,31 +28,41 @@ import java.util.*;
 
 @Slf4j
 @Controller
-@RequestMapping(value = "/kkoChat/v1/*")
+@RequestMapping(value = "/kakaochat/v1/*")
 public class KakaoRestAPI {
-    //Logger logger = LoggerFactory.getLogger(getClass());
-    @Autowired
     private WeatherApiService weatherapiservice;
-    @Autowired
+
     private KakaoApiService kakaoApiService;
 
+    private KakaoUserLocationRepository kakaoUserLocationRepository;
+
+    public KakaoRestAPI(WeatherApiService weatherapiservice, KakaoApiService kakaoApiService, KakaoUserLocationRepository kakaoUserLocationRepository) {
+        this.weatherapiservice = weatherapiservice;
+        this.kakaoApiService = kakaoApiService;
+        this.kakaoUserLocationRepository = kakaoUserLocationRepository;
+    }
 
     @ResponseBody
     @RequestMapping(value = "chat" , method= {RequestMethod.POST},headers = {"Accept=application/json; UTF-8"})
     public HashMap<String, Object> callAPI(@RequestBody KakaoUserRequest params, HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
         HashMap<String,Object> resultJson = new HashMap<>();
-        try {
-            JSONObject jsonObject = new JSONObject(params.getUserRequest());
-            Map<String, Object> userRequest = getMapFromJsonObject(jsonObject);
-            log.info("uttr= {}",userRequest.get("utterance"));
 
+        try {
+            Map<String, Object> userProps = getStringObjectMap(params);
+            String kakaoUserkey= (String) userProps.get("plusfriendUserKey");
+            log.info("kakaoUserkey={}",kakaoUserkey);
+            KakaoUser user = new KakaoUser();
+            user.setKakaoUserkey(kakaoUserkey);
+            String join = kakaoApiService.join(user);
+            log.info("join= {}",join);
+            JSONObject userRequest = new JSONObject(params.getUserRequest());
 
             HashMap<String,Object> template = new HashMap<>();
             List<HashMap<String,Object>> outputs = new ArrayList<>();
             List<HashMap<String,Object>> quikButtons = new ArrayList<>();
             HashMap<String, Object> simpletext;
             String utter = (String) userRequest.get("utterance");
-
+            log.info("utter ={}",utter);
 
             Map<String,String> text = new HashMap<>();
             switch (utter){
@@ -73,7 +85,7 @@ public class KakaoRestAPI {
                     Map<String, String> param = new HashMap<>();
                     param.put("label","위치정보 동의");
                     param.put("action","webLink");
-                    param.put("webLinkUrl","http://localhost:8080/kkoChat/v1/locationAgree");
+                    param.put("webLinkUrl","https://www.pointman.shop/kakaochat/v1/locationAgree");
                     param.put("text","");
                     param.put("title","위치정보제공");
                     basicCard = kakaoApiService.createBasicCard(param);
@@ -92,12 +104,19 @@ public class KakaoRestAPI {
         log.info("final resultJson::: "+resultJson);
         return resultJson;
     }
+
+
+
     @ResponseBody
     @RequestMapping(value = "weatherInfo" , method= {RequestMethod.POST},headers = {"Accept=application/json; UTF-8"})
-    public HashMap<String, String> weatherInfo(@RequestBody Map<String,Object> params, HttpServletRequest request, HttpServletResponse response){
+    public HashMap<String, String> weatherInfo(@RequestBody Map<String,String> params, HttpServletRequest request, HttpServletResponse response){
         HashMap<String,String> resultJson = new HashMap<>();
         try {
             log.info("xy = {} ",params);
+            Optional<KakaoUserLocation> userkey = kakaoUserLocationRepository.findByUserkey(params.get("userkey"));
+
+
+
             resultJson.put("redirectURL","https://plus.kakao.com/talk/bot/@pointman_dev/위치정보 동의 완료");
         }catch (Exception e){
             System.out.println(e);
@@ -112,7 +131,7 @@ public class KakaoRestAPI {
         return "locationAgree";
     }
 
-    public static Map<String, Object> getMapFromJsonObject(JSONObject jsonObj){
+    public static Map<String, Object> getMapByJsonObject(JSONObject jsonObj){
         Map<String, Object> map = null;
 
         try {
@@ -128,6 +147,22 @@ public class KakaoRestAPI {
             e.printStackTrace();
         }
         return map;
+    }
+    private static Map<String, Object> getStringObjectMap(KakaoUserRequest params) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject userReqObject = new JSONObject(params.getUserRequest());
+        Map<String, Object> userRequestMap = getMapByJsonObject(userReqObject);
+        String userJson = objectMapper.writeValueAsString(userRequestMap.get("user"));
+
+        JSONObject userObject = new JSONObject(userJson);
+        Map<String, Object> userMap = getMapByJsonObject(userObject);
+        String userpropertiesJson = objectMapper.writeValueAsString(userMap.get("properties"));
+
+        JSONObject userPropObject = new JSONObject(userpropertiesJson);
+        Map<String, Object> propsMap = getMapByJsonObject(userPropObject);
+
+        return propsMap;
     }
 
 

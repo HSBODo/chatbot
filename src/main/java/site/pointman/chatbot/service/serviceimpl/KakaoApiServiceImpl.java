@@ -1,21 +1,29 @@
 package site.pointman.chatbot.service.serviceimpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import site.pointman.chatbot.domain.KakaoUser;
+import site.pointman.chatbot.repository.KakaoUserRepository;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.WeatherApiService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+@Slf4j
 @Service
 public class KakaoApiServiceImpl implements KakaoApiService {
-    Logger logger = LoggerFactory.getLogger(getClass());
+
+    private  final KakaoUserRepository kakaoUserRepository;
+    @Autowired
+    public KakaoApiServiceImpl(KakaoUserRepository kakaoUserRepository) {
+        this.kakaoUserRepository = kakaoUserRepository;
+    }
+
+
     @Override
     public String selectUtter(Map<String,Object> params) throws Exception{
         ObjectMapper mapper = new ObjectMapper();
@@ -51,10 +59,10 @@ public class KakaoApiServiceImpl implements KakaoApiService {
 
         buttonProp.put("label","날씨");
         buttonProp.put("action","webLink");
-        buttonProp.put("webLinkUrl","http://54.248.24.34:8080/kkoChat/v1/locationAgree");
+        buttonProp.put("webLinkUrl","https://www.pointman.shop/kakaochat/v1/locationAgree");
 
         buttons.add(buttonProp);
-        logger.info("buttons"+buttons);
+        log.info("buttons"+buttons);
 
         return buttons;
     }
@@ -64,18 +72,18 @@ public class KakaoApiServiceImpl implements KakaoApiService {
 
         List<HashMap<String,Object>> quickButtons = new ArrayList<>();
 
-        logger.info("arraylist"+param);
+        log.info("arraylist"+param);
         for ( String i : param){
             HashMap<String, Object> quickButtonProp = new HashMap<>();
-            logger.info(i);
+            log.info(i);
             quickButtonProp.put("messageText",i);
             quickButtonProp.put("action","message");
             quickButtonProp.put("label",i);
             quickButtons.add(quickButtonProp);
-            logger.info(quickButtons.toString());
+            log.info(quickButtons.toString());
         }
 
-        logger.info("quickButtons"+quickButtons);
+        log.info("quickButtons"+quickButtons);
         return quickButtons;
     }
 
@@ -100,5 +108,20 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         return simpleText;
     }
 
+    @Override
+    public String join(KakaoUser user) {
+       //회원 검증
+//        kakaoUserRepository.save(user);
+        return  validateDuplicateMember(user);
+    }
 
+    private String validateDuplicateMember(KakaoUser user) {
+        Optional<KakaoUser> findUser = kakaoUserRepository.findByUserkey(user.getKakaoUserkey());
+        String result ="중복회원";
+        if(!findUser.isPresent()){
+            kakaoUserRepository.save(user);
+            result=user.getKakaoUserkey();
+        }
+        return result;
+    }
 }
