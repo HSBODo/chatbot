@@ -49,59 +49,42 @@ public class KakaoRestAPI {
     }
 
     @ResponseBody
-    @RequestMapping(value = "chat" , method= {RequestMethod.POST},headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "chat" , headers = {"Accept=application/json; UTF-8"})
     public JSONObject callAPI(@RequestBody KakaoUserRequest params) throws JsonProcessingException, ParseException {
         KakaoResponse response = new KakaoResponse();
         try {
-//            KakaoUserRequest userProps = getStringObjectMap(params);
-//            log.info("params ={}",userProps);
-//            String join = kakaoApiService.join(user);
-//            log.info("join= {}",join);
+            String uttr = params.getUttr();
+            String kakaoUserkey = params.getKakaoUserkey();
 
-
-
-            String test ="오늘의 날씨";
-
-            Map<String,String> text = new HashMap<>();
-            switch (test){
+            switch (uttr){
                 case "위치정보 동의 완료" :
+                    KakaoUserLocation kakaoUserLocation = new KakaoUserLocation();
+                    kakaoUserLocation.setX("37.4758682");
+                    kakaoUserLocation.setY("126.8350464");
+                    response.addContent(kakaoApiService.todayWeather(kakaoUserLocation));
                     break;
                 case "오늘의 토픽" :
                     break;
                 case "오늘의 날씨" :
                     log.info("오늘의 날씨 시작!!");
-                    BasicCard basicCard = new BasicCard();
-                    Buttons buttons = new Buttons();
-                    Button button = new Button("webLink","위치정보 동의하기","https://www.pointman.shop/kakaochat/v1/locationAgree");
-                    buttons.addButton(button);
-                    JSONObject basicCardJson=basicCard.createBasicCard(
-                            "위치정보의 수집ㆍ이용"," ◇ 위치정보수집ㆍ이용 목적 : 이동통신망사업자 및 이동통신재판매사업자로부터 총포 또는 총포소지자의 실시간 위치정보 확인을 통해 법령 위반행위 확인 및 사고 발생시 신속한 대처 등 총포 오남용 및 안전사고 예방에 활용\n" +
-                            " ◇ 위치정보의 보유 및 이용기간 : 총포 보관해제시부터 총포 재보관 또는 당해 수렵기간 종료 후 1개월\n" +
-                            " ◇ 동의 거부권리 안내 : 위 위치정보 수집에 대한 동의는 거부할 수 있습니다. \n",
-                            "https://www.pointman.shop/image/location_notice.png",
-                            buttons.createButtons()
-                    );
-                    response.addContent(basicCardJson);
+                    response.addContent(kakaoApiService.locationAgree());
                     break;
                 default:
             }
 
         }catch (Exception e){
-            System.out.println(e);
+            log.info("Exception:::{}",e);
         }
         return response.createKakaoResponse();
     }
 
     @ResponseBody
-    @RequestMapping(value = "weatherInfo" , method= {RequestMethod.POST},headers = {"Accept=application/json; UTF-8"})
-    public HashMap<String, String> weatherInfo(@RequestBody Map<String,String> params, HttpServletRequest request, HttpServletResponse response){
+    @PostMapping(value = "weatherInfo" , headers = {"Accept=application/json; UTF-8"})
+    public HashMap<String, String> weatherInfo(@RequestBody KakaoUserRequest params){
         HashMap<String,String> resultJson = new HashMap<>();
         try {
             log.info("xy = {} ",params);
-            Optional<KakaoUserLocation> userkey = kakaoUserLocationRepository.findByUserkey(params.get("userkey"));
-
-
-
+            Optional<KakaoUserLocation> userkey = kakaoUserLocationRepository.findByUserkey(params.getKakaoUserkey());
             resultJson.put("redirectURL","https://plus.kakao.com/talk/bot/@pointman_dev/위치정보 동의 완료");
         }catch (Exception e){
             System.out.println(e);
@@ -133,47 +116,4 @@ public class KakaoRestAPI {
         response.addContent(basicCardJson);
         return response.createKakaoResponse();
     }
-
-    private static Map<String, Object> getMapByJsonObject(JSONObject jsonObj){
-        Map<String, Object> map = null;
-
-        try {
-            map = new ObjectMapper().readValue(jsonObj.toString(), Map.class);
-        } catch (JsonParseException e) {
-
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-
-            e.printStackTrace();
-        } catch (IOException e) {
-
-            e.printStackTrace();
-        }
-        return map;
-    }
-//    private static KakaoUserRequest getStringObjectMap(KakaoUserRequest params) throws JsonProcessingException {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//
-//        JSONObject userReqObject = new JSONObject(params.getUserRequest());
-//        Map<String, Object> userRequestMap = getMapByJsonObject(userReqObject);
-//        String userJson = objectMapper.writeValueAsString(userRequestMap.get("user"));
-//
-//        JSONObject userObject = new JSONObject(userJson);
-//        Map<String, Object> userMap = getMapByJsonObject(userObject);
-//        String userpropertiesJson = objectMapper.writeValueAsString(userMap.get("properties"));
-//
-//        JSONObject userPropObject = new JSONObject(userpropertiesJson);
-//        Map<String, Object> propsMap = getMapByJsonObject(userPropObject);
-//
-//        String kakaoUserkey= (String) propsMap.get("plusfriendUserKey");
-//        String utter = (String) userReqObject.get("utterance");
-//
-//        params.setUttr(utter);
-//        params.setKakaoUserkey(kakaoUserkey);
-//
-//        return params;
-//    }
-
-
-
 }

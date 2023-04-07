@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 
+import site.pointman.chatbot.domain.KakaoUserLocation;
 import site.pointman.chatbot.domain.LocationXY;
 import site.pointman.chatbot.domain.WeatherReq;
 import site.pointman.chatbot.service.WeatherApiService;
@@ -77,18 +78,17 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         result.put("TMP",TMP);
         result.put("UUU",UUU);
         result.put("WSD",WSD);
-        log.info("codeToName = {}",result);
         return result;
     }
 
 
     @Override
-    public Map<String, String> selectShortTermWeather(LocationXY xy) {
+    public Map<String, String> selectShortTermWeather(KakaoUserLocation kakaoUserLocation) {
         Map<String,String> response = new HashMap<>();
-        LocationXY convertXY = convertGRID_GPS(xy);
+        convertGRID_GPS(kakaoUserLocation);
 
-        String x = convertXY.getX();
-        String y = convertXY.getY();
+        String x = kakaoUserLocation.getX();
+        String y = kakaoUserLocation.getY();
         log.info("convertX = {}, convertY = {}",x,y);
 
         WeatherReq weatherReq = new WeatherReq();
@@ -184,17 +184,18 @@ public class WeatherApiServiceImpl implements WeatherApiService {
     }
 
 
-    public static LocationXY convertGRID_GPS(LocationXY xy) {
+    public static void convertGRID_GPS(KakaoUserLocation kakaoUserLocation ) {
+
         double x = 0;
         double y = 0;
         try {
-            log.info("convert Start = {}", xy);
-            double lat_x = Double.parseDouble(xy.getX());
-            double lng_Y = Double.parseDouble(xy.getY());
+
+            double lat_x = Double.parseDouble(kakaoUserLocation.getX());
+            double lng_Y = Double.parseDouble(kakaoUserLocation.getY());
 
             log.info("lat={} , lng={}", lat_x, lng_Y);
-            int mode = xy.getMode();
-            Map<String, Double> latXlngY = new HashMap<>();
+            int mode =0;
+
             final int TO_GRID = 0;
             final int TO_GPS = 1;
 
@@ -264,11 +265,9 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         } catch (NumberFormatException e) {
             throw new RuntimeException(e);
         } finally {
-            xy.setX(String.valueOf( (int)Math.round(x)));
-            xy.setY(String.valueOf( (int)Math.round(y)));
-            return xy;
+            kakaoUserLocation.setX(String.valueOf( (int)Math.round(x)));
+            kakaoUserLocation.setY(String.valueOf( (int)Math.round(y)));
         }
-
     }
 
 }
