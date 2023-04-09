@@ -2,7 +2,7 @@ package site.pointman.chatbot.service;
 
 
 
-import site.pointman.chatbot.domain.KakaoMemberLocation;
+import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 
 import java.util.Map;
 

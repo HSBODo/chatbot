@@ -10,7 +10,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import site.pointman.chatbot.domain.KakaoMemberLocation;
+import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.domain.KakaoUserRequest;
 import site.pointman.chatbot.domain.kakaochatbotuiresponse.*;
 import site.pointman.chatbot.repository.KakaoUserLocationRepository;

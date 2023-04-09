@@ -1,4 +1,4 @@
-package site.pointman.chatbot.domain;
+package site.pointman.chatbot.domain.member;
 
 
 import lombok.Getter;

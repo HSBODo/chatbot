@@ -1,8 +1,6 @@
 package site.pointman.chatbot.repository.impl;
 
-import site.pointman.chatbot.domain.KakaoMember;
-import site.pointman.chatbot.domain.KakaoMemberLocation;
-import site.pointman.chatbot.repository.KakaoMemberRepository;
+import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.repository.KakaoUserLocationRepository;
 
 import javax.persistence.EntityManager;

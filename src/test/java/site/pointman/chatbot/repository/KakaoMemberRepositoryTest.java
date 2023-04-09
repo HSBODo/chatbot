@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
-import site.pointman.chatbot.domain.KakaoMember;
-import site.pointman.chatbot.domain.KakaoMemberLocation;
+import site.pointman.chatbot.domain.member.KakaoMember;
+import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.service.MemberService;
 
 import java.util.Map;

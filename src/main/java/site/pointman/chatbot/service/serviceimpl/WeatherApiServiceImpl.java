@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
-import site.pointman.chatbot.domain.KakaoMemberLocation;
+import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.domain.WeatherReq;
 import site.pointman.chatbot.service.WeatherApiService;
 

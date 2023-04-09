@@ -2,9 +2,8 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import site.pointman.chatbot.domain.KakaoMember;
-import site.pointman.chatbot.domain.KakaoMemberLocation;
-import site.pointman.chatbot.repository.KakaoUserLocationRepository;
+import site.pointman.chatbot.domain.member.KakaoMember;
+import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.service.MemberService;
 

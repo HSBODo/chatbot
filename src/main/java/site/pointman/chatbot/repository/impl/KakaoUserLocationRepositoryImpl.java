@@ -1,8 +1,7 @@
 package site.pointman.chatbot.repository.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
-import site.pointman.chatbot.domain.KakaoMemberLocation;
+import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.repository.KakaoUserLocationRepository;
 
 import java.util.HashMap;
