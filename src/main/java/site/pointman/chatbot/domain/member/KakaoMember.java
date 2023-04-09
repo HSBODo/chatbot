@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Entity
 @Getter @Setter
 @Table(name = "tb_kakao_member")
+@Inheritance(strategy = InheritanceType.JOINED)
 //@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class KakaoMember {
     @GeneratedValue(strategy = GenerationType.AUTO)
