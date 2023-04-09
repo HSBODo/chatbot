@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table(name = "tb_kakao_member")
 @Inheritance(strategy = InheritanceType.JOINED)
 //@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class KakaoMember {
+public class KakaoMember extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idx ;
     @Id
@@ -19,4 +19,6 @@ public class KakaoMember {
     private String kakaoUserkey ;
     @Column(name = "partner_id")
     private String partnerId ;
+    @Column(name = "is_use")
+    private String isUse ;
 }
