@@ -23,7 +23,7 @@ public class KakaoResponse {
         String resultJson ="{\n" +
                 "    \"version\": \"2.0\",\n" +
                 "    \"template\": {\n" +
-                "        \"outputs\":"+this.outputs+
+                "        \"outputs\":"+outputs+
                 "    }\n" +
                 "}";
 

@@ -1,13 +1,13 @@
 package site.pointman.chatbot.repository;
 
-import site.pointman.chatbot.domain.KakaoUser;
-import site.pointman.chatbot.domain.KakaoUserLocation;
+import site.pointman.chatbot.domain.KakaoMemberLocation;
 
 import java.util.Optional;
 
 public interface KakaoUserLocationRepository {
-    KakaoUserLocation save (KakaoUserLocation userLocation);
-    Optional<KakaoUserLocation> findByXY(String  kakaoUserkey);
-    void update (KakaoUserLocation userLocation);
-    Optional<KakaoUserLocation> findByUserkey(String  kakaoUserkey);
+    KakaoMemberLocation save (KakaoMemberLocation userLocation);
+    void update (KakaoMemberLocation userLocation);
+    Optional<KakaoMemberLocation> findByUserkey(String  kakaoUserkey);
+
+    Optional<KakaoMemberLocation> findByLocation(String kakaoUserkey);
 }

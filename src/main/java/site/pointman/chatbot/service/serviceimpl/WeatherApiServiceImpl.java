@@ -2,11 +2,11 @@ package site.pointman.chatbot.service.serviceimpl;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
-import site.pointman.chatbot.domain.KakaoUserLocation;
-import site.pointman.chatbot.domain.LocationXY;
+import site.pointman.chatbot.domain.KakaoMemberLocation;
 import site.pointman.chatbot.domain.WeatherReq;
 import site.pointman.chatbot.service.WeatherApiService;
 
@@ -24,21 +24,29 @@ import java.util.*;
 @Slf4j
 @Service
 public class WeatherApiServiceImpl implements WeatherApiService {
+    @Value("${host.url}")
+    String hostUrl;
+    @Value("${weather.api.key}")
+    String weatherApiKey;
+
+    private Map<String,String> findBySkyVal = new HashMap<String,String>(){{
+        put("1","맑음");
+        put("3","구름많음");
+        put("4","흐림");
+    }};
+    private Map<String,String> findByPtyVal = new HashMap<String,String>(){{
+        put("0","없음");
+        put("1","비");
+        put("2","비/눈");
+        put("3","눈");
+        put("4","소나기");
+    }};
+
     @Override
     public Map<String, String> WeatherCodeFindByName(Map<String, String> param) {
         Map<String,String> result = new HashMap<>();
-        Map<String,String> findBySkyVal = new HashMap<String,String>(){{
-            put("1","맑음");
-            put("3","구름많음");
-            put("4","흐림");
-        }};
-        Map<String,String> findByPtyVal = new HashMap<String,String>(){{
-            put("0","없음");
-            put("1","비");
-            put("2","비/눈");
-            put("3","눈");
-            put("4","소나기");
-        }};
+
+
         String baseDate = param.get("baseDate");
         String POP = param.get("POP"); //강수확률
         String ptyCode = param.get("PTY"); //강수형태
@@ -54,7 +62,26 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         String WAV = param.get("WAV"); //파고
         String VEC = param.get("VEC"); //풍향
         Float wsdCode = Float.parseFloat(param.get("WSD")); //풍속
+        String imgUrl;
         String WSD;
+
+        if(ptyCode=="1" || ptyCode=="2" ||ptyCode=="4"){
+            imgUrl = hostUrl+"/image/weather/raindrops.jpg";
+        } else if (ptyCode=="3") {
+            imgUrl = hostUrl+"/image/weather/snow.jpg";
+        } else {
+            if(skyCode =="3"){
+                imgUrl = hostUrl+"/image/weather/clouds.jpg";
+            } else if (skyCode =="4") {
+                imgUrl = hostUrl+"/image/weather/fog.jpg";
+            }else {
+                imgUrl = hostUrl+"/image/weather/sunshine.jpg";
+            }
+        }
+
+
+
+
 
        if(wsdCode<4){
            WSD = "바람이 약하게 불어옵니다.";
@@ -78,12 +105,13 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         result.put("TMP",TMP);
         result.put("UUU",UUU);
         result.put("WSD",WSD);
+        result.put("imgUrl",imgUrl);
         return result;
     }
 
 
     @Override
-    public Map<String, String> selectShortTermWeather(KakaoUserLocation kakaoUserLocation) {
+    public Map<String, String> selectShortTermWeather(KakaoMemberLocation kakaoUserLocation) {
         Map<String,String> response = new HashMap<>();
         convertGRID_GPS(kakaoUserLocation);
 
@@ -124,7 +152,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
             formatedDate = nowDate.minusDays(1).format(dateFormatter);
             basTime = "2300";
         }
-        weatherReq.setServiceKey("9gnt6hr%2FHUiuAFBAUa0tmYIksePfXZfo9sDFe8Nw7oySE15LFBR2mZ%2BsEPsITToh1s4up2xzcbrtPfVCZUoGFg%3D%3D");
+        weatherReq.setServiceKey(weatherApiKey);
         weatherReq.setNumOfRows("12");
         weatherReq.setPageNo("1");
         weatherReq.setDataType("JSON");
@@ -184,7 +212,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
     }
 
 
-    public static void convertGRID_GPS(KakaoUserLocation kakaoUserLocation ) {
+    public static void convertGRID_GPS(KakaoMemberLocation kakaoUserLocation ) {
 
         double x = 0;
         double y = 0;
@@ -193,7 +221,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
             double lat_x = Double.parseDouble(kakaoUserLocation.getX());
             double lng_Y = Double.parseDouble(kakaoUserLocation.getY());
 
-            log.info("lat={} , lng={}", lat_x, lng_Y);
+            log.info("kakao lat={} , lng={}", lat_x, lng_Y);
             int mode =0;
 
             final int TO_GRID = 0;
