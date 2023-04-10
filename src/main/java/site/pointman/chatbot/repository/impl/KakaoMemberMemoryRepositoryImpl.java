@@ -4,6 +4,7 @@ import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -27,14 +28,14 @@ public class KakaoMemberMemoryRepositoryImpl implements KakaoMemberRepository {
     }
 
     @Override
-    public Optional<KakaoMember> findByUserkey(String kakaoUserkey) {
+    public Optional<KakaoMember> findByMember(String kakaoUserkey) {
         return store.values().stream()
                 .filter(user -> user.getKakaoUserkey().equals(kakaoUserkey))
                 .findAny();
     }
 
     @Override
-    public void update(KakaoMemberLocation userLocation) {
+    public void updateLocation(String kakaoUserkey, Map<String, BigDecimal> updateParams) {
 
     }
 

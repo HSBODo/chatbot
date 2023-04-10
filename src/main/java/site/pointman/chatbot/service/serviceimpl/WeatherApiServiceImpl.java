@@ -12,6 +12,7 @@ import site.pointman.chatbot.service.WeatherApiService;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 
 import java.net.URL;
@@ -115,8 +116,8 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         Map<String,String> response = new HashMap<>();
         convertGRID_GPS(kakaoUserLocation);
 
-        String x = kakaoUserLocation.getX();
-        String y = kakaoUserLocation.getY();
+        BigDecimal x = kakaoUserLocation.getX();
+        BigDecimal y = kakaoUserLocation.getY();
         log.info("convertX = {}, convertY = {}",x,y);
 
         WeatherReq weatherReq = new WeatherReq();
@@ -152,14 +153,15 @@ public class WeatherApiServiceImpl implements WeatherApiService {
             formatedDate = nowDate.minusDays(1).format(dateFormatter);
             basTime = "2300";
         }
+        log.info("weatherApiKey={}",weatherApiKey);
         weatherReq.setServiceKey(weatherApiKey);
         weatherReq.setNumOfRows("12");
         weatherReq.setPageNo("1");
         weatherReq.setDataType("JSON");
         weatherReq.setBase_date(formatedDate);
         weatherReq.setBase_time(basTime);
-        weatherReq.setNx(x);
-        weatherReq.setNy(y);
+        weatherReq.setNx(x.toString());
+        weatherReq.setNy(y.toString());
         try {
 
             StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); /*URL*/
@@ -218,8 +220,8 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         double y = 0;
         try {
 
-            double lat_x = Double.parseDouble(kakaoUserLocation.getX());
-            double lng_Y = Double.parseDouble(kakaoUserLocation.getY());
+            double lat_x = Double.parseDouble(kakaoUserLocation.getX().toString());
+            double lng_Y = Double.parseDouble(kakaoUserLocation.getY().toString());
 
             log.info("kakao lat={} , lng={}", lat_x, lng_Y);
             int mode =0;
@@ -293,8 +295,8 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         } catch (NumberFormatException e) {
             throw new RuntimeException(e);
         } finally {
-            kakaoUserLocation.setX(String.valueOf( (int)Math.round(x)));
-            kakaoUserLocation.setY(String.valueOf( (int)Math.round(y)));
+            kakaoUserLocation.setX(BigDecimal.valueOf( (int)Math.round(x)));
+            kakaoUserLocation.setY(BigDecimal.valueOf( (int)Math.round(y)));
         }
     }
 

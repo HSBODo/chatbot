@@ -7,12 +7,11 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 
 @Slf4j
 @Getter @Setter  @ToString @NoArgsConstructor
-public class KakaoUserRequest {
+public class KakaoRequest {
     private JSONObject intent;
     private JSONObject userRequest;
     private JSONObject bot;

@@ -6,6 +6,6 @@ import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import java.util.Map;
 
 public interface MemberService {
-    Map<String,String> join(KakaoMember user);
+    Map<String,String> join(KakaoMember member);
     Map<String,String> saveLocation(KakaoMemberLocation userLocation);
 }

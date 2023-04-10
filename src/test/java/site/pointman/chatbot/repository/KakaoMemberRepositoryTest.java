@@ -23,7 +23,7 @@ class KakaoMemberRepositoryTest {
     @Commit
     void save() {
         KakaoMember member = new KakaoMember();
-        member.setKakaoUserkey("testuserkey123");
+        member.setKakaoUserkey("testuserkey1234zxc");
         member.setPartnerId("pointman");
         Map<String, String> result = memberService.join(member);
         System.out.println("result"+result.toString());
@@ -34,10 +34,9 @@ class KakaoMemberRepositoryTest {
     @Commit
     void saveLocation() {
         KakaoMemberLocation member = new KakaoMemberLocation();
-        member.setKakaoUserkey("testuserkey12312");
-        member.setPartnerId("pointman");
-        member.setX("456456.1516");
-        member.setY("1232131.14148");
+        member.setKakaoUserkey("testuserkey1234zxc");
+        member.setX("456456");
+        member.setY("1232131");
         Map<String, String> result = memberService.saveLocation(member);
         System.out.println("result"+result.toString());
     }

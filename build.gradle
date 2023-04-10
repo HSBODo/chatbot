@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'site.pointman'
-version = '0.1.4'
+version = '0.1.5'
 sourceCompatibility = '11'
 
 configurations {
@@ -33,6 +33,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	//testImplementation 'org.springframework.security:spring-security-test'
 //	runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 	implementation 'mysql:mysql-connector-java'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 }

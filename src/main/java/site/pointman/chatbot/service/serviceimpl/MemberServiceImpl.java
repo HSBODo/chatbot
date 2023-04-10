@@ -7,6 +7,7 @@ import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.service.MemberService;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -32,44 +33,62 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
-    private Map<String,String> validateDuplicateMember(KakaoMember user) {
+    private Map<String,String> validateDuplicateMember(KakaoMember member) {
         Map result = new HashMap<>();
-        Optional<KakaoMember> findUser = kakaoUserRepository.findByUserkey(user.getKakaoUserkey());
-        if(!findUser.isPresent()){
-            kakaoUserRepository.save(user);
-            result.put("msg","회원가입 완료.");
-            result.put("code",1);
-            result.put("kakaoUserkey",user.getKakaoUserkey());
-        }else {
-            result.put("msg","중복회원");
-            result.put("code",0);
-            result.put("kakaoUserkey",user.getKakaoUserkey());
+        try {
+            Optional<KakaoMember> findMember = kakaoUserRepository.findByMember(member.getKakaoUserkey());
+            if(!findMember.isPresent()){
+                kakaoUserRepository.save(member);
+                result.put("msg","회원가입 완료.");
+                result.put("code",1);
+                result.put("kakaoUserkey",member.getKakaoUserkey());
+            }else {
+                result.put("msg","중복회원");
+                result.put("code",1);
+                result.put("kakaoUserkey",member.getKakaoUserkey());
+            }
+        }catch (Exception e){
+            throw e;
         }
         return result;
     }
 
-    private Map<String,String> validateDuplicateMemberLocation(KakaoMemberLocation user) {
+    private Map<String,String> validateDuplicateMemberLocation(KakaoMemberLocation memberLocation) {
         Map result = new HashMap<>();
-        Optional<KakaoMemberLocation> findUser = kakaoUserRepository.findByLocation(user.getKakaoUserkey());
-        result.put("msg","중복회원입니다.");
-        result.put("code",0);
-        result.put("kakaoUserkey",user.getKakaoUserkey());
-        result.put("X",user.getX());
-        result.put("Y",user.getY());
-        if(!findUser.isPresent()){
-            kakaoUserRepository.save(user);
-            result.put("msg","위치저장 완료");
+        try {
+            String kakaoUserkey = memberLocation.getKakaoUserkey();
+            Optional<KakaoMember> findMember = kakaoUserRepository.findByMember(kakaoUserkey);
+            if(!findMember.isPresent()){
+                result.put("msg","위치저장 실패. 존재하지 않은 회원");
+                result.put("code",1);
+                result.put("kakaoUserkey",kakaoUserkey);
+                return result;
+            }
+
+            Optional<KakaoMemberLocation> findLocation = kakaoUserRepository.findByLocation(kakaoUserkey);
+            if(!findLocation.isPresent()){
+                kakaoUserRepository.saveLocation(memberLocation);
+                result.put("msg","위치저장 완료");
+                result.put("code",0);
+                result.put("kakaoUserkey",kakaoUserkey);
+                result.put("X",memberLocation.getX());
+                result.put("Y",memberLocation.getY());
+            }else {
+                Map<String, BigDecimal> updateParams= new HashMap<>();
+                updateParams.put("X",memberLocation.getX());
+                updateParams.put("Y",memberLocation.getY());
+                kakaoUserRepository.updateLocation(kakaoUserkey,updateParams);
+                result.put("msg","위치업데이트 완료.");
+                result.put("code",0);
+                result.put("kakaoUserkey",kakaoUserkey);
+                result.put("X",memberLocation.getX());
+                result.put("Y",memberLocation.getY());
+            }
+        }catch (Exception e){
+            result.put("msg","위치저장 실패. ");
             result.put("code",1);
-            result.put("kakaoUserkey",user.getKakaoUserkey());
-            result.put("X",user.getX());
-            result.put("Y",user.getY());
-        }else {
-            result.put("msg","위치저장 실패.");
-            result.put("code",0);
-            result.put("kakaoUserkey",user.getKakaoUserkey());
-            result.put("X",user.getX());
-            result.put("Y",user.getY());
         }
+
         return result;
     }
 }

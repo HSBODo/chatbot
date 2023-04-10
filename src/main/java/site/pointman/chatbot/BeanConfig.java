@@ -42,9 +42,5 @@ public class BeanConfig {
     public KakaoMemberRepository kakaoMemberRepository(){
         return  new JpaKakaoMemberRepository(em);
     }
-    @Bean
-    public KakaoUserLocationRepository kakaoUserLocationRepository(){
-        return  new JpaKakaoMemberLocationRepository(em);
-    }
 
 }
