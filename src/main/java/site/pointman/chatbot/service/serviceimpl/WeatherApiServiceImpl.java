@@ -31,6 +31,8 @@ public class WeatherApiServiceImpl implements WeatherApiService {
     String hostUrl;
     @Value("${weather.api.key}")
     String weatherApiKey;
+    @Value("${weather.api.url}")
+    String weatherApiUrl;
 
     @Override
     public WeatherElementCode selectShortTermWeather(KakaoMemberLocation kakaoUserLocation) {
@@ -74,7 +76,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
             weatherReq.setNx(x.toString());
             weatherReq.setNy(y.toString());
 
-            StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); /*URL*/
+            StringBuilder urlBuilder = new StringBuilder(weatherApiUrl); /*URL*/
             urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "="+weatherReq.getServiceKey()); /*Service Key*/
             urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode(weatherReq.getPageNo(), "UTF-8")); /*페이지번호*/
             urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode(weatherReq.getNumOfRows(), "UTF-8")); /*한 페이지 결과 수*/
@@ -123,7 +125,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         }
         return response;
     }
-    private static WeatherElementCode getWeatherCodeMapping(Map<String, String> elementMap) {
+    private  WeatherElementCode getWeatherCodeMapping(Map<String, String> elementMap) {
         WeatherElementCode weatherElementCode = new WeatherElementCode();
         weatherElementCode.setBaseDate(elementMap.get("baseDate"));
         weatherElementCode.setPty(Integer.parseInt(elementMap.get("PTY")));
@@ -141,7 +143,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         return weatherElementCode;
     }
 
-    private static int currentTimeFormat (){
+    private  int currentTimeFormat (){
         // 현재 날짜
         ZonedDateTime nowUTC = ZonedDateTime.now(ZoneId.of("UTC"));
         LocalDateTime nowSeoul = nowUTC.withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
@@ -152,7 +154,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
 
         return formatedTime;
     }
-    private static String currentDateFormat (int formatedTime){
+    private  String currentDateFormat (int formatedTime){
         LocalDate nowDate =  LocalDate.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String formatedDate;
@@ -163,7 +165,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         }
         return formatedDate;
     }
-    private static void convertGRID_GPS(KakaoMemberLocation kakaoUserLocation , int mode ) {
+    private  void convertGRID_GPS(KakaoMemberLocation kakaoUserLocation , int mode ) {
 
         double x = 0;
         double y = 0;

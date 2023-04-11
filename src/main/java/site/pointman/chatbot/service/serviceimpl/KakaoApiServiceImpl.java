@@ -81,10 +81,10 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                         " 기온: "+weatherCode.getTmp()+"도"+"\n" +
                         " 습도: "+weatherCode.getReh()+"%"+"\n" +
                         " 바람: "+weatherCode.getWsdValue()+"\n" +
-                        " 풍속: "+weatherCode.getUuu()+" m/s\n" +
+                        " 풍속: "+weatherCode.getWsd()+" m/s\n" +
                         " 강수형태:"+weatherCode.getPtyValue()+"\n" +
                         " 강수확률: "+weatherCode.getPop()+"%\n" +
-                        " 강수량: "+weatherCode.getPcp()+"\n" +
+                        " 1시간 강수량: "+weatherCode.getPcp()+"\n" +
                         " 적설량: "+weatherCode.getSno()+"\n",
                 weatherCode.getImgUrl(),
                 buttons.createButtons()
