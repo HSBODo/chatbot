@@ -3,7 +3,7 @@ package site.pointman.chatbot.service;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
-import site.pointman.chatbot.domain.kakaochatbotuiresponse.*;
+import site.pointman.chatbot.domain.kakaochatbotui.*;
 
 public interface KakaoApiService {
 

@@ -1,4 +1,4 @@
-package site.pointman.chatbot.domain.kakaochatbotuiresponse;
+package site.pointman.chatbot.domain;
 
 import lombok.Getter;
 import org.json.simple.JSONObject;

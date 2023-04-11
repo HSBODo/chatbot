@@ -1,15 +1,11 @@
 package site.pointman.chatbot;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import site.pointman.chatbot.domain.kakaochatbotuiresponse.*;
+import site.pointman.chatbot.domain.kakaochatbotui.*;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
-import site.pointman.chatbot.repository.KakaoUserLocationRepository;
-import site.pointman.chatbot.repository.impl.JpaKakaoMemberLocationRepository;
 import site.pointman.chatbot.repository.impl.JpaKakaoMemberRepository;
 
 import javax.persistence.EntityManager;
-import javax.sql.DataSource;
 
 @Configuration
 public class BeanConfig {

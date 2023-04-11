@@ -10,10 +10,11 @@ import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import site.pointman.chatbot.domain.KakaoResponse;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.domain.KakaoRequest;
-import site.pointman.chatbot.domain.kakaochatbotuiresponse.*;
+import site.pointman.chatbot.domain.kakaochatbotui.*;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.MemberService;
@@ -60,12 +61,8 @@ public class KakaoRestAPI {
             switch (uttr){
                 case "위치정보 동의 완료" :
                     log.info("위치정보 동의 완료!!");
-                    KakaoMemberLocation kakaoUserLocation = new KakaoMemberLocation();
-                    KakaoMemberLocation location = KakaoMemberRepository.findByLocation(kakaoUserkey).get();
-                    kakaoUserLocation.setX(location.getX());
-                    kakaoUserLocation.setY(location.getY());
+                    KakaoMemberLocation kakaoUserLocation = KakaoMemberRepository.findByLocation(kakaoUserkey).get();
                     kakaoResponse.addContent(kakaoApiService.createTodayWeather(kakaoUserLocation));
-
                     break;
                 case "이미지" :
                     kakaoResponse.addContent(kakaoApiService.createSimpleImage(simpleImage,"보물상자입니다","https://www.pointman.shop/image/location_notice.png"));
@@ -115,23 +112,5 @@ public class KakaoRestAPI {
     public String locationNotice(){
         log.info("-----------위치정보 동의---------");
         return "location-notice";
-    }
-
-    @ResponseBody
-    @GetMapping(value = "test" ,headers = {"Accept=application/json; UTF-8"})
-    public JSONObject test() throws ParseException {
-
-        KakaoResponse response = new KakaoResponse();
-        BasicCard basicCard = new BasicCard();
-        Buttons buttonsObj = new Buttons();
-        CommerceCard commerceCard =new CommerceCard();
-        Button button = new Button("webLink","https://e.kakao.com/t/hello-ryan","구경하기");
-
-        buttonsObj.addButton(button);
-        List buttons = buttonsObj.createButtons();
-        JSONObject basicCardJson=commerceCard.createCommerceCard("asda",10000,1000,"123","title","description","thumbnailImgUrl","",buttons);
-
-        response.addContent(basicCardJson);
-        return response.createKakaoResponse();
     }
 }

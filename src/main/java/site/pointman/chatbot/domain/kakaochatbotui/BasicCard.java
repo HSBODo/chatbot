@@ -1,6 +1,5 @@
-package site.pointman.chatbot.domain.kakaochatbotuiresponse;
+package site.pointman.chatbot.domain.kakaochatbotui;
 
-import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

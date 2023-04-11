@@ -9,6 +9,7 @@ import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.service.MemberService;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 @SpringBootTest
@@ -35,8 +36,8 @@ class KakaoMemberRepositoryTest {
     void saveLocation() {
         KakaoMemberLocation member = new KakaoMemberLocation();
         member.setKakaoUserkey("testuserkey1234zxc");
-        member.setX("456456");
-        member.setY("1232131");
+        member.setX(BigDecimal.valueOf(37.4603776));
+        member.setY(BigDecimal.valueOf(126.8187136));
         Map<String, String> result = memberService.saveLocation(member);
         System.out.println("result"+result.toString());
     }

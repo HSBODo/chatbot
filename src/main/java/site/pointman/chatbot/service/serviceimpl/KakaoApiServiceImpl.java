@@ -6,7 +6,8 @@ import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
-import site.pointman.chatbot.domain.kakaochatbotuiresponse.*;
+import site.pointman.chatbot.domain.kakaochatbotui.*;
+import site.pointman.chatbot.domain.wearher.WeatherElementCode;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.WeatherApiService;
 
@@ -69,24 +70,23 @@ public class KakaoApiServiceImpl implements KakaoApiService {
 
     @Override
     public JSONObject createTodayWeather(KakaoMemberLocation kakaoUserLocation) throws ParseException{
-        Map<String,String> weatherCode =  weatherApiService.selectShortTermWeather(kakaoUserLocation);
-        log.info("weatherCode ={}",weatherCode);
-        Map<String,String> weatherInfo = weatherApiService.WeatherCodeFindByName(weatherCode);
-        log.info("weatherInfo ={}",weatherInfo);
+        WeatherElementCode weatherCode =  weatherApiService.selectShortTermWeather(kakaoUserLocation);
+        log.info("getPty ={}",weatherCode.getPty());
+        log.info("getPty ={}",weatherCode.getSky());
         BasicCard basicCard = new BasicCard();
         Buttons buttons = new Buttons();
         JSONObject basicCardJson=basicCard.createBasicCard(
-                weatherInfo.get("baseDate")+" 날씨",
-                " 하늘상태:"+weatherInfo.get("SKY")+"\n" +
-                        " 기온: "+weatherInfo.get("TMP")+"도"+"\n" +
-                        " 습도: "+weatherInfo.get("REH")+"%"+"\n" +
-                        " 바람: "+weatherInfo.get("WSD")+"\n" +
-                        " 풍속: "+weatherInfo.get("UUU")+" m/s\n" +
-                        " 강수형태:"+weatherInfo.get("PTY")+"\n" +
-                        " 강수확률: "+weatherInfo.get("POP")+"%\n" +
-                        " 강수량: "+weatherInfo.get("PCP")+"\n" +
-                        " 적설량: "+weatherInfo.get("SNO")+"\n",
-                weatherInfo.get("imgUrl"),
+                weatherCode.getBaseDate()+" 오늘의 날씨",
+                " 하늘상태:"+weatherCode.getSkyValue()+"\n" +
+                        " 기온: "+weatherCode.getTmp()+"도"+"\n" +
+                        " 습도: "+weatherCode.getReh()+"%"+"\n" +
+                        " 바람: "+weatherCode.getWsdValue()+"\n" +
+                        " 풍속: "+weatherCode.getUuu()+" m/s\n" +
+                        " 강수형태:"+weatherCode.getPtyValue()+"\n" +
+                        " 강수확률: "+weatherCode.getPop()+"%\n" +
+                        " 강수량: "+weatherCode.getPcp()+"\n" +
+                        " 적설량: "+weatherCode.getSno()+"\n",
+                weatherCode.getImgUrl(),
                 buttons.createButtons()
         );
         return  basicCardJson;

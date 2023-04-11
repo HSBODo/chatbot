@@ -1,4 +1,5 @@
 package site.pointman.chatbot.service.serviceimpl;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -7,7 +8,8 @@ import org.springframework.stereotype.Service;
 
 
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
-import site.pointman.chatbot.domain.WeatherReq;
+import site.pointman.chatbot.domain.wearher.WeatherElementCode;
+import site.pointman.chatbot.domain.wearher.WeatherReq;
 import site.pointman.chatbot.service.WeatherApiService;
 
 import java.io.BufferedReader;
@@ -30,139 +32,47 @@ public class WeatherApiServiceImpl implements WeatherApiService {
     @Value("${weather.api.key}")
     String weatherApiKey;
 
-    private Map<String,String> findBySkyVal = new HashMap<String,String>(){{
-        put("1","맑음");
-        put("3","구름많음");
-        put("4","흐림");
-    }};
-    private Map<String,String> findByPtyVal = new HashMap<String,String>(){{
-        put("0","없음");
-        put("1","비");
-        put("2","비/눈");
-        put("3","눈");
-        put("4","소나기");
-    }};
-
     @Override
-    public Map<String, String> WeatherCodeFindByName(Map<String, String> param) {
-        Map<String,String> result = new HashMap<>();
-
-
-        String baseDate = param.get("baseDate");
-        String POP = param.get("POP"); //강수확률
-        String ptyCode = param.get("PTY"); //강수형태
-        String PCP = param.get("PCP"); //1시간 강수량
-        String REH = param.get("REH"); //습도
-        String SNO = param.get("SNO"); //1시간 적설
-        String skyCode = param.get("SKY"); //하늘상태
-        String TMP = param.get("TMP"); //1시간 기온
-        String TMN = param.get("TMN"); //일 최저기온
-        String TMX = param.get("TMX"); //일 최고기온
-        String UUU = param.get("UUU"); //풍속(동서성분)
-        String VVV = param.get("VVV"); //풍속(남북성분)
-        String WAV = param.get("WAV"); //파고
-        String VEC = param.get("VEC"); //풍향
-        Float wsdCode = Float.parseFloat(param.get("WSD")); //풍속
-        String imgUrl;
-        String WSD;
-
-        if(ptyCode=="1" || ptyCode=="2" ||ptyCode=="4"){
-            imgUrl = hostUrl+"/image/weather/raindrops.jpg";
-        } else if (ptyCode=="3") {
-            imgUrl = hostUrl+"/image/weather/snow.jpg";
-        } else {
-            if(skyCode =="3"){
-                imgUrl = hostUrl+"/image/weather/clouds.jpg";
-            } else if (skyCode =="4") {
-                imgUrl = hostUrl+"/image/weather/fog.jpg";
-            }else {
-                imgUrl = hostUrl+"/image/weather/sunshine.jpg";
-            }
-        }
-
-
-
-
-
-       if(wsdCode<4){
-           WSD = "바람이 약하게 불어옵니다.";
-       } else if (wsdCode>=4 && wsdCode<9) {
-           WSD = "바람이 적당히 불어옵니다.";
-       } else if (wsdCode>=9 && wsdCode<14) {
-           WSD = "바람이 강하게 불어옵니다 .";
-       } else if (wsdCode>=14) {
-           WSD = "바람이 매우강하게 불어옵니다.";
-       }else {
-           WSD = "바람이 어떻게 불지 예측할수 없어요.";
-       }
-
-        result.put("baseDate",baseDate);
-        result.put("SKY",findBySkyVal.get(skyCode));
-        result.put("POP",POP);
-        result.put("PTY",findByPtyVal.get(ptyCode));
-        result.put("PCP",PCP);
-        result.put("REH",REH);
-        result.put("SNO",SNO);
-        result.put("TMP",TMP);
-        result.put("UUU",UUU);
-        result.put("WSD",WSD);
-        result.put("imgUrl",imgUrl);
-        return result;
-    }
-
-
-    @Override
-    public Map<String, String> selectShortTermWeather(KakaoMemberLocation kakaoUserLocation) {
-        Map<String,String> response = new HashMap<>();
-        convertGRID_GPS(kakaoUserLocation);
-
-        BigDecimal x = kakaoUserLocation.getX();
-        BigDecimal y = kakaoUserLocation.getY();
-        log.info("convertX = {}, convertY = {}",x,y);
-
-        WeatherReq weatherReq = new WeatherReq();
-        // 현재 날짜
-        LocalDate nowDate =  LocalDate.now();
-        ZonedDateTime nowUTC = ZonedDateTime.now(ZoneId.of("UTC"));
-        LocalDateTime nowSeoul = nowUTC.withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
-        // 포맷 정의
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH");
-        // 포맷 적용
-        String formatedDate = nowDate.format(dateFormatter);
-        int formatedTime = Integer.parseInt(nowSeoul.format(timeFormatter));
-        log.info("weather API current time = {} ",formatedTime);
-        String basTime;
-        if(formatedTime>=2 && formatedTime<=4){
-            basTime = "0200";
-        } else if (formatedTime>=5 && formatedTime<=7) {
-            basTime = "0500";
-        } else if (formatedTime>=8 && formatedTime<=10) {
-            basTime = "0800";
-        } else if (formatedTime>=11 && formatedTime<=13) {
-            basTime = "1100";
-        } else if (formatedTime>=14 && formatedTime<=16) {
-            basTime = "1400";
-        } else if (formatedTime>=17 && formatedTime<=19) {
-            basTime = "1700";
-        } else if (formatedTime>=20 && formatedTime<=22) {
-            basTime = "2000";
-        } else if (formatedTime>=23) {
-            basTime = "2300";
-        }else {
-            formatedDate = nowDate.minusDays(1).format(dateFormatter);
-            basTime = "2300";
-        }
-        log.info("weatherApiKey={}",weatherApiKey);
-        weatherReq.setServiceKey(weatherApiKey);
-        weatherReq.setNumOfRows("12");
-        weatherReq.setPageNo("1");
-        weatherReq.setDataType("JSON");
-        weatherReq.setBase_date(formatedDate);
-        weatherReq.setBase_time(basTime);
-        weatherReq.setNx(x.toString());
-        weatherReq.setNy(y.toString());
+    public WeatherElementCode selectShortTermWeather(KakaoMemberLocation kakaoUserLocation) {
+        WeatherElementCode response = new WeatherElementCode();
         try {
+            convertGRID_GPS(kakaoUserLocation,0);
+            BigDecimal x = kakaoUserLocation.getX();
+            BigDecimal y = kakaoUserLocation.getY();
+            log.info("convertX = {}, convertY = {}",x,y);
+            WeatherReq weatherReq = new WeatherReq();
+            int formatedTime = currentTimeFormat();
+            String formatedDate = currentDateFormat(formatedTime);
+
+            String basTime;
+            if(formatedTime>=2 && formatedTime<=4){
+                basTime = "0200";
+            } else if (formatedTime>=5 && formatedTime<=7) {
+                basTime = "0500";
+            } else if (formatedTime>=8 && formatedTime<=10) {
+                basTime = "0800";
+            } else if (formatedTime>=11 && formatedTime<=13) {
+                basTime = "1100";
+            } else if (formatedTime>=14 && formatedTime<=16) {
+                basTime = "1400";
+            } else if (formatedTime>=17 && formatedTime<=19) {
+                basTime = "1700";
+            } else if (formatedTime>=20 && formatedTime<=22) {
+                basTime = "2000";
+            } else if (formatedTime>=23) {
+                basTime = "2300";
+            }else {
+                basTime = "2300";
+            }
+            log.info("weatherApiKey={}",weatherApiKey);
+            weatherReq.setServiceKey(weatherApiKey);
+            weatherReq.setNumOfRows("12");
+            weatherReq.setPageNo("1");
+            weatherReq.setDataType("JSON");
+            weatherReq.setBase_date(formatedDate);
+            weatherReq.setBase_time(basTime);
+            weatherReq.setNx(x.toString());
+            weatherReq.setNy(y.toString());
 
             StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); /*URL*/
             urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "="+weatherReq.getServiceKey()); /*Service Key*/
@@ -197,24 +107,63 @@ public class WeatherApiServiceImpl implements WeatherApiService {
             JSONObject jsonHeader =  jsonResponse.getJSONObject("header");
             JSONObject jsonBody =  jsonResponse.getJSONObject("body");
             JSONObject jsonItems =  jsonBody.getJSONObject("items");
-            JSONArray jsonArray = jsonItems.optJSONArray("item");
+            JSONArray  jsonArray = jsonItems.optJSONArray("item");
 
             Map<String,String> elementMap = new HashMap<>();
-
+            elementMap.put("baseDate",formatedDate);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject element = (JSONObject) jsonArray.opt(i);
                 elementMap.put(element.optString("category"),element.optString("fcstValue"));
             }
-            elementMap.put("baseDate",nowDate.toString());
-            response = elementMap ;
+
+            response = getWeatherCodeMapping(elementMap);
+            log.info("re={}",response);
         } catch ( Exception e) {
-          System.out.println(e);
+            log.info("e={}",e);
         }
         return response;
     }
+    private static WeatherElementCode getWeatherCodeMapping(Map<String, String> elementMap) {
+        WeatherElementCode weatherElementCode = new WeatherElementCode();
+        weatherElementCode.setBaseDate(elementMap.get("baseDate"));
+        weatherElementCode.setPty(Integer.parseInt(elementMap.get("PTY")));
+        weatherElementCode.setPop(elementMap.get("POP"));
+        weatherElementCode.setPcp(elementMap.get("PCP"));
+        weatherElementCode.setReh(elementMap.get("REH"));
+        weatherElementCode.setTmp(elementMap.get("TMP"));
+        weatherElementCode.setSky(Integer.parseInt(elementMap.get("SKY")));
+        weatherElementCode.setUuu(elementMap.get("UUU"));
+        weatherElementCode.setVec(elementMap.get("VEC"));
+        weatherElementCode.setWav(elementMap.get("WAV"));
+        weatherElementCode.setWsd(Float.parseFloat(elementMap.get("WSD")));
+        weatherElementCode.setSno(elementMap.get("SNO"));
+        weatherElementCode.setVvv(elementMap.get("VVV"));
+        return weatherElementCode;
+    }
 
+    private static int currentTimeFormat (){
+        // 현재 날짜
+        ZonedDateTime nowUTC = ZonedDateTime.now(ZoneId.of("UTC"));
+        LocalDateTime nowSeoul = nowUTC.withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+        // 포맷 정의
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH");
+        // 포맷 적용
+        int formatedTime = Integer.parseInt(nowSeoul.format(timeFormatter));
 
-    public static void convertGRID_GPS(KakaoMemberLocation kakaoUserLocation ) {
+        return formatedTime;
+    }
+    private static String currentDateFormat (int formatedTime){
+        LocalDate nowDate =  LocalDate.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String formatedDate;
+        if(formatedTime<=1){
+            formatedDate = nowDate.minusDays(1).format(dateFormatter);
+        }else {
+            formatedDate = nowDate.format(dateFormatter);
+        }
+        return formatedDate;
+    }
+    private static void convertGRID_GPS(KakaoMemberLocation kakaoUserLocation , int mode ) {
 
         double x = 0;
         double y = 0;
@@ -224,7 +173,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
             double lng_Y = Double.parseDouble(kakaoUserLocation.getY().toString());
 
             log.info("kakao lat={} , lng={}", lat_x, lng_Y);
-            int mode =0;
+
 
             final int TO_GRID = 0;
             final int TO_GPS = 1;
