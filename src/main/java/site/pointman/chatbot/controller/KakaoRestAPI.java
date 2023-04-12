@@ -52,15 +52,26 @@ public class KakaoRestAPI {
 
                     kakaoResponse.addContent(kakaoApiService.createTodayWeather(kakaoUserLocation));
                     break;
-                case "이미지" :
-                    kakaoResponse.addContent(kakaoApiService.createSimpleImage("보물상자입니다","https://www.pointman.shop/image/location_notice.png"));
-                    break;
                 case "오늘의 날씨" :
                     kakaoResponse.addContent(kakaoApiService.createLocationNotice(kakaoUserkey));
+                    break;
+                case "오늘의 이슈" :
+                    kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다..."));
+                    break;
+                case "오늘의 상품" :
+                    kakaoResponse.addContent(kakaoApiService.createSimpleText("열심히 개발중..."));
+                    break;
+                case "오늘의 메뉴" :
+                    kakaoResponse.addContent(kakaoApiService.createSimpleText("라면만 먹으면서 개발중..."));
+                    break;
+                case "챗 GPT" :
+                    kakaoResponse.addContent(kakaoApiService.createSimpleText("GPT와 협상중입니다..."));
                     break;
                 case "개발자 소개" :
                     kakaoResponse.addContent(kakaoApiService.createDeveloperInfo());
                     break;
+
+
                 default:
                     kakaoResponse.addContent(kakaoApiService.createSimpleText("폴백블럭"));
             }
