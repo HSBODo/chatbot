@@ -3,7 +3,6 @@ package site.pointman.chatbot.service.serviceimpl;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.domain.kakaochatbotui.*;
@@ -11,20 +10,30 @@ import site.pointman.chatbot.domain.wearher.WeatherElementCode;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.WeatherApiService;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Slf4j
 @Service
 public class KakaoApiServiceImpl implements KakaoApiService {
 
+    private BasicCard basicCard;
+    private SimpleText simpleText;
+    private SimpleImage simpleImage;
     private WeatherApiService weatherApiService;
-    @Autowired
-    public KakaoApiServiceImpl(WeatherApiService weatherApiService) {
+
+    private CommerceCard commerceCard;
+
+    public KakaoApiServiceImpl(BasicCard basicCard, SimpleText simpleText, SimpleImage simpleImage, WeatherApiService weatherApiService, CommerceCard commerceCard) {
+        this.basicCard = basicCard;
+        this.simpleText = simpleText;
+        this.simpleImage = simpleImage;
         this.weatherApiService = weatherApiService;
+        this.commerceCard = commerceCard;
     }
 
     @Override
-    public JSONObject createBasicCard(BasicCard basicCard, String title, String msg, String thumbnailImgUrl,Buttons buttons) throws ParseException {
+    public JSONObject createBasicCard(String title, String msg, String thumbnailImgUrl,Buttons buttons) throws ParseException {
         return  basicCard.createBasicCard(
                 title,
                 msg,
@@ -34,7 +43,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     }
 
     @Override
-    public JSONObject createLocationNotice(BasicCard basicCard, String kakaoUserkey) throws ParseException {
+    public JSONObject createLocationNotice(String kakaoUserkey) throws ParseException {
         Buttons buttons = new Buttons();
         Button button = new Button("webLink","위치정보 동의하기","https://www.pointman.shop/kakaochat/v1/location-notice?u="+kakaoUserkey);
         buttons.addButton(button);
@@ -49,18 +58,47 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     }
 
     @Override
-    public JSONObject createSimpleText(SimpleText simpleText, String msg) throws ParseException {
+    public JSONObject createDeveloperInfo() throws ParseException {
+        Buttons buttons = new Buttons();
+        Button button1 = new Button("webLink","블로그","https://pointman.tistory.com/");
+        Button button2 = new Button("webLink","GitHub","https://github.com/HSBODo");
+        Button button3 = new Button("webLink","포트폴리오","https://hsbodo.github.io/PointMan/iPortfolio/index.html");
+        buttons.addButton(button1);
+        buttons.addButton(button2);
+        buttons.addButton(button3);
+        return basicCard.createBasicCard(
+                "Backend Developer",
+                "안녕하세요.\n" +
+                        "백엔드 개발자 한수빈입니다.\n" +
+                        "Email: vinsulill@gmail.com",
+                "https://www.pointman.shop/image/Ryan.jpg",
+                buttons.createButtons()
+        );
+    }
+
+    @Override
+    public JSONObject createSimpleText(String msg) throws ParseException {
         return simpleText.createSimpleText(msg);
     }
 
     @Override
-    public JSONObject createSimpleImage(SimpleImage simpleImage, String altText,String imgUrl) throws ParseException {
+    public JSONObject createSimpleImage(String altText,String imgUrl) throws ParseException {
         return simpleImage.createSimpleImage(altText,imgUrl);
     }
 
     @Override
-    public JSONObject createCommerceCard() throws ParseException {
-        return null;
+    public JSONObject createCommerceCard(String description, int price, int discount, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, Buttons buttons) throws ParseException {
+
+        return commerceCard.createCommerceCard(
+                description,
+                price,
+                discount,
+                currency,
+                thumbnailImgUrl,
+                thumbnailLink,
+                profileImgUrl,
+                ProfileNickname,
+                buttons.createButtons());
     }
 
     @Override
@@ -69,14 +107,14 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     }
 
     @Override
-    public JSONObject createTodayWeather(KakaoMemberLocation kakaoUserLocation) throws ParseException{
+    public JSONObject createTodayWeather(KakaoMemberLocation kakaoUserLocation) throws Exception {
         WeatherElementCode weatherCode =  weatherApiService.selectShortTermWeather(kakaoUserLocation);
-        log.info("getPty ={}",weatherCode.getPty());
-        log.info("getPty ={}",weatherCode.getSky());
         BasicCard basicCard = new BasicCard();
         Buttons buttons = new Buttons();
+
+
         JSONObject basicCardJson=basicCard.createBasicCard(
-                weatherCode.getBaseDate()+" 오늘의 날씨",
+                weatherCode.getBaseDateValue()+" 오늘의 날씨",
                 " 하늘상태:"+weatherCode.getSkyValue()+"\n" +
                         " 기온: "+weatherCode.getTmp()+"도"+"\n" +
                         " 습도: "+weatherCode.getReh()+"%"+"\n" +

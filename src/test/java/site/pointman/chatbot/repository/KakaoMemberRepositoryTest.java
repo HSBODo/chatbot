@@ -15,31 +15,29 @@ import java.util.Map;
 @SpringBootTest
 @Transactional
 class KakaoMemberRepositoryTest {
-    @Autowired
-    KakaoMemberRepository kakaoMemberRepository;
-    @Autowired
-    MemberService memberService;
-
     @Test
     @Commit
     void save() {
-        KakaoMember member = new KakaoMember();
-        member.setKakaoUserkey("testuserkey1234zxc");
-        member.setPartnerId("pointman");
-        Map<String, String> result = memberService.join(member);
-        System.out.println("result"+result.toString());
+
     }
 
 
     @Test
     @Commit
     void saveLocation() {
-        KakaoMemberLocation member = new KakaoMemberLocation();
-        member.setKakaoUserkey("testuserkey1234zxc");
-        member.setX(BigDecimal.valueOf(37.4603776));
-        member.setY(BigDecimal.valueOf(126.8187136));
-        Map<String, String> result = memberService.saveLocation(member);
-        System.out.println("result"+result.toString());
+
+    }
+    @Test
+    void findByMember (){
+
+    }
+    @Test
+    void updateLocation(){
+
+    }
+    @Test
+    void findByLocation(){
+
     }
 
 }

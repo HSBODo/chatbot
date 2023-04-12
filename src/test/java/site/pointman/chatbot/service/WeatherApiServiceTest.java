@@ -22,10 +22,9 @@ class WeatherApiServiceTest {
         kakaoMemberLocation.setX(BigDecimal.valueOf(37.4603776));
         kakaoMemberLocation.setY(BigDecimal.valueOf(126.8187136));
         WeatherElementCode result = weatherApiService.selectShortTermWeather(kakaoMemberLocation);
-        log.info("result = {}",result.getBaseDate());
-    }
+        log.info("result = {}",result.toString());
+        assertInstanceOf(WeatherElementCode.class,result);
+   }
 
-    @Test
-    void weatherCodeFindByName() {
-    }
+
 }

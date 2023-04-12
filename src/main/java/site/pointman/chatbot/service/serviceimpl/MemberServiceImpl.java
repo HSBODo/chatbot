@@ -38,14 +38,16 @@ public class MemberServiceImpl implements MemberService {
         try {
             Optional<KakaoMember> findMember = kakaoUserRepository.findByMember(member.getKakaoUserkey());
             if(!findMember.isPresent()){
-                kakaoUserRepository.save(member);
+                KakaoMember saveMember = kakaoUserRepository.save(member);
                 result.put("msg","회원가입 완료.");
                 result.put("code",1);
                 result.put("kakaoUserkey",member.getKakaoUserkey());
+                result.put("member",saveMember);
             }else {
                 result.put("msg","중복회원");
                 result.put("code",1);
                 result.put("kakaoUserkey",member.getKakaoUserkey());
+                result.put("member",null);
             }
         }catch (Exception e){
             throw e;
@@ -55,8 +57,8 @@ public class MemberServiceImpl implements MemberService {
 
     private Map<String,String> validateDuplicateMemberLocation(KakaoMemberLocation memberLocation) {
         Map result = new HashMap<>();
+        String kakaoUserkey = memberLocation.getKakaoUserkey();
         try {
-            String kakaoUserkey = memberLocation.getKakaoUserkey();
             Optional<KakaoMember> findMember = kakaoUserRepository.findByMember(kakaoUserkey);
             if(!findMember.isPresent()){
                 result.put("msg","위치저장 실패. 존재하지 않은 회원");
@@ -64,13 +66,13 @@ public class MemberServiceImpl implements MemberService {
                 result.put("kakaoUserkey",kakaoUserkey);
                 return result;
             }
-
             Optional<KakaoMemberLocation> findLocation = kakaoUserRepository.findByLocation(kakaoUserkey);
             if(!findLocation.isPresent()){
-                kakaoUserRepository.saveLocation(memberLocation);
+                KakaoMemberLocation kakaoMemberLocation = kakaoUserRepository.saveLocation(memberLocation);
                 result.put("msg","위치저장 완료");
                 result.put("code",0);
                 result.put("kakaoUserkey",kakaoUserkey);
+                result.put("kakaoMemberLocation",kakaoMemberLocation);
                 result.put("X",memberLocation.getX());
                 result.put("Y",memberLocation.getY());
             }else {
@@ -87,6 +89,7 @@ public class MemberServiceImpl implements MemberService {
         }catch (Exception e){
             result.put("msg","위치저장 실패. ");
             result.put("code",1);
+            result.put("kakaoUserkey",kakaoUserkey);
         }
 
         return result;

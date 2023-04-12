@@ -2,9 +2,10 @@ package site.pointman.chatbot.domain.wearher;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.PostConstruct;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,6 +67,14 @@ public class WeatherElementCode {
             put(4,"소나기");
         }};
         return (String)findByPtyVal.get(pty);
+    }
+
+    public String getBaseDateValue() throws ParseException {
+        SimpleDateFormat strToDate = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat dateToStr = new SimpleDateFormat("yyyy-MM-dd");
+        Date yyyyMMdd = strToDate.parse(baseDate);
+        String formatDate = dateToStr.format(yyyyMMdd);
+        return formatDate;
     }
     public String getWsdValue() {
         String wsdValue;

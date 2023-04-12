@@ -5,15 +5,19 @@ import org.json.simple.parser.ParseException;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.domain.kakaochatbotui.*;
 
+import java.util.List;
+import java.util.Map;
+
 public interface KakaoApiService {
 
-    JSONObject createBasicCard(BasicCard basicCard, String title, String msg, String thumbnailImgUrl, Buttons buttons) throws ParseException;
-    JSONObject createSimpleText(SimpleText simpleText, String msg) throws ParseException;
-    JSONObject createSimpleImage(SimpleImage simpleImage, String altText, String imgUrl) throws ParseException;
-    JSONObject createCommerceCard() throws ParseException;
+    JSONObject createBasicCard(String title, String msg, String thumbnailImgUrl, Buttons buttons) throws ParseException;
+    JSONObject createSimpleText(String msg) throws ParseException;
+    JSONObject createSimpleImage(String altText, String imgUrl) throws ParseException;
+    JSONObject createCommerceCard(String description, int price, int discount, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, Buttons buttons) throws ParseException;
     JSONObject createListCard() throws ParseException;
-    JSONObject createTodayWeather(KakaoMemberLocation kakaoMemberLocation) throws  ParseException;
+    JSONObject createTodayWeather(KakaoMemberLocation kakaoMemberLocation) throws Exception;
 
-    JSONObject createLocationNotice(BasicCard basicCard, String kakaoUserkey) throws ParseException;
+    JSONObject createLocationNotice(String kakaoUserkey) throws ParseException;
+    JSONObject createDeveloperInfo() throws ParseException;
 
 }

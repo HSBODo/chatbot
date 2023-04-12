@@ -35,6 +35,10 @@ public class BeanConfig {
         return new Buttons();
     }
     @Bean
+    public CommerceCard commerceCard(){
+        return new CommerceCard();
+    }
+    @Bean
     public KakaoMemberRepository kakaoMemberRepository(){
         return  new JpaKakaoMemberRepository(em);
     }
