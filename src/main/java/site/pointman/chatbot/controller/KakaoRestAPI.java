@@ -57,27 +57,25 @@ public class KakaoRestAPI {
                     kakaoResponse.addContent(kakaoApiService.createLocationNotice(kakaoUserkey));
                     break;
                 case "오늘의 이슈" :
-                    kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다..."));
+                    kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다."));
                     break;
                 case "오늘의 상품" :
                     Buttons buttons = new Buttons();
-                    Button button = new Button("webLink","구매하러가기","wwww.wwww");
+                    Button button = new Button("webLink","구매하러가기","https://www.pointman.shop");
                     buttons.addButton(button);
-                    //kakaoResponse.addContent(kakaoApiService.createCommerceCard("테스트1",10000,1000,"won","www.","www.link","www.","nick",buttons));
+                    kakaoResponse.addContent(kakaoApiService.createCommerceCard("테스트상품",10000,1000,0,0,"won","https://www.pointman.shop/image/Ryan1.jpg","https://www.pointman.shop","https://www.pointman.shop","https://www.pointman.shop",buttons));
                     break;
                 case "오늘의 메뉴" :
-                    kakaoResponse.addContent(kakaoApiService.createSimpleText("라면만 먹으면서 개발중..."));
+                    kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다."));
                     break;
                 case "챗 GPT" :
-                    kakaoResponse.addContent(kakaoApiService.createSimpleText("GPT와 협상중입니다..."));
+                    kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다."));
                     break;
                 case "개발자 소개" :
                     kakaoResponse.addContent(kakaoApiService.createDeveloperInfo());
                     break;
-
-
                 default:
-                    kakaoResponse.addContent(kakaoApiService.createSimpleText("폴백블럭"));
+                    kakaoResponse.addContent(kakaoApiService.createSimpleText("아직 학습이 부족합니다."));
             }
 
         }catch (Exception e){

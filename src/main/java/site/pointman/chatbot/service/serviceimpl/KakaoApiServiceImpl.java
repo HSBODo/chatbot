@@ -82,7 +82,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         Buttons buttons = new Buttons();
         Button button1 = new Button("webLink","블로그","https://pointman.tistory.com/");
         Button button2 = new Button("webLink","GitHub","https://github.com/HSBODo");
-        Button button3 = new Button("webLink","포트폴리오","https://hsbodo.github.io/PointMan/iPortfolio/index.html");
+        Button button3 = new Button("webLink","포트폴리오","https://www.pointman.shop");
         buttons.addButton(button1);
         buttons.addButton(button2);
         buttons.addButton(button3);
