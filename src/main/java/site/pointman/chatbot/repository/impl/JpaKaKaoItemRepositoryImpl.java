@@ -6,7 +6,6 @@ import site.pointman.chatbot.repository.KaKaoItemRepository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-@Repository
 public class JpaKaKaoItemRepositoryImpl implements KaKaoItemRepository {
     private final EntityManager em;
 

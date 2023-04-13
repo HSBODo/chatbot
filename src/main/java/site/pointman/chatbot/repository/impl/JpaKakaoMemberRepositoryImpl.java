@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 @Slf4j
-@Repository
 public class JpaKakaoMemberRepositoryImpl implements KakaoMemberRepository {
     private final EntityManager em;
 
