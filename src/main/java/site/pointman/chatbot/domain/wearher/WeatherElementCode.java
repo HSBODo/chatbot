@@ -27,7 +27,7 @@ public class WeatherElementCode {
     private String tmn; //일 최저기온
     private String tmx; //일 최고기온
     private String imgUrl;
-    private String hostUrl ="https://www.pointman.shop";
+    private String hostUrl;
 
 
     public String getImgUrl() {

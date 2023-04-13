@@ -13,11 +13,12 @@ public interface KakaoApiService {
     JSONObject createBasicCard(String title, String msg, String thumbnailImgUrl, Buttons buttons) throws ParseException;
     JSONObject createSimpleText(String msg) throws ParseException;
     JSONObject createSimpleImage(String altText, String imgUrl) throws ParseException;
-    JSONObject createCommerceCard(String description, int price, int discount, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, Buttons buttons) throws ParseException;
+    JSONObject createCommerceCard(String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, Buttons buttons) throws ParseException;
     JSONObject createListCard() throws ParseException;
-    JSONObject createTodayWeather(KakaoMemberLocation kakaoMemberLocation) throws Exception;
+    JSONObject createTodayWeather(String kakaoUserkey) throws Exception;
 
     JSONObject createLocationNotice(String kakaoUserkey) throws ParseException;
     JSONObject createDeveloperInfo() throws ParseException;
+    JSONObject createRecommendItems() throws ParseException;
 
 }

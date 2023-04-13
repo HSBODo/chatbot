@@ -140,6 +140,7 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         weatherElementCode.setWsd(Float.parseFloat(elementMap.get("WSD")));
         weatherElementCode.setSno(elementMap.get("SNO"));
         weatherElementCode.setVvv(elementMap.get("VVV"));
+        weatherElementCode.setHostUrl(hostUrl);
         return weatherElementCode;
     }
 

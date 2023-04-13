@@ -1,23 +1,24 @@
 package site.pointman.chatbot.repository.impl;
 
-import lombok.Setter;
+
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 
 import javax.persistence.EntityManager;
-import java.lang.reflect.Member;
+
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
 import java.util.Map;
 import java.util.Optional;
 @Slf4j
-public class JpaKakaoMemberRepository implements KakaoMemberRepository {
+@Repository
+public class JpaKakaoMemberRepositoryImpl implements KakaoMemberRepository {
     private final EntityManager em;
 
-    public JpaKakaoMemberRepository(EntityManager em) {
+    public JpaKakaoMemberRepositoryImpl(EntityManager em) {
         this.em = em;
     }
 

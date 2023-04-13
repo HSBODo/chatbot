@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import site.pointman.chatbot.domain.KakaoResponse;
+import site.pointman.chatbot.domain.kakaochatbotui.Button;
+import site.pointman.chatbot.domain.kakaochatbotui.Buttons;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.domain.KakaoRequest;
@@ -25,13 +27,11 @@ import java.util.*;
 public class KakaoRestAPI {
     private KakaoApiService kakaoApiService;
     private MemberService memberService;
-    private KakaoMemberRepository KakaoMemberRepository;
 
 
-    public KakaoRestAPI(KakaoApiService kakaoApiService, MemberService memberService, KakaoMemberRepository kakaoMemberRepository) {
+    public KakaoRestAPI(KakaoApiService kakaoApiService, MemberService memberService) {
         this.kakaoApiService = kakaoApiService;
         this.memberService = memberService;
-        this.KakaoMemberRepository = kakaoMemberRepository;
     }
 
     @ResponseBody
@@ -40,7 +40,9 @@ public class KakaoRestAPI {
         KakaoResponse kakaoResponse = new KakaoResponse();
         try {
             String uttr = params.getUttr();
-            String kakaoUserkey = params.getKakaoUserkey();
+            String kakaoUserkey ="";
+            kakaoUserkey = params.getKakaoUserkey();
+
             KakaoMember member = new KakaoMember();
             member.setKakaoUserkey(kakaoUserkey);
             member.setPartnerId("pointman");
@@ -48,9 +50,8 @@ public class KakaoRestAPI {
             log.info("Request:: uttr ={}, userkey = {}",uttr,kakaoUserkey);
             switch (uttr){
                 case "위치정보 동의 완료" :
-                    KakaoMemberLocation kakaoUserLocation = KakaoMemberRepository.findByLocation(kakaoUserkey).get();
 
-                    kakaoResponse.addContent(kakaoApiService.createTodayWeather(kakaoUserLocation));
+                    kakaoResponse.addContent(kakaoApiService.createTodayWeather(kakaoUserkey));
                     break;
                 case "오늘의 날씨" :
                     kakaoResponse.addContent(kakaoApiService.createLocationNotice(kakaoUserkey));
@@ -59,7 +60,10 @@ public class KakaoRestAPI {
                     kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다..."));
                     break;
                 case "오늘의 상품" :
-                    kakaoResponse.addContent(kakaoApiService.createSimpleText("열심히 개발중..."));
+                    Buttons buttons = new Buttons();
+                    Button button = new Button("webLink","구매하러가기","wwww.wwww");
+                    buttons.addButton(button);
+                    //kakaoResponse.addContent(kakaoApiService.createCommerceCard("테스트1",10000,1000,"won","www.","www.link","www.","nick",buttons));
                     break;
                 case "오늘의 메뉴" :
                     kakaoResponse.addContent(kakaoApiService.createSimpleText("라면만 먹으면서 개발중..."));

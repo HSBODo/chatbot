@@ -2,8 +2,10 @@ package site.pointman.chatbot;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import site.pointman.chatbot.domain.kakaochatbotui.*;
+import site.pointman.chatbot.repository.KaKaoItemRepository;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
-import site.pointman.chatbot.repository.impl.JpaKakaoMemberRepository;
+import site.pointman.chatbot.repository.impl.JpaKaKaoItemRepositoryImpl;
+import site.pointman.chatbot.repository.impl.JpaKakaoMemberRepositoryImpl;
 
 import javax.persistence.EntityManager;
 
@@ -40,7 +42,11 @@ public class BeanConfig {
     }
     @Bean
     public KakaoMemberRepository kakaoMemberRepository(){
-        return  new JpaKakaoMemberRepository(em);
+        return  new JpaKakaoMemberRepositoryImpl(em);
+    }
+    @Bean
+    public KaKaoItemRepository kaKaoItemRepository (){
+        return  new JpaKaKaoItemRepositoryImpl(em);
     }
 
 }

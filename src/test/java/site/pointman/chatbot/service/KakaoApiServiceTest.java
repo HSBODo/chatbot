@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.domain.kakaochatbotui.*;
 import site.pointman.chatbot.domain.KakaoResponse;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
+import site.pointman.chatbot.repository.KaKaoItemRepository;
+import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.service.serviceimpl.KakaoApiServiceImpl;
 
 import javax.annotation.PostConstruct;
@@ -31,9 +33,14 @@ class KakaoApiServiceTest {
     private CommerceCard commerceCard;
     @Autowired
     private KakaoApiService kakaoApiService ;
+    @Autowired
+    private KakaoMemberRepository kakaoMemberRepository;
+
+    @Autowired
+    private KaKaoItemRepository kaKaoItemRepository;
     @PostConstruct
     void init(){
-        this.kakaoApiService = new KakaoApiServiceImpl(basicCard,simpleText,simpleImage,weatherApiService,commerceCard);
+        this.kakaoApiService = new KakaoApiServiceImpl(kaKaoItemRepository,kakaoMemberRepository,basicCard,simpleText,simpleImage,weatherApiService,commerceCard);
     }
 
 
@@ -71,6 +78,8 @@ class KakaoApiServiceTest {
                 "desc",
                 10000,
                 1000,
+                0,
+                0,
                 "won",
                 "www.asdasdasd",
                 "www.asdasdzzxcz..zxc",
@@ -105,12 +114,9 @@ class KakaoApiServiceTest {
     @Test
     void todayWeather() throws Exception {
         KakaoResponse kakaoResponse = new KakaoResponse();
-        KakaoMemberLocation kakaoMemberLocation = new KakaoMemberLocation();
-        kakaoMemberLocation.setX(BigDecimal.valueOf(37.4603776));
-        kakaoMemberLocation.setY(BigDecimal.valueOf(126.8187136));
-        kakaoMemberLocation.setKakaoUserkey("asdasdasd");
+        String kakaoUserkey= "QFERwysZbO77";
 
-        kakaoResponse.addContent( kakaoApiService.createTodayWeather(kakaoMemberLocation));
+        kakaoResponse.addContent( kakaoApiService.createTodayWeather(kakaoUserkey));
         JSONObject result = kakaoResponse.createKakaoResponse();
         log.info("result={},",result);
         assertThat(result).isInstanceOf(JSONObject.class);

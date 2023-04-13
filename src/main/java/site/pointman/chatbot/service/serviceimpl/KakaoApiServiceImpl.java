@@ -4,27 +4,32 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
+import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.domain.kakaochatbotui.*;
 import site.pointman.chatbot.domain.wearher.WeatherElementCode;
+import site.pointman.chatbot.repository.KaKaoItemRepository;
+import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.WeatherApiService;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.List;
+
 
 @Slf4j
 @Service
 public class KakaoApiServiceImpl implements KakaoApiService {
-
+    private KaKaoItemRepository kaKaoItemRepository;
+    private KakaoMemberRepository KakaoMemberRepository;
     private BasicCard basicCard;
     private SimpleText simpleText;
     private SimpleImage simpleImage;
     private WeatherApiService weatherApiService;
-
     private CommerceCard commerceCard;
 
-    public KakaoApiServiceImpl(BasicCard basicCard, SimpleText simpleText, SimpleImage simpleImage, WeatherApiService weatherApiService, CommerceCard commerceCard) {
+    public KakaoApiServiceImpl(KaKaoItemRepository kaKaoItemRepository, site.pointman.chatbot.repository.KakaoMemberRepository kakaoMemberRepository, BasicCard basicCard, SimpleText simpleText, SimpleImage simpleImage, WeatherApiService weatherApiService, CommerceCard commerceCard) {
+        this.kaKaoItemRepository = kaKaoItemRepository;
+        this.KakaoMemberRepository = kakaoMemberRepository;
         this.basicCard = basicCard;
         this.simpleText = simpleText;
         this.simpleImage = simpleImage;
@@ -33,13 +38,28 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     }
 
     @Override
-    public JSONObject createBasicCard(String title, String msg, String thumbnailImgUrl,Buttons buttons) throws ParseException {
-        return  basicCard.createBasicCard(
-                title,
-                msg,
-                thumbnailImgUrl,
+    public JSONObject createTodayWeather(String kakaoUserkey) throws Exception {
+        KakaoMemberLocation kakaoUserLocation = KakaoMemberRepository.findByLocation(kakaoUserkey).get();
+        WeatherElementCode weatherCode =  weatherApiService.selectShortTermWeather(kakaoUserLocation);
+        BasicCard basicCard = new BasicCard();
+        Buttons buttons = new Buttons();
+
+
+        JSONObject basicCardJson=basicCard.createBasicCard(
+                weatherCode.getBaseDateValue()+" 오늘의 날씨",
+                " 하늘상태:"+weatherCode.getSkyValue()+"\n" +
+                        " 기온: "+weatherCode.getTmp()+"도"+"\n" +
+                        " 습도: "+weatherCode.getReh()+"%"+"\n" +
+                        " 바람: "+weatherCode.getWsdValue()+"\n" +
+                        " 풍속: "+weatherCode.getWsd()+" m/s\n" +
+                        " 강수형태:"+weatherCode.getPtyValue()+"\n" +
+                        " 강수확률: "+weatherCode.getPop()+"%\n" +
+                        " 1시간 강수량: "+weatherCode.getPcp()+"\n" +
+                        " 적설량: "+weatherCode.getSno()+"\n",
+                weatherCode.getImgUrl(),
                 buttons.createButtons()
         );
+        return  basicCardJson;
     }
 
     @Override
@@ -71,28 +91,48 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                 "안녕하세요.\n" +
                         "백엔드 개발자 한수빈입니다.\n" +
                         "Email: vinsulill@gmail.com",
-                "https://www.pointman.shop/image/Ryan.jpg",
+                "https://www.pointman.shop/image/Ryan1.jpg",
                 buttons.createButtons()
         );
+    }
+    @Override
+    public JSONObject createRecommendItems() throws ParseException {
+        List<Item> findItems = kaKaoItemRepository.findByDisplayItems();
+     ;
+        return null;
     }
 
     @Override
     public JSONObject createSimpleText(String msg) throws ParseException {
         return simpleText.createSimpleText(msg);
     }
+    @Override
+    public JSONObject createBasicCard(String title, String msg, String thumbnailImgUrl,Buttons buttons) throws ParseException {
+        return  basicCard.createBasicCard(
+                title,
+                msg,
+                thumbnailImgUrl,
+                buttons.createButtons()
+        );
+    }
+
 
     @Override
     public JSONObject createSimpleImage(String altText,String imgUrl) throws ParseException {
         return simpleImage.createSimpleImage(altText,imgUrl);
     }
 
+
+
     @Override
-    public JSONObject createCommerceCard(String description, int price, int discount, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, Buttons buttons) throws ParseException {
+    public JSONObject createCommerceCard(String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, Buttons buttons) throws ParseException {
 
         return commerceCard.createCommerceCard(
                 description,
                 price,
                 discount,
+                discountedPrice,
+                discountRate,
                 currency,
                 thumbnailImgUrl,
                 thumbnailLink,
@@ -103,30 +143,8 @@ public class KakaoApiServiceImpl implements KakaoApiService {
 
     @Override
     public JSONObject createListCard() throws ParseException {
+
         return null;
     }
 
-    @Override
-    public JSONObject createTodayWeather(KakaoMemberLocation kakaoUserLocation) throws Exception {
-        WeatherElementCode weatherCode =  weatherApiService.selectShortTermWeather(kakaoUserLocation);
-        BasicCard basicCard = new BasicCard();
-        Buttons buttons = new Buttons();
-
-
-        JSONObject basicCardJson=basicCard.createBasicCard(
-                weatherCode.getBaseDateValue()+" 오늘의 날씨",
-                " 하늘상태:"+weatherCode.getSkyValue()+"\n" +
-                        " 기온: "+weatherCode.getTmp()+"도"+"\n" +
-                        " 습도: "+weatherCode.getReh()+"%"+"\n" +
-                        " 바람: "+weatherCode.getWsdValue()+"\n" +
-                        " 풍속: "+weatherCode.getWsd()+" m/s\n" +
-                        " 강수형태:"+weatherCode.getPtyValue()+"\n" +
-                        " 강수확률: "+weatherCode.getPop()+"%\n" +
-                        " 1시간 강수량: "+weatherCode.getPcp()+"\n" +
-                        " 적설량: "+weatherCode.getSno()+"\n",
-                weatherCode.getImgUrl(),
-                buttons.createButtons()
-        );
-        return  basicCardJson;
-    }
 }

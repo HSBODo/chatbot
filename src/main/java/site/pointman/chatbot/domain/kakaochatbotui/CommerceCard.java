@@ -33,7 +33,7 @@ public class CommerceCard  {
 
      */
 
-    public JSONObject createCommerceCard(String description, int price, int discount, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, List<Map<String,String>> buttons) throws ParseException {
+    public JSONObject createCommerceCard(String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, List<Map<String,String>> buttons) throws ParseException {
         JSONParser jsonParser = new JSONParser();
         JSONArray jsonArr = new JSONArray();
         buttons.forEach(button -> {
@@ -49,6 +49,8 @@ public class CommerceCard  {
                 "          \"description\": \""+description+"\",\n" +
                 "          \"price\": "+price+",\n" +
                 "          \"discount\": "+discount+",\n" +
+                "          \"currency\": \""+discountedPrice+"\",\n" +
+                "          \"currency\": \""+discountRate+"\",\n" +
                 "          \"currency\": \""+currency+"\",\n" +
                 "          \"thumbnails\": [\n" +
                 "            {\n" +
