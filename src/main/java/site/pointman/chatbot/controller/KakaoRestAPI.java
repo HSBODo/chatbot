@@ -66,7 +66,7 @@ public class KakaoRestAPI {
                     kakaoResponse.addContent(kakaoApiService.createCommerceCard("테스트상품",10000,1000,0,0,"won","https://www.pointman.shop/image/Ryan1.jpg","https://www.pointman.shop","https://www.pointman.shop","https://www.pointman.shop",buttons));
                     break;
                 case "오늘의 메뉴" :
-                    kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다."));
+                    kakaoResponse.addContent(kakaoApiService.createRecommendItems());
                     break;
                 case "챗 GPT" :
                     kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다."));
