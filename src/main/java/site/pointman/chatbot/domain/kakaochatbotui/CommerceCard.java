@@ -49,8 +49,8 @@ public class CommerceCard  {
                 "          \"description\": \""+description+"\",\n" +
                 "          \"price\": "+price+",\n" +
                 "          \"discount\": "+discount+",\n" +
-                "          \"currency\": \""+discountedPrice+"\",\n" +
-                "          \"currency\": \""+discountRate+"\",\n" +
+                "          \"discountedPrice\": \""+discountedPrice+"\",\n" +
+                "          \"discountRate\": \""+discountRate+"\",\n" +
                 "          \"currency\": \""+currency+"\",\n" +
                 "          \"thumbnails\": [\n" +
                 "            {\n" +

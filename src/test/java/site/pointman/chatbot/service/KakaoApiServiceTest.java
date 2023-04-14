@@ -38,9 +38,11 @@ class KakaoApiServiceTest {
 
     @Autowired
     private KaKaoItemRepository kaKaoItemRepository;
+    @Autowired
+    private Carousel carousel;
     @PostConstruct
     void init(){
-        this.kakaoApiService = new KakaoApiServiceImpl(kaKaoItemRepository,kakaoMemberRepository,basicCard,simpleText,simpleImage,weatherApiService,commerceCard);
+        this.kakaoApiService = new KakaoApiServiceImpl(kaKaoItemRepository,kakaoMemberRepository,basicCard,simpleText,simpleImage,weatherApiService,commerceCard,carousel);
     }
 
 
@@ -120,6 +122,13 @@ class KakaoApiServiceTest {
         JSONObject result = kakaoResponse.createKakaoResponse();
         log.info("result={},",result);
         assertThat(result).isInstanceOf(JSONObject.class);
+
+    }
+
+    @Test
+    void createRecommendItems() throws Exception {
+        JSONObject recommendItems = kakaoApiService.createRecommendItems();
+        log.info("result={}",recommendItems);
 
     }
 }

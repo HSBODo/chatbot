@@ -33,6 +33,10 @@ public class BeanConfig {
         return new SimpleImage();
     }
     @Bean
+    public Carousel carousel(){
+        return new Carousel();
+    }
+    @Bean
     public Buttons buttons(){
         return new Buttons();
     }

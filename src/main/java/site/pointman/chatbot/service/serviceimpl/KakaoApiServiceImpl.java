@@ -26,8 +26,9 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     private SimpleImage simpleImage;
     private WeatherApiService weatherApiService;
     private CommerceCard commerceCard;
+    private Carousel carousel;
 
-    public KakaoApiServiceImpl(KaKaoItemRepository kaKaoItemRepository, site.pointman.chatbot.repository.KakaoMemberRepository kakaoMemberRepository, BasicCard basicCard, SimpleText simpleText, SimpleImage simpleImage, WeatherApiService weatherApiService, CommerceCard commerceCard) {
+    public KakaoApiServiceImpl(KaKaoItemRepository kaKaoItemRepository, KakaoMemberRepository kakaoMemberRepository, BasicCard basicCard, SimpleText simpleText, SimpleImage simpleImage, WeatherApiService weatherApiService, CommerceCard commerceCard, Carousel carousel) {
         this.kaKaoItemRepository = kaKaoItemRepository;
         this.KakaoMemberRepository = kakaoMemberRepository;
         this.basicCard = basicCard;
@@ -35,6 +36,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         this.simpleImage = simpleImage;
         this.weatherApiService = weatherApiService;
         this.commerceCard = commerceCard;
+        this.carousel = carousel;
     }
 
     @Override
@@ -98,8 +100,33 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public JSONObject createRecommendItems() throws ParseException {
         List<Item> findItems = kaKaoItemRepository.findByDisplayItems();
-     ;
-        return null;
+        carousel.setType("CommerceCard");
+        findItems.stream()
+                .forEach(item ->{
+                    Buttons buttons = new Buttons();
+                    Button button = new Button("webLink","구매하러가기",item.getThumbnailLink());
+                    buttons.addButton(button);
+                    try {
+                        carousel.addContent(commerceCard.createCommerceCard(
+                                item.getDescription(),
+                                item.getPrice(),
+                                item.getDiscount(),
+                                item.getDiscountedPrice(),
+                                item.getDiscountRate(),
+                                item.getCurrency(),
+                                item.getThumbnailImgUrl(),
+                                item.getThumbnailLink(),
+                                item.getProfileImgUrl(),
+                                item.getProfileNickname(),
+                                buttons.createButtons()
+                        ));
+
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                });
+        return carousel.createCarousel();
     }
 
     @Override
