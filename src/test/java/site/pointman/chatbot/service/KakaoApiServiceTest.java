@@ -8,13 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.domain.kakaochatbotui.*;
 import site.pointman.chatbot.domain.KakaoResponse;
-import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.repository.KaKaoItemRepository;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.service.serviceimpl.KakaoApiServiceImpl;
 
 import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -28,7 +26,7 @@ class KakaoApiServiceTest {
     @Autowired
     private  SimpleImage simpleImage;
     @Autowired
-    private WeatherApiService weatherApiService;
+    private OpenApiService weatherApiService;
     @Autowired
     private CommerceCard commerceCard;
     @Autowired
@@ -38,14 +36,13 @@ class KakaoApiServiceTest {
 
     @Autowired
     private KaKaoItemRepository kaKaoItemRepository;
-    @Autowired
-    private Carousel carousel;
+
 
 
 
     @PostConstruct
     void init(){
-        this.kakaoApiService = new KakaoApiServiceImpl(kaKaoItemRepository,kakaoMemberRepository,basicCard,simpleText,simpleImage,weatherApiService,commerceCard,carousel);
+        this.kakaoApiService = new KakaoApiServiceImpl(kaKaoItemRepository,kakaoMemberRepository,basicCard,simpleText,simpleImage,weatherApiService,commerceCard);
     }
 
 
@@ -96,9 +93,7 @@ class KakaoApiServiceTest {
 
     }
 
-    @Test
-    void createListCard() {
-    }
+
     @Test
     void createDeveloperInfo() throws ParseException {
         JSONObject result = kakaoApiService.createDeveloperInfo();
@@ -135,5 +130,21 @@ class KakaoApiServiceTest {
         kakaoResponse.addContent(recommendItems);
         log.info("result={}",kakaoResponse.createKakaoResponse());
 
+    }
+
+    @Test
+    void createListCard() throws Exception {
+//        JSONObject recommendItems = kakaoApiService.createListCard();
+//        KakaoResponse kakaoResponse = new KakaoResponse();
+//        kakaoResponse.addContent(recommendItems);
+//        log.info("result={}",kakaoResponse.createKakaoResponse());
+
+    }
+
+    @Test
+    void createTodayNews() throws Exception {
+        KakaoResponse kakaoResponse = new KakaoResponse();
+        kakaoResponse.addContent(kakaoApiService.createTodayNews("토픽"));
+        log.info("result={}",  kakaoResponse.createKakaoResponse()       );
     }
 }

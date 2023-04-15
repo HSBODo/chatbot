@@ -56,17 +56,14 @@ public class KakaoRestAPI {
                 case "오늘의 날씨" :
                     kakaoResponse.addContent(kakaoApiService.createLocationNotice(kakaoUserkey));
                     break;
-                case "오늘의 이슈" :
-                    kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다."));
+                case "오늘의 뉴스" :
+                    kakaoResponse.addContent(kakaoApiService.createTodayNews("경제"));
                     break;
-                case "오늘의 상품" :
-                    Buttons buttons = new Buttons();
-                    Button button = new Button("webLink","구매하러가기","https://www.pointman.shop");
-                    buttons.addButton(button);
-                    kakaoResponse.addContent(kakaoApiService.createCommerceCard("테스트상품",10000,1000,0,0,"won","https://www.pointman.shop/image/Ryan1.jpg","https://www.pointman.shop","https://www.pointman.shop","https://www.pointman.shop",buttons));
+                case "오늘의 특가 상품" :
+                    kakaoResponse.addContent(kakaoApiService.createRecommendItems());
                     break;
                 case "오늘의 메뉴" :
-                    kakaoResponse.addContent(kakaoApiService.createRecommendItems());
+                    kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다."));
                     break;
                 case "챗 GPT" :
                     kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다."));
@@ -79,7 +76,6 @@ public class KakaoRestAPI {
             }
 
         }catch (Exception e){
-            log.info("Exception:::{}",e);
             kakaoResponse.addContent(kakaoApiService.createSimpleText("챗봇에 문제가 생겼습니다. 죄송합니다."));
         }
         log.info("kakaoResponse = {}",kakaoResponse.createKakaoResponse());

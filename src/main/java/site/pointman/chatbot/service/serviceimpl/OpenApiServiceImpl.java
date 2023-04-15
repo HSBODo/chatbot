@@ -1,19 +1,22 @@
 package site.pointman.chatbot.service.serviceimpl;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
+import site.pointman.chatbot.domain.search.Search;
 import site.pointman.chatbot.domain.wearher.WeatherElementCode;
 import site.pointman.chatbot.domain.wearher.WeatherReq;
-import site.pointman.chatbot.service.WeatherApiService;
+import site.pointman.chatbot.service.OpenApiService;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 
@@ -23,17 +26,30 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Slf4j
 @Service
-public class WeatherApiServiceImpl implements WeatherApiService {
+public class OpenApiServiceImpl implements OpenApiService {
     @Value("${host.url}")
-    String hostUrl;
+    private String hostUrl;
     @Value("${weather.api.key}")
-    String weatherApiKey;
+    private String weatherApiKey;
     @Value("${weather.api.url}")
-    String weatherApiUrl;
+    private String weatherApiUrl;
 
+    @Value("${naver.api.key}")
+    private String naverApiKey;
+    @Value("${naver.api.secret}")
+    private String naverApiSecretKey;
+    private JSONParser jsonParser = new JSONParser();
     @Override
     public WeatherElementCode selectShortTermWeather(KakaoMemberLocation kakaoUserLocation) {
         WeatherElementCode response = new WeatherElementCode();
@@ -125,6 +141,100 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         }
         return response;
     }
+
+    @Override
+    public Search selectNaverSearch(String searchText, String display,String start, String sort) throws ParseException {
+        String clientId = naverApiKey; //애플리케이션 클라이언트 아이디
+        String clientSecret = naverApiSecretKey; //애플리케이션 클라이언트 시크릿
+        log.info("clientId={},clientSecret={}",clientId,clientSecret);
+
+        String text = searchText;
+        try {
+            text = URLEncoder.encode(text, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("검색어 인코딩 실패",e);
+        }
+
+        //query=%EC%A3%BC%EC%8B%9D&display=10&start=1&sort=sim
+        String apiURL = "https://openapi.naver.com/v1/search/blog?query=" + text+"&display=" + display + "&start="+start+"&sort="+sort;    // JSON 결과
+        //String apiURL = "https://openapi.naver.com/v1/search/blog.xml?query="+ text; // XML 결과
+
+
+        Map<String, String> requestHeaders = new HashMap<>();
+        requestHeaders.put("X-Naver-Client-Id", clientId);
+        requestHeaders.put("X-Naver-Client-Secret", clientSecret);
+        String responseBody = get(apiURL,requestHeaders);
+
+        JSONObject responsejsonObject = new JSONObject(responseBody);
+        JSONArray items = new JSONArray();
+        items = (JSONArray) responsejsonObject.get("items");
+        LocalDate nowDate =  LocalDate.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formatedDate = nowDate.format(dateFormatter);
+
+        Search search = new Search();
+        search.setLastBuildDate(formatedDate);
+        search.setTotal((int) responsejsonObject.get("total"));
+        search.setStart((int) responsejsonObject.get("start"));
+        search.setDisplay((int) responsejsonObject.get("display"));
+        search.setItems(items);
+        return search;
+    }
+
+    private static String get(String apiUrl, Map<String, String> requestHeaders){
+        HttpURLConnection con = connect(apiUrl);
+        try {
+            con.setRequestMethod("GET");
+            for(Map.Entry<String, String> header :requestHeaders.entrySet()) {
+                con.setRequestProperty(header.getKey(), header.getValue());
+            }
+
+
+            int responseCode = con.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) { // 정상 호출
+                return readBody(con.getInputStream());
+            } else { // 오류 발생
+                return readBody(con.getErrorStream());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("API 요청과 응답 실패", e);
+        } finally {
+            con.disconnect();
+        }
+    }
+
+    private static String readBody(InputStream body){
+        InputStreamReader streamReader = new InputStreamReader(body);
+
+
+        try (BufferedReader lineReader = new BufferedReader(streamReader)) {
+            StringBuilder responseBody = new StringBuilder();
+
+
+            String line;
+            while ((line = lineReader.readLine()) != null) {
+                responseBody.append(line);
+            }
+
+
+            return responseBody.toString();
+        } catch (IOException e) {
+            throw new RuntimeException("API 응답을 읽는 데 실패했습니다.", e);
+        }
+    }
+
+    private static HttpURLConnection connect(String apiUrl){
+        try {
+            URL url = new URL(apiUrl);
+            return (HttpURLConnection)url.openConnection();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("API URL이 잘못되었습니다. : " + apiUrl, e);
+        } catch (IOException e) {
+            throw new RuntimeException("연결이 실패했습니다. : " + apiUrl, e);
+        }
+    }
+
+
     private  WeatherElementCode getWeatherCodeMapping(Map<String, String> elementMap) {
         WeatherElementCode weatherElementCode = new WeatherElementCode();
         weatherElementCode.setBaseDate(elementMap.get("baseDate"));
@@ -143,7 +253,6 @@ public class WeatherApiServiceImpl implements WeatherApiService {
         weatherElementCode.setHostUrl(hostUrl);
         return weatherElementCode;
     }
-
     private  int currentTimeFormat (){
         // 현재 날짜
         ZonedDateTime nowUTC = ZonedDateTime.now(ZoneId.of("UTC"));

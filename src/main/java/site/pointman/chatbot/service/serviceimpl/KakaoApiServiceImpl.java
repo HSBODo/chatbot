@@ -2,18 +2,23 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.item.Item;
+import site.pointman.chatbot.domain.item.ListCardItem;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.domain.kakaochatbotui.*;
+import site.pointman.chatbot.domain.search.Search;
 import site.pointman.chatbot.domain.wearher.WeatherElementCode;
 import site.pointman.chatbot.repository.KaKaoItemRepository;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.service.KakaoApiService;
-import site.pointman.chatbot.service.WeatherApiService;
+import site.pointman.chatbot.service.OpenApiService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -24,28 +29,55 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     private BasicCard basicCard;
     private SimpleText simpleText;
     private SimpleImage simpleImage;
-    private WeatherApiService weatherApiService;
+    private OpenApiService openApiService;
     private CommerceCard commerceCard;
-    private Carousel carousel;
+    private JSONParser jsonParser = new JSONParser();
 
-    public KakaoApiServiceImpl(KaKaoItemRepository kaKaoItemRepository, KakaoMemberRepository kakaoMemberRepository, BasicCard basicCard, SimpleText simpleText, SimpleImage simpleImage, WeatherApiService weatherApiService, CommerceCard commerceCard, Carousel carousel) {
+
+    public KakaoApiServiceImpl(KaKaoItemRepository kaKaoItemRepository, KakaoMemberRepository kakaoMemberRepository, BasicCard basicCard, SimpleText simpleText, SimpleImage simpleImage, OpenApiService openApiService, CommerceCard commerceCard) {
         this.kaKaoItemRepository = kaKaoItemRepository;
         this.KakaoMemberRepository = kakaoMemberRepository;
         this.basicCard = basicCard;
         this.simpleText = simpleText;
         this.simpleImage = simpleImage;
-        this.weatherApiService = weatherApiService;
+        this.openApiService = openApiService;
         this.commerceCard = commerceCard;
-        this.carousel = carousel;
+    }
+
+    @Override
+    public JSONObject createTodayNews(String searchText) throws Exception {
+        Search search = openApiService.selectNaverSearch(searchText,"5","1","date");
+        List<ListCardItem> listCardItems = new ArrayList<>();
+        List<Button> buttons = new ArrayList<>();
+        Button button = new Button("webLink","구경가기","");
+        buttons.add(button);
+        search.getItems().forEach(item -> {
+            try {
+                JSONObject jsonObject = new JSONObject((JSONObject) jsonParser.parse(item.toString()));
+                String title =(String) jsonObject.get("title");
+                String description =(String) jsonObject.get("description");
+                log.info("title={}",title);
+                log.info("desc={}",description);
+                log.info("-----------------------------");
+                title= title.replaceAll("<(/)?([a-zA-Z]*)(\\\\s[a-zA-Z]*=[^>]*)?(\\\\s)*(/)?>","");
+                description = description.replaceAll("<(/)?([a-zA-Z]*)(\\\\s[a-zA-Z]*=[^>]*)?(\\\\s)*(/)?>","");
+                log.info("title={}",title);
+                log.info("desc={}",description);
+                ListCardItem listCardItem = new ListCardItem(title,description,"",(String)jsonObject.get("link"));
+                listCardItems.add(listCardItem);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return  createListCard(search.getLastBuildDate()+" 오늘의 뉴스",listCardItems,buttons);
     }
 
     @Override
     public JSONObject createTodayWeather(String kakaoUserkey) throws Exception {
         KakaoMemberLocation kakaoUserLocation = KakaoMemberRepository.findByLocation(kakaoUserkey).get();
-        WeatherElementCode weatherCode =  weatherApiService.selectShortTermWeather(kakaoUserLocation);
+        WeatherElementCode weatherCode =  openApiService.selectShortTermWeather(kakaoUserLocation);
         BasicCard basicCard = new BasicCard();
         Buttons buttons = new Buttons();
-
 
         JSONObject basicCardJson=basicCard.createBasicCard(
                 weatherCode.getBaseDateValue()+" 오늘의 날씨",
@@ -100,14 +132,15 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public JSONObject createRecommendItems() throws ParseException {
         List<Item> findItems = kaKaoItemRepository.findByDisplayItems();
-        carousel.setType("CommerceCard");
+        Carousel carousel = new Carousel();
+        carousel.setType("commerceCard");
         findItems.stream()
                 .forEach(item ->{
                     Buttons buttons = new Buttons();
                     Button button = new Button("webLink","구매하러가기",item.getThumbnailLink());
                     buttons.addButton(button);
                     try {
-                        carousel.addContent(commerceCard.createCommerceCard(
+                        carousel.addContent(commerceCard.createCarouselTypeCommerceCard(
                                 item.getDescription(),
                                 item.getPrice(),
                                 item.getDiscount(),
@@ -169,9 +202,21 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     }
 
     @Override
-    public JSONObject createListCard() throws ParseException {
+    public JSONObject createListCard(String title, List<ListCardItem> listCardItems, List<Button> buttonList) throws ParseException {
+        ListItem listItem= new ListItem();
+        Buttons buttons = new Buttons();
+        listCardItems.forEach(listCardItem -> {
+            try {
+                listItem.addItem(listCardItem.getItemTitle(),listCardItem.getDescription(),listCardItem.getImgUrl(),listCardItem.getWebLink());
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        buttonList.forEach(button -> {
+            buttons.addButton(button);
+        });
 
-        return null;
+        return listItem.createListItem(title,buttons.createButtons());
     }
 
 }

@@ -1,12 +1,13 @@
 package site.pointman.chatbot.domain.kakaochatbotui;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-@Getter
+@Getter  @Setter
 public class Buttons {
     private List buttons ;
 

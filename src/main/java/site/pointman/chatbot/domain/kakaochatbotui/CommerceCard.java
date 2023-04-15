@@ -32,9 +32,8 @@ public class CommerceCard  {
      buttons	        Array<Button>	    O	        다양한 액션을 수행할 수 있는 버튼입니다.	1개 이상, 3개 이하
 
      */
-
+    private JSONParser jsonParser = new JSONParser();
     public JSONObject createCommerceCard(String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, List<Map<String,String>> buttons) throws ParseException {
-        JSONParser jsonParser = new JSONParser();
         JSONArray jsonArr = new JSONArray();
         buttons.forEach(button -> {
             JSONObject jsonObj = new JSONObject();
@@ -66,6 +65,43 @@ public class CommerceCard  {
                 "          },\n" +
                 "          \"buttons\":"+jsonArr+"\n"+
                 "        }\n" +
+                "      }";
+
+
+        JSONObject resultJsonObj = (JSONObject) jsonParser.parse(resultJson);
+        return resultJsonObj;
+    }
+
+    public JSONObject createCarouselTypeCommerceCard(String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, List<Map<String,String>> buttons) throws ParseException {
+        JSONArray jsonArr = new JSONArray();
+        buttons.forEach(button -> {
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put("action", button.get("action"));
+            jsonObj.put("label", button.get("label"));
+            jsonObj.put("webLinkUrl",button.get("webLinkUrl"));
+            jsonArr.put(jsonObj);
+        });
+
+        String resultJson ="{\n" +
+                "          \"description\": \""+description+"\",\n" +
+                "          \"price\": "+price+",\n" +
+                "          \"discount\": "+discount+",\n" +
+                "          \"discountedPrice\": \""+discountedPrice+"\",\n" +
+                "          \"discountRate\": \""+discountRate+"\",\n" +
+                "          \"currency\": \""+currency+"\",\n" +
+                "          \"thumbnails\": [\n" +
+                "            {\n" +
+                "              \"imageUrl\": \""+thumbnailImgUrl+"\",\n" +
+                "              \"link\": {\n" +
+                "                \"web\": \""+thumbnailLink+"\"\n" +
+                "              }\n" +
+                "            }\n" +
+                "          ],\n" +
+                "          \"profile\": {\n" +
+                "            \"imageUrl\": \""+profileImgUrl+"\",\n" +
+                "            \"nickname\": \""+ProfileNickname+"\"\n" +
+                "          },\n" +
+                "          \"buttons\":"+jsonArr+"\n"+
                 "      }";
 
 
