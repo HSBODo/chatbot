@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
-import site.pointman.chatbot.domain.wearher.WeatherElementCode;
+import site.pointman.chatbot.dto.wearherapi.WeatherElementCode;
 
 import java.math.BigDecimal;
 

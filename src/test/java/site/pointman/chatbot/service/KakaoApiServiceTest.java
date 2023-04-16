@@ -6,52 +6,35 @@ import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import site.pointman.chatbot.domain.kakaochatbotui.*;
-import site.pointman.chatbot.domain.KakaoResponse;
-import site.pointman.chatbot.repository.KaKaoItemRepository;
-import site.pointman.chatbot.repository.KakaoMemberRepository;
-import site.pointman.chatbot.service.serviceimpl.KakaoApiServiceImpl;
+import site.pointman.chatbot.dto.kakaoui.KakaoResponse;
+import site.pointman.chatbot.dto.kakaoui.Button;
 
-import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
 class KakaoApiServiceTest {
-    @Autowired
-    private BasicCard basicCard;
-    @Autowired
-    private SimpleText simpleText;
-    @Autowired
-    private  SimpleImage simpleImage;
-    @Autowired
-    private OpenApiService weatherApiService;
-    @Autowired
-    private CommerceCard commerceCard;
+
+
+
     @Autowired
     private KakaoApiService kakaoApiService ;
-    @Autowired
-    private KakaoMemberRepository kakaoMemberRepository;
-
-    @Autowired
-    private KaKaoItemRepository kaKaoItemRepository;
 
 
 
-
-    @PostConstruct
-    void init(){
-        this.kakaoApiService = new KakaoApiServiceImpl(kaKaoItemRepository,kakaoMemberRepository,basicCard,simpleText,simpleImage,weatherApiService,commerceCard);
-    }
 
 
     @Test
     void createBasicCard() throws ParseException {
-        Buttons buttons = new Buttons();
+        List<Button> buttons = new ArrayList();
         Button button = new Button("action","laber","www.asdasd.com");
-        buttons.addButton(button);
-        JSONObject result = kakaoApiService.createBasicCard("테스트 제목", "테스트 메세지", "썸네일 url", buttons);
+        Button button2 = new Button("action1","label1","www.asdasd.com1");
+        buttons.add(button);
+        buttons.add(button2);
+        JSONObject result = kakaoApiService.createBasicCard("","테스트 제목", "테스트 메세지", "썸네일 url", buttons);
         log.info("result={}",result);
         assertThat(result).isInstanceOf(JSONObject.class);
     }
@@ -73,10 +56,11 @@ class KakaoApiServiceTest {
 
     @Test
     void createCommerceCard() throws ParseException {
-        Buttons buttons = new Buttons();
+        List<Button> buttons = new ArrayList<>();
         Button button = new Button("action","label","www.asdasd.com");
-        buttons.addButton(button);
+        buttons.add(button);
         JSONObject result = kakaoApiService.createCommerceCard(
+                "basic",
                 "desc",
                 10000,
                 1000,
@@ -134,7 +118,13 @@ class KakaoApiServiceTest {
 
     @Test
     void createListCard() throws Exception {
-//        JSONObject recommendItems = kakaoApiService.createListCard();
+//        List<ListCardItem> listCardItems = new ArrayList<>();
+//        ListCardItem listCardItem = new ListCardItem("title","desc","img","webl");
+//        listCardItems.add(listCardItem);
+//        List<Button> buttons = new ArrayList<>();
+//        Button button = new Button("ac","la","we");
+//        buttons.add(button);
+//        JSONObject recommendItems = kakaoApiService.createListCard("","테스트",listCardItems,buttons);
 //        KakaoResponse kakaoResponse = new KakaoResponse();
 //        kakaoResponse.addContent(recommendItems);
 //        log.info("result={}",kakaoResponse.createKakaoResponse());
@@ -144,7 +134,7 @@ class KakaoApiServiceTest {
     @Test
     void createTodayNews() throws Exception {
         KakaoResponse kakaoResponse = new KakaoResponse();
-        kakaoResponse.addContent(kakaoApiService.createTodayNews("토픽"));
+        kakaoResponse.addContent(kakaoApiService.createTodayNews("뉴스"));
         log.info("result={}",  kakaoResponse.createKakaoResponse()       );
     }
 }

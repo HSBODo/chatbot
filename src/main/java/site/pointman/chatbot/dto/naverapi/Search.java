@@ -1,4 +1,4 @@
-package site.pointman.chatbot.domain.search;
+package site.pointman.chatbot.dto.naverapi;
 
 import lombok.Getter;
 import lombok.Setter;

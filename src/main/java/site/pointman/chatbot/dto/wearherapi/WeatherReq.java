@@ -1,8 +1,7 @@
-package site.pointman.chatbot.domain.wearher;
+package site.pointman.chatbot.dto.wearherapi;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 
 @Getter

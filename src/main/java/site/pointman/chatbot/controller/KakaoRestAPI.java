@@ -9,13 +9,10 @@ import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import site.pointman.chatbot.domain.KakaoResponse;
-import site.pointman.chatbot.domain.kakaochatbotui.Button;
-import site.pointman.chatbot.domain.kakaochatbotui.Buttons;
+import site.pointman.chatbot.dto.kakaoui.KakaoResponse;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
-import site.pointman.chatbot.domain.KakaoRequest;
-import site.pointman.chatbot.repository.KakaoMemberRepository;
+import site.pointman.chatbot.dto.kakaoui.KakaoRequest;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.MemberService;
 
@@ -57,7 +54,7 @@ public class KakaoRestAPI {
                     kakaoResponse.addContent(kakaoApiService.createLocationNotice(kakaoUserkey));
                     break;
                 case "오늘의 뉴스" :
-                    kakaoResponse.addContent(kakaoApiService.createTodayNews("경제"));
+                    kakaoResponse.addContent(kakaoApiService.createTodayNews("뉴스"));
                     break;
                 case "오늘의 특가 상품" :
                     kakaoResponse.addContent(kakaoApiService.createRecommendItems());

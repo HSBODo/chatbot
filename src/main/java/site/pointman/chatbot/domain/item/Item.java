@@ -2,8 +2,7 @@ package site.pointman.chatbot.domain.item;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import site.pointman.chatbot.domain.member.BaseEntity;
+import site.pointman.chatbot.domain.BaseEntity;
 
 import javax.persistence.*;
 

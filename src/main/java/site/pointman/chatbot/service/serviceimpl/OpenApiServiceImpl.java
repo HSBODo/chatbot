@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 
 
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
-import site.pointman.chatbot.domain.search.Search;
-import site.pointman.chatbot.domain.wearher.WeatherElementCode;
-import site.pointman.chatbot.domain.wearher.WeatherReq;
+import site.pointman.chatbot.dto.naverapi.Search;
+import site.pointman.chatbot.dto.wearherapi.WeatherElementCode;
+import site.pointman.chatbot.dto.wearherapi.WeatherReq;
 import site.pointman.chatbot.service.OpenApiService;
 
 import java.io.BufferedReader;
@@ -24,13 +24,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,7 +78,6 @@ public class OpenApiServiceImpl implements OpenApiService {
             }else {
                 basTime = "2300";
             }
-            log.info("weatherApiKey={}",weatherApiKey);
             weatherReq.setServiceKey(weatherApiKey);
             weatherReq.setNumOfRows("12");
             weatherReq.setPageNo("1");
@@ -92,55 +87,43 @@ public class OpenApiServiceImpl implements OpenApiService {
             weatherReq.setNx(x.toString());
             weatherReq.setNy(y.toString());
 
-            StringBuilder urlBuilder = new StringBuilder(weatherApiUrl); /*URL*/
-            urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "="+weatherReq.getServiceKey()); /*Service Key*/
-            urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode(weatherReq.getPageNo(), "UTF-8")); /*페이지번호*/
-            urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode(weatherReq.getNumOfRows(), "UTF-8")); /*한 페이지 결과 수*/
-            urlBuilder.append("&" + URLEncoder.encode("dataType","UTF-8") + "=" + URLEncoder.encode(weatherReq.getDataType(), "UTF-8")); /*요청자료형식(XML/JSON) Default: XML*/
-            urlBuilder.append("&" + URLEncoder.encode("base_date","UTF-8") + "=" + URLEncoder.encode(weatherReq.getBase_date(), "UTF-8")); /*‘21년 6월 28일발표*/
-            urlBuilder.append("&" + URLEncoder.encode("base_time","UTF-8") + "=" + URLEncoder.encode(weatherReq.getBase_time(), "UTF-8")); /*05시 발표*/
-            urlBuilder.append("&" + URLEncoder.encode("nx","UTF-8") + "=" + URLEncoder.encode(weatherReq.getNx(), "UTF-8")); /*예보지점의 X 좌표값*/
-            urlBuilder.append("&" + URLEncoder.encode("ny","UTF-8") + "=" + URLEncoder.encode(weatherReq.getNy(), "UTF-8")); /*예보지점의 Y 좌표값*/
-            URL url = new URL(urlBuilder.toString());
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Content-type", "application/json");
-            BufferedReader rd;
-            if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
-                rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            } else {
-                rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-            }
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = rd.readLine()) != null) {
-                sb.append(line);
-            }
-            log.info("weatherAPI response = {} ",sb);
-            rd.close();
-            conn.disconnect();
+            String serviceKey = weatherReq.getServiceKey();
+            String numOfRows = getStringEncoded(weatherReq.getNumOfRows());
+            String pageNo = getStringEncoded(weatherReq.getPageNo());
+            String dataType = getStringEncoded(weatherReq.getDataType());
+            String base_date = getStringEncoded(weatherReq.getBase_date());
+            String base_time = getStringEncoded(weatherReq.getBase_time());
+            String nx = getStringEncoded(weatherReq.getNx());
+            String ny = getStringEncoded(weatherReq.getNy());
 
-            JSONObject jsonObject = new JSONObject(sb.toString());
-            JSONObject jsonResponse = jsonObject.getJSONObject("response");
+            String apiURL = weatherApiUrl+"?serviceKey=" + serviceKey+"&pageNo=" + pageNo + "&numOfRows="+numOfRows+"&dataType="+dataType+"&base_date="+base_date+"&base_time="+base_time+"&nx="+nx+"&ny="+ny;    // JSON 결과
+
+
+            Map<String, String> requestHeaders = new HashMap<>();
+            requestHeaders.put("Content-type", "application/json");
+            String responseBody = get(apiURL,requestHeaders);
+
+            JSONObject responsejsonObject = new JSONObject(responseBody);
+            log.info("responsejsonObject={}",responsejsonObject);
+            JSONObject jsonResponse = responsejsonObject.getJSONObject("response");
             JSONObject jsonHeader =  jsonResponse.getJSONObject("header");
             JSONObject jsonBody =  jsonResponse.getJSONObject("body");
-            JSONObject jsonItems =  jsonBody.getJSONObject("items");
-            JSONArray  jsonArray = jsonItems.optJSONArray("item");
-
+            JSONObject jsonItems = jsonBody.getJSONObject("items");
+            JSONArray  jsonItemList = jsonItems.getJSONArray("item");
             Map<String,String> elementMap = new HashMap<>();
             elementMap.put("baseDate",formatedDate);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject element = (JSONObject) jsonArray.opt(i);
+            for (int i = 0; i < jsonItemList.length(); i++) {
+                JSONObject element = (JSONObject) jsonItemList.opt(i);
                 elementMap.put(element.optString("category"),element.optString("fcstValue"));
             }
-
             response = getWeatherCodeMapping(elementMap);
-            log.info("re={}",response);
         } catch ( Exception e) {
-            log.info("e={}",e);
+            throw new IllegalArgumentException("날씨 api 실패");
         }
         return response;
     }
+
+
 
     @Override
     public Search selectNaverSearch(String searchText, String display,String start, String sort) throws ParseException {
@@ -149,11 +132,7 @@ public class OpenApiServiceImpl implements OpenApiService {
         log.info("clientId={},clientSecret={}",clientId,clientSecret);
 
         String text = searchText;
-        try {
-            text = URLEncoder.encode(text, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("검색어 인코딩 실패",e);
-        }
+        text = getStringEncoded(text);
 
         //query=%EC%A3%BC%EC%8B%9D&display=10&start=1&sort=sim
         String apiURL = "https://openapi.naver.com/v1/search/blog?query=" + text+"&display=" + display + "&start="+start+"&sort="+sort;    // JSON 결과
@@ -166,6 +145,7 @@ public class OpenApiServiceImpl implements OpenApiService {
         String responseBody = get(apiURL,requestHeaders);
 
         JSONObject responsejsonObject = new JSONObject(responseBody);
+
         JSONArray items = new JSONArray();
         items = (JSONArray) responsejsonObject.get("items");
         LocalDate nowDate =  LocalDate.now();
@@ -233,7 +213,14 @@ public class OpenApiServiceImpl implements OpenApiService {
             throw new RuntimeException("연결이 실패했습니다. : " + apiUrl, e);
         }
     }
-
+    private static String getStringEncoded(String text) {
+        try {
+            text = URLEncoder.encode(text, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("검색어 인코딩 실패",e);
+        }
+        return text;
+    }
 
     private  WeatherElementCode getWeatherCodeMapping(Map<String, String> elementMap) {
         WeatherElementCode weatherElementCode = new WeatherElementCode();

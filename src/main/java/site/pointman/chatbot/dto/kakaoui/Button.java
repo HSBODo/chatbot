@@ -1,4 +1,4 @@
-package site.pointman.chatbot.domain.kakaochatbotui;
+package site.pointman.chatbot.dto.kakaoui;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
