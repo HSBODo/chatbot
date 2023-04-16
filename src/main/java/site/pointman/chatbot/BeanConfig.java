@@ -3,8 +3,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import site.pointman.chatbot.repository.KaKaoItemRepository;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
+import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.impl.JpaKaKaoItemRepositoryImpl;
 import site.pointman.chatbot.repository.impl.JpaKakaoMemberRepositoryImpl;
+import site.pointman.chatbot.repository.impl.JpaMemberRepositoryImpl;
 
 import javax.persistence.EntityManager;
 
@@ -26,6 +28,9 @@ public class BeanConfig {
     @Bean
     public KaKaoItemRepository kaKaoItemRepository (){
         return  new JpaKaKaoItemRepositoryImpl(em);
+    }
+    @Bean
+    public MemberRepository memberRepository(){return new JpaMemberRepositoryImpl(em);
     }
 
 }

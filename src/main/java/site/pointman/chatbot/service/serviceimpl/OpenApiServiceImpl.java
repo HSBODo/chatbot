@@ -36,6 +36,7 @@ import java.util.Map;
 public class OpenApiServiceImpl implements OpenApiService {
     @Value("${host.url}")
     private String hostUrl;
+
     @Value("${weather.api.key}")
     private String weatherApiKey;
     @Value("${weather.api.url}")
@@ -46,6 +47,7 @@ public class OpenApiServiceImpl implements OpenApiService {
     @Value("${naver.api.secret}")
     private String naverApiSecretKey;
     private JSONParser jsonParser = new JSONParser();
+
     @Override
     public WeatherElementCode selectShortTermWeather(KakaoMemberLocation kakaoUserLocation) {
         WeatherElementCode response = new WeatherElementCode();
@@ -98,7 +100,6 @@ public class OpenApiServiceImpl implements OpenApiService {
 
             String apiURL = weatherApiUrl+"?serviceKey=" + serviceKey+"&pageNo=" + pageNo + "&numOfRows="+numOfRows+"&dataType="+dataType+"&base_date="+base_date+"&base_time="+base_time+"&nx="+nx+"&ny="+ny;    // JSON 결과
 
-
             Map<String, String> requestHeaders = new HashMap<>();
             requestHeaders.put("Content-type", "application/json");
             String responseBody = get(apiURL,requestHeaders);
@@ -122,8 +123,6 @@ public class OpenApiServiceImpl implements OpenApiService {
         }
         return response;
     }
-
-
 
     @Override
     public Search selectNaverSearch(String searchText, String display,String start, String sort) throws ParseException {
