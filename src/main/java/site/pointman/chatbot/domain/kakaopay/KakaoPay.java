@@ -17,9 +17,9 @@ import javax.validation.constraints.NotEmpty;
 public class KakaoPay extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idx ;
-    @Id
+
     private String tid;
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
     private Long order_id;
 
     private String payment_method_type;
@@ -30,7 +30,7 @@ public class KakaoPay extends BaseEntity {
     private String partner_order_id;
     private String partner_user_id;
     private String item_name;
-    private String item_code;
+    private Long item_code;
     private int quantity;
     private int total_amount;
     private int tax_free_amount;

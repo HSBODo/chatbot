@@ -9,6 +9,7 @@ import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.dto.wearherapi.WeatherPropertyCode;
 
 import java.math.BigDecimal;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
@@ -32,6 +33,7 @@ class OpenApiServiceTest {
 
     @Test
     void kakaoPayReady() throws Exception {
+       log.info("test={}", ThreadLocalRandom.current().nextInt(100000000,999999999));
         //openApiService.kakaoPayReady();
     }
 

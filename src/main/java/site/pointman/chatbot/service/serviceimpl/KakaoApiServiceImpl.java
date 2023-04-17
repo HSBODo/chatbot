@@ -135,14 +135,16 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         );
     }
     @Override
-    public JSONObject createRecommendItems() throws ParseException {
+    public JSONObject createRecommendItems(String kakaoUserkey) throws ParseException {
         List<Item> findItems = kaKaoItemRepository.findByDisplayItems();
         List items = new ArrayList<>();
         findItems.stream()
                 .forEach(item ->{
                     List<Button>buttons= new ArrayList<>();
                     Button button = new Button("webLink","구매하러가기",item.getThumbnailLink());
+                    Button button1 = new Button("webLink","카카오페이 결제","https://www.pointman.shop/kakaochat/v1/kakaopay-ready?itemcode="+item.getItemCode()+"&kakaouserkey="+kakaoUserkey);
                     buttons.add(button);
+                    buttons.add(button1);
                     try {
                         JSONObject commerceCard = createCommerceCard(
                                 "carousel",

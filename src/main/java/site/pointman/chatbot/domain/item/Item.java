@@ -15,7 +15,7 @@ public class Item extends BaseEntity {
     private Long idx ;
     @Id
     @Column(name = "item_code")
-    private int itemCode;
+    private Long itemCode;
     private String description; //최대 40자
     private String thumbnailImgUrl;
     private String thumbnailLink;

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
+import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.domain.kakaopay.KakaoPay;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.dto.kakaopay.KakaoPayReady;
@@ -21,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 
 import java.net.URL;
@@ -33,6 +35,7 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 @Slf4j
@@ -50,6 +53,18 @@ public class OpenApiServiceImpl implements OpenApiService {
     private String naverApiKey;
     @Value("${naver.api.secret}")
     private String naverApiSecretKey;
+
+    @Value("${kakao.pay.cid}")
+    private String cid;
+    @Value("${kakao.pay.approval_url}")
+    private String approval_url;
+    @Value("${kakao.pay.fail_url}")
+    private String fail_url;
+    @Value("${kakao.pay.cancel_url}")
+    private String cancel_url;
+    @Value("${kakao.admin.key}")
+    private String kakaoAdminKey;
+
     private JSONParser jsonParser = new JSONParser();
 
     public OpenApiServiceImpl(KaKaoItemRepository kaKaoItemRepository) {
@@ -140,7 +155,6 @@ public class OpenApiServiceImpl implements OpenApiService {
     public Search selectNaverSearch(String searchText, String display,String start, String sort) throws ParseException {
         String clientId = naverApiKey; //애플리케이션 클라이언트 아이디
         String clientSecret = naverApiSecretKey; //애플리케이션 클라이언트 시크릿
-        log.info("clientId={},clientSecret={}",clientId,clientSecret);
 
         String text = searchText;
         text = getStringEncoded(text);
@@ -172,29 +186,50 @@ public class OpenApiServiceImpl implements OpenApiService {
         return search;
     }
 
+    @Override
+    public KakaoPayReady createKakaoPayReady(Long itemCode,String kakaoUserkey) throws Exception{
+        Item findItem = kaKaoItemRepository.findByItem(itemCode);
+        KakaoPayReady kakaoPayReady = new KakaoPayReady(
+                kakaoUserkey,
+                cid,
+                "partner_order_id",
+                "partner_user_id",
+                findItem.getProfileNickname(),
+                1,
+                findItem.getDiscountedPrice(),
+                0,
+                0,
+                approval_url,
+                fail_url,
+                cancel_url,
+                findItem.getItemCode());
+        return kakaoPayReady;
+    }
 
     @Override
     public KakaoPay kakaoPayReady(KakaoPayReady kakaoPayReady) throws Exception {
 
+        Long orderId = createOrderId();
+        String itemName= kakaoPayReady.getItem_name().replaceAll(" ","");
         String apiURL = "https://kapi.kakao.com/v1/payment/ready";    // JSON 결과
         StringBuilder urlBuilder = new StringBuilder(apiURL); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("cid","UTF-8") + "="+kakaoPayReady.getCid());
         urlBuilder.append("&" + URLEncoder.encode("partner_order_id","UTF-8") + "="+kakaoPayReady.getPartner_order_id());
         urlBuilder.append("&" + URLEncoder.encode("partner_user_id","UTF-8") + "="+kakaoPayReady.getPartner_user_id());
-        urlBuilder.append("&" + URLEncoder.encode("item_name","UTF-8") + "="+kakaoPayReady.getItem_name());
+        urlBuilder.append("&" + URLEncoder.encode("item_name","UTF-8") + "="+itemName);
         urlBuilder.append("&" + URLEncoder.encode("quantity","UTF-8") + "="+kakaoPayReady.getQuantity());
         urlBuilder.append("&" + URLEncoder.encode("total_amount","UTF-8") + "="+kakaoPayReady.getTotal_amount());
         urlBuilder.append("&" + URLEncoder.encode("vat_amount","UTF-8") + "="+kakaoPayReady.getVat_amount());
         urlBuilder.append("&" + URLEncoder.encode("tax_free_amount","UTF-8") + "="+kakaoPayReady.getTax_free_amount());
-        urlBuilder.append("&" + URLEncoder.encode("approval_url","UTF-8") + "="+"https://www.pointman.shop/kakaochat/v1/"+kakaoPayReady.getKakaoUserkey()+"/kakaopay-approve");
+        urlBuilder.append("&" + URLEncoder.encode("approval_url","UTF-8") + "="+"https://www.pointman.shop/kakaochat/v1/"+orderId+"/kakaopay-approve");
         urlBuilder.append("&" + URLEncoder.encode("fail_url","UTF-8") + "="+kakaoPayReady.getFail_url());
         urlBuilder.append("&" + URLEncoder.encode("cancel_url","UTF-8") + "="+kakaoPayReady.getCancel_url());
-
+        log.info("kakaoPayReady={}",urlBuilder);
         Map<String, String> requestHeaders = new HashMap<>();
-        requestHeaders.put("Authorization", "KakaoAK 999c444140ed5c2f49c0f197048fea34");
+        requestHeaders.put("Authorization", "KakaoAK "+kakaoAdminKey);
         requestHeaders.put("Content-Type", "application/x-www-form-urlencoded");
         String responseBody = post(String.valueOf(urlBuilder),requestHeaders);
-
+        log.info("responseBody={}",responseBody);
         JSONObject responsejsonObject = new JSONObject(responseBody);
         KakaoPay kakaoPay= new KakaoPay();
         kakaoPay.setKakao_userkey(kakaoPayReady.getKakaoUserkey());
@@ -214,13 +249,16 @@ public class OpenApiServiceImpl implements OpenApiService {
         kakaoPay.setNext_redirect_mobile_url(responsejsonObject.getString("next_redirect_mobile_url"));
         kakaoPay.setNext_redirect_app_url(responsejsonObject.getString("next_redirect_app_url"));
         kakaoPay.setNext_redirect_pc_url(responsejsonObject.getString("next_redirect_pc_url"));
+        kakaoPay.setOrder_id(orderId);
         return kaKaoItemRepository.savePayReady(kakaoPay);
+    }
+    public static Long createOrderId(){
+      return  Long.parseLong(String.valueOf(ThreadLocalRandom.current().nextInt(100000000,999999999)));
     }
 
     @Override
-    public KakaoPayReady kakaoPayApprove(String pg_token ,String kakaoUserkey) throws Exception {
-        KakaoPay kakaoPay = kaKaoItemRepository.findByReadyOrder(kakaoUserkey).get();
-        log.info("kakaoPay={}",kakaoPay.getTid());
+    public KakaoPayReady kakaoPayApprove(String pg_token ,Long orderId) throws Exception {
+        KakaoPay kakaoPay = kaKaoItemRepository.findByReadyOrder(orderId).get();
         String apiURL = "https://kapi.kakao.com/v1/payment/approve";    // JSON 결과
         StringBuilder urlBuilder = new StringBuilder(apiURL); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("cid","UTF-8") + "="+"TC0ONETIME");
@@ -232,7 +270,7 @@ public class OpenApiServiceImpl implements OpenApiService {
         urlBuilder.append("&" + URLEncoder.encode("total_amount","UTF-8") + "="+kakaoPay.getTotal_amount());
 
         Map<String, String> requestHeaders = new HashMap<>();
-        requestHeaders.put("Authorization", "KakaoAK 999c444140ed5c2f49c0f197048fea34");
+        requestHeaders.put("Authorization", "KakaoAK "+kakaoAdminKey);
         requestHeaders.put("Content-Type", "application/x-www-form-urlencoded");
         String responseBody = post(String.valueOf(urlBuilder),requestHeaders);
 

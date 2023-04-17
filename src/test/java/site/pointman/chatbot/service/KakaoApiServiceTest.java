@@ -109,7 +109,8 @@ class KakaoApiServiceTest {
 
     @Test
     void createRecommendItems() throws Exception {
-        JSONObject recommendItems = kakaoApiService.createRecommendItems();
+        String kakaoUserkey= "QFERwysZbO77";
+        JSONObject recommendItems = kakaoApiService.createRecommendItems(kakaoUserkey);
         KakaoResponse kakaoResponse = new KakaoResponse();
         kakaoResponse.addContent(recommendItems);
         log.info("result={}",kakaoResponse.createKakaoResponse());

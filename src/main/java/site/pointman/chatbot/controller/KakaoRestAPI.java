@@ -27,7 +27,6 @@ import java.util.*;
 public class KakaoRestAPI {
     private KakaoApiService kakaoApiService;
     private MemberService memberService;
-
     private OpenApiService openApiService;
 
     public KakaoRestAPI(KakaoApiService kakaoApiService, MemberService memberService, OpenApiService openApiService) {
@@ -62,9 +61,9 @@ public class KakaoRestAPI {
                     kakaoResponse.addContent(kakaoApiService.createTodayNews("뉴스"));
                     break;
                 case "오늘의 특가 상품" :
-                    kakaoResponse.addContent(kakaoApiService.createRecommendItems());
+                    kakaoResponse.addContent(kakaoApiService.createRecommendItems(kakaoUserkey));
                     break;
-                case "오늘의 메뉴" :
+                case "주문 조회" :
                     kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다."));
                     break;
                 case "챗 GPT" :
@@ -107,20 +106,34 @@ public class KakaoRestAPI {
     }
 
     @GetMapping(value = "kakaopay-ready")
-    public String kakaoPayReady(Model model) throws Exception{
-        KakaoPayReady kakaoPayReady = new KakaoPayReady();
-        String kakaoUserkey="QFERwysZbO77";
-        kakaoPayReady.setKakaoUserkey(kakaoUserkey);
-        KakaoPay kakaoPay = openApiService.kakaoPayReady(kakaoPayReady);
-        return "redirect:"+ kakaoPay.getNext_redirect_pc_url();
+    public String kakaoPayReady(@RequestParam Long itemcode,@RequestParam String kakaouserkey) throws Exception{
+        log.info("itemcode={}",itemcode);
+        log.info("kakaouserkey={}",kakaouserkey);
+        String redirectUrl="https://plus.kakao.com/talk/bot/@pointman_dev/결제실패";
+        try {
+            KakaoPayReady kakaoPayReady = openApiService.createKakaoPayReady(itemcode, kakaouserkey);
+            KakaoPay kakaoPay = openApiService.kakaoPayReady(kakaoPayReady);
+            redirectUrl=kakaoPay.getNext_redirect_mobile_url();
+            log.info("kakaopay-ready success ={}",redirectUrl);
+        }catch (Exception e){
+            log.info("e={}",e.toString());
+            log.info("kakaopay-ready fail ={}",redirectUrl);
+            return "redirect:"+redirectUrl;
+        }
+        return "redirect:"+redirectUrl;
     }
-    @ResponseBody
-    @GetMapping(value = "/{kakaoUserkey}/kakaopay-approve")
-    public String kakaoPayApprove (@PathVariable String kakaoUserkey, String pg_token) throws Exception{
-        log.info("pg_token={}",pg_token);
-        log.info("kakaoUserkey={}",kakaoUserkey);
-        KakaoPayReady kakaoReady = openApiService.kakaoPayApprove(pg_token,kakaoUserkey);
-        return "";
+    @GetMapping(value = "/{orderId}/kakaopay-approve")
+    public String kakaoPayApprove (@PathVariable Long orderId, String pg_token) {
+        try {
+            log.info("pg_token={}",pg_token);
+            log.info("orderId={}",orderId);
+            openApiService.kakaoPayApprove(pg_token,orderId);
+            log.info("kakaopay-approve success");
+        }catch (Exception e){
+            log.info("kakaopay-approve fail");
+            return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/결제 실패";
+        }
+        return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/결제 완료";
     }
     @GetMapping(value = "location-notice")
     public String locationNotice(){

@@ -14,7 +14,9 @@ public interface OpenApiService {
     WeatherPropertyCode selectShortTermWeather (KakaoMemberLocation kakaoUserLocation);
     Search selectNaverSearch(String searchText, String display,String start, String sort) throws ParseException;
 
+    KakaoPayReady createKakaoPayReady(Long itemCode,String kakaoUserkey)throws Exception;
+
     KakaoPay kakaoPayReady(KakaoPayReady kakaoPayReady) throws Exception;
 
-    KakaoPayReady kakaoPayApprove(String pg_token, String kakaoUserkey) throws Exception;
+    KakaoPayReady kakaoPayApprove(String pg_token, Long orderId) throws Exception;
 }
