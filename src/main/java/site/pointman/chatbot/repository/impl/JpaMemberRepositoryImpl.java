@@ -1,7 +1,6 @@
 package site.pointman.chatbot.repository.impl;
 
-import site.pointman.chatbot.domain.item.Item;
-import site.pointman.chatbot.domain.member.KakaoMember;
+
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.repository.MemberRepository;
 

@@ -10,7 +10,7 @@ import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.dto.kakaoui.ListCardItem;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.dto.naverapi.Search;
-import site.pointman.chatbot.dto.wearherapi.WeatherElementCode;
+import site.pointman.chatbot.dto.wearherapi.WeatherPropertyCode;
 import site.pointman.chatbot.dto.kakaoui.Button;
 import site.pointman.chatbot.repository.KaKaoItemRepository;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
@@ -80,7 +80,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public JSONObject createTodayWeather(String kakaoUserkey) throws Exception {
         KakaoMemberLocation kakaoUserLocation = KakaoMemberRepository.findByLocation(kakaoUserkey).get();
-        WeatherElementCode weatherCode =  openApiService.selectShortTermWeather(kakaoUserLocation);
+        WeatherPropertyCode weatherCode =  openApiService.selectShortTermWeather(kakaoUserLocation);
         List buttonList = new ArrayList<Button>();
 
         return  createBasicCard("basic",
@@ -173,7 +173,6 @@ public class KakaoApiServiceImpl implements KakaoApiService {
          이름	타입	        필수 여부	설명	제한
          text	string	        O	    전달하고자 하는 텍스트입니다	1000자
          */
-
         String resultJson ="{\n" +
                 "               \"simpleText\": {\n" +
                 "                   \"text\": \""+msg+"\",\n" +

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
-import site.pointman.chatbot.dto.wearherapi.WeatherElementCode;
+import site.pointman.chatbot.dto.wearherapi.WeatherPropertyCode;
 
 import java.math.BigDecimal;
 
@@ -21,13 +21,19 @@ class OpenApiServiceTest {
         KakaoMemberLocation kakaoMemberLocation= new KakaoMemberLocation();
         kakaoMemberLocation.setX(BigDecimal.valueOf(37.4603776));
         kakaoMemberLocation.setY(BigDecimal.valueOf(126.8187136));
-        WeatherElementCode result = openApiService.selectShortTermWeather(kakaoMemberLocation);
+        WeatherPropertyCode result = openApiService.selectShortTermWeather(kakaoMemberLocation);
         log.info("result = {}",result.toString());
-        assertInstanceOf(WeatherElementCode.class,result);
+        assertInstanceOf(WeatherPropertyCode.class,result);
    }
    @Test
     void selectNaverSearch() throws ParseException {
        openApiService.selectNaverSearch("뉴스","5","1","date");
     }
+
+    @Test
+    void kakaoPayReady() throws Exception {
+        //openApiService.kakaoPayReady();
+    }
+
 
 }

@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
+import site.pointman.chatbot.domain.kakaopay.KakaoPay;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
+import site.pointman.chatbot.dto.kakaopay.KakaoPayReady;
 import site.pointman.chatbot.dto.naverapi.Search;
-import site.pointman.chatbot.dto.wearherapi.WeatherElementCode;
+import site.pointman.chatbot.dto.wearherapi.WeatherPropertyCode;
 import site.pointman.chatbot.dto.wearherapi.WeatherReq;
+import site.pointman.chatbot.repository.KaKaoItemRepository;
 import site.pointman.chatbot.service.OpenApiService;
 
 import java.io.BufferedReader;
@@ -29,34 +32,42 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Slf4j
 @Service
 public class OpenApiServiceImpl implements OpenApiService {
+
+    private KaKaoItemRepository kaKaoItemRepository;
     @Value("${host.url}")
     private String hostUrl;
-
     @Value("${weather.api.key}")
     private String weatherApiKey;
     @Value("${weather.api.url}")
     private String weatherApiUrl;
-
     @Value("${naver.api.key}")
     private String naverApiKey;
     @Value("${naver.api.secret}")
     private String naverApiSecretKey;
     private JSONParser jsonParser = new JSONParser();
 
+    public OpenApiServiceImpl(KaKaoItemRepository kaKaoItemRepository) {
+        this.kaKaoItemRepository = kaKaoItemRepository;
+    }
+
     @Override
-    public WeatherElementCode selectShortTermWeather(KakaoMemberLocation kakaoUserLocation) {
-        WeatherElementCode response = new WeatherElementCode();
+    public WeatherPropertyCode selectShortTermWeather(KakaoMemberLocation kakaoUserLocation) {
+        WeatherPropertyCode response = new WeatherPropertyCode();
         try {
             convertGRID_GPS(kakaoUserLocation,0);
+
             BigDecimal x = kakaoUserLocation.getX();
             BigDecimal y = kakaoUserLocation.getY();
             log.info("convertX = {}, convertY = {}",x,y);
+
             WeatherReq weatherReq = new WeatherReq();
+
             int formatedTime = currentTimeFormat();
             String formatedDate = currentDateFormat(formatedTime);
 
@@ -80,23 +91,23 @@ public class OpenApiServiceImpl implements OpenApiService {
             }else {
                 basTime = "2300";
             }
-            weatherReq.setServiceKey(weatherApiKey);
-            weatherReq.setNumOfRows("12");
-            weatherReq.setPageNo("1");
-            weatherReq.setDataType("JSON");
-            weatherReq.setBase_date(formatedDate);
-            weatherReq.setBase_time(basTime);
-            weatherReq.setNx(x.toString());
-            weatherReq.setNy(y.toString());
+//            weatherReq.setServiceKey(weatherApiKey);
+//            weatherReq.setNumOfRows("12");
+//            weatherReq.setPageNo("1");
+//            weatherReq.setDataType("JSON");
+//            weatherReq.setBase_date(formatedDate);
+//            weatherReq.setBase_time(basTime);
+//            weatherReq.setNx(x.toString());
+//            weatherReq.setNy(y.toString());
 
-            String serviceKey = weatherReq.getServiceKey();
-            String numOfRows = getStringEncoded(weatherReq.getNumOfRows());
-            String pageNo = getStringEncoded(weatherReq.getPageNo());
-            String dataType = getStringEncoded(weatherReq.getDataType());
-            String base_date = getStringEncoded(weatherReq.getBase_date());
-            String base_time = getStringEncoded(weatherReq.getBase_time());
-            String nx = getStringEncoded(weatherReq.getNx());
-            String ny = getStringEncoded(weatherReq.getNy());
+            String serviceKey = weatherApiKey;
+            String numOfRows = getStringEncoded("12");
+            String pageNo = getStringEncoded("1");
+            String dataType = getStringEncoded("JSON");
+            String base_date = getStringEncoded(formatedDate);
+            String base_time = getStringEncoded(basTime);
+            String nx = getStringEncoded(x.toString());
+            String ny = getStringEncoded(y.toString());
 
             String apiURL = weatherApiUrl+"?serviceKey=" + serviceKey+"&pageNo=" + pageNo + "&numOfRows="+numOfRows+"&dataType="+dataType+"&base_date="+base_date+"&base_time="+base_time+"&nx="+nx+"&ny="+ny;    // JSON 결과
 
@@ -111,13 +122,14 @@ public class OpenApiServiceImpl implements OpenApiService {
             JSONObject jsonBody =  jsonResponse.getJSONObject("body");
             JSONObject jsonItems = jsonBody.getJSONObject("items");
             JSONArray  jsonItemList = jsonItems.getJSONArray("item");
-            Map<String,String> elementMap = new HashMap<>();
-            elementMap.put("baseDate",formatedDate);
+
+            Map<String,String> responsePropertys = new HashMap<>();
+            responsePropertys.put("baseDate",formatedDate);
             for (int i = 0; i < jsonItemList.length(); i++) {
                 JSONObject element = (JSONObject) jsonItemList.opt(i);
-                elementMap.put(element.optString("category"),element.optString("fcstValue"));
+                responsePropertys.put(element.optString("category"),element.optString("fcstValue"));
             }
-            response = getWeatherCodeMapping(elementMap);
+            response = getWeatherCodeMapping(responsePropertys);
         } catch ( Exception e) {
             throw new IllegalArgumentException("날씨 api 실패");
         }
@@ -158,6 +170,100 @@ public class OpenApiServiceImpl implements OpenApiService {
         search.setDisplay((int) responsejsonObject.get("display"));
         search.setItems(items);
         return search;
+    }
+
+
+    @Override
+    public KakaoPay kakaoPayReady(KakaoPayReady kakaoPayReady) throws Exception {
+
+        String apiURL = "https://kapi.kakao.com/v1/payment/ready";    // JSON 결과
+        StringBuilder urlBuilder = new StringBuilder(apiURL); /*URL*/
+        urlBuilder.append("?" + URLEncoder.encode("cid","UTF-8") + "="+kakaoPayReady.getCid());
+        urlBuilder.append("&" + URLEncoder.encode("partner_order_id","UTF-8") + "="+kakaoPayReady.getPartner_order_id());
+        urlBuilder.append("&" + URLEncoder.encode("partner_user_id","UTF-8") + "="+kakaoPayReady.getPartner_user_id());
+        urlBuilder.append("&" + URLEncoder.encode("item_name","UTF-8") + "="+kakaoPayReady.getItem_name());
+        urlBuilder.append("&" + URLEncoder.encode("quantity","UTF-8") + "="+kakaoPayReady.getQuantity());
+        urlBuilder.append("&" + URLEncoder.encode("total_amount","UTF-8") + "="+kakaoPayReady.getTotal_amount());
+        urlBuilder.append("&" + URLEncoder.encode("vat_amount","UTF-8") + "="+kakaoPayReady.getVat_amount());
+        urlBuilder.append("&" + URLEncoder.encode("tax_free_amount","UTF-8") + "="+kakaoPayReady.getTax_free_amount());
+        urlBuilder.append("&" + URLEncoder.encode("approval_url","UTF-8") + "="+"https://www.pointman.shop/kakaochat/v1/"+kakaoPayReady.getKakaoUserkey()+"/kakaopay-approve");
+        urlBuilder.append("&" + URLEncoder.encode("fail_url","UTF-8") + "="+kakaoPayReady.getFail_url());
+        urlBuilder.append("&" + URLEncoder.encode("cancel_url","UTF-8") + "="+kakaoPayReady.getCancel_url());
+
+        Map<String, String> requestHeaders = new HashMap<>();
+        requestHeaders.put("Authorization", "KakaoAK 999c444140ed5c2f49c0f197048fea34");
+        requestHeaders.put("Content-Type", "application/x-www-form-urlencoded");
+        String responseBody = post(String.valueOf(urlBuilder),requestHeaders);
+
+        JSONObject responsejsonObject = new JSONObject(responseBody);
+        KakaoPay kakaoPay= new KakaoPay();
+        kakaoPay.setKakao_userkey(kakaoPayReady.getKakaoUserkey());
+        kakaoPay.setTid(responsejsonObject.getString("tid"));
+        kakaoPay.setCid(responsejsonObject.getString("created_at"));
+        kakaoPay.setItem_name(kakaoPayReady.getItem_name());
+        kakaoPay.setItem_code(kakaoPayReady.getItem_code());
+        kakaoPay.setQuantity(kakaoPayReady.getQuantity());
+        kakaoPay.setStatus("ready");
+        kakaoPay.setTax_free_amount(kakaoPayReady.getTax_free_amount());
+        kakaoPay.setTotal_amount(kakaoPayReady.getTotal_amount());
+        kakaoPay.setVat_amount(kakaoPayReady.getVat_amount());
+        kakaoPay.setPartner_order_id(kakaoPayReady.getPartner_order_id());
+        kakaoPay.setPartner_user_id(kakaoPayReady.getPartner_user_id());
+        kakaoPay.setAndroid_app_scheme(responsejsonObject.getString("android_app_scheme"));
+        kakaoPay.setIos_app_scheme(responsejsonObject.getString("ios_app_scheme"));
+        kakaoPay.setNext_redirect_mobile_url(responsejsonObject.getString("next_redirect_mobile_url"));
+        kakaoPay.setNext_redirect_app_url(responsejsonObject.getString("next_redirect_app_url"));
+        kakaoPay.setNext_redirect_pc_url(responsejsonObject.getString("next_redirect_pc_url"));
+        return kaKaoItemRepository.savePayReady(kakaoPay);
+    }
+
+    @Override
+    public KakaoPayReady kakaoPayApprove(String pg_token ,String kakaoUserkey) throws Exception {
+        KakaoPay kakaoPay = kaKaoItemRepository.findByReadyOrder(kakaoUserkey).get();
+        log.info("kakaoPay={}",kakaoPay.getTid());
+        String apiURL = "https://kapi.kakao.com/v1/payment/approve";    // JSON 결과
+        StringBuilder urlBuilder = new StringBuilder(apiURL); /*URL*/
+        urlBuilder.append("?" + URLEncoder.encode("cid","UTF-8") + "="+"TC0ONETIME");
+        urlBuilder.append("&" + URLEncoder.encode("tid","UTF-8") + "="+kakaoPay.getTid());
+        urlBuilder.append("&" + URLEncoder.encode("partner_order_id","UTF-8") + "="+kakaoPay.getPartner_order_id());
+        urlBuilder.append("&" + URLEncoder.encode("partner_user_id","UTF-8") + "="+kakaoPay.getPartner_user_id());
+        urlBuilder.append("&" + URLEncoder.encode("pg_token","UTF-8") + "="+pg_token);
+        urlBuilder.append("&" + URLEncoder.encode("payload","UTF-8") + "="+"1");
+        urlBuilder.append("&" + URLEncoder.encode("total_amount","UTF-8") + "="+kakaoPay.getTotal_amount());
+
+        Map<String, String> requestHeaders = new HashMap<>();
+        requestHeaders.put("Authorization", "KakaoAK 999c444140ed5c2f49c0f197048fea34");
+        requestHeaders.put("Content-Type", "application/x-www-form-urlencoded");
+        String responseBody = post(String.valueOf(urlBuilder),requestHeaders);
+
+        JSONObject responsejsonObject = new JSONObject(responseBody);
+        kakaoPay.setApproved_at(responsejsonObject.getString("approved_at"));
+        kakaoPay.setAid(responsejsonObject.getString("aid"));
+        kakaoPay.setPayment_method_type(responsejsonObject.getString("payment_method_type"));
+        kakaoPay.setStatus("approve");
+        kaKaoItemRepository.updatePayApprove(kakaoPay);
+        return null;
+    }
+    private static String post(String apiUrl, Map<String, String> requestHeaders){
+        HttpURLConnection con = connect(apiUrl);
+        try {
+            con.setRequestMethod("POST");
+            for(Map.Entry<String, String> header :requestHeaders.entrySet()) {
+                con.setRequestProperty(header.getKey(), header.getValue());
+            }
+
+
+            int responseCode = con.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) { // 정상 호출
+                return readBody(con.getInputStream());
+            } else { // 오류 발생
+                return readBody(con.getErrorStream());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("API 요청과 응답 실패", e);
+        } finally {
+            con.disconnect();
+        }
     }
 
     private static String get(String apiUrl, Map<String, String> requestHeaders){
@@ -221,23 +327,23 @@ public class OpenApiServiceImpl implements OpenApiService {
         return text;
     }
 
-    private  WeatherElementCode getWeatherCodeMapping(Map<String, String> elementMap) {
-        WeatherElementCode weatherElementCode = new WeatherElementCode();
-        weatherElementCode.setBaseDate(elementMap.get("baseDate"));
-        weatherElementCode.setPty(Integer.parseInt(elementMap.get("PTY")));
-        weatherElementCode.setPop(elementMap.get("POP"));
-        weatherElementCode.setPcp(elementMap.get("PCP"));
-        weatherElementCode.setReh(elementMap.get("REH"));
-        weatherElementCode.setTmp(elementMap.get("TMP"));
-        weatherElementCode.setSky(Integer.parseInt(elementMap.get("SKY")));
-        weatherElementCode.setUuu(elementMap.get("UUU"));
-        weatherElementCode.setVec(elementMap.get("VEC"));
-        weatherElementCode.setWav(elementMap.get("WAV"));
-        weatherElementCode.setWsd(Float.parseFloat(elementMap.get("WSD")));
-        weatherElementCode.setSno(elementMap.get("SNO"));
-        weatherElementCode.setVvv(elementMap.get("VVV"));
-        weatherElementCode.setHostUrl(hostUrl);
-        return weatherElementCode;
+    private WeatherPropertyCode getWeatherCodeMapping(Map<String, String> elementMap) {
+        WeatherPropertyCode weatherPropertyCode = new WeatherPropertyCode();
+        weatherPropertyCode.setBaseDate(elementMap.get("baseDate"));
+        weatherPropertyCode.setPty(Integer.parseInt(elementMap.get("PTY")));
+        weatherPropertyCode.setPop(elementMap.get("POP"));
+        weatherPropertyCode.setPcp(elementMap.get("PCP"));
+        weatherPropertyCode.setReh(elementMap.get("REH"));
+        weatherPropertyCode.setTmp(elementMap.get("TMP"));
+        weatherPropertyCode.setSky(Integer.parseInt(elementMap.get("SKY")));
+        weatherPropertyCode.setUuu(elementMap.get("UUU"));
+        weatherPropertyCode.setVec(elementMap.get("VEC"));
+        weatherPropertyCode.setWav(elementMap.get("WAV"));
+        weatherPropertyCode.setWsd(Float.parseFloat(elementMap.get("WSD")));
+        weatherPropertyCode.setSno(elementMap.get("SNO"));
+        weatherPropertyCode.setVvv(elementMap.get("VVV"));
+        weatherPropertyCode.setHostUrl(hostUrl);
+        return weatherPropertyCode;
     }
     private  int currentTimeFormat (){
         // 현재 날짜

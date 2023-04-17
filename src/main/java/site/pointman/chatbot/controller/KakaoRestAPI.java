@@ -5,16 +5,19 @@ import lombok.extern.slf4j.Slf4j;
 
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import site.pointman.chatbot.domain.kakaopay.KakaoPay;
+import site.pointman.chatbot.dto.kakaopay.KakaoPayReady;
 import site.pointman.chatbot.dto.kakaoui.KakaoResponse;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.dto.kakaoui.KakaoRequest;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.MemberService;
+import site.pointman.chatbot.service.OpenApiService;
 
 import java.util.*;
 
@@ -25,15 +28,17 @@ public class KakaoRestAPI {
     private KakaoApiService kakaoApiService;
     private MemberService memberService;
 
+    private OpenApiService openApiService;
 
-    public KakaoRestAPI(KakaoApiService kakaoApiService, MemberService memberService) {
+    public KakaoRestAPI(KakaoApiService kakaoApiService, MemberService memberService, OpenApiService openApiService) {
         this.kakaoApiService = kakaoApiService;
         this.memberService = memberService;
+        this.openApiService = openApiService;
     }
 
     @ResponseBody
     @RequestMapping(value = "chat" , headers = {"Accept=application/json; UTF-8"})
-    public JSONObject callAPI(@RequestBody KakaoRequest params) throws ParseException {
+    public JSONObject callAPI(@RequestBody KakaoRequest params) throws Exception {
         KakaoResponse kakaoResponse = new KakaoResponse();
         try {
             String uttr = params.getUttr();
@@ -44,10 +49,10 @@ public class KakaoRestAPI {
             member.setKakaoUserkey(kakaoUserkey);
             member.setPartnerId("pointman");
             memberService.join(member);
+
             log.info("Request:: uttr ={}, userkey = {}",uttr,kakaoUserkey);
             switch (uttr){
                 case "위치정보 동의 완료" :
-
                     kakaoResponse.addContent(kakaoApiService.createTodayWeather(kakaoUserkey));
                     break;
                 case "오늘의 날씨" :
@@ -86,7 +91,7 @@ public class KakaoRestAPI {
         try {
             KakaoMember member = new KakaoMember();
             KakaoMemberLocation memberLocation = new KakaoMemberLocation();
-            log.info("X={}, Y={}, kakaoUserkey={}",params.getX(),params.getY(),params.getKakaoUserkey());
+
             member.setKakaoUserkey(params.getKakaoUserkey());
             memberLocation.setKakaoUserkey(params.getKakaoUserkey());
             memberLocation.setX(params.getX());
@@ -101,7 +106,22 @@ public class KakaoRestAPI {
         return resultJson;
     }
 
-
+    @GetMapping(value = "kakaopay-ready")
+    public String kakaoPayReady(Model model) throws Exception{
+        KakaoPayReady kakaoPayReady = new KakaoPayReady();
+        String kakaoUserkey="QFERwysZbO77";
+        kakaoPayReady.setKakaoUserkey(kakaoUserkey);
+        KakaoPay kakaoPay = openApiService.kakaoPayReady(kakaoPayReady);
+        return "redirect:"+ kakaoPay.getNext_redirect_pc_url();
+    }
+    @ResponseBody
+    @GetMapping(value = "/{kakaoUserkey}/kakaopay-approve")
+    public String kakaoPayApprove (@PathVariable String kakaoUserkey, String pg_token) throws Exception{
+        log.info("pg_token={}",pg_token);
+        log.info("kakaoUserkey={}",kakaoUserkey);
+        KakaoPayReady kakaoReady = openApiService.kakaoPayApprove(pg_token,kakaoUserkey);
+        return "";
+    }
     @GetMapping(value = "location-notice")
     public String locationNotice(){
         log.info("-----------위치정보 동의---------");

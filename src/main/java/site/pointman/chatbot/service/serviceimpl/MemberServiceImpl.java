@@ -50,11 +50,10 @@ public class MemberServiceImpl implements MemberService {
                 result.put("member",null);
             }
         }catch (Exception e){
-            throw e;
+            throw new IllegalArgumentException("회원가입 실패");
         }
         return result;
     }
-
     private Map<String,String> validateDuplicateMemberLocation(KakaoMemberLocation memberLocation) {
         Map result = new HashMap<>();
         String kakaoUserkey = memberLocation.getKakaoUserkey();
@@ -87,11 +86,8 @@ public class MemberServiceImpl implements MemberService {
                 result.put("Y",memberLocation.getY());
             }
         }catch (Exception e){
-            result.put("msg","위치저장 실패. ");
-            result.put("code",1);
-            result.put("kakaoUserkey",kakaoUserkey);
+            throw new IllegalArgumentException("위치저장 실패");
         }
-
         return result;
     }
 }

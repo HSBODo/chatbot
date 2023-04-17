@@ -9,7 +9,13 @@ import java.util.List;
 
 public interface KakaoApiService {
 
-    JSONObject createBasicCard(String displayType,String title, String msg, String thumbnailImgUrl, List<Button> buttons) throws ParseException;
+    JSONObject createBasicCard(
+            String displayType,
+            String title,
+            String msg,
+            String thumbnailImgUrl,
+            List<Button> buttons
+    ) throws ParseException;
     JSONObject createSimpleText(String msg) throws ParseException;
     JSONObject createSimpleImage(String altText, String imgUrl) throws ParseException;
     JSONObject createCommerceCard(
@@ -26,7 +32,12 @@ public interface KakaoApiService {
             String ProfileNickname,
             List<Button> buttonsList
     ) throws ParseException;
-    JSONObject createListCard(String displayType,String title, List<ListCardItem> listCardItems, List<Button> buttonList ) throws ParseException;
+    JSONObject createListCard(
+            String displayType,
+            String title,
+            List<ListCardItem> listCardItems,
+            List<Button> buttonList
+    ) throws ParseException;
     JSONObject createTodayWeather(String kakaoUserkey) throws Exception;
 
     JSONObject createTodayNews(String searchText) throws Exception;
