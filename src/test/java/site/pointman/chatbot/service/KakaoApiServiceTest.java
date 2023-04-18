@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.dto.kakaoui.KakaoResponse;
 import site.pointman.chatbot.dto.kakaoui.Button;
+import site.pointman.chatbot.dto.kakaoui.ListCardItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -39,6 +42,13 @@ class KakaoApiServiceTest {
         assertThat(result).isInstanceOf(JSONObject.class);
     }
 
+    @Test
+    void createOrderList() throws ParseException {
+        String kakaoUserkey= "QFERwysZbO77";
+        JSONObject orderList = kakaoApiService.createOrderList(kakaoUserkey);
+        log.info("result={}",orderList);
+        assertThat(orderList).isInstanceOf(JSONObject.class);
+    }
     @Test
     void createSimpleText() throws ParseException {
         JSONObject result = kakaoApiService.createSimpleText("심플텍스트 메세지");
@@ -119,16 +129,18 @@ class KakaoApiServiceTest {
 
     @Test
     void createListCard() throws Exception {
-//        List<ListCardItem> listCardItems = new ArrayList<>();
-//        ListCardItem listCardItem = new ListCardItem("title","desc","img","webl");
-//        listCardItems.add(listCardItem);
-//        List<Button> buttons = new ArrayList<>();
-//        Button button = new Button("ac","la","we");
-//        buttons.add(button);
-//        JSONObject recommendItems = kakaoApiService.createListCard("","테스트",listCardItems,buttons);
-//        KakaoResponse kakaoResponse = new KakaoResponse();
-//        kakaoResponse.addContent(recommendItems);
-//        log.info("result={}",kakaoResponse.createKakaoResponse());
+        List<ListCardItem> listCardItems = new ArrayList<>();
+        Map<String,String> link = new HashMap<>();
+        link.put("web","asdsadsa");
+        ListCardItem listCardItem = new ListCardItem("title","desc","img",link);
+        listCardItems.add(listCardItem);
+        List<Button> buttons = new ArrayList<>();
+        Button button = new Button("ac","la","we");
+        buttons.add(button);
+        JSONObject recommendItems = kakaoApiService.createListCard("","123123",listCardItems,buttons);
+        KakaoResponse kakaoResponse = new KakaoResponse();
+        kakaoResponse.addContent(recommendItems);
+        log.info("result={}",kakaoResponse.createKakaoResponse());
 
     }
 

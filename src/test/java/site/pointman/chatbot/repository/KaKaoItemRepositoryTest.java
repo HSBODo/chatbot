@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.domain.item.Item;
+import site.pointman.chatbot.domain.kakaopay.KakaoPay;
 import site.pointman.chatbot.repository.impl.JpaKaKaoItemRepositoryImpl;
 
 import java.util.Iterator;
@@ -23,6 +24,16 @@ class KaKaoItemRepositoryTest {
         items.stream()
                 .forEach(item -> {
                     log.info("item={}",item.getItemCode());
+                });
+    }
+
+    @Test
+    void findByOrderItems() {
+        String kakaoUserkey="QFERwysZbO77";
+        List<KakaoPay> items = kaKaoItemRepository.findByOrderItems(kakaoUserkey);
+        items.stream()
+                .forEach(item -> {
+                    log.info("item={}",item.getItem_code());
                 });
     }
 }

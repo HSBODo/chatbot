@@ -45,6 +45,7 @@ public interface KakaoApiService {
     JSONObject createLocationNotice(String kakaoUserkey) throws ParseException;
     JSONObject createDeveloperInfo() throws ParseException;
     JSONObject createRecommendItems(String kakaoUserkey) throws ParseException;
+    JSONObject createOrderList(String kakaoUserkey) throws ParseException;
 
     JSONObject createCarousel(String itemType,List items) throws ParseException;
 

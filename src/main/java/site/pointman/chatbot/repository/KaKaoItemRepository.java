@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface KaKaoItemRepository {
     List<Item> findByDisplayItems();
-
+    List<KakaoPay> findByOrderItems(String kakaoUserkey);
     Item findByItem(Long itemCode);
     KakaoPay savePayReady(KakaoPay kakaoPay);
     Optional<KakaoPay> findByReadyOrder(Long orderId);

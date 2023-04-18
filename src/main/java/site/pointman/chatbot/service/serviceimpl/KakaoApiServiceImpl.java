@@ -7,6 +7,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.item.Item;
+import site.pointman.chatbot.domain.kakaopay.KakaoPay;
 import site.pointman.chatbot.dto.kakaoui.ListCardItem;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.dto.naverapi.Search;
@@ -67,16 +68,6 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         });
         return createCarousel("listCard",carouselItems);
     }
-    private String replaceAll (String text){
-        text=text.replaceAll("<(/)?([a-zA-Z]*)(\\\\s[a-zA-Z]*=[^>]*)?(\\\\s)*(/)?>","");
-        text=text.replaceAll("&gt;",">");
-        text=text.replaceAll("&lt;","<");
-        text=text.replaceAll("&quot;","");
-        text=text.replaceAll("&apos;","");
-        text=text.replaceAll("&nbsp;"," ");
-        text=text.replaceAll("&amp;","&");
-        return text;
-    }
     @Override
     public JSONObject createTodayWeather(String kakaoUserkey) throws Exception {
         KakaoMemberLocation kakaoUserLocation = KakaoMemberRepository.findByLocation(kakaoUserkey).get();
@@ -98,7 +89,6 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                 buttonList
         );
     }
-
     @Override
     public JSONObject createLocationNotice(String kakaoUserkey) throws ParseException {
         Button button = new Button("webLink","위치정보 동의하기","https://www.pointman.shop/kakaochat/v1/location-notice?u="+kakaoUserkey);
@@ -114,7 +104,6 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                 buttonList
         );
     }
-
     @Override
     public JSONObject createDeveloperInfo() throws ParseException {
         List buttonList = new ArrayList<Button>();
@@ -142,9 +131,9 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                 .forEach(item ->{
                     List<Button>buttons= new ArrayList<>();
                     Button button = new Button("webLink","구매하러가기",item.getThumbnailLink());
-                    Button button1 = new Button("webLink","카카오페이 결제","https://www.pointman.shop/kakaochat/v1/kakaopay-ready?itemcode="+item.getItemCode()+"&kakaouserkey="+kakaoUserkey);
+                    Button payButton = new Button("webLink","카카오페이 결제","https://www.pointman.shop/kakaochat/v1/kakaopay-ready?itemcode="+item.getItemCode()+"&kakaouserkey="+kakaoUserkey);
                     buttons.add(button);
-                    buttons.add(button1);
+                    buttons.add(payButton);
                     try {
                         JSONObject commerceCard = createCommerceCard(
                                 "carousel",
@@ -168,7 +157,6 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                 });
         return createCarousel("commerceCard",items);
     }
-
     @Override
     public JSONObject createSimpleText(String msg) throws ParseException {
         /**
@@ -229,8 +217,6 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         JSONObject resultJsonObj = (JSONObject) jsonParser.parse(resultJson);
         return resultJsonObj;
     }
-
-
     @Override
     public JSONObject createSimpleImage(String altText,String imgUrl) throws ParseException {
         /**
@@ -249,9 +235,6 @@ public class KakaoApiServiceImpl implements KakaoApiService {
 
         return resultJsonObj;
     }
-
-
-
     @Override
     public JSONObject createCommerceCard(String displayType,String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, List<Button> buttonList) throws ParseException {
         /**
@@ -360,8 +343,6 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         JSONObject resultJsonObj = (JSONObject) jsonParser.parse(resultJson);
         return resultJsonObj;
     }
-
-
     @Override
     public JSONObject createCarousel(String itemType, List items) throws ParseException {
         /**
@@ -378,5 +359,46 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                 "}";
         JSONObject resultJsonObj = (JSONObject) jsonParser.parse(resultJson);
         return resultJsonObj;
+    }
+
+    @Override
+    public JSONObject createOrderList(String kakaoUserkey) throws ParseException {
+        List<KakaoPay> findItems = kaKaoItemRepository.findByOrderItems(kakaoUserkey);
+        List orderItems = new ArrayList<>();
+        findItems.stream()
+                .forEach(item ->{
+                    List<Button>buttons= new ArrayList<>();
+                    Button pay = new Button("webLink","결제 취소","");
+                    buttons.add(pay);
+                    try {
+                        JSONObject basicCard = createBasicCard(
+                                "carousel",
+                                item.getItem_name(),
+                                "결제 일자:"+item.getApproved_at()+"\n"+
+                                        "결제 금액:"+item.getTotal_amount()+"\n"+
+                                        "결제 수량:"+item.getQuantity()+"\n"+
+                                        "결제 수단:"+item.getPayment_method_type()+"\n"
+                                ,
+                                "",
+                                buttons
+                        );
+                        orderItems.add(basicCard);
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                });
+        return createCarousel("basicCard",orderItems);
+    }
+
+    private String replaceAll (String text){
+        text=text.replaceAll("<(/)?([a-zA-Z]*)(\\\\s[a-zA-Z]*=[^>]*)?(\\\\s)*(/)?>","");
+        text=text.replaceAll("&gt;",">");
+        text=text.replaceAll("&lt;","<");
+        text=text.replaceAll("&quot;","");
+        text=text.replaceAll("&apos;","");
+        text=text.replaceAll("&nbsp;"," ");
+        text=text.replaceAll("&amp;","&");
+        return text;
     }
 }

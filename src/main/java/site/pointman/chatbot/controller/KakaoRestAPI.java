@@ -64,7 +64,7 @@ public class KakaoRestAPI {
                     kakaoResponse.addContent(kakaoApiService.createRecommendItems(kakaoUserkey));
                     break;
                 case "주문 조회" :
-                    kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다."));
+                    kakaoResponse.addContent(kakaoApiService.createOrderList(kakaoUserkey));
                     break;
                 case "챗 GPT" :
                     kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다."));

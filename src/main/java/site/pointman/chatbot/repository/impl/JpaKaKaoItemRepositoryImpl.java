@@ -23,7 +23,15 @@ public class JpaKaKaoItemRepositoryImpl implements KaKaoItemRepository {
 
     @Override
     public List<Item> findByDisplayItems() {
-        return em.createQuery("select i from Item i where i.is_display='Y'", Item.class)
+        return em.createQuery("select i from Item i where i.is_display=:display", Item.class)
+                .setParameter("display","Y")
+                .getResultList();
+    }
+
+    @Override
+    public List<KakaoPay> findByOrderItems(String kakaoUserkey) {
+        return em.createQuery("select o from KakaoPay o where o.status='approve' AND o.kakao_userkey=:kakaoUserkey", KakaoPay.class)
+                .setParameter("kakaoUserkey",kakaoUserkey)
                 .getResultList();
     }
 
