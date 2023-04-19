@@ -106,14 +106,6 @@ public class OpenApiServiceImpl implements OpenApiService {
             }else {
                 basTime = "2300";
             }
-//            weatherReq.setServiceKey(weatherApiKey);
-//            weatherReq.setNumOfRows("12");
-//            weatherReq.setPageNo("1");
-//            weatherReq.setDataType("JSON");
-//            weatherReq.setBase_date(formatedDate);
-//            weatherReq.setBase_time(basTime);
-//            weatherReq.setNx(x.toString());
-//            weatherReq.setNy(y.toString());
 
             String serviceKey = weatherApiKey;
             String numOfRows = getStringEncoded("12");
@@ -150,7 +142,6 @@ public class OpenApiServiceImpl implements OpenApiService {
         }
         return response;
     }
-
     @Override
     public Search selectNaverSearch(String searchText, String display,String start, String sort) throws ParseException {
         String clientId = naverApiKey; //애플리케이션 클라이언트 아이디
@@ -185,7 +176,6 @@ public class OpenApiServiceImpl implements OpenApiService {
         search.setItems(items);
         return search;
     }
-
     @Override
     public KakaoPayReady createKakaoPayReady(Long itemCode,String kakaoUserkey) throws Exception{
         Item findItem = kaKaoItemRepository.findByItem(itemCode);
@@ -205,7 +195,6 @@ public class OpenApiServiceImpl implements OpenApiService {
                 findItem.getItemCode());
         return kakaoPayReady;
     }
-
     @Override
     public KakaoPay kakaoPayReady(KakaoPayReady kakaoPayReady) throws Exception {
 
@@ -231,31 +220,9 @@ public class OpenApiServiceImpl implements OpenApiService {
         String responseBody = post(String.valueOf(urlBuilder),requestHeaders);
         log.info("responseBody={}",responseBody);
         JSONObject responsejsonObject = new JSONObject(responseBody);
-        KakaoPay kakaoPay= new KakaoPay();
-        kakaoPay.setKakao_userkey(kakaoPayReady.getKakaoUserkey());
-        kakaoPay.setTid(responsejsonObject.getString("tid"));
-        kakaoPay.setCid(responsejsonObject.getString("created_at"));
-        kakaoPay.setItem_name(kakaoPayReady.getItem_name());
-        kakaoPay.setItem_code(kakaoPayReady.getItem_code());
-        kakaoPay.setQuantity(kakaoPayReady.getQuantity());
-        kakaoPay.setStatus("ready");
-        kakaoPay.setTax_free_amount(kakaoPayReady.getTax_free_amount());
-        kakaoPay.setTotal_amount(kakaoPayReady.getTotal_amount());
-        kakaoPay.setVat_amount(kakaoPayReady.getVat_amount());
-        kakaoPay.setPartner_order_id(kakaoPayReady.getPartner_order_id());
-        kakaoPay.setPartner_user_id(kakaoPayReady.getPartner_user_id());
-        kakaoPay.setAndroid_app_scheme(responsejsonObject.getString("android_app_scheme"));
-        kakaoPay.setIos_app_scheme(responsejsonObject.getString("ios_app_scheme"));
-        kakaoPay.setNext_redirect_mobile_url(responsejsonObject.getString("next_redirect_mobile_url"));
-        kakaoPay.setNext_redirect_app_url(responsejsonObject.getString("next_redirect_app_url"));
-        kakaoPay.setNext_redirect_pc_url(responsejsonObject.getString("next_redirect_pc_url"));
-        kakaoPay.setOrder_id(orderId);
+        KakaoPay kakaoPay = getKakaoPay(kakaoPayReady, orderId, responsejsonObject);
         return kaKaoItemRepository.savePayReady(kakaoPay);
     }
-    public static Long createOrderId(){
-      return  Long.parseLong(String.valueOf(ThreadLocalRandom.current().nextInt(100000000,999999999)));
-    }
-
     @Override
     public KakaoPayReady kakaoPayApprove(String pg_token ,Long orderId) throws Exception {
         KakaoPay kakaoPay = kaKaoItemRepository.findByReadyOrder(orderId).get();
@@ -282,6 +249,32 @@ public class OpenApiServiceImpl implements OpenApiService {
         kaKaoItemRepository.updatePayApprove(kakaoPay);
         return null;
     }
+
+    private static KakaoPay getKakaoPay(KakaoPayReady kakaoPayReady, Long orderId, JSONObject responsejsonObject) {
+        KakaoPay kakaoPay= new KakaoPay();
+        kakaoPay.setKakao_userkey(kakaoPayReady.getKakaoUserkey());
+        kakaoPay.setTid(responsejsonObject.getString("tid"));
+        kakaoPay.setCid(responsejsonObject.getString("created_at"));
+        kakaoPay.setItem_name(kakaoPayReady.getItem_name());
+        kakaoPay.setItem_code(kakaoPayReady.getItem_code());
+        kakaoPay.setQuantity(kakaoPayReady.getQuantity());
+        kakaoPay.setStatus("ready");
+        kakaoPay.setTax_free_amount(kakaoPayReady.getTax_free_amount());
+        kakaoPay.setTotal_amount(kakaoPayReady.getTotal_amount());
+        kakaoPay.setVat_amount(kakaoPayReady.getVat_amount());
+        kakaoPay.setPartner_order_id(kakaoPayReady.getPartner_order_id());
+        kakaoPay.setPartner_user_id(kakaoPayReady.getPartner_user_id());
+        kakaoPay.setAndroid_app_scheme(responsejsonObject.getString("android_app_scheme"));
+        kakaoPay.setIos_app_scheme(responsejsonObject.getString("ios_app_scheme"));
+        kakaoPay.setNext_redirect_mobile_url(responsejsonObject.getString("next_redirect_mobile_url"));
+        kakaoPay.setNext_redirect_app_url(responsejsonObject.getString("next_redirect_app_url"));
+        kakaoPay.setNext_redirect_pc_url(responsejsonObject.getString("next_redirect_pc_url"));
+        kakaoPay.setOrder_id(orderId);
+        return kakaoPay;
+    }
+    public static Long createOrderId(){
+      return  Long.parseLong(String.valueOf(ThreadLocalRandom.current().nextInt(100000000,999999999)));
+    }
     private static String post(String apiUrl, Map<String, String> requestHeaders){
         HttpURLConnection con = connect(apiUrl);
         try {
@@ -303,7 +296,6 @@ public class OpenApiServiceImpl implements OpenApiService {
             con.disconnect();
         }
     }
-
     private static String get(String apiUrl, Map<String, String> requestHeaders){
         HttpURLConnection con = connect(apiUrl);
         try {
@@ -325,7 +317,6 @@ public class OpenApiServiceImpl implements OpenApiService {
             con.disconnect();
         }
     }
-
     private static String readBody(InputStream body){
         InputStreamReader streamReader = new InputStreamReader(body);
 
@@ -345,7 +336,6 @@ public class OpenApiServiceImpl implements OpenApiService {
             throw new RuntimeException("API 응답을 읽는 데 실패했습니다.", e);
         }
     }
-
     private static HttpURLConnection connect(String apiUrl){
         try {
             URL url = new URL(apiUrl);
@@ -364,7 +354,6 @@ public class OpenApiServiceImpl implements OpenApiService {
         }
         return text;
     }
-
     private WeatherPropertyCode getWeatherCodeMapping(Map<String, String> elementMap) {
         WeatherPropertyCode weatherPropertyCode = new WeatherPropertyCode();
         weatherPropertyCode.setBaseDate(elementMap.get("baseDate"));
