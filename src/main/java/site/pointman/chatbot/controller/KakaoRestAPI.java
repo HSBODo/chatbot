@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import site.pointman.chatbot.domain.kakaopay.KakaoPay;
 import site.pointman.chatbot.dto.kakaopay.KakaoPayReady;
+import site.pointman.chatbot.dto.kakaoui.Button;
 import site.pointman.chatbot.dto.kakaoui.KakaoResponse;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
@@ -63,11 +64,14 @@ public class KakaoRestAPI {
                 case "오늘의 특가 상품" :
                     kakaoResponse.addContent(kakaoApiService.createRecommendItems(kakaoUserkey));
                     break;
-                case "주문 조회" :
+                case "주문조회" :
                     kakaoResponse.addContent(kakaoApiService.createOrderList(kakaoUserkey));
                     break;
-                case "챗 GPT" :
-                    kakaoResponse.addContent(kakaoApiService.createSimpleText("개발중입니다."));
+                case "관리자페이지" :
+                    List buttonList = new ArrayList<Button>();
+                    Button adminPage = new Button("webLink","관리자페이지","https://www.pointman.shop/admin-page/login");
+                    buttonList.add(adminPage);
+                    kakaoResponse.addContent(kakaoApiService.createBasicCard("","관리자페이지","회원관리, 상품관리, 매출관리를 할 수 있어요!!","https://www.pointman.shop/image/%EC%B6%9C%EA%B7%BC%EB%8F%84%EC%9A%B0%EB%AF%B8.png",buttonList));
                     break;
                 case "개발자 소개" :
                     kakaoResponse.addContent(kakaoApiService.createDeveloperInfo());
