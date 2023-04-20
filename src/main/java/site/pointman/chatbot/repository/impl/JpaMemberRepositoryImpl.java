@@ -1,6 +1,7 @@
 package site.pointman.chatbot.repository.impl;
 
 
+import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.repository.MemberRepository;
 
@@ -8,6 +9,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 public class JpaMemberRepositoryImpl implements MemberRepository {
     private final EntityManager em;
 
