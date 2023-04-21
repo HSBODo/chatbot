@@ -8,6 +8,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.domain.kakaopay.KakaoPay;
+import site.pointman.chatbot.dto.kakaoui.ButtonBlock;
 import site.pointman.chatbot.dto.kakaoui.ListCardItem;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.dto.naverapi.Search;
@@ -17,11 +18,9 @@ import site.pointman.chatbot.repository.KaKaoItemRepository;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.OpenApiService;
+import site.pointman.chatbot.utill.Utillity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Slf4j
@@ -31,7 +30,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     private KakaoMemberRepository KakaoMemberRepository;
     private OpenApiService openApiService;
     private JSONParser jsonParser = new JSONParser();
-
+    private Utillity utillity;
 
     public KakaoApiServiceImpl(KaKaoItemRepository kaKaoItemRepository, KakaoMemberRepository kakaoMemberRepository, OpenApiService openApiService) {
         this.kaKaoItemRepository = kaKaoItemRepository;
@@ -39,26 +38,26 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         this.openApiService = openApiService;
     }
 
+
     @Override
     public JSONObject createTodayNews(String searchText) throws Exception {
         Search search = openApiService.selectNaverSearch(searchText,"30","1","date");
         List carouselItems = new ArrayList<>();
-        List<ListCardItem> listCardItems = new ArrayList<>();
         List<Button> buttons = new ArrayList<>();
-        Button button = new Button("webLink","구경가기","");
-        buttons.add(button);
+        List<ListCardItem> listCardItems = new ArrayList<>();
         search.getItems().forEach(item -> {
             try {
                 JSONObject jsonObject = new JSONObject((JSONObject) jsonParser.parse(item.toString()));
-                String title =replaceAll((String) jsonObject.get("title"));
-                String description =replaceAll((String) jsonObject.get("description"));
                 Map webLink = new HashMap<>();
+                String title =utillity.replaceAll((String) jsonObject.get("title"));
+                String description =utillity.replaceAll((String) jsonObject.get("description"));
                 webLink.put("web", jsonObject.get("link"));
+
                 ListCardItem listCardItem = new ListCardItem(title,description,"https://www.pointman.shop/image/news.jpg",webLink);
                 listCardItems.add(listCardItem);
+
                 int cnt =  search.getItems().indexOf(item)+1;
-                log.info("index={}",cnt);
-                if(cnt%5==0){
+                if(cnt%5==0){  // <= 케로셀 최대 5개 까지만 표시
                     carouselItems.add(createListCard("carousel",search.getLastBuildDate()+" 오늘의 뉴스",listCardItems,buttons));
                     listCardItems.clear();
                 }
@@ -157,6 +156,56 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                 });
         return createCarousel("commerceCard",items);
     }
+    @Override
+    public JSONObject createOrderList(String kakaoUserkey) throws ParseException {
+        List orderItems = new ArrayList<>();
+        List<KakaoPay> orderList = kaKaoItemRepository.findByOrderItems(kakaoUserkey);
+        orderList.stream()
+                .forEach(order ->{
+                    try {
+                        Item Item = kaKaoItemRepository.findByItem(order.getItem_code());
+
+                        List<Button>buttons= new ArrayList<>();
+                        Map buttonParams = new HashMap<String,String>();
+                        buttonParams.put("itemCode","123123");
+                        buttonParams.put("price","30000");
+                        ButtonBlock orderDetail = new ButtonBlock("block","결제 상세보기","",buttonParams);
+                        Button payCancel = new Button("webLink","결제 취소","https://www.pointman.shop/");
+
+                        buttons.add(orderDetail);
+                        buttons.add(payCancel);
+
+
+                        JSONObject basicCard = createBasicCard(
+                                "carousel",
+                                order.getItem_name(),
+                                "결제 일자: "+utillity.formatApproveDate(order.getApproved_at())+"\n"+
+                                        "결제 금액: "+utillity.formatMoney(order.getTotal_amount())+"원\n"
+                                ,
+                                Item.getThumbnailImgUrl(),
+                                buttons
+                        );
+                        orderItems.add(basicCard);
+                    } catch (Exception e) {
+                        log.info(e.toString());
+                        throw new RuntimeException(e);
+                    }
+                });
+        return createCarousel("basicCard",orderItems);
+    }
+
+    @Override
+    public JSONObject createOrderDetail(String kakaoUserkey, Long orderId) throws Exception {
+        try {
+            Optional<KakaoPay> maybeOrder = kaKaoItemRepository.findByOrder(orderId);
+            if(maybeOrder.isEmpty()) throw new IllegalStateException("주문번호와 일치하는 주문이 없습니다.");
+
+        }catch (Exception e){
+
+        }
+        return null;
+    }
+
     @Override
     public JSONObject createSimpleText(String msg) throws ParseException {
         /**
@@ -361,46 +410,4 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         return resultJsonObj;
     }
 
-    @Override
-    public JSONObject createOrderList(String kakaoUserkey) throws ParseException {
-        List<KakaoPay> orderList = kaKaoItemRepository.findByOrderItems(kakaoUserkey);
-        List orderItems = new ArrayList<>();
-        orderList.stream()
-                .forEach(order ->{
-                    Item Item = kaKaoItemRepository.findByItem(order.getItem_code());
-
-                    List<Button>buttons= new ArrayList<>();
-                    Button pay = new Button("webLink","결제 취소","https://www.pointman.shop/");
-                    buttons.add(pay);
-                    try {
-                        JSONObject basicCard = createBasicCard(
-                                "carousel",
-                                order.getItem_name(),
-                                "결제 일자:"+order.getApproved_at()+"\n"+
-                                        "결제 금액:"+order.getTotal_amount()+"\n"+
-                                        "결제 수량:"+order.getQuantity()+"\n"+
-                                        "결제 수단:"+order.getPayment_method_type()+"\n"
-                                ,
-                                Item.getThumbnailImgUrl(),
-                                buttons
-                        );
-                        orderItems.add(basicCard);
-                    } catch (ParseException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                });
-        return createCarousel("basicCard",orderItems);
-    }
-
-    private String replaceAll (String text){
-        text=text.replaceAll("<(/)?([a-zA-Z]*)(\\\\s[a-zA-Z]*=[^>]*)?(\\\\s)*(/)?>","");
-        text=text.replaceAll("&gt;",">");
-        text=text.replaceAll("&lt;","<");
-        text=text.replaceAll("&quot;","");
-        text=text.replaceAll("&apos;","");
-        text=text.replaceAll("&nbsp;"," ");
-        text=text.replaceAll("&amp;","&");
-        return text;
-    }
 }

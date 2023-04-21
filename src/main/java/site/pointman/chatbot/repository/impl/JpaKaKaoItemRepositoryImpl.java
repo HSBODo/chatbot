@@ -42,6 +42,12 @@ public class JpaKaKaoItemRepositoryImpl implements KaKaoItemRepository {
     }
 
     @Override
+    public Optional<KakaoPay> findByOrder(Long orderId) {
+        KakaoPay findOrder = em.find(KakaoPay.class, orderId);
+        return Optional.ofNullable(findOrder);
+    }
+
+    @Override
     public Item findByItem(Long itemCode) {
         Item findItem = em.find(Item.class, itemCode);
         return findItem;
@@ -55,7 +61,6 @@ public class JpaKaKaoItemRepositoryImpl implements KaKaoItemRepository {
         findOrder.setApproved_at(kakaoPay.getApproved_at());
         findOrder.setAid(kakaoPay.getAid());
         findOrder.setPayment_method_type(kakaoPay.getPayment_method_type());
-        log.info("update");
     }
 
     @Override

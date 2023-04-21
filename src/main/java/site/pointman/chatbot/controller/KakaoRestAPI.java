@@ -41,8 +41,9 @@ public class KakaoRestAPI {
     public JSONObject callAPI(@RequestBody KakaoRequest params) throws Exception {
         KakaoResponse kakaoResponse = new KakaoResponse();
         try {
+            log.info("action={}",params.getAction().get("clientExtra"));
             String uttr = params.getUttr();
-            String kakaoUserkey ="";
+            String kakaoUserkey;
             kakaoUserkey = params.getKakaoUserkey();
 
             KakaoMember member = new KakaoMember();
@@ -52,6 +53,8 @@ public class KakaoRestAPI {
 
             log.info("Request:: uttr ={}, userkey = {}",uttr,kakaoUserkey);
             switch (uttr){
+                case "결제 상세보기" :
+
                 case "위치정보 동의 완료" :
                     kakaoResponse.addContent(kakaoApiService.createTodayWeather(kakaoUserkey));
                     break;
@@ -81,6 +84,7 @@ public class KakaoRestAPI {
             }
 
         }catch (Exception e){
+            log.info(e.toString());
             kakaoResponse.addContent(kakaoApiService.createSimpleText("챗봇에 문제가 생겼습니다. 죄송합니다."));
         }
         log.info("kakaoResponse = {}",kakaoResponse.createKakaoResponse());

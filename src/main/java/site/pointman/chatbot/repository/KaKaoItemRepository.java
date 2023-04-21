@@ -12,5 +12,7 @@ public interface KaKaoItemRepository {
     Item findByItem(Long itemCode);
     KakaoPay savePayReady(KakaoPay kakaoPay);
     Optional<KakaoPay> findByReadyOrder(Long orderId);
+
+    Optional<KakaoPay> findByOrder(Long orderId);
     void updatePayApprove(KakaoPay kakaoPay);
 }
