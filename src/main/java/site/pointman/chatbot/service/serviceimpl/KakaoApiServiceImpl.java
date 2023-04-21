@@ -363,23 +363,25 @@ public class KakaoApiServiceImpl implements KakaoApiService {
 
     @Override
     public JSONObject createOrderList(String kakaoUserkey) throws ParseException {
-        List<KakaoPay> findItems = kaKaoItemRepository.findByOrderItems(kakaoUserkey);
+        List<KakaoPay> orderList = kaKaoItemRepository.findByOrderItems(kakaoUserkey);
         List orderItems = new ArrayList<>();
-        findItems.stream()
-                .forEach(item ->{
+        orderList.stream()
+                .forEach(order ->{
+                    Item Item = kaKaoItemRepository.findByItem(order.getItem_code());
+
                     List<Button>buttons= new ArrayList<>();
-                    Button pay = new Button("webLink","결제 취소","");
+                    Button pay = new Button("webLink","결제 취소","https://www.pointman.shop/");
                     buttons.add(pay);
                     try {
                         JSONObject basicCard = createBasicCard(
                                 "carousel",
-                                item.getItem_name(),
-                                "결제 일자:"+item.getApproved_at()+"\n"+
-                                        "결제 금액:"+item.getTotal_amount()+"\n"+
-                                        "결제 수량:"+item.getQuantity()+"\n"+
-                                        "결제 수단:"+item.getPayment_method_type()+"\n"
+                                order.getItem_name(),
+                                "결제 일자:"+order.getApproved_at()+"\n"+
+                                        "결제 금액:"+order.getTotal_amount()+"\n"+
+                                        "결제 수량:"+order.getQuantity()+"\n"+
+                                        "결제 수단:"+order.getPayment_method_type()+"\n"
                                 ,
-                                "",
+                                Item.getThumbnailImgUrl(),
                                 buttons
                         );
                         orderItems.add(basicCard);

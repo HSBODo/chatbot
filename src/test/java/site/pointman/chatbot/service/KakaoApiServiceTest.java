@@ -144,6 +144,7 @@ class KakaoApiServiceTest {
 
     }
 
+
     @Test
     void createTodayNews() throws Exception {
         KakaoResponse kakaoResponse = new KakaoResponse();
