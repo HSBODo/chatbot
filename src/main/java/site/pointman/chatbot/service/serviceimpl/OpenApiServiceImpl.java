@@ -3,13 +3,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
 import site.pointman.chatbot.domain.item.Item;
-import site.pointman.chatbot.domain.kakaopay.KakaoPay;
+import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.dto.kakaopay.KakaoPayReady;
 import site.pointman.chatbot.dto.naverapi.Search;
@@ -22,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.HttpURLConnection;
 
 import java.net.URL;
@@ -143,60 +141,67 @@ public class OpenApiServiceImpl implements OpenApiService {
         return response;
     }
     @Override
-    public Search selectNaverSearch(String searchText, String display,String start, String sort) throws ParseException {
-        String clientId = naverApiKey; //애플리케이션 클라이언트 아이디
-        String clientSecret = naverApiSecretKey; //애플리케이션 클라이언트 시크릿
-
-        String text = searchText;
-        text = getStringEncoded(text);
-
-        //query=%EC%A3%BC%EC%8B%9D&display=10&start=1&sort=sim
-        String apiURL = "https://openapi.naver.com/v1/search/blog?query=" + text+"&display=" + display + "&start="+start+"&sort="+sort;    // JSON 결과
-        //String apiURL = "https://openapi.naver.com/v1/search/blog.xml?query="+ text; // XML 결과
-
-
-        Map<String, String> requestHeaders = new HashMap<>();
-        requestHeaders.put("X-Naver-Client-Id", clientId);
-        requestHeaders.put("X-Naver-Client-Secret", clientSecret);
-        String responseBody = get(apiURL,requestHeaders);
-
-        JSONObject responsejsonObject = new JSONObject(responseBody);
-
-        JSONArray items = new JSONArray();
-        items = (JSONArray) responsejsonObject.get("items");
-        LocalDate nowDate =  LocalDate.now();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formatedDate = nowDate.format(dateFormatter);
-
+    public Search selectNaverSearch(String searchText, String display,String start, String sort) {
         Search search = new Search();
-        search.setLastBuildDate(formatedDate);
-        search.setTotal((int) responsejsonObject.get("total"));
-        search.setStart((int) responsejsonObject.get("start"));
-        search.setDisplay((int) responsejsonObject.get("display"));
-        search.setItems(items);
+        try {
+            String clientId = naverApiKey; //애플리케이션 클라이언트 아이디
+            String clientSecret = naverApiSecretKey; //애플리케이션 클라이언트 시크릿
+
+            String text = searchText;
+            text = getStringEncoded(text);
+
+            //query=%EC%A3%BC%EC%8B%9D&display=10&start=1&sort=sim
+            String apiURL = "https://openapi.naver.com/v1/search/blog?query=" + text+"&display=" + display + "&start="+start+"&sort="+sort;    // JSON 결과
+            //String apiURL = "https://openapi.naver.com/v1/search/blog.xml?query="+ text; // XML 결과
+
+
+            Map<String, String> requestHeaders = new HashMap<>();
+            requestHeaders.put("X-Naver-Client-Id", clientId);
+            requestHeaders.put("X-Naver-Client-Secret", clientSecret);
+            String responseBody = get(apiURL,requestHeaders);
+
+            JSONObject responsejsonObject = new JSONObject(responseBody);
+
+            JSONArray items = new JSONArray();
+            items = (JSONArray) responsejsonObject.get("items");
+            LocalDate nowDate =  LocalDate.now();
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String formatedDate = nowDate.format(dateFormatter);
+
+
+            search.setLastBuildDate(formatedDate);
+            search.setTotal((int) responsejsonObject.get("total"));
+            search.setStart((int) responsejsonObject.get("start"));
+            search.setDisplay((int) responsejsonObject.get("display"));
+            search.setItems(items);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new IllegalArgumentException("naver 뉴스 정보를 불러오는 데 실패하였습니다.");
+        }
         return search;
     }
     @Override
-    public KakaoPayReady createKakaoPayReady(Long itemCode,String kakaoUserkey) throws Exception{
-        Item findItem = kaKaoItemRepository.findByItem(itemCode);
+    public KakaoPayReady createKakaoPayReady(Long itemCode,String kakaoUserkey) {
+        Optional<Item> maybeItem = kaKaoItemRepository.findByItem(itemCode);
+        if(maybeItem.isEmpty()) throw new IllegalArgumentException("상품이 존재하지 않습니다.");
         KakaoPayReady kakaoPayReady = new KakaoPayReady(
                 kakaoUserkey,
                 cid,
                 "partner_order_id",
                 "partner_user_id",
-                findItem.getProfileNickname(),
+                maybeItem.get().getProfileNickname(),
                 1,
-                findItem.getDiscountedPrice(),
+                maybeItem.get().getDiscountedPrice(),
                 0,
                 0,
                 approval_url,
                 fail_url,
                 cancel_url,
-                findItem.getItemCode());
+                maybeItem.get().getItemCode());
         return kakaoPayReady;
     }
     @Override
-    public KakaoPay kakaoPayReady(KakaoPayReady kakaoPayReady) throws Exception {
+    public Order kakaoPayReady(KakaoPayReady kakaoPayReady) throws Exception {
 
         Long orderId = createOrderId();
         String itemName= kakaoPayReady.getItem_name().replaceAll(" ","");
@@ -220,21 +225,21 @@ public class OpenApiServiceImpl implements OpenApiService {
         String responseBody = post(String.valueOf(urlBuilder),requestHeaders);
         log.info("responseBody={}",responseBody);
         JSONObject responsejsonObject = new JSONObject(responseBody);
-        KakaoPay kakaoPay = getKakaoPay(kakaoPayReady, orderId, responsejsonObject);
-        return kaKaoItemRepository.savePayReady(kakaoPay);
+        Order order = getKakaoPay(kakaoPayReady, orderId, responsejsonObject);
+        return kaKaoItemRepository.savePayReady(order);
     }
     @Override
     public KakaoPayReady kakaoPayApprove(String pg_token ,Long orderId) throws Exception {
-        KakaoPay kakaoPay = kaKaoItemRepository.findByReadyOrder(orderId).get();
+        Order order = kaKaoItemRepository.findByReadyOrder(orderId).get();
         String apiURL = "https://kapi.kakao.com/v1/payment/approve";    // JSON 결과
         StringBuilder urlBuilder = new StringBuilder(apiURL); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("cid","UTF-8") + "="+"TC0ONETIME");
-        urlBuilder.append("&" + URLEncoder.encode("tid","UTF-8") + "="+kakaoPay.getTid());
-        urlBuilder.append("&" + URLEncoder.encode("partner_order_id","UTF-8") + "="+kakaoPay.getPartner_order_id());
-        urlBuilder.append("&" + URLEncoder.encode("partner_user_id","UTF-8") + "="+kakaoPay.getPartner_user_id());
+        urlBuilder.append("&" + URLEncoder.encode("tid","UTF-8") + "="+ order.getTid());
+        urlBuilder.append("&" + URLEncoder.encode("partner_order_id","UTF-8") + "="+ order.getPartner_order_id());
+        urlBuilder.append("&" + URLEncoder.encode("partner_user_id","UTF-8") + "="+ order.getPartner_user_id());
         urlBuilder.append("&" + URLEncoder.encode("pg_token","UTF-8") + "="+pg_token);
         urlBuilder.append("&" + URLEncoder.encode("payload","UTF-8") + "="+"1");
-        urlBuilder.append("&" + URLEncoder.encode("total_amount","UTF-8") + "="+kakaoPay.getTotal_amount());
+        urlBuilder.append("&" + URLEncoder.encode("total_amount","UTF-8") + "="+ order.getTotal_amount());
 
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("Authorization", "KakaoAK "+kakaoAdminKey);
@@ -242,35 +247,35 @@ public class OpenApiServiceImpl implements OpenApiService {
         String responseBody = post(String.valueOf(urlBuilder),requestHeaders);
 
         JSONObject responsejsonObject = new JSONObject(responseBody);
-        kakaoPay.setApproved_at(responsejsonObject.getString("approved_at"));
-        kakaoPay.setAid(responsejsonObject.getString("aid"));
-        kakaoPay.setPayment_method_type(responsejsonObject.getString("payment_method_type"));
-        kakaoPay.setStatus("approve");
-        kaKaoItemRepository.updatePayApprove(kakaoPay);
+        order.setApproved_at(responsejsonObject.getString("approved_at"));
+        order.setAid(responsejsonObject.getString("aid"));
+        order.setPayment_method_type(responsejsonObject.getString("payment_method_type"));
+        order.setStatus("approve");
+        kaKaoItemRepository.updatePayApprove(order);
         return null;
     }
 
-    private static KakaoPay getKakaoPay(KakaoPayReady kakaoPayReady, Long orderId, JSONObject responsejsonObject) {
-        KakaoPay kakaoPay= new KakaoPay();
-        kakaoPay.setKakao_userkey(kakaoPayReady.getKakaoUserkey());
-        kakaoPay.setTid(responsejsonObject.getString("tid"));
-        kakaoPay.setCid(responsejsonObject.getString("created_at"));
-        kakaoPay.setItem_name(kakaoPayReady.getItem_name());
-        kakaoPay.setItem_code(kakaoPayReady.getItem_code());
-        kakaoPay.setQuantity(kakaoPayReady.getQuantity());
-        kakaoPay.setStatus("ready");
-        kakaoPay.setTax_free_amount(kakaoPayReady.getTax_free_amount());
-        kakaoPay.setTotal_amount(kakaoPayReady.getTotal_amount());
-        kakaoPay.setVat_amount(kakaoPayReady.getVat_amount());
-        kakaoPay.setPartner_order_id(kakaoPayReady.getPartner_order_id());
-        kakaoPay.setPartner_user_id(kakaoPayReady.getPartner_user_id());
-        kakaoPay.setAndroid_app_scheme(responsejsonObject.getString("android_app_scheme"));
-        kakaoPay.setIos_app_scheme(responsejsonObject.getString("ios_app_scheme"));
-        kakaoPay.setNext_redirect_mobile_url(responsejsonObject.getString("next_redirect_mobile_url"));
-        kakaoPay.setNext_redirect_app_url(responsejsonObject.getString("next_redirect_app_url"));
-        kakaoPay.setNext_redirect_pc_url(responsejsonObject.getString("next_redirect_pc_url"));
-        kakaoPay.setOrder_id(orderId);
-        return kakaoPay;
+    private static Order getKakaoPay(KakaoPayReady kakaoPayReady, Long orderId, JSONObject responsejsonObject) {
+        Order order = new Order();
+        order.setKakao_userkey(kakaoPayReady.getKakaoUserkey());
+        order.setTid(responsejsonObject.getString("tid"));
+        order.setCid(responsejsonObject.getString("created_at"));
+        order.setItem_name(kakaoPayReady.getItem_name());
+        order.setItem_code(kakaoPayReady.getItem_code());
+        order.setQuantity(kakaoPayReady.getQuantity());
+        order.setStatus("ready");
+        order.setTax_free_amount(kakaoPayReady.getTax_free_amount());
+        order.setTotal_amount(kakaoPayReady.getTotal_amount());
+        order.setVat_amount(kakaoPayReady.getVat_amount());
+        order.setPartner_order_id(kakaoPayReady.getPartner_order_id());
+        order.setPartner_user_id(kakaoPayReady.getPartner_user_id());
+        order.setAndroid_app_scheme(responsejsonObject.getString("android_app_scheme"));
+        order.setIos_app_scheme(responsejsonObject.getString("ios_app_scheme"));
+        order.setNext_redirect_mobile_url(responsejsonObject.getString("next_redirect_mobile_url"));
+        order.setNext_redirect_app_url(responsejsonObject.getString("next_redirect_app_url"));
+        order.setNext_redirect_pc_url(responsejsonObject.getString("next_redirect_pc_url"));
+        order.setOrder_id(orderId);
+        return order;
     }
     public static Long createOrderId(){
       return  Long.parseLong(String.valueOf(ThreadLocalRandom.current().nextInt(100000000,999999999)));

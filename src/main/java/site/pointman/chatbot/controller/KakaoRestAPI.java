@@ -1,17 +1,19 @@
 package site.pointman.chatbot.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import site.pointman.chatbot.domain.kakaopay.KakaoPay;
+import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.dto.kakaopay.KakaoPayReady;
 import site.pointman.chatbot.dto.kakaoui.Button;
+import site.pointman.chatbot.dto.kakaoui.ExtraCode;
 import site.pointman.chatbot.dto.kakaoui.KakaoResponse;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
@@ -29,6 +31,7 @@ public class KakaoRestAPI {
     private KakaoApiService kakaoApiService;
     private MemberService memberService;
     private OpenApiService openApiService;
+    private JSONParser jsonParser = new JSONParser();
 
     public KakaoRestAPI(KakaoApiService kakaoApiService, MemberService memberService, OpenApiService openApiService) {
         this.kakaoApiService = kakaoApiService;
@@ -40,21 +43,23 @@ public class KakaoRestAPI {
     @RequestMapping(value = "chat" , headers = {"Accept=application/json; UTF-8"})
     public JSONObject callAPI(@RequestBody KakaoRequest params) throws Exception {
         KakaoResponse kakaoResponse = new KakaoResponse();
+        String kakaoUserkey;
         try {
-            log.info("action={}",params.getAction().get("clientExtra"));
-            String uttr = params.getUttr();
-            String kakaoUserkey;
-            kakaoUserkey = params.getKakaoUserkey();
+            String uttr = params.getUttr(); //사용자 발화
+            kakaoUserkey = params.getKakaoUserkey(); //사용자 유저키
+            log.info("Request:: uttr ={}, userkey = {}",uttr,kakaoUserkey);
 
             KakaoMember member = new KakaoMember();
             member.setKakaoUserkey(kakaoUserkey);
             member.setPartnerId("pointman");
             memberService.join(member);
-
-            log.info("Request:: uttr ={}, userkey = {}",uttr,kakaoUserkey);
             switch (uttr){
                 case "결제 상세보기" :
-
+                    log.info("action={}",params.getAction().get("clientExtra"));
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    ExtraCode extraCode = objectMapper.convertValue(params.getAction().get("clientExtra"), ExtraCode.class);
+                    kakaoResponse.addContent(kakaoApiService.createOrderDetail(kakaoUserkey,extraCode.getOrderId()));
+                    break;
                 case "위치정보 동의 완료" :
                     kakaoResponse.addContent(kakaoApiService.createTodayWeather(kakaoUserkey));
                     break;
@@ -84,8 +89,8 @@ public class KakaoRestAPI {
             }
 
         }catch (Exception e){
-            log.info(e.toString());
-            kakaoResponse.addContent(kakaoApiService.createSimpleText("챗봇에 문제가 생겼습니다. 죄송합니다."));
+            e.printStackTrace();
+            kakaoResponse.addContent(kakaoApiService.createSimpleText(e.getMessage()));
         }
         log.info("kakaoResponse = {}",kakaoResponse.createKakaoResponse());
         return kakaoResponse.createKakaoResponse();
@@ -120,8 +125,8 @@ public class KakaoRestAPI {
         String redirectUrl="https://plus.kakao.com/talk/bot/@pointman_dev/결제실패";
         try {
             KakaoPayReady kakaoPayReady = openApiService.createKakaoPayReady(itemcode, kakaouserkey);
-            KakaoPay kakaoPay = openApiService.kakaoPayReady(kakaoPayReady);
-            redirectUrl=kakaoPay.getNext_redirect_mobile_url();
+            Order order = openApiService.kakaoPayReady(kakaoPayReady);
+            redirectUrl= order.getNext_redirect_mobile_url();
             log.info("kakaopay-ready success ={}",redirectUrl);
         }catch (Exception e){
             log.info("e={}",e.toString());

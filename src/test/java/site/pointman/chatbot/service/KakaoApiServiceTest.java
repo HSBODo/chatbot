@@ -116,6 +116,14 @@ class KakaoApiServiceTest {
         assertThat(result).isInstanceOf(JSONObject.class);
 
     }
+    @Test
+    void createOrderDetail() throws Exception {
+        Long orderId= 474872585L;
+        String kakaoUserkey= "QFERwysZbO77";
+        JSONObject orderDetail = kakaoApiService.createOrderDetail(kakaoUserkey, orderId);
+        log.info("orderDetailJson={}",orderDetail);
+    }
+
 
     @Test
     void createRecommendItems() throws Exception {

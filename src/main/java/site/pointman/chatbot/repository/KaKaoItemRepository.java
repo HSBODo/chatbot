@@ -1,18 +1,18 @@
 package site.pointman.chatbot.repository;
 
 import site.pointman.chatbot.domain.item.Item;
-import site.pointman.chatbot.domain.kakaopay.KakaoPay;
+import site.pointman.chatbot.domain.order.Order;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface KaKaoItemRepository {
     List<Item> findByDisplayItems();
-    List<KakaoPay> findByOrderItems(String kakaoUserkey);
-    Item findByItem(Long itemCode);
-    KakaoPay savePayReady(KakaoPay kakaoPay);
-    Optional<KakaoPay> findByReadyOrder(Long orderId);
+    Optional<List<Order>> findByOrderItems(String kakaoUserkey);
+    Optional<Item> findByItem(Long itemCode);
+    Order savePayReady(Order order);
+    Optional<Order> findByReadyOrder(Long orderId);
 
-    Optional<KakaoPay> findByOrder(Long orderId);
-    void updatePayApprove(KakaoPay kakaoPay);
+    Optional<Order> findByOrder(String kakaoUserkey, Long orderId);
+    void updatePayApprove(Order order);
 }

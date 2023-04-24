@@ -2,9 +2,7 @@ package site.pointman.chatbot.repository.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import site.pointman.chatbot.domain.item.Item;
-import site.pointman.chatbot.domain.kakaopay.KakaoPay;
-import site.pointman.chatbot.domain.member.KakaoMember;
-import site.pointman.chatbot.domain.member.KakaoMemberLocation;
+import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.repository.KaKaoItemRepository;
 
 import javax.persistence.EntityManager;
@@ -29,42 +27,45 @@ public class JpaKaKaoItemRepositoryImpl implements KaKaoItemRepository {
     }
 
     @Override
-    public List<KakaoPay> findByOrderItems(String kakaoUserkey) {
-        return em.createQuery("select o from KakaoPay o where o.status='approve' AND o.kakao_userkey=:kakaoUserkey", KakaoPay.class)
+    public Optional<List<Order>> findByOrderItems(String kakaoUserkey) {
+        return Optional.ofNullable(em.createQuery("select o from Order o where o.status='approve' AND o.kakao_userkey=:kakaoUserkey", Order.class)
                 .setParameter("kakaoUserkey",kakaoUserkey)
-                .getResultList();
+                .getResultList());
     }
 
     @Override
-    public KakaoPay savePayReady(KakaoPay kakaoPay) {
-        em.persist(kakaoPay);
-        return kakaoPay;
+    public Order savePayReady(Order order) {
+        em.persist(order);
+        return order;
     }
 
     @Override
-    public Optional<KakaoPay> findByOrder(Long orderId) {
-        KakaoPay findOrder = em.find(KakaoPay.class, orderId);
+    public Optional<Order> findByOrder(String kakaoUserkey, Long orderId) {
+        Order findOrder = em.createQuery("select o from Order o where  o.order_id=:orderId AND o.kakao_userkey=:kakaoUserkey", Order.class)
+                .setParameter("orderId",orderId)
+                .setParameter("kakaoUserkey",kakaoUserkey)
+                .getSingleResult();
         return Optional.ofNullable(findOrder);
     }
 
     @Override
-    public Item findByItem(Long itemCode) {
+    public Optional<Item> findByItem(Long itemCode) {
         Item findItem = em.find(Item.class, itemCode);
-        return findItem;
+        return Optional.ofNullable(findItem);
     }
 
     @Override
-    public void updatePayApprove(KakaoPay kakaoPay) {
-        Long orderId = kakaoPay.getOrder_id();
-        KakaoPay findOrder = em.find(KakaoPay.class, orderId);
-        findOrder.setStatus(kakaoPay.getStatus());
-        findOrder.setApproved_at(kakaoPay.getApproved_at());
-        findOrder.setAid(kakaoPay.getAid());
-        findOrder.setPayment_method_type(kakaoPay.getPayment_method_type());
+    public void updatePayApprove(Order order) {
+        Long orderId = order.getOrder_id();
+        Order findOrder = em.find(Order.class, orderId);
+        findOrder.setStatus(order.getStatus());
+        findOrder.setApproved_at(order.getApproved_at());
+        findOrder.setAid(order.getAid());
+        findOrder.setPayment_method_type(order.getPayment_method_type());
     }
 
     @Override
-    public Optional<KakaoPay> findByReadyOrder(Long orderId) {
-        return Optional.ofNullable(em.createQuery("select i from KakaoPay i where i.status='ready' AND i.order_id='"+orderId+"'", KakaoPay.class).getSingleResult());
+    public Optional<Order> findByReadyOrder(Long orderId) {
+        return Optional.ofNullable(em.createQuery("select o from Order o where o.status='ready' AND o.order_id='"+orderId+"'", Order.class).getSingleResult());
     }
 }

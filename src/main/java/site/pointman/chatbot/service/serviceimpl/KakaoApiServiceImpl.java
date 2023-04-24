@@ -7,7 +7,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.item.Item;
-import site.pointman.chatbot.domain.kakaopay.KakaoPay;
+import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.dto.kakaoui.ButtonBlock;
 import site.pointman.chatbot.dto.kakaoui.ListCardItem;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
@@ -41,10 +41,11 @@ public class KakaoApiServiceImpl implements KakaoApiService {
 
     @Override
     public JSONObject createTodayNews(String searchText) throws Exception {
-        Search search = openApiService.selectNaverSearch(searchText,"30","1","date");
+
         List carouselItems = new ArrayList<>();
         List<Button> buttons = new ArrayList<>();
         List<ListCardItem> listCardItems = new ArrayList<>();
+        Search search = openApiService.selectNaverSearch(searchText,"30","1","date");
         search.getItems().forEach(item -> {
             try {
                 JSONObject jsonObject = new JSONObject((JSONObject) jsonParser.parse(item.toString()));
@@ -62,17 +63,17 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                     listCardItems.clear();
                 }
             } catch (ParseException e) {
-                throw new RuntimeException(e);
+                throw new IllegalArgumentException("뉴스정보를 불러오는 데 실패하였습니다.");
             }
         });
         return createCarousel("listCard",carouselItems);
     }
     @Override
     public JSONObject createTodayWeather(String kakaoUserkey) throws Exception {
-        KakaoMemberLocation kakaoUserLocation = KakaoMemberRepository.findByLocation(kakaoUserkey).get();
-        WeatherPropertyCode weatherCode =  openApiService.selectShortTermWeather(kakaoUserLocation);
+        Optional<KakaoMemberLocation> maybeMemberLocation = KakaoMemberRepository.findByLocation(kakaoUserkey);
+        if(maybeMemberLocation.isEmpty()) throw new NullPointerException("회원의 위치정보가 없습니다.");
+        WeatherPropertyCode weatherCode =  openApiService.selectShortTermWeather(maybeMemberLocation.get());
         List buttonList = new ArrayList<Button>();
-
         return  createBasicCard("basic",
                 weatherCode.getBaseDateValue()+" 오늘의 날씨",
                 " 하늘상태:"+weatherCode.getSkyValue()+"\n" +
@@ -159,16 +160,18 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public JSONObject createOrderList(String kakaoUserkey) throws ParseException {
         List orderItems = new ArrayList<>();
-        List<KakaoPay> orderList = kaKaoItemRepository.findByOrderItems(kakaoUserkey);
-        orderList.stream()
+        Optional<List<Order>> maybeOderItems = kaKaoItemRepository.findByOrderItems(kakaoUserkey);
+        if(maybeOderItems.isEmpty()) throw new IllegalStateException("주문하신 상품이 없습니다.");
+        maybeOderItems.get().stream()
                 .forEach(order ->{
                     try {
-                        Item Item = kaKaoItemRepository.findByItem(order.getItem_code());
+                        Optional<Item> maybeItem = kaKaoItemRepository.findByItem(order.getItem_code());
 
                         List<Button>buttons= new ArrayList<>();
                         Map buttonParams = new HashMap<String,String>();
-                        buttonParams.put("itemCode","123123");
-                        buttonParams.put("price","30000");
+                        buttonParams.put("itemCode",maybeItem.get().getItemCode());
+                        buttonParams.put("orderId",order.getOrder_id());
+                        buttonParams.put("kakaoUserkey",kakaoUserkey);
                         ButtonBlock orderDetail = new ButtonBlock("block","결제 상세보기","",buttonParams);
                         Button payCancel = new Button("webLink","결제 취소","https://www.pointman.shop/");
 
@@ -182,29 +185,49 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                                 "결제 일자: "+utillity.formatApproveDate(order.getApproved_at())+"\n"+
                                         "결제 금액: "+utillity.formatMoney(order.getTotal_amount())+"원\n"
                                 ,
-                                Item.getThumbnailImgUrl(),
+                                maybeItem.get().getThumbnailImgUrl(),
                                 buttons
                         );
                         orderItems.add(basicCard);
                     } catch (Exception e) {
                         log.info(e.toString());
-                        throw new RuntimeException(e);
+                        throw new NullPointerException("주문하신 상품 조회에 실패했습니다.");
                     }
                 });
         return createCarousel("basicCard",orderItems);
     }
-
     @Override
     public JSONObject createOrderDetail(String kakaoUserkey, Long orderId) throws Exception {
+        JSONObject basicCard;
         try {
-            Optional<KakaoPay> maybeOrder = kaKaoItemRepository.findByOrder(orderId);
+            Optional<Order> maybeOrder = kaKaoItemRepository.findByOrder(kakaoUserkey,orderId);
             if(maybeOrder.isEmpty()) throw new IllegalStateException("주문번호와 일치하는 주문이 없습니다.");
+            Optional<Item> maybeItem = kaKaoItemRepository.findByItem(maybeOrder.get().getItem_code());
+            if(maybeItem.isEmpty()) throw new IllegalStateException("상품코드와 일치하는 상품이 없습니다.");
+
+            List<Button> buttons= new ArrayList<>();
+            Button payCancel = new Button("webLink","결제 취소","https://www.pointman.shop/");
+            buttons.add(payCancel);
+            basicCard = createBasicCard(
+                    "",
+                    maybeItem.get().getProfileNickname(),
+                    "주문번호: " + maybeOrder.get().getOrder_id() +"\n"+
+                            "결제일자: " + utillity.formatApproveDate(maybeOrder.get().getApproved_at()) + "\n" +
+                            "결제금액: " + utillity.formatMoney(maybeOrder.get().getTotal_amount()) + "원\n" +
+                            "결제수량: " + maybeOrder.get().getQuantity() + "개\n" +
+                            "결제수단: " + maybeOrder.get().getPayment_method_type() +"\n"+
+                            "결제상태: " + maybeOrder.get().getStatus()
+                    ,
+                    maybeItem.get().getThumbnailImgUrl(),
+                    buttons);
 
         }catch (Exception e){
-
+            log.info(e.getStackTrace().toString());
+            throw new IllegalStateException("주문 상세조회 실패하였습니다.");
         }
-        return null;
+        return basicCard;
     }
+
 
     @Override
     public JSONObject createSimpleText(String msg) throws ParseException {

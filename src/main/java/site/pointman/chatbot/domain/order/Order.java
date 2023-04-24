@@ -1,4 +1,4 @@
-package site.pointman.chatbot.domain.kakaopay;
+package site.pointman.chatbot.domain.order;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,15 +6,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.domain.BaseEntity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "tb_kakao_pay")
+@Table(name = "tb_order")
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
-public class KakaoPay extends BaseEntity {
+public class Order extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idx ;
 
