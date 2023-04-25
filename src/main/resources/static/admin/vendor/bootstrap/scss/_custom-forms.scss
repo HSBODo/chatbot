@@ -368,9 +368,9 @@
     height: $custom-file-height-inner;
     padding: $custom-file-padding-y $custom-file-padding-x;
     line-height: $custom-file-line-height;
-    color: $custom-file-button-color;
+    color: $custom-file-buttonDto-color;
     content: "Browse";
-    @include gradient-bg($custom-file-button-bg);
+    @include gradient-bg($custom-file-buttonDto-bg);
     border-left: inherit;
     @include border-radius(0 $custom-file-border-radius $custom-file-border-radius 0);
   }

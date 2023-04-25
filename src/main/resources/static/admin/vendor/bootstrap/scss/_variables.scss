@@ -120,7 +120,7 @@ $enable-transitions:                          true !default;
 $enable-prefers-reduced-motion-media-query:   true !default;
 $enable-hover-media-query:                    false !default; // Deprecated, no longer affects any compiled CSS
 $enable-grid-classes:                         true !default;
-$enable-pointer-cursor-for-buttons:           true !default;
+$enable-pointer-cursor-for-buttonDtos:           true !default;
 $enable-print-styles:                         true !default;
 $enable-responsive-font-sizes:                false !default;
 $enable-validation-icons:                     true !default;
@@ -409,7 +409,7 @@ $input-btn-border-width:      $border-width !default;
 
 // Buttons
 //
-// For each of Bootstrap's buttons, define text, background, and border color.
+// For each of Bootstrap's buttonDtos, define text, background, and border color.
 
 $btn-padding-y:               $input-btn-padding-y !default;
 $btn-padding-x:               $input-btn-padding-x !default;
@@ -441,7 +441,7 @@ $btn-link-disabled-color:     $gray-600 !default;
 
 $btn-block-spacing-y:         .5rem !default;
 
-// Allows for customizing button radius independently from global border radius
+// Allows for customizing buttonDto radius independently from global border radius
 $btn-border-radius:           $border-radius !default;
 $btn-border-radius-lg:        $border-radius-lg !default;
 $btn-border-radius-sm:        $border-radius-sm !default;
@@ -643,8 +643,8 @@ $custom-file-border-width:          $input-border-width !default;
 $custom-file-border-color:          $input-border-color !default;
 $custom-file-border-radius:         $input-border-radius !default;
 $custom-file-box-shadow:            $input-box-shadow !default;
-$custom-file-button-color:          $custom-file-color !default;
-$custom-file-button-bg:             $input-group-addon-bg !default;
+$custom-file-buttonDto-color:          $custom-file-color !default;
+$custom-file-buttonDto-bg:             $input-group-addon-bg !default;
 $custom-file-text: (
   en: "Browse"
 ) !default;

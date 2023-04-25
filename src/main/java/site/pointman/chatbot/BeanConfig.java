@@ -1,6 +1,7 @@
 package site.pointman.chatbot;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import site.pointman.chatbot.repository.KaKaoItemRepository;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.repository.MemberRepository;
@@ -32,5 +33,6 @@ public class BeanConfig {
     @Bean
     public MemberRepository memberRepository(){return new JpaMemberRepositoryImpl(em);
     }
+
 
 }

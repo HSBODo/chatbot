@@ -16,7 +16,7 @@
   user-select: none;
   background-color: transparent;
   border: $btn-border-width solid transparent;
-  @include button-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-line-height, $btn-border-radius);
+  @include buttonDto-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-line-height, $btn-border-radius);
   @include transition($btn-transition);
 
   @include hover() {
@@ -38,7 +38,7 @@
   }
 
   &:not(:disabled):not(.disabled) {
-    cursor: if($enable-pointer-cursor-for-buttons, pointer, null);
+    cursor: if($enable-pointer-cursor-for-buttonDtos, pointer, null);
 
     &:active,
     &.active {
@@ -59,27 +59,27 @@ fieldset:disabled a.btn {
 
 
 //
-// Alternate buttons
+// Alternate buttonDtos
 //
 
 @each $color, $value in $theme-colors {
   .btn-#{$color} {
-    @include button-variant($value, $value);
+    @include buttonDto-variant($value, $value);
   }
 }
 
 @each $color, $value in $theme-colors {
   .btn-outline-#{$color} {
-    @include button-outline-variant($value);
+    @include buttonDto-outline-variant($value);
   }
 }
 
 
 //
-// Link buttons
+// Link buttonDtos
 //
 
-// Make a button look and behave like a link
+// Make a buttonDto look and behave like a link
 .btn-link {
   font-weight: $font-weight-normal;
   color: $link-color;
@@ -110,23 +110,23 @@ fieldset:disabled a.btn {
 //
 
 .btn-lg {
-  @include button-size($btn-padding-y-lg, $btn-padding-x-lg, $btn-font-size-lg, $btn-line-height-lg, $btn-border-radius-lg);
+  @include buttonDto-size($btn-padding-y-lg, $btn-padding-x-lg, $btn-font-size-lg, $btn-line-height-lg, $btn-border-radius-lg);
 }
 
 .btn-sm {
-  @include button-size($btn-padding-y-sm, $btn-padding-x-sm, $btn-font-size-sm, $btn-line-height-sm, $btn-border-radius-sm);
+  @include buttonDto-size($btn-padding-y-sm, $btn-padding-x-sm, $btn-font-size-sm, $btn-line-height-sm, $btn-border-radius-sm);
 }
 
 
 //
-// Block button
+// Block buttonDto
 //
 
 .btn-block {
   display: block;
   width: 100%;
 
-  // Vertically space out multiple block buttons
+  // Vertically space out multiple block buttonDtos
   + .btn-block {
     margin-top: $btn-block-spacing-y;
   }
@@ -135,7 +135,7 @@ fieldset:disabled a.btn {
 // Specificity overrides
 input[type="submit"],
 input[type="reset"],
-input[type="button"] {
+input[type="buttonDto"] {
   &.btn-block {
     width: 100%;
   }

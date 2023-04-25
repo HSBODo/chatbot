@@ -68,7 +68,7 @@ Version: 1.3.0
   - Other small fixes and improvements
   
 Version: 1.2.1
-  - Fixed mobile nav toggle button in iPhones
+  - Fixed mobile nav toggle buttonDto in iPhones
   
 Version: 1.2.0
   - Added portfolio details page

@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Slf4j
 @Getter @Setter  @ToString @NoArgsConstructor
-public class KakaoRequest {
+public class KakaoRequestDto {
     private JSONObject intent;
     private JSONObject userRequest;
     private JSONObject bot;

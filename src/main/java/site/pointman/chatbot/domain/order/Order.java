@@ -24,6 +24,7 @@ public class Order extends BaseEntity {
     private String payment_method_type;
     private String kakao_userkey;
     private String approved_at;
+    private String canceled_at;
     private String aid;
     private String cid;
     private String partner_order_id;
@@ -34,7 +35,8 @@ public class Order extends BaseEntity {
     private int total_amount;
     private int tax_free_amount;
     private int vat_amount;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
     private String next_redirect_app_url;
     private String next_redirect_mobile_url;
     private String next_redirect_pc_url;

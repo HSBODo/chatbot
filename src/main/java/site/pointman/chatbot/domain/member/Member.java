@@ -1,7 +1,6 @@
 package site.pointman.chatbot.domain.member;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -35,21 +34,22 @@ public class Member extends BaseEntity {
     private String email;
 
     @NotEmpty
-    private String access;
+    @Enumerated(EnumType.STRING)
+    private RoleType roleType;
 
     @NotEmpty
     private String partnerId;
 
     private String isUse;
     @Builder
-    public Member(Long idx, String id, String name, String password, String phone, String email, String access, String partnerId, String isUse) {
+    public Member(Long idx, String id, String name, String password, String phone, String email, RoleType roleType, String partnerId, String isUse) {
         this.idx = idx;
         this.id = id;
         this.name = name;
         this.password = password;
         this.phone = phone;
         this.email = email;
-        this.access = access;
+        this.roleType = roleType;
         this.partnerId = partnerId;
         this.isUse = isUse;
     }
@@ -57,7 +57,7 @@ public class Member extends BaseEntity {
         return Member.builder()
                 .name(name)
                 .email(email)
-                .access(access)
+                .roleType(roleType)
                 .id(id)
                 .isUse(isUse)
                 .password(password)

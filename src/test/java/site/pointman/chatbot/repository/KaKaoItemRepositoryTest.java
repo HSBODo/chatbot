@@ -9,6 +9,7 @@ import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.domain.order.Order;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @SpringBootTest
@@ -26,12 +27,13 @@ class KaKaoItemRepositoryTest {
     }
 
     @Test
-    void findByOrderItems() {
+    void findByOrders() {
         String kakaoUserkey="QFERwysZbO77";
-        List<Order> items = kaKaoItemRepository.findByOrderItems(kakaoUserkey);
+        List<Order> items = kaKaoItemRepository.findByOrders(kakaoUserkey);
+        if(items.isEmpty()) throw new NullPointerException("주문이력이 없습니다.");
         items.stream()
                 .forEach(item -> {
-                    log.info("item={}",item.getItem_code());
+                    log.info("item={}",item.getItem_name());
                 });
     }
 
@@ -39,7 +41,10 @@ class KaKaoItemRepositoryTest {
     void findByOrder(){
         Long orderId= 474872585L;
         String kakaoUserkey= "QFERwysZbO77";
-        Order order = kaKaoItemRepository.findByOrder(kakaoUserkey,orderId).get();
+        Optional<Order> maybeOrder = kaKaoItemRepository.findByOrder(kakaoUserkey, orderId);
+        if(maybeOrder.isEmpty()) throw  new NullPointerException("주문번호와 일치하는 주문이 없습니다");
+        Order order = maybeOrder.get();
+
         Long order_id = order.getOrder_id();
         log.info("orderId={}",order_id);
         Assertions.assertThat(order.getOrder_id()).isEqualTo(orderId);

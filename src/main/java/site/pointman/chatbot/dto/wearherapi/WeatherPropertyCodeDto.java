@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter @Setter
-public class WeatherPropertyCode {
+public class WeatherPropertyCodeDto {
     private String baseDate;
     private int sky; //하늘상태
     private String pop; //강수확률

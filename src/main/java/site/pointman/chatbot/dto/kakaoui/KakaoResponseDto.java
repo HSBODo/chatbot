@@ -8,10 +8,10 @@ import org.json.simple.parser.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 @Getter
-public class KakaoResponse {
+public class KakaoResponseDto {
     private List outputs;
 
-    public KakaoResponse() {
+    public KakaoResponseDto() {
         this.outputs = new ArrayList();
     }
     public void addContent(JSONObject content) {

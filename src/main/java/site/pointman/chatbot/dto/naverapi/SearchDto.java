@@ -7,7 +7,7 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 @Getter @Setter
-public class Search {
+public class SearchDto {
 
     private String lastBuildDate;
     private int total;

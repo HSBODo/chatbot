@@ -302,7 +302,7 @@ label {
 // Remove the default `border-radius` that macOS Chrome adds.
 //
 // Details at https://github.com/twbs/bootstrap/issues/24093
-button {
+buttonDto {
   // stylelint-disable-next-line property-disallowed-list
   border-radius: 0;
 }
@@ -312,12 +312,12 @@ button {
 // should be doing this automatically, but seems to currently be
 // confused and applies its very visible two-tone outline anyway.
 
-button:focus:not(:focus-visible) {
+buttonDto:focus:not(:focus-visible) {
   outline: 0;
 }
 
 input,
-button,
+buttonDto,
 select,
 optgroup,
 textarea {
@@ -327,20 +327,20 @@ textarea {
   line-height: inherit;
 }
 
-button,
+buttonDto,
 input {
   overflow: visible; // Show the overflow in Edge
 }
 
-button,
+buttonDto,
 select {
   text-transform: none; // Remove the inheritance of text transform in Firefox
 }
 
-// Set the cursor for non-`<button>` buttons
+// Set the cursor for non-`<buttonDto>` buttonDtos
 //
 // Details at https://github.com/twbs/bootstrap/pull/30562
-[role="button"] {
+[role="buttonDto"] {
   cursor: pointer;
 }
 
@@ -355,17 +355,17 @@ select {
 // 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`
 //    controls in Android 4.
 // 2. Correct the inability to style clickable types in iOS and Safari.
-button,
-[type="button"], // 1
+buttonDto,
+[type="buttonDto"], // 1
 [type="reset"],
 [type="submit"] {
-  -webkit-appearance: button; // 2
+  -webkit-appearance: buttonDto; // 2
 }
 
-// Opinionated: add "hand" cursor to non-disabled button elements.
-@if $enable-pointer-cursor-for-buttons {
-  button,
-  [type="button"],
+// Opinionated: add "hand" cursor to non-disabled buttonDto elements.
+@if $enable-pointer-cursor-for-buttonDtos {
+  buttonDto,
+  [type="buttonDto"],
   [type="reset"],
   [type="submit"] {
     &:not(:disabled) {
@@ -375,8 +375,8 @@ button,
 }
 
 // Remove inner border and padding from Firefox, but don't restore the outline like Normalize.
-button::-moz-focus-inner,
-[type="button"]::-moz-focus-inner,
+buttonDto::-moz-focus-inner,
+[type="buttonDto"]::-moz-focus-inner,
 [type="reset"]::-moz-focus-inner,
 [type="submit"]::-moz-focus-inner {
   padding: 0;
@@ -427,14 +427,14 @@ progress {
   vertical-align: baseline; // Add the correct vertical alignment in Chrome, Firefox, and Opera.
 }
 
-// Correct the cursor style of increment and decrement buttons in Chrome.
-[type="number"]::-webkit-inner-spin-button,
-[type="number"]::-webkit-outer-spin-button {
+// Correct the cursor style of increment and decrement buttonDtos in Chrome.
+[type="number"]::-webkit-inner-spin-buttonDto,
+[type="number"]::-webkit-outer-spin-buttonDto {
   height: auto;
 }
 
-[type="search"] {
-  // This overrides the extra rounded corners on search inputs in iOS so that our
+[type="searchDto"] {
+  // This overrides the extra rounded corners on searchDto inputs in iOS so that our
   // `.form-control` class can properly style them. Note that this cannot simply
   // be added to `.form-control` as it's not specific enough. For details, see
   // https://github.com/twbs/bootstrap/issues/11586.
@@ -446,7 +446,7 @@ progress {
 // Remove the inner padding in Chrome and Safari on macOS.
 //
 
-[type="search"]::-webkit-search-decoration {
+[type="searchDto"]::-webkit-searchDto-decoration {
   -webkit-appearance: none;
 }
 
@@ -455,9 +455,9 @@ progress {
 // 2. Change font properties to `inherit` in Safari.
 //
 
-::-webkit-file-upload-button {
+::-webkit-file-upload-buttonDto {
   font: inherit; // 2
-  -webkit-appearance: button; // 1
+  -webkit-appearance: buttonDto; // 1
 }
 
 //

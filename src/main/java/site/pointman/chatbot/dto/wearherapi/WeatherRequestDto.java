@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class WeatherReq {
+public class WeatherRequestDto {
     private String serviceKey;
     private String numOfRows;
     private String pageNo;

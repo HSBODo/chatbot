@@ -1,13 +1,12 @@
 package site.pointman.chatbot.dto.kakaoui;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Map;
 
 @Getter @Setter
-public class ButtonBlock extends Button {
+public class ButtonBlockDto extends ButtonDto {
     /**
      * 필드명	        타입	                필수 여부	                설명	                                                                        제한
      * label	        string	                O	                    버튼에 적히는 문구입니다.	                                                    버튼 14자(가로배열 2개 8자)
@@ -25,7 +24,7 @@ public class ButtonBlock extends Button {
     private Map<String,String> extra;
     private String blockId;
 
-    public ButtonBlock(String action, String label,String blockId ,Map<String,String> extra) {
+    public ButtonBlockDto(String action, String label, String blockId , Map<String,String> extra) {
         super(action,label);
         this.extra = extra;
         this.blockId = blockId;

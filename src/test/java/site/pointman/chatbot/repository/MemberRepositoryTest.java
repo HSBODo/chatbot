@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.member.RoleType;
 
 import java.util.Optional;
 
@@ -21,7 +22,7 @@ class MemberRepositoryTest {
                 "123456",
                 "123456",
                 "test@naver.com",
-                "admin",
+                RoleType.ADMIN,
                 "admin",
                 "Y"
         );

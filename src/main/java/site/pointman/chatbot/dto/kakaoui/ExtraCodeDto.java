@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class ExtraCode {
+public class ExtraCodeDto {
     String kakaoUserkey;
     String itemCode;
     Long orderId;
