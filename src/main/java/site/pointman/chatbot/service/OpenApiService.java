@@ -12,13 +12,7 @@ import site.pointman.chatbot.dto.wearherapi.WeatherPropertyCodeDto;
 public interface OpenApiService {
     WeatherPropertyCodeDto selectShortTermWeather (KakaoMemberLocation kakaoUserLocation);
     SearchDto selectNaverSearch(String searchText, String display, String start, String sort);
-
-    KakaoPayReadyDto createKakaoPayReady(Long itemCode, String kakaoUserkey)throws Exception;
-
-
-    Order kakaoPayReady(KakaoPayReadyDto kakaoPayReadyDto) throws Exception;
-
-    KakaoPayReadyDto kakaoPayApprove(String pg_token, Long orderId) throws Exception;
-
-    Order kakaoPayCancel(Long orderId) throws Exception;
+    String  kakaoPayReady(Long itemCode, String kakaoUserkey) throws Exception;
+    void kakaoPayApprove(String pg_token, Long orderId) throws Exception;
+    void kakaoPayCancel(Long orderId) throws Exception;
 }

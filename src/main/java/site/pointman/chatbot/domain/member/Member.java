@@ -40,9 +40,8 @@ public class Member extends BaseEntity {
     @NotEmpty
     private String partnerId;
 
-    private String isUse;
     @Builder
-    public Member(Long idx, String id, String name, String password, String phone, String email, RoleType roleType, String partnerId, String isUse) {
+    public Member(Long idx, String id, String name, String password, String phone, String email, RoleType roleType, String partnerId) {
         this.idx = idx;
         this.id = id;
         this.name = name;
@@ -51,7 +50,6 @@ public class Member extends BaseEntity {
         this.email = email;
         this.roleType = roleType;
         this.partnerId = partnerId;
-        this.isUse = isUse;
     }
     public Member toEntity(){
         return Member.builder()
@@ -59,7 +57,6 @@ public class Member extends BaseEntity {
                 .email(email)
                 .roleType(roleType)
                 .id(id)
-                .isUse(isUse)
                 .password(password)
                 .partnerId(partnerId)
                 .phone(phone).build();

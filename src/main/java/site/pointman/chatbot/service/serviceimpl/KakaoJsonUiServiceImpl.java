@@ -6,6 +6,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.dto.kakaoui.ButtonDto;
+import site.pointman.chatbot.dto.kakaoui.CarouselType;
+import site.pointman.chatbot.dto.kakaoui.DisplayType;
 import site.pointman.chatbot.dto.kakaoui.ListCardItemDto;
 import site.pointman.chatbot.service.KakaoJsonUiService;
 
@@ -14,7 +16,7 @@ import java.util.List;
 public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
     private JSONParser jsonParser = new JSONParser();
     @Override
-    public JSONObject createBasicCard(String displayType, String title, String description, String thumbnailImgUrl, List<ButtonDto> buttonDtoList) throws ParseException {
+    public JSONObject createBasicCard(DisplayType displayType, String title, String description, String thumbnailImgUrl, List<ButtonDto> buttonDtoList) throws ParseException {
         /**
          Information. description 필드
 
@@ -34,7 +36,7 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
          */
         JSONArray buttons = new JSONArray(buttonDtoList);
         String resultJson;
-        if(displayType=="carousel"){
+        if(displayType.equals(DisplayType.carousel)){
             resultJson ="{\n" +
                     "          \"title\": \""+title+"\",\n" +
                     "          \"description\": \""+description+"\",\n" +
@@ -61,7 +63,7 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
     }
 
     @Override
-    public JSONObject createCommerceCard(String displayType,String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, List<ButtonDto> buttonDtoList) throws ParseException {
+    public JSONObject createCommerceCard(DisplayType displayType,String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, List<ButtonDto> buttonDtoList) throws ParseException {
         /**
          Information. price, discount, discountedPrice 의 동작 방식
 
@@ -86,7 +88,7 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
          */
         JSONArray buttons = new JSONArray(buttonDtoList);
         String resultJson;
-        if(displayType=="carousel"){
+        if(displayType.equals(DisplayType.carousel)){
             resultJson ="{\n" +
                     "          \"description\": \""+description+"\",\n" +
                     "          \"price\": "+price+",\n" +
@@ -141,11 +143,11 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
     }
 
     @Override
-    public JSONObject createListCard(String displayType, String title, List<ListCardItemDto> listCardItemListDto, List<ButtonDto> buttonDtoList) throws ParseException {
+    public JSONObject createListCard(DisplayType displayType, String title, List<ListCardItemDto> listCardItemListDto, List<ButtonDto> buttonDtoList) throws ParseException {
         JSONArray buttons = new JSONArray(buttonDtoList);
         JSONArray listCardItems = new JSONArray(listCardItemListDto);
         String resultJson;
-        if(displayType=="carousel"){
+        if(displayType.equals(DisplayType.carousel)){
             resultJson =
                     "      {\n" +
                             "          \"header\": {\n" +
@@ -171,7 +173,7 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
     }
 
     @Override
-    public JSONObject createCarousel(String itemType, List items) throws ParseException {
+    public JSONObject createCarousel(CarouselType itemType, List items) throws ParseException {
         /**
          * 필드명	    타입	            필수 여부	설명	                제한
          * type	        string	            O	케로셀의 타입입니다.	basicCard 혹은 commerceCard, listCard, itemCard

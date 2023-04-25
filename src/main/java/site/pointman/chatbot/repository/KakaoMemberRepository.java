@@ -11,6 +11,6 @@ public interface KakaoMemberRepository {
     KakaoMember save (KakaoMember member);
     KakaoMemberLocation saveLocation (KakaoMemberLocation memberLocation);
     Optional<KakaoMember> findByMember(String  kakaoUserkey);
-    void updateLocation (String kakaoUserkey, Map<String, BigDecimal> updateParams);
+    Optional<KakaoMemberLocation> updateLocation (String kakaoUserkey, BigDecimal x , BigDecimal y);
     Optional<KakaoMemberLocation> findByLocation(String kakaoUserkey);
 }

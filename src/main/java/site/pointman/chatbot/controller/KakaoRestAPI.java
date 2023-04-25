@@ -12,12 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.dto.kakaopay.KakaoPayReadyDto;
-import site.pointman.chatbot.dto.kakaoui.ButtonDto;
-import site.pointman.chatbot.dto.kakaoui.ExtraCodeDto;
-import site.pointman.chatbot.dto.kakaoui.KakaoResponseDto;
+import site.pointman.chatbot.dto.kakaoui.*;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
-import site.pointman.chatbot.dto.kakaoui.KakaoRequestDto;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.KakaoJsonUiService;
 import site.pointman.chatbot.service.MemberService;
@@ -52,9 +49,10 @@ public class KakaoRestAPI {
             kakaoUserkey = params.getKakaoUserkey(); //사용자 유저키
             log.info("Request:: uttr ={}, userkey = {}",uttr,kakaoUserkey);
 
-            KakaoMember member = new KakaoMember();
-            member.setKakaoUserkey(kakaoUserkey);
-            member.setPartnerId("pointman");
+            KakaoMember member = KakaoMember.builder()
+                    .kakaoUserkey(kakaoUserkey)
+                    .partnerId("pointman")
+                    .build();
             memberService.join(member);
             switch (uttr){
                 case "결제 상세보기" :
@@ -82,7 +80,7 @@ public class KakaoRestAPI {
                     List buttonList = new ArrayList<ButtonDto>();
                     ButtonDto adminPage = new ButtonDto("webLink","관리자페이지","https://www.pointman.shop/admin-page/login");
                     buttonList.add(adminPage);
-                    kakaoResponseDto.addContent(kakaoJsonUiService.createBasicCard("","관리자페이지","회원관리, 상품관리, 매출관리를 할 수 있어요!!","https://www.pointman.shop/image/%EC%B6%9C%EA%B7%BC%EB%8F%84%EC%9A%B0%EB%AF%B8.png",buttonList));
+                    kakaoResponseDto.addContent(kakaoJsonUiService.createBasicCard(DisplayType.basic,"관리자페이지","회원관리, 상품관리, 매출관리를 할 수 있어요!!","https://www.pointman.shop/image/%EC%B6%9C%EA%B7%BC%EB%8F%84%EC%9A%B0%EB%AF%B8.png",buttonList));
                     break;
                 case "개발자 소개" :
                     kakaoResponseDto.addContent(kakaoApiService.createDeveloperInfo());
@@ -104,13 +102,15 @@ public class KakaoRestAPI {
     public HashMap<String, String> locationAgree(@RequestBody KakaoMemberLocation params){
         HashMap<String,String> resultJson = new HashMap<>();
         try {
-            KakaoMember member = new KakaoMember();
-            KakaoMemberLocation memberLocation = new KakaoMemberLocation();
+            KakaoMember member = KakaoMember.builder()
+                    .kakaoUserkey(params.getKakaoUserkey())
+                    .build();
+            KakaoMemberLocation memberLocation = KakaoMemberLocation.builder()
+                    .kakaoUserkey(params.getKakaoUserkey())
+                    .x(params.getX())
+                    .x(params.getY())
+                    .build();
 
-            member.setKakaoUserkey(params.getKakaoUserkey());
-            memberLocation.setKakaoUserkey(params.getKakaoUserkey());
-            memberLocation.setX(params.getX());
-            memberLocation.setY(params.getY());
             log.info("join={}",memberService.join(member));
             log.info("saveLocation={}",memberService.saveLocation(memberLocation));
 
@@ -123,16 +123,14 @@ public class KakaoRestAPI {
 
     @GetMapping(value = "kakaopay-ready")
     public String kakaoPayReady(@RequestParam Long itemcode,@RequestParam String kakaouserkey) throws Exception{
-        log.info("itemcode={}",itemcode);
-        log.info("kakaouserkey={}",kakaouserkey);
-        String redirectUrl="https://plus.kakao.com/talk/bot/@pointman_dev/결제실패";
+        log.info("itemcode={},kakaouserkey={}",itemcode,kakaouserkey);
+        String redirectUrl;
         try {
-            KakaoPayReadyDto kakaoPayReadyDto = openApiService.createKakaoPayReady(itemcode, kakaouserkey);
-            Order order = openApiService.kakaoPayReady(kakaoPayReadyDto);
-            redirectUrl= order.getNext_redirect_mobile_url();
+            redirectUrl = openApiService.kakaoPayReady(itemcode, kakaouserkey);
             log.info("kakaopay-ready success ={}",redirectUrl);
         }catch (Exception e){
-            log.info("e={}",e.toString());
+            e.printStackTrace();
+            redirectUrl="https://plus.kakao.com/talk/bot/@pointman_dev/결제실패";
             log.info("kakaopay-ready fail ={}",redirectUrl);
             return "redirect:"+redirectUrl;
         }
@@ -146,10 +144,11 @@ public class KakaoRestAPI {
             openApiService.kakaoPayApprove(pg_token,orderId);
             log.info("kakaopay-approve success");
         }catch (Exception e){
+            e.printStackTrace();
             log.info("kakaopay-approve fail");
-            return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/결제 실패";
+            return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/결제실패";
         }
-        return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/결제 완료";
+        return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/결제완료";
     }
 
     @GetMapping(value = "/{orderId}/kakaopay-cancel")
@@ -157,9 +156,9 @@ public class KakaoRestAPI {
         try {
             openApiService.kakaoPayCancel(orderId);
         }catch (Exception e){
-            return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/주문취소 실패";
+            return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/주문취소실패";
         }
-        return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/주문취소 완료";
+        return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/주문취소완료";
     }
     @GetMapping(value = "location-notice")
     public String locationNotice(){

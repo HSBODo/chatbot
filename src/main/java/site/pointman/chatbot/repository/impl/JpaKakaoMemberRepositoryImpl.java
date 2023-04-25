@@ -39,11 +39,11 @@ public class JpaKakaoMemberRepositoryImpl implements KakaoMemberRepository {
     }
 
     @Override
-    public void updateLocation(String kakaoUserkey, Map<String, BigDecimal> updateParams) {
+    public Optional<KakaoMemberLocation> updateLocation(String kakaoUserkey, BigDecimal x , BigDecimal y) {
         KakaoMemberLocation memberLocation = em.find(KakaoMemberLocation.class,kakaoUserkey);
-        log.info("X={},Y={}",updateParams.get("X"),updateParams.get("Y"));
-        memberLocation.setX(updateParams.get("X"));
-        memberLocation.setY(updateParams.get("Y"));
+        memberLocation.changeX(x);
+        memberLocation.changeY(y);
+        return Optional.ofNullable(memberLocation);
     }
 
     @Override

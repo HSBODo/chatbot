@@ -6,9 +6,9 @@ import site.pointman.chatbot.domain.order.Order;
 import java.util.List;
 import java.util.Optional;
 
-public interface KaKaoItemRepository {
+public interface ItemRepository {
     List<Item> findByDisplayItems();
-    List<Order> findByOrders(String kakaoUserkey);
+    List<Order> findByApproveOrders(String kakaoUserkey);
     Optional<Item> findByItem(Long itemCode);
     Order savePayReady(Order order);
     Optional<Order> findByReadyOrder(Long orderId);
@@ -16,7 +16,7 @@ public interface KaKaoItemRepository {
     Optional<Order> findByApproveOrder(Long orderId);
 
     Optional<Order> findByOrder(String kakaoUserkey, Long orderId);
-    void updatePayApprove(Order order);
+    Optional<Order> updatePayApprove(Long orderId,Order updateParams);
 
-    void updatePayCancel(Order order);
+    Optional<Order> updatePayCancel(Long orderId,Order updateParams);
 }

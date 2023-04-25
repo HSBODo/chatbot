@@ -23,8 +23,7 @@ class MemberRepositoryTest {
                 "123456",
                 "test@naver.com",
                 RoleType.ADMIN,
-                "admin",
-                "Y"
+                "admin"
         );
         memberRepository.save(member.toEntity());
     }

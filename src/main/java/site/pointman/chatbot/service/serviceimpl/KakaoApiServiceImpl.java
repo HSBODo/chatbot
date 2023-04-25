@@ -8,13 +8,12 @@ import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.order.OrderStatus;
-import site.pointman.chatbot.dto.kakaoui.ButtonBlockDto;
-import site.pointman.chatbot.dto.kakaoui.ButtonDto;
-import site.pointman.chatbot.dto.kakaoui.ListCardItemDto;
+import site.pointman.chatbot.domain.order.PayMethod;
+import site.pointman.chatbot.dto.kakaoui.*;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.dto.naverapi.SearchDto;
 import site.pointman.chatbot.dto.wearherapi.WeatherPropertyCodeDto;
-import site.pointman.chatbot.repository.KaKaoItemRepository;
+import site.pointman.chatbot.repository.ItemRepository;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.KakaoJsonUiService;
@@ -27,15 +26,15 @@ import java.util.*;
 @Slf4j
 @Service
 public class KakaoApiServiceImpl implements KakaoApiService {
-    private KaKaoItemRepository kaKaoItemRepository;
+    private ItemRepository itemRepository;
     private KakaoMemberRepository KakaoMemberRepository;
     private OpenApiService openApiService;
     private KakaoJsonUiService kakaoJsonUiService;
     private JSONParser jsonParser = new JSONParser();
     private Utillity utillity;
 
-    public KakaoApiServiceImpl(KaKaoItemRepository kaKaoItemRepository, KakaoMemberRepository kakaoMemberRepository, OpenApiService openApiService, KakaoJsonUiService kakaoJsonUiService) {
-        this.kaKaoItemRepository = kaKaoItemRepository;
+    public KakaoApiServiceImpl(ItemRepository itemRepository, KakaoMemberRepository kakaoMemberRepository, OpenApiService openApiService, KakaoJsonUiService kakaoJsonUiService) {
+        this.itemRepository = itemRepository;
         this.KakaoMemberRepository = kakaoMemberRepository;
         this.openApiService = openApiService;
         this.kakaoJsonUiService = kakaoJsonUiService;
@@ -61,14 +60,14 @@ public class KakaoApiServiceImpl implements KakaoApiService {
 
                 int cnt =  searchDto.getItems().indexOf(item)+1;
                 if(cnt%5==0){  // <= 케로셀 최대 5개 까지만 표시
-                    carouselItems.add(kakaoJsonUiService.createListCard("carousel", searchDto.getLastBuildDate()+" 오늘의 뉴스", listCardItemDtos, buttons));
+                    carouselItems.add(kakaoJsonUiService.createListCard(DisplayType.carousel, searchDto.getLastBuildDate()+" 오늘의 뉴스", listCardItemDtos, buttons));
                     listCardItemDtos.clear();
                 }
             } catch (ParseException e) {
                 throw new IllegalArgumentException("뉴스정보를 불러오는 데 실패하였습니다.");
             }
         });
-        return kakaoJsonUiService.createCarousel("listCard",carouselItems);
+        return kakaoJsonUiService.createCarousel(CarouselType.listCard,carouselItems);
     }
     @Override
     public JSONObject createTodayWeather(String kakaoUserkey) throws Exception {
@@ -77,7 +76,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
 
         WeatherPropertyCodeDto weatherCode =  openApiService.selectShortTermWeather(maybeMemberLocation.get());
         List buttonList = new ArrayList<ButtonDto>();
-        return  kakaoJsonUiService.createBasicCard("basic",
+        return  kakaoJsonUiService.createBasicCard(DisplayType.basic,
                 weatherCode.getBaseDateValue()+" 오늘의 날씨",
                 " 하늘상태:"+weatherCode.getSkyValue()+"\n" +
                         " 기온: "+weatherCode.getTmp()+"도"+"\n" +
@@ -98,7 +97,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         List buttonList = new ArrayList<ButtonDto>();
         buttonList.add(buttonDto);
         return kakaoJsonUiService.createBasicCard(
-                "basic",
+                DisplayType.basic,
                 "위치정보의 수집ㆍ이용",
                 " ◇ 위치정보수집ㆍ이용 목적 : 이동통신망사업자 및 이동통신재판매사업자로부터 총포 또는 총포소지자의 실시간 위치정보 확인을 통해 법령 위반행위 확인 및 사고 발생시 신속한 대처 등 총포 오남용 및 안전사고 예방에 활용\n" +
                         " ◇ 위치정보의 보유 및 이용기간 : 총포 보관해제시부터 총포 재보관 또는 당해 수렵기간 종료 후 1개월\n" +
@@ -117,7 +116,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         buttonList.add(gitHub);
         buttonList.add(portfolio);
         return kakaoJsonUiService.createBasicCard(
-                "basic",
+                DisplayType.basic,
                 "Backend Developer",
                 "안녕하세요.\n" +
                         "백엔드 개발자 한수빈입니다.\n" +
@@ -128,7 +127,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     }
     @Override
     public JSONObject createRecommendItems(String kakaoUserkey) throws Exception {
-        List<Item> findItems = kaKaoItemRepository.findByDisplayItems();
+        List<Item> findItems = itemRepository.findByDisplayItems();
         if(findItems.isEmpty()) throw new NullPointerException("현재 특가상품이 없습니다.");
         List items = new ArrayList<>();
         findItems.stream()
@@ -140,7 +139,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                     buttons.add(payButtonDto);
                     try {
                         JSONObject commerceCard = kakaoJsonUiService.createCommerceCard(
-                                "carousel",
+                                DisplayType.carousel,
                                 item.getDescription(),
                                 item.getPrice(),
                                 item.getDiscount(),
@@ -159,17 +158,17 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                     }
 
                 });
-        return kakaoJsonUiService.createCarousel("commerceCard",items);
+        return kakaoJsonUiService.createCarousel(CarouselType.commerceCard,items);
     }
     @Override
     public JSONObject createOrderList(String kakaoUserkey) throws Exception {
         List orderItems = new ArrayList<>();
-        List<Order> maybeOders = kaKaoItemRepository.findByOrders(kakaoUserkey);
-        if(maybeOders.isEmpty()) throw new IllegalStateException("주문하신 상품이 없습니다.");
-        maybeOders.stream()
+        List<Order> maybeOrders = itemRepository.findByApproveOrders(kakaoUserkey);
+        if(maybeOrders.isEmpty()) throw new IllegalStateException("주문하신 상품이 없습니다.");
+        maybeOrders.stream()
                 .forEach(order ->{
                     try {
-                        Optional<Item> maybeItem = kaKaoItemRepository.findByItem(order.getItem_code());
+                        Optional<Item> maybeItem = itemRepository.findByItem(order.getItem_code());
                         if (maybeItem.isEmpty()) return;
 
                         List<ButtonDto> buttons = new ArrayList<>();
@@ -187,7 +186,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                         buttons.add(orderDetail);
 
                         JSONObject basicCard = kakaoJsonUiService.createBasicCard(
-                                "carousel",
+                                DisplayType.carousel,
                                 order.getItem_name(),
                                 "결제 일자: "+utillity.formatApproveDate(String.valueOf(order.getCreateDate()))+"\n"+
                                         "결제 금액: "+utillity.formatMoney(order.getTotal_amount())+"원\n"
@@ -201,15 +200,15 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                         throw new NullPointerException("주문하신 상품 조회에 실패했습니다.");
                     }
                 });
-        return kakaoJsonUiService.createCarousel("basicCard",orderItems);
+        return kakaoJsonUiService.createCarousel(CarouselType.basicCard,orderItems);
     }
     @Override
     public JSONObject createOrderDetail(String kakaoUserkey, Long orderId) throws Exception {
         JSONObject basicCard;
         try {
-            Optional<Order> maybeOrder = kaKaoItemRepository.findByOrder(kakaoUserkey,orderId);
+            Optional<Order> maybeOrder = itemRepository.findByOrder(kakaoUserkey,orderId);
             if(maybeOrder.isEmpty()) throw new IllegalStateException("주문번호와 일치하는 주문이 없습니다.");
-            Optional<Item> maybeItem = kaKaoItemRepository.findByItem(maybeOrder.get().getItem_code());
+            Optional<Item> maybeItem = itemRepository.findByItem(maybeOrder.get().getItem_code());
             if(maybeItem.isEmpty()) throw new IllegalStateException("상품코드와 일치하는 상품이 없습니다.");
 
             List<ButtonDto> buttons = new ArrayList<>();
@@ -217,9 +216,9 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                 ButtonDto payCancel = new ButtonDto("webLink","결제 취소","https://www.pointman.shop/kakaochat/v1/"+maybeOrder.get().getOrder_id()+"/kakaopay-cancel");
                 buttons.add(payCancel);
             }
-            String payMethod = maybeOrder.get().getPayment_method_type()==null?"없음":maybeOrder.get().getPayment_method_type();
+            PayMethod payMethod = maybeOrder.get().getPayment_method_type()==null?PayMethod.없음:maybeOrder.get().getPayment_method_type();
             basicCard = kakaoJsonUiService.createBasicCard(
-                    "",
+                    DisplayType.basic,
                     maybeItem.get().getProfileNickname(),
                     "주문번호: " + maybeOrder.get().getOrder_id() +"\n"+
                             "결제일자: " + utillity.formatApproveDate(String.valueOf(maybeOrder.get().getCreateDate())) + "\n" +

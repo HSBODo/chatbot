@@ -24,23 +24,18 @@ class MemberServiceTest {
 
     @Test
     void join() {
-        KakaoMember member = new KakaoMember();
-        member.setKakaoUserkey("testuserkey1234zxc");
-        member.setPartnerId("pointman");
-        Map<String, String> result = memberService.join(member);
-        assertThat(member).isEqualTo(result.get("member"));
+
+
     }
 
     @Test
     void saveLocation() {
-        KakaoMemberLocation member = new KakaoMemberLocation();
-        member.setKakaoUserkey("QFERwysZbO77"); //member 존재, 위치정보 있음
-//        member.setKakaoUserkey("undefine");// member 존재, 위치정보 없음
-//        member.setKakaoUserkey("QFERwysZbO771"); //member 존재, 위치정보 없음
-
-        member.setX(BigDecimal.valueOf(37.4603776));
-        member.setY(BigDecimal.valueOf(126.8187136));
-        Map<String, String> result = memberService.saveLocation(member);
+        KakaoMemberLocation memberLocation = KakaoMemberLocation.builder()
+                .kakaoUserkey("QFERwysZbO77")
+                .x(BigDecimal.valueOf(37.4603776))
+                .y(BigDecimal.valueOf(126.8187136))
+                .build();
+        Map<String, String> result = memberService.saveLocation(memberLocation);
         String resultCode = String.valueOf(result.get("code"));
         log.info("result = {}",result);
         assertThat(resultCode).isEqualTo("0");

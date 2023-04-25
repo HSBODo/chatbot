@@ -59,7 +59,7 @@ public class MemberServiceImpl implements MemberService {
         String kakaoUserkey = memberLocation.getKakaoUserkey();
         try {
             Optional<KakaoMember> findMember = kakaoUserRepository.findByMember(kakaoUserkey);
-            if(!findMember.isPresent()){
+            if(!findMember.isEmpty()){
                 result.put("msg","위치저장 실패. 존재하지 않은 회원");
                 result.put("code",1);
                 result.put("kakaoUserkey",kakaoUserkey);
@@ -75,10 +75,7 @@ public class MemberServiceImpl implements MemberService {
                 result.put("X",memberLocation.getX());
                 result.put("Y",memberLocation.getY());
             }else {
-                Map<String, BigDecimal> updateParams= new HashMap<>();
-                updateParams.put("X",memberLocation.getX());
-                updateParams.put("Y",memberLocation.getY());
-                kakaoUserRepository.updateLocation(kakaoUserkey,updateParams);
+                kakaoUserRepository.updateLocation(kakaoUserkey,memberLocation.getX(),memberLocation.getY());
                 result.put("msg","위치업데이트 완료.");
                 result.put("code",0);
                 result.put("kakaoUserkey",kakaoUserkey);
@@ -86,7 +83,7 @@ public class MemberServiceImpl implements MemberService {
                 result.put("Y",memberLocation.getY());
             }
         }catch (Exception e){
-            throw new IllegalArgumentException("위치저장 실패");
+            throw new NullPointerException("위치저장 실패");
         }
         return result;
     }

@@ -20,6 +20,6 @@ public class BaseEntity {
     @Column(name = "update_time")
     private LocalDateTime lastModifiedDate;
 
-    @Column(name = "delete_time")
-    private LocalDateTime deleteDate;
+    @Column(name = "is_use")
+    private String isUse="Y";
 }
