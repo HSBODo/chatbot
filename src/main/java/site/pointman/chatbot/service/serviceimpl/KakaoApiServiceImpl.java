@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.order.OrderStatus;
+import site.pointman.chatbot.domain.order.PayMethod;
 import site.pointman.chatbot.dto.kakaoui.ButtonBlockDto;
 import site.pointman.chatbot.dto.kakaoui.ButtonDto;
 import site.pointman.chatbot.dto.kakaoui.ListCardItemDto;
@@ -164,9 +165,9 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public JSONObject createOrderList(String kakaoUserkey) throws Exception {
         List orderItems = new ArrayList<>();
-        List<Order> maybeOders = kaKaoItemRepository.findByOrders(kakaoUserkey);
-        if(maybeOders.isEmpty()) throw new IllegalStateException("주문하신 상품이 없습니다.");
-        maybeOders.stream()
+        List<Order> maybeOrders = kaKaoItemRepository.findByOrders(kakaoUserkey);
+        if(maybeOrders.isEmpty()) throw new IllegalStateException("주문하신 상품이 없습니다.");
+        maybeOrders.stream()
                 .forEach(order ->{
                     try {
                         Optional<Item> maybeItem = kaKaoItemRepository.findByItem(order.getItem_code());
@@ -217,7 +218,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                 ButtonDto payCancel = new ButtonDto("webLink","결제 취소","https://www.pointman.shop/kakaochat/v1/"+maybeOrder.get().getOrder_id()+"/kakaopay-cancel");
                 buttons.add(payCancel);
             }
-            String payMethod = maybeOrder.get().getPayment_method_type()==null?"없음":maybeOrder.get().getPayment_method_type();
+            PayMethod payMethod = maybeOrder.get().getPayment_method_type()==null?PayMethod.없음:maybeOrder.get().getPayment_method_type();
             basicCard = kakaoJsonUiService.createBasicCard(
                     "",
                     maybeItem.get().getProfileNickname(),

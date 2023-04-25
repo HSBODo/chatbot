@@ -20,8 +20,8 @@ public class Order extends BaseEntity {
     private String tid;
     @Id
     private Long order_id;
-
-    private String payment_method_type;
+    @Enumerated(EnumType.STRING)
+    private PayMethod payment_method_type;
     private String kakao_userkey;
     private String approved_at;
     private String canceled_at;

@@ -3,6 +3,7 @@ package site.pointman.chatbot.repository.impl;
 import lombok.extern.slf4j.Slf4j;
 import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.domain.order.Order;
+import site.pointman.chatbot.domain.order.OrderStatus;
 import site.pointman.chatbot.repository.KaKaoItemRepository;
 
 import javax.persistence.EntityManager;
@@ -23,7 +24,10 @@ public class JpaKaKaoItemRepositoryImpl implements KaKaoItemRepository {
 
     @Override
     public Optional<Order> findByApproveOrder(Long orderId) {
-        return Optional.ofNullable(em.createQuery("select o from Order o where o.status='approve' AND o.order_id='"+orderId+"'", Order.class).getSingleResult());
+        return Optional.ofNullable(em.createQuery("select o from Order o where o.status=:status AND o.order_id=:orderId", Order.class)
+                .setParameter("status",OrderStatus.결제승인)
+                .setParameter("orderId",orderId)
+                .getSingleResult());
     }
 
     @Override
@@ -35,7 +39,8 @@ public class JpaKaKaoItemRepositoryImpl implements KaKaoItemRepository {
 
     @Override
     public List<Order> findByOrders(String kakaoUserkey) {
-        return em.createQuery("select o from Order o where o.kakao_userkey=:kakaoUserkey", Order.class)
+        return em.createQuery("select o from Order o where o.status = :status and o.kakao_userkey=:kakaoUserkey", Order.class)
+                .setParameter("status",OrderStatus.결제승인)
                 .setParameter("kakaoUserkey",kakaoUserkey)
                 .getResultList()
                 ;
@@ -82,6 +87,10 @@ public class JpaKaKaoItemRepositoryImpl implements KaKaoItemRepository {
 
     @Override
     public Optional<Order> findByReadyOrder(Long orderId) {
-        return Optional.ofNullable(em.createQuery("select o from Order o where o.status='ready' AND o.order_id='"+orderId+"'", Order.class).getSingleResult());
+        return Optional.ofNullable(em.createQuery("select o from Order o where o.status=:status AND o.order_id=:orderId", Order.class)
+                .setParameter("status", OrderStatus.결제대기)
+                .setParameter("orderId",orderId)
+                .getSingleResult()
+        );
     }
 }

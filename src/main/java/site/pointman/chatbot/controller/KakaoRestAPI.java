@@ -146,6 +146,7 @@ public class KakaoRestAPI {
             openApiService.kakaoPayApprove(pg_token,orderId);
             log.info("kakaopay-approve success");
         }catch (Exception e){
+            e.printStackTrace();
             log.info("kakaopay-approve fail");
             return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/결제 실패";
         }

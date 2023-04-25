@@ -11,6 +11,7 @@ import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.domain.order.OrderStatus;
+import site.pointman.chatbot.domain.order.PayMethod;
 import site.pointman.chatbot.dto.kakaopay.KakaoPayReadyDto;
 import site.pointman.chatbot.dto.naverapi.SearchDto;
 import site.pointman.chatbot.dto.wearherapi.WeatherPropertyCodeDto;
@@ -219,6 +220,7 @@ public class OpenApiServiceImpl implements OpenApiService {
         urlBuilder.append("&" + URLEncoder.encode("approval_url","UTF-8") + "="+"https://www.pointman.shop/kakaochat/v1/"+orderId+"/kakaopay-approve");
         urlBuilder.append("&" + URLEncoder.encode("fail_url","UTF-8") + "="+ kakaoPayReadyDto.getFail_url());
         urlBuilder.append("&" + URLEncoder.encode("cancel_url","UTF-8") + "="+ kakaoPayReadyDto.getCancel_url());
+//        urlBuilder.append("&" + URLEncoder.encode("payment_method_type","UTF-8") + "=");
         log.info("kakaoPayReady={}",urlBuilder);
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("Authorization", "KakaoAK "+kakaoAdminKey);
@@ -250,11 +252,12 @@ public class OpenApiServiceImpl implements OpenApiService {
             requestHeaders.put("Content-Type", "application/x-www-form-urlencoded");
             String responseBody = post(String.valueOf(urlBuilder),requestHeaders);
             log.info("kakaoApprove responseBody={}",responseBody);
-            JSONObject responsejsonObject = new JSONObject(responseBody);
 
+            JSONObject responsejsonObject = new JSONObject(responseBody);
+            PayMethod payMethod = responsejsonObject.getString("payment_method_type").equalsIgnoreCase("MONEY")? PayMethod.카카오페이 :PayMethod.카드;
             order.setApproved_at(responsejsonObject.getString("approved_at"));
             order.setAid(responsejsonObject.getString("aid"));
-            order.setPayment_method_type(responsejsonObject.getString("payment_method_type"));
+            order.setPayment_method_type(payMethod);
             order.setStatus(OrderStatus.결제승인);
             kaKaoItemRepository.updatePayApprove(order);
 
