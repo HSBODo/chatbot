@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Transactional
-public class JpaMemberRepositoryImpl implements MemberRepository {
+public class MemberRepositoryImpl implements MemberRepository {
     private final EntityManager em;
 
-    public JpaMemberRepositoryImpl(EntityManager em) {
+    public MemberRepositoryImpl(EntityManager em) {
         this.em = em;
     }
 

@@ -1,13 +1,9 @@
 package site.pointman.chatbot.dto.kakaopay;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @Builder
 public class KakaoPayReadyDto {
     private String kakaoUserkey;

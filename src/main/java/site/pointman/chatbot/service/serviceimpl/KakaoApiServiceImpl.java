@@ -15,6 +15,7 @@ import site.pointman.chatbot.dto.naverapi.SearchDto;
 import site.pointman.chatbot.dto.wearherapi.WeatherPropertyCodeDto;
 import site.pointman.chatbot.repository.ItemRepository;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
+import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.KakaoJsonUiService;
 import site.pointman.chatbot.service.OpenApiService;
@@ -28,14 +29,16 @@ import java.util.*;
 public class KakaoApiServiceImpl implements KakaoApiService {
     private ItemRepository itemRepository;
     private KakaoMemberRepository KakaoMemberRepository;
+    private OrderRepository orderRepository;
     private OpenApiService openApiService;
     private KakaoJsonUiService kakaoJsonUiService;
     private JSONParser jsonParser = new JSONParser();
     private Utillity utillity;
 
-    public KakaoApiServiceImpl(ItemRepository itemRepository, KakaoMemberRepository kakaoMemberRepository, OpenApiService openApiService, KakaoJsonUiService kakaoJsonUiService) {
+    public KakaoApiServiceImpl(ItemRepository itemRepository, KakaoMemberRepository kakaoMemberRepository, OrderRepository orderRepository, OpenApiService openApiService, KakaoJsonUiService kakaoJsonUiService) {
         this.itemRepository = itemRepository;
         this.KakaoMemberRepository = kakaoMemberRepository;
+        this.orderRepository = orderRepository;
         this.openApiService = openApiService;
         this.kakaoJsonUiService = kakaoJsonUiService;
     }
@@ -164,7 +167,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public JSONObject createOrderList(String kakaoUserkey) throws Exception {
         List orderItems = new ArrayList<>();
-        List<Order> maybeOrders = itemRepository.findByApproveOrders(kakaoUserkey);
+        List<Order> maybeOrders = orderRepository.findByApproveOrders(kakaoUserkey);
         if(maybeOrders.isEmpty()) throw new IllegalStateException("주문하신 상품이 없습니다.");
         maybeOrders.stream()
                 .forEach(order ->{
@@ -207,7 +210,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     public JSONObject createOrderDetail(String kakaoUserkey, Long orderId) throws Exception {
         JSONObject basicCard;
         try {
-            Optional<Order> maybeOrder = itemRepository.findByOrder(kakaoUserkey,orderId);
+            Optional<Order> maybeOrder = orderRepository.findByOrder(kakaoUserkey,orderId);
             if(maybeOrder.isEmpty()) throw new IllegalStateException("주문번호와 일치하는 주문이 없습니다.");
             Optional<Item> maybeItem = itemRepository.findByItem(maybeOrder.get().getItem_code());
             if(maybeItem.isEmpty()) throw new IllegalStateException("상품코드와 일치하는 상품이 없습니다.");

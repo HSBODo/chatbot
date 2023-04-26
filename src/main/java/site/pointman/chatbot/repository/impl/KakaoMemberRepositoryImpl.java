@@ -10,13 +10,12 @@ import javax.persistence.EntityManager;
 
 import java.math.BigDecimal;
 
-import java.util.Map;
 import java.util.Optional;
 @Slf4j
-public class JpaKakaoMemberRepositoryImpl implements KakaoMemberRepository {
+public class KakaoMemberRepositoryImpl implements KakaoMemberRepository {
     private final EntityManager em;
 
-    public JpaKakaoMemberRepositoryImpl(EntityManager em) {
+    public KakaoMemberRepositoryImpl(EntityManager em) {
         this.em = em;
     }
 

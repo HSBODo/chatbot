@@ -17,6 +17,7 @@ import site.pointman.chatbot.dto.naverapi.SearchDto;
 import site.pointman.chatbot.dto.wearherapi.WeatherPropertyCodeDto;
 import site.pointman.chatbot.dto.wearherapi.WeatherRequestDto;
 import site.pointman.chatbot.repository.ItemRepository;
+import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.service.OpenApiService;
 
 import java.io.BufferedReader;
@@ -43,6 +44,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class OpenApiServiceImpl implements OpenApiService {
 
     private ItemRepository itemRepository;
+    private OrderRepository orderRepository;
     @Value("${host.url}")
     private String hostUrl;
     @Value("${weather.api.key}")
@@ -67,8 +69,9 @@ public class OpenApiServiceImpl implements OpenApiService {
 
     private JSONParser jsonParser = new JSONParser();
 
-    public OpenApiServiceImpl(ItemRepository itemRepository) {
+    public OpenApiServiceImpl(ItemRepository itemRepository, OrderRepository orderRepository) {
         this.itemRepository = itemRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Override
@@ -222,11 +225,11 @@ public class OpenApiServiceImpl implements OpenApiService {
         urlBuilder.append("&" + URLEncoder.encode("total_amount","UTF-8") + "="+ kakaoPayReadyDto.getTotal_amount());
         urlBuilder.append("&" + URLEncoder.encode("vat_amount","UTF-8") + "="+ kakaoPayReadyDto.getVat_amount());
         urlBuilder.append("&" + URLEncoder.encode("tax_free_amount","UTF-8") + "="+ kakaoPayReadyDto.getTax_free_amount());
-        urlBuilder.append("&" + URLEncoder.encode("approval_url","UTF-8") + "="+kakaoPayReadyDto.getApproval_url()+"/"+orderId+"/kakaopay-approve");
-        urlBuilder.append("&" + URLEncoder.encode("fail_url","UTF-8") + "="+ kakaoPayReadyDto.getFail_url()+"/"+orderId+"/kakaopay-fail");
-        urlBuilder.append("&" + URLEncoder.encode("cancel_url","UTF-8") + "="+ kakaoPayReadyDto.getCancel_url()+"/"+orderId+"/kakaopay-cancel");
+        urlBuilder.append("&" + URLEncoder.encode("approval_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochat/v1/"+orderId+"/kakaopay-approve");
+        urlBuilder.append("&" + URLEncoder.encode("fail_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochat/v1/"+orderId+"/kakaopay-fail");
+        urlBuilder.append("&" + URLEncoder.encode("cancel_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochat/v1/"+orderId+"/kakaopay-cancel");
 //        urlBuilder.append("&" + URLEncoder.encode("payment_method_type","UTF-8") + "=");
-
+        log.info("urlBuilder={}",urlBuilder);
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("Authorization", "KakaoAK "+kakaoAdminKey);
         requestHeaders.put("Content-Type", "application/x-www-form-urlencoded");
@@ -254,12 +257,12 @@ public class OpenApiServiceImpl implements OpenApiService {
                 .next_redirect_mobile_url(responsejsonObject.getString("next_redirect_mobile_url"))
                 .next_redirect_pc_url(responsejsonObject.getString("next_redirect_pc_url"))
                 .build();
-        itemRepository.savePayReady(readyOrder);
+        orderRepository.savePayReady(readyOrder);
         return readyOrder.getNext_redirect_mobile_url();
     }
     @Override
     public void kakaoPayApprove(String pg_token , Long orderId) throws Exception {
-        Optional<Order> maybeReadyOrder = itemRepository.findByReadyOrder(orderId);
+        Optional<Order> maybeReadyOrder = orderRepository.findByReadyOrder(orderId);
         if(maybeReadyOrder.isEmpty()) throw new NullPointerException("결제 승인대기 주문이 없습니다.");
         Order order = maybeReadyOrder.get();
         try {
@@ -286,7 +289,7 @@ public class OpenApiServiceImpl implements OpenApiService {
             order.changeAid(responsejsonObject.getString("aid"));
             order.changePayMethod(payMethod);
             order.changeStatus(OrderStatus.결제승인);
-            itemRepository.updatePayApprove(order.getOrder_id(),order);
+            orderRepository.updatePayApprove(order.getOrder_id(),order);
         }catch (Exception e){
             e.printStackTrace();
             throw new IllegalArgumentException("결제승인 실패하였습니다.");
@@ -295,7 +298,7 @@ public class OpenApiServiceImpl implements OpenApiService {
     @Override
     public void kakaoPayCancel(Long orderId) throws Exception {
 
-        Optional<Order> maybeApproveOrder = itemRepository.findByApproveOrder(orderId);
+        Optional<Order> maybeApproveOrder = orderRepository.findByApproveOrder(orderId);
         if(maybeApproveOrder.isEmpty()) throw  new NullPointerException("결제승인 완료된 주문이 없습니다.");
         Order orderApproved = maybeApproveOrder.get();
 
@@ -318,7 +321,7 @@ public class OpenApiServiceImpl implements OpenApiService {
             orderApproved.changeCancelAt(responsejsonObject.getString("canceled_at"));
             orderApproved.changeStatus(OrderStatus.결제취소);
 
-            itemRepository.updatePayCancel(orderApproved.getOrder_id(),orderApproved);
+            orderRepository.updatePayCancel(orderApproved.getOrder_id(),orderApproved);
             log.info("responsejsonObject={}",responsejsonObject);
         }catch (Exception e){
             e.printStackTrace();

@@ -1,5 +1,7 @@
 package site.pointman.chatbot.service.serviceimpl;
 
+import net.bytebuddy.implementation.bytecode.Duplication;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.domain.member.KakaoMember;
@@ -28,31 +30,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Map<String,String> join(KakaoMember user) {
-        return  validateDuplicateMember(user);
+    public void join(KakaoMember user) {
+        validateDuplicateMember(user);
     }
 
 
-    private Map<String,String> validateDuplicateMember(KakaoMember member) {
-        Map result = new HashMap<>();
-        try {
+    private void validateDuplicateMember(KakaoMember member) {
             Optional<KakaoMember> findMember = kakaoUserRepository.findByMember(member.getKakaoUserkey());
-            if(!findMember.isPresent()){
-                KakaoMember saveMember = kakaoUserRepository.save(member);
-                result.put("msg","회원가입 완료.");
-                result.put("code",1);
-                result.put("kakaoUserkey",member.getKakaoUserkey());
-                result.put("member",saveMember);
-            }else {
-                result.put("msg","중복회원");
-                result.put("code",1);
-                result.put("kakaoUserkey",member.getKakaoUserkey());
-                result.put("member",null);
-            }
-        }catch (Exception e){
-            throw new IllegalArgumentException("회원가입 실패");
-        }
-        return result;
+            if(!findMember.isEmpty())throw new DuplicateKeyException("중복회원입니다.");
+            kakaoUserRepository.save(member);
     }
     private Map<String,String> validateDuplicateMemberLocation(KakaoMemberLocation memberLocation) {
         Map result = new HashMap<>();

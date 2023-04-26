@@ -4,9 +4,11 @@ import org.springframework.context.annotation.Configuration;
 import site.pointman.chatbot.repository.ItemRepository;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.repository.MemberRepository;
+import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.repository.impl.ItemRepositoryImpl;
-import site.pointman.chatbot.repository.impl.JpaKakaoMemberRepositoryImpl;
-import site.pointman.chatbot.repository.impl.JpaMemberRepositoryImpl;
+import site.pointman.chatbot.repository.impl.KakaoMemberRepositoryImpl;
+import site.pointman.chatbot.repository.impl.MemberRepositoryImpl;
+import site.pointman.chatbot.repository.impl.OrderRepositoryImpl;
 
 import javax.persistence.EntityManager;
 
@@ -23,14 +25,18 @@ public class BeanConfig {
 
     @Bean
     public KakaoMemberRepository kakaoMemberRepository(){
-        return  new JpaKakaoMemberRepositoryImpl(em);
+        return  new KakaoMemberRepositoryImpl(em);
     }
     @Bean
     public ItemRepository kaKaoItemRepository (){
         return  new ItemRepositoryImpl(em);
     }
     @Bean
-    public MemberRepository memberRepository(){return new JpaMemberRepositoryImpl(em);
+    public MemberRepository memberRepository(){return new MemberRepositoryImpl(em);
+    }
+    @Bean
+    public OrderRepository orderRepository(){
+        return new OrderRepositoryImpl(em);
     }
 
 

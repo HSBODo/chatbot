@@ -105,13 +105,14 @@ public class KakaoRestAPI {
             KakaoMember member = KakaoMember.builder()
                     .kakaoUserkey(params.getKakaoUserkey())
                     .build();
+
             KakaoMemberLocation memberLocation = KakaoMemberLocation.builder()
                     .kakaoUserkey(params.getKakaoUserkey())
                     .x(params.getX())
                     .x(params.getY())
                     .build();
 
-            log.info("join={}",memberService.join(member));
+            memberService.join(member);
             log.info("saveLocation={}",memberService.saveLocation(memberLocation));
 
             resultJson.put("redirectURL","https://plus.kakao.com/talk/bot/@pointman_dev/위치정보 동의 완료");
