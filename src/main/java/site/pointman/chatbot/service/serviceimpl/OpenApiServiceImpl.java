@@ -290,6 +290,7 @@ public class OpenApiServiceImpl implements OpenApiService {
             order.changePayMethod(payMethod);
             order.changeStatus(OrderStatus.결제승인);
             orderRepository.updatePayApprove(order.getOrder_id(),order);
+            itemRepository.updateMinusItemQuantity(order.getItem_code(), Long.valueOf(order.getQuantity()));
         }catch (Exception e){
             e.printStackTrace();
             throw new IllegalArgumentException("결제승인 실패하였습니다.");

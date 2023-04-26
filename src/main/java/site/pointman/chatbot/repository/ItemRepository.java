@@ -9,5 +9,6 @@ import java.util.Optional;
 public interface ItemRepository {
     List<Item> findByDisplayItems();
     Optional<Item> findByItem(Long itemCode);
+    Optional<Item> updateMinusItemQuantity(Long itemCode,Long quantity);
 
 }

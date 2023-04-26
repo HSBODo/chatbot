@@ -1,7 +1,7 @@
 package site.pointman.chatbot.domain;
 
 import lombok.Getter;
-import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -21,5 +21,6 @@ public class BaseEntity {
     private LocalDateTime lastModifiedDate;
 
     @Column(name = "is_use")
+    @ColumnDefault("Y")
     private String isUse="Y";
 }

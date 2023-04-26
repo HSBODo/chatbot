@@ -24,9 +24,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Map<String,String> saveLocation(KakaoMemberLocation userLocation) {
-
-        return  validateDuplicateMemberLocation(userLocation);
+    public void saveLocation(KakaoMemberLocation userLocation) {
+        validateDuplicateMemberLocation(userLocation);
     }
 
     @Override
@@ -36,41 +35,29 @@ public class MemberServiceImpl implements MemberService {
 
 
     private void validateDuplicateMember(KakaoMember member) {
+        try {
             Optional<KakaoMember> findMember = kakaoUserRepository.findByMember(member.getKakaoUserkey());
-            if(!findMember.isEmpty())throw new DuplicateKeyException("중복회원입니다.");
-            kakaoUserRepository.save(member);
+            if(findMember.isEmpty())kakaoUserRepository.save(member);
+        }catch (Exception e){
+            throw new IllegalArgumentException("회원가입에 실패하였습니다.");
+        }
     }
-    private Map<String,String> validateDuplicateMemberLocation(KakaoMemberLocation memberLocation) {
+    private void validateDuplicateMemberLocation(KakaoMemberLocation memberLocation) {
         Map result = new HashMap<>();
         String kakaoUserkey = memberLocation.getKakaoUserkey();
         try {
-            Optional<KakaoMember> findMember = kakaoUserRepository.findByMember(kakaoUserkey);
-            if(!findMember.isEmpty()){
-                result.put("msg","위치저장 실패. 존재하지 않은 회원");
-                result.put("code",1);
-                result.put("kakaoUserkey",kakaoUserkey);
-                return result;
-            }
-            Optional<KakaoMemberLocation> findLocation = kakaoUserRepository.findByLocation(kakaoUserkey);
-            if(!findLocation.isPresent()){
-                KakaoMemberLocation kakaoMemberLocation = kakaoUserRepository.saveLocation(memberLocation);
-                result.put("msg","위치저장 완료");
-                result.put("code",0);
-                result.put("kakaoUserkey",kakaoUserkey);
-                result.put("kakaoMemberLocation",kakaoMemberLocation);
-                result.put("X",memberLocation.getX());
-                result.put("Y",memberLocation.getY());
-            }else {
+            Optional<KakaoMember> maybeFindMember = kakaoUserRepository.findByMember(kakaoUserkey);
+            if(!maybeFindMember.isEmpty()) throw new NullPointerException("존재하지 않은 회원입니다.");
+            KakaoMember member = maybeFindMember.get();
+
+            Optional<KakaoMemberLocation> maybeFindLocation = kakaoUserRepository.findByLocation(member.getKakaoUserkey());
+            if(maybeFindLocation.isEmpty()){ //<================= 처음
+                kakaoUserRepository.saveLocation(memberLocation);
+            }else {//<========= 기존에 위치저장을 했던 회원
                 kakaoUserRepository.updateLocation(kakaoUserkey,memberLocation.getX(),memberLocation.getY());
-                result.put("msg","위치업데이트 완료.");
-                result.put("code",0);
-                result.put("kakaoUserkey",kakaoUserkey);
-                result.put("X",memberLocation.getX());
-                result.put("Y",memberLocation.getY());
             }
         }catch (Exception e){
-            throw new NullPointerException("위치저장 실패");
+            throw new NullPointerException("위치정보 저장에 실패하였습니다.");
         }
-        return result;
     }
 }

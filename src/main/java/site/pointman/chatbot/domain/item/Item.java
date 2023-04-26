@@ -47,4 +47,7 @@ public class Item extends BaseEntity {
         this.is_display = is_display;
         this.total_quantity = total_quantity;
     }
+    public void changeQuantity(Long quantity){
+        this.total_quantity = quantity;
+    }
 }

@@ -53,7 +53,7 @@ public class KakaoRestAPI {
                     .kakaoUserkey(kakaoUserkey)
                     .partnerId("pointman")
                     .build();
-            memberService.join(member);
+            memberService.join(member); //<==중복회원 체크 및 회원가입
             switch (uttr){
                 case "결제 상세보기" :
                     log.info("action={}",params.getAction().get("clientExtra"));
@@ -100,7 +100,7 @@ public class KakaoRestAPI {
     @ResponseBody
     @PostMapping(value = "location-agree" , headers = {"Accept=application/json; UTF-8"})
     public HashMap<String, String> locationAgree(@RequestBody KakaoMemberLocation params){
-        HashMap<String,String> resultJson = new HashMap<>();
+        HashMap<String,String> redirectURL = new HashMap<>();
         try {
             KakaoMember member = KakaoMember.builder()
                     .kakaoUserkey(params.getKakaoUserkey())
@@ -111,15 +111,13 @@ public class KakaoRestAPI {
                     .x(params.getX())
                     .x(params.getY())
                     .build();
-
             memberService.join(member);
-            log.info("saveLocation={}",memberService.saveLocation(memberLocation));
-
-            resultJson.put("redirectURL","https://plus.kakao.com/talk/bot/@pointman_dev/위치정보 동의 완료");
+            memberService.saveLocation(memberLocation);
+            redirectURL.put("redirectURL","https://plus.kakao.com/talk/bot/@pointman_dev/위치정보 동의 완료");
         }catch (Exception e){
-            resultJson.put("redirectURL","https://plus.kakao.com/talk/bot/@pointman_dev/위치정보 동의 실패");
+            redirectURL.put("redirectURL","https://plus.kakao.com/talk/bot/@pointman_dev/위치정보 동의 실패");
         }
-        return resultJson;
+        return redirectURL;
     }
 
     @GetMapping(value = "kakaopay-ready")
