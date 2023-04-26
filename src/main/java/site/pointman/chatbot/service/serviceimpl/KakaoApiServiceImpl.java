@@ -76,8 +76,9 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     public JSONObject createTodayWeather(String kakaoUserkey) throws Exception {
         Optional<KakaoMemberLocation> maybeMemberLocation = KakaoMemberRepository.findByLocation(kakaoUserkey);
         if(maybeMemberLocation.isEmpty()) throw new NullPointerException("회원의 위치정보가 없습니다.");
+        KakaoMemberLocation memberLocation = maybeMemberLocation.get();
 
-        WeatherPropertyCodeDto weatherCode =  openApiService.selectShortTermWeather(maybeMemberLocation.get());
+        WeatherPropertyCodeDto weatherCode =  openApiService.selectShortTermWeather(memberLocation);
         List buttonList = new ArrayList<ButtonDto>();
         return  kakaoJsonUiService.createBasicCard(DisplayType.basic,
                 weatherCode.getBaseDateValue()+" 오늘의 날씨",

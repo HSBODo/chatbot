@@ -15,7 +15,6 @@ import site.pointman.chatbot.domain.order.PayMethod;
 import site.pointman.chatbot.dto.kakaopay.KakaoPayReadyDto;
 import site.pointman.chatbot.dto.naverapi.SearchDto;
 import site.pointman.chatbot.dto.wearherapi.WeatherPropertyCodeDto;
-import site.pointman.chatbot.dto.wearherapi.WeatherRequestDto;
 import site.pointman.chatbot.repository.ItemRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.service.OpenApiService;
@@ -84,7 +83,6 @@ public class OpenApiServiceImpl implements OpenApiService {
             BigDecimal y = kakaoUserLocation.getY();
             log.info("convertX = {}, convertY = {}",x,y);
 
-            WeatherRequestDto weatherRequestDto = new WeatherRequestDto();
 
             int formatedTime = currentTimeFormat();
             String formatedDate = currentDateFormat(formatedTime);
@@ -107,9 +105,8 @@ public class OpenApiServiceImpl implements OpenApiService {
             } else if (formatedTime>=23) {
                 basTime = "2300";
             }else {
-                basTime = "2300";
+                basTime = "0200";
             }
-
             String serviceKey = weatherApiKey;
             String numOfRows = getStringEncoded("12");
             String pageNo = getStringEncoded("1");
@@ -141,6 +138,7 @@ public class OpenApiServiceImpl implements OpenApiService {
             }
             response = getWeatherCodeMapping(responsePropertys);
         } catch ( Exception e) {
+            e.printStackTrace();
             throw new IllegalArgumentException("날씨 api 실패");
         }
         return response;
@@ -444,13 +442,7 @@ public class OpenApiServiceImpl implements OpenApiService {
     private  String currentDateFormat (int formatedTime){
         LocalDate nowDate =  LocalDate.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        String formatedDate;
-        if(formatedTime<=1){
-            formatedDate = nowDate.minusDays(1).format(dateFormatter);
-        }else {
-            formatedDate = nowDate.format(dateFormatter);
-        }
-        return formatedDate;
+        return nowDate.format(dateFormatter);
     }
     private  void convertGRID_GPS(KakaoMemberLocation kakaoUserLocation , int mode ) {
 

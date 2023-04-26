@@ -43,11 +43,10 @@ public class MemberServiceImpl implements MemberService {
         }
     }
     private void validateDuplicateMemberLocation(KakaoMemberLocation memberLocation) {
-        Map result = new HashMap<>();
         String kakaoUserkey = memberLocation.getKakaoUserkey();
         try {
             Optional<KakaoMember> maybeFindMember = kakaoUserRepository.findByMember(kakaoUserkey);
-            if(!maybeFindMember.isEmpty()) throw new NullPointerException("존재하지 않은 회원입니다.");
+            if(maybeFindMember.isEmpty()) throw new NullPointerException("존재하지 않은 회원입니다.");
             KakaoMember member = maybeFindMember.get();
 
             Optional<KakaoMemberLocation> maybeFindLocation = kakaoUserRepository.findByLocation(member.getKakaoUserkey());
@@ -57,6 +56,7 @@ public class MemberServiceImpl implements MemberService {
                 kakaoUserRepository.updateLocation(kakaoUserkey,memberLocation.getX(),memberLocation.getY());
             }
         }catch (Exception e){
+            e.printStackTrace();
             throw new NullPointerException("위치정보 저장에 실패하였습니다.");
         }
     }

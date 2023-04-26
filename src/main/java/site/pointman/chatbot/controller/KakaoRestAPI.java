@@ -53,9 +53,11 @@ public class KakaoRestAPI {
                     .kakaoUserkey(kakaoUserkey)
                     .partnerId("pointman")
                     .build();
+
             memberService.join(member); //<==중복회원 체크 및 회원가입
             switch (uttr){
                 case "결제 상세보기" :
+                    params.getAction().get("clientExtra");
                     log.info("action={}",params.getAction().get("clientExtra"));
                     ObjectMapper objectMapper = new ObjectMapper();
                     ExtraCodeDto extraCodeDto = objectMapper.convertValue(params.getAction().get("clientExtra"), ExtraCodeDto.class);
@@ -109,12 +111,13 @@ public class KakaoRestAPI {
             KakaoMemberLocation memberLocation = KakaoMemberLocation.builder()
                     .kakaoUserkey(params.getKakaoUserkey())
                     .x(params.getX())
-                    .x(params.getY())
+                    .y(params.getY())
                     .build();
-            memberService.join(member);
-            memberService.saveLocation(memberLocation);
+            memberService.join(member); //<==회원 체크 및 회원 가입
+            memberService.saveLocation(memberLocation); //<== 위치정보 저장 및 업데이트
             redirectURL.put("redirectURL","https://plus.kakao.com/talk/bot/@pointman_dev/위치정보 동의 완료");
         }catch (Exception e){
+            e.printStackTrace();
             redirectURL.put("redirectURL","https://plus.kakao.com/talk/bot/@pointman_dev/위치정보 동의 실패");
         }
         return redirectURL;
@@ -155,6 +158,7 @@ public class KakaoRestAPI {
         try {
             openApiService.kakaoPayCancel(orderId);
         }catch (Exception e){
+            e.printStackTrace();
             return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/주문취소실패";
         }
         return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/주문취소완료";
