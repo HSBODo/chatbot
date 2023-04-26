@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import site.pointman.chatbot.domain.order.Order;
@@ -43,10 +44,11 @@ public class KakaoRestAPI {
     @RequestMapping(value = "chat" , headers = {"Accept=application/json; UTF-8"})
     public JSONObject callAPI(@RequestBody KakaoRequestDto params) throws Exception {
         KakaoResponseDto kakaoResponseDto = new KakaoResponseDto();
-        String kakaoUserkey;
+        Map<String,String> errors = new HashMap<>();
         try {
             String uttr = params.getUttr(); //사용자 발화
-            kakaoUserkey = params.getKakaoUserkey(); //사용자 유저키
+            String kakaoUserkey = params.getKakaoUserkey(); //사용자 유저키
+            if(!StringUtils.hasText(kakaoUserkey)) errors.put("kakaoUserkey","유저키는 필수입니다.");
             log.info("Request:: uttr ={}, userkey = {}",uttr,kakaoUserkey);
 
             KakaoMember member = KakaoMember.builder()
@@ -103,7 +105,11 @@ public class KakaoRestAPI {
     @PostMapping(value = "location-agree" , headers = {"Accept=application/json; UTF-8"})
     public HashMap<String, String> locationAgree(@RequestBody KakaoMemberLocation params){
         HashMap<String,String> redirectURL = new HashMap<>();
+        Map<String,String> errors = new HashMap<>();
         try {
+            if(!StringUtils.hasText(params.getKakaoUserkey())) errors.put("kakaoUserkey","유저키는 필수입니다.");
+            if(params.getX().equals(null) || params.getY().equals(null)) errors.put("XY","위치좌표는 필수입니다.");
+
             KakaoMember member = KakaoMember.builder()
                     .kakaoUserkey(params.getKakaoUserkey())
                     .build();
