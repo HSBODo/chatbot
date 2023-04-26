@@ -69,7 +69,7 @@ class KakaoApiServiceTest {
     }
     @Test
     void createOrderDetail() throws Exception {
-        Long orderId= 115343591L;
+        Long orderId= 189457795L;
         String kakaoUserkey= "QFERwysZbO77";
         JSONObject orderDetail = kakaoApiService.createOrderDetail(kakaoUserkey, orderId);
         log.info("orderDetailJson={}",orderDetail);

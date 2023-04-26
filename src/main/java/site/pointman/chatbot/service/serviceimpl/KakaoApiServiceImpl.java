@@ -154,6 +154,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                         );
                         items.add(commerceCard);
                     } catch (ParseException e) {
+                        e.printStackTrace();
                         throw new RuntimeException(e);
                     }
 
@@ -216,9 +217,9 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                 ButtonDto payCancel = new ButtonDto("webLink","결제 취소","https://www.pointman.shop/kakaochat/v1/"+maybeOrder.get().getOrder_id()+"/kakaopay-cancel");
                 buttons.add(payCancel);
             }
-            String payMethod = maybeOrder.get().getPayment_method_type()==null?"없음":maybeOrder.get().getPayment_method_type();
+            PayMethod payMethod = maybeOrder.get().getPayment_method_type()==null?PayMethod.없음:maybeOrder.get().getPayment_method_type();
             basicCard = kakaoJsonUiService.createBasicCard(
-                    "",
+                    DisplayType.basic,
                     maybeItem.get().getProfileNickname(),
                     "주문번호: " + maybeOrder.get().getOrder_id() +"\n"+
                             "결제일자: " + utillity.formatApproveDate(String.valueOf(maybeOrder.get().getCreateDate())) + "\n" +
@@ -231,7 +232,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                     buttons);
 
         }catch (Exception e){
-            log.info(e.getStackTrace().toString());
+            e.printStackTrace();
             throw new IllegalStateException("주문 상세조회 실패하였습니다.");
         }
         return basicCard;

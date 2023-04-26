@@ -529,8 +529,8 @@ public class OpenApiServiceImpl implements OpenApiService {
         } catch (NumberFormatException e) {
             throw new RuntimeException(e);
         } finally {
-            kakaoUserLocation.setX(BigDecimal.valueOf( (int)Math.round(x)));
-            kakaoUserLocation.setY(BigDecimal.valueOf( (int)Math.round(y)));
+            kakaoUserLocation.changeX(BigDecimal.valueOf( (int)Math.round(x)));
+            kakaoUserLocation.changeY(BigDecimal.valueOf( (int)Math.round(y)));
         }
     }
 
