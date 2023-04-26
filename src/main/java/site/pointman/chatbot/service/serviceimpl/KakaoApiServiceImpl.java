@@ -216,9 +216,9 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                 ButtonDto payCancel = new ButtonDto("webLink","결제 취소","https://www.pointman.shop/kakaochat/v1/"+maybeOrder.get().getOrder_id()+"/kakaopay-cancel");
                 buttons.add(payCancel);
             }
-            PayMethod payMethod = maybeOrder.get().getPayment_method_type()==null?PayMethod.없음:maybeOrder.get().getPayment_method_type();
+            String payMethod = maybeOrder.get().getPayment_method_type()==null?"없음":maybeOrder.get().getPayment_method_type();
             basicCard = kakaoJsonUiService.createBasicCard(
-                    DisplayType.basic,
+                    "",
                     maybeItem.get().getProfileNickname(),
                     "주문번호: " + maybeOrder.get().getOrder_id() +"\n"+
                             "결제일자: " + utillity.formatApproveDate(String.valueOf(maybeOrder.get().getCreateDate())) + "\n" +
