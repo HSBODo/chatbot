@@ -1,9 +1,12 @@
-package site.pointman.chatbot.dto.kakaoui;
+package site.pointman.chatbot.vo.kakaoui;
 
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Map;
+
 @Getter @Setter
-public class ButtonDto {
+public class ButtonBlockVo extends ButtonVo {
     /**
      * 필드명	        타입	                필수 여부	                설명	                                                                        제한
      * label	        string	                O	                    버튼에 적히는 문구입니다.	                                                    버튼 14자(가로배열 2개 8자)
@@ -18,18 +21,12 @@ public class ButtonDto {
      * extra	        Map<String, Any>		                        block이나 message action으로 블록 호출시, 스킬 서버에 추가적으로 제공하는 정보
      */
 
-    private String action;
-    private String label;
-    private String webLinkUrl;
+    private Map<String,String> extra;
+    private String blockId;
 
-    public ButtonDto(String action, String label, String webLinkUrl) {
-        this.action = action;
-        this.label = label;
-        this.webLinkUrl = webLinkUrl;
-    }
-
-    public ButtonDto(String action, String label) {
-        this.action = action;
-        this.label = label;
+    public ButtonBlockVo(String action, String label, String blockId , Map<String,String> extra) {
+        super(action,label);
+        this.extra = extra;
+        this.blockId = blockId;
     }
 }

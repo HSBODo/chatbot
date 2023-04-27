@@ -1,4 +1,4 @@
-package site.pointman.chatbot.dto.kakaoui;
+package site.pointman.chatbot.vo;
 
 import lombok.Getter;
 import org.json.simple.JSONObject;
@@ -8,10 +8,10 @@ import org.json.simple.parser.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 @Getter
-public class KakaoResponseDto {
+public class KakaoResponseVo {
     private List outputs;
 
-    public KakaoResponseDto() {
+    public KakaoResponseVo() {
         this.outputs = new ArrayList();
     }
     public void addContent(JSONObject content) {

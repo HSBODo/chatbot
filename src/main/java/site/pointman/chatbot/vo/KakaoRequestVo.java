@@ -1,4 +1,4 @@
-package site.pointman.chatbot.dto.kakaoui;
+package site.pointman.chatbot.vo;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Slf4j
 @Getter @Setter  @ToString @NoArgsConstructor
-public class KakaoRequestDto {
+public class KakaoRequestVo {
     private JSONObject intent;
     private JSONObject userRequest;
     private JSONObject bot;
