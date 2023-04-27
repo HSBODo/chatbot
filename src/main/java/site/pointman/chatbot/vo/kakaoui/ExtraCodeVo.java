@@ -8,5 +8,4 @@ public class ExtraCodeVo {
     String kakaoUserkey;
     String itemCode;
     Long orderId;
-
 }

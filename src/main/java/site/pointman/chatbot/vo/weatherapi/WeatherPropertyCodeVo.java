@@ -73,8 +73,8 @@ public class WeatherPropertyCodeVo {
         SimpleDateFormat strToDate = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat dateToStr = new SimpleDateFormat("yyyy-MM-dd");
         Date yyyyMMdd = strToDate.parse(baseDate);
-        String formatDate = dateToStr.format(yyyyMMdd);
-        return formatDate;
+        String yyyy_MM_dd = dateToStr.format(yyyyMMdd);
+        return yyyy_MM_dd;
     }
     public String getWsdValue() {
         String wsdValue;
@@ -90,5 +90,22 @@ public class WeatherPropertyCodeVo {
             wsdValue = "바람이 어떻게 불지 예측할수 없어요.";
         }
         return wsdValue;
+    }
+
+    public void mapToVo(Map<String, String> elementMap) {
+        this.baseDate = elementMap.get("baseDate");
+        this.pty = Integer.parseInt(elementMap.get("PTY"));
+        this.pop = elementMap.get("POP");
+        this.pcp = elementMap.get("PCP");
+        this.reh = elementMap.get("REH");
+        this.tmp = elementMap.get("TMP");
+        this.sky = Integer.parseInt(elementMap.get("SKY"));
+        this.uuu = elementMap.get("UUU");
+        this.vec = elementMap.get("VEC");
+        this.wav = elementMap.get("WAV");
+        this.wsd = Float.parseFloat(elementMap.get("WSD"));
+        this.sno = elementMap.get("SNO");
+        this.vvv = elementMap.get("VVV");
+        this.hostUrl = elementMap.get("hostUrl");
     }
 }

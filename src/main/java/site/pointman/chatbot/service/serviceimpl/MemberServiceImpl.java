@@ -24,25 +24,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void saveLocation(KakaoMemberLocation userLocation) {
-        validateDuplicateMemberLocation(userLocation);
-    }
-
-    @Override
-    public void join(KakaoMember user) {
-        validateDuplicateMember(user);
-    }
-
-
-    private void validateDuplicateMember(KakaoMember member) {
-        try {
-            Optional<KakaoMember> findMember = kakaoUserRepository.findByMember(member.getKakaoUserkey());
-            if(findMember.isEmpty())kakaoUserRepository.save(member);
-        }catch (Exception e){
-            throw new IllegalArgumentException("회원가입에 실패하였습니다.");
-        }
-    }
-    private void validateDuplicateMemberLocation(KakaoMemberLocation memberLocation) {
+    public void saveLocation(KakaoMemberLocation memberLocation) {
         String kakaoUserkey = memberLocation.getKakaoUserkey();
         try {
             Optional<KakaoMember> maybeFindMember = kakaoUserRepository.findByMember(kakaoUserkey);
@@ -50,14 +32,25 @@ public class MemberServiceImpl implements MemberService {
             KakaoMember member = maybeFindMember.get();
 
             Optional<KakaoMemberLocation> maybeFindLocation = kakaoUserRepository.findByLocation(member.getKakaoUserkey());
-            if(maybeFindLocation.isEmpty()){ //<================= 처음
+            if(maybeFindLocation.isEmpty()){ //<================= 기존에 위치정보가 없으면 save
                 kakaoUserRepository.saveLocation(memberLocation);
-            }else {//<========= 기존에 위치저장을 했던 회원
-                kakaoUserRepository.updateLocation(kakaoUserkey,memberLocation.getX(),memberLocation.getY());
-            }
+            }else {                             //<========= 기존에 위치정보가 있으면 update
+                    kakaoUserRepository.updateLocation(kakaoUserkey,memberLocation.getX(),memberLocation.getY());
+                }
         }catch (Exception e){
             e.printStackTrace();
             throw new NullPointerException("위치정보 저장에 실패하였습니다.");
+        }
+    }
+
+    @Override
+    public void join(KakaoMember member) {
+        try {
+            Optional<KakaoMember> findMember = kakaoUserRepository.findByMember(member.getKakaoUserkey());
+            if(findMember.isEmpty())kakaoUserRepository.save(member); //<== 중복회원이 아니면
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new IllegalArgumentException("회원가입에 실패하였습니다.");
         }
     }
 }

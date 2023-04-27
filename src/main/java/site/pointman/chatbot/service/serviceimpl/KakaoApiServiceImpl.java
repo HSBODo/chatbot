@@ -46,31 +46,33 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public JSONObject createTodayNews(String searchText) throws Exception {
 
-        List carouselItems = new ArrayList<>();
+        List listCards = new ArrayList<>();
         List<ButtonVo> buttons = new ArrayList<>();
-        List<ListCardItemVo> listCardItemVos = new ArrayList<>();
+        List<ListCardItemVo> listCardItems = new ArrayList<>();
         SearchVo searchVo = openApiService.selectNaverSearch(searchText,"30","1","date");
+        Optional.ofNullable(searchVo).orElseThrow(() -> new NullPointerException("뉴스정보가 없습니다."));
         searchVo.getItems().forEach(item -> {
             try {
-                JSONObject jsonObject = new JSONObject((JSONObject) jsonParser.parse(item.toString()));
+                JSONObject searchJsonObject = new JSONObject((JSONObject) jsonParser.parse(item.toString()));
                 Map webLink = new HashMap<>();
-                String title =utillity.replaceAll((String) jsonObject.get("title"));
-                String description =utillity.replaceAll((String) jsonObject.get("description"));
-                webLink.put("web", jsonObject.get("link"));
+                String title =utillity.replaceAll((String) searchJsonObject.get("title"));
+                String description =utillity.replaceAll((String) searchJsonObject.get("description"));
+                webLink.put("web", searchJsonObject.get("link"));
 
-                ListCardItemVo listCardItemVo = new ListCardItemVo(title,description,"https://www.pointman.shop/image/news.jpg",webLink);
-                listCardItemVos.add(listCardItemVo);
+                ListCardItemVo listCardItem = new ListCardItemVo(title,description,"https://www.pointman.shop/image/news.jpg",webLink);
+                listCardItems.add(listCardItem);
 
                 int cnt =  searchVo.getItems().indexOf(item)+1;
                 if(cnt%5==0){  // <= 케로셀 최대 5개 까지만 표시
-                    carouselItems.add(kakaoJsonUiService.createListCard(DisplayType.carousel, searchVo.getLastBuildDate()+" 오늘의 뉴스", listCardItemVos, buttons));
-                    listCardItemVos.clear();
+                    listCards.add(kakaoJsonUiService.createListCard(DisplayType.carousel, searchVo.getLastBuildDate()+" 오늘의 뉴스", listCardItems, buttons));
+                    listCardItems.clear();
                 }
+
             } catch (ParseException e) {
                 throw new IllegalArgumentException("뉴스정보를 불러오는 데 실패하였습니다.");
             }
         });
-        return kakaoJsonUiService.createCarousel(CarouselType.listCard,carouselItems);
+        return kakaoJsonUiService.createCarousel(CarouselType.listCard,listCards);
     }
     @Override
     public JSONObject createTodayWeather(String kakaoUserkey) throws Exception {
@@ -97,9 +99,9 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     }
     @Override
     public JSONObject createLocationNotice(String kakaoUserkey) throws ParseException {
-        ButtonVo buttonVo = new ButtonVo("webLink","위치정보 동의하기","https://www.pointman.shop/kakaochat/v1/location-notice?u="+kakaoUserkey);
-        List buttonList = new ArrayList<ButtonVo>();
-        buttonList.add(buttonVo);
+        ButtonVo locationNoticeButton = new ButtonVo("webLink","위치정보 동의하기","https://www.pointman.shop/kakaochat/v1/location-notice?u="+kakaoUserkey);
+        List<ButtonVo> buttons = new ArrayList<>();
+        buttons.add(locationNoticeButton);
         return kakaoJsonUiService.createBasicCard(
                 DisplayType.basic,
                 "위치정보의 수집ㆍ이용",
@@ -107,18 +109,19 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                         " ◇ 위치정보의 보유 및 이용기간 : 총포 보관해제시부터 총포 재보관 또는 당해 수렵기간 종료 후 1개월\n" +
                         " ◇ 동의 거부권리 안내 : 위 위치정보 수집에 대한 동의는 거부할 수 있습니다. \n",
                 "https://www.pointman.shop/image/location_notice.jpg",
-                buttonList
+                buttons
         );
     }
     @Override
     public JSONObject createDeveloperInfo() throws ParseException {
-        List buttonList = new ArrayList<ButtonVo>();
-        ButtonVo blog = new ButtonVo("webLink","블로그","https://pointman.tistory.com/");
-        ButtonVo gitHub = new ButtonVo("webLink","GitHub","https://github.com/HSBODo");
-        ButtonVo portfolio = new ButtonVo("webLink","포트폴리오","https://www.pointman.shop");
-        buttonList.add(blog);
-        buttonList.add(gitHub);
-        buttonList.add(portfolio);
+
+        ButtonVo blogButton = new ButtonVo("webLink","블로그","https://pointman.tistory.com/");
+        ButtonVo gitHubButton = new ButtonVo("webLink","GitHub","https://github.com/HSBODo");
+        ButtonVo portfolioButton = new ButtonVo("webLink","포트폴리오","https://www.pointman.shop");
+        List buttons = new ArrayList<ButtonVo>();
+        buttons.add(blogButton);
+        buttons.add(gitHubButton);
+        buttons.add(portfolioButton);
         return kakaoJsonUiService.createBasicCard(
                 DisplayType.basic,
                 "Backend Developer",
@@ -126,21 +129,21 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                         "백엔드 개발자 한수빈입니다.\n" +
                         "Email: vinsulill@gmail.com",
                 "https://www.pointman.shop/image/Ryan1.jpg",
-                buttonList
+                buttons
         );
     }
     @Override
     public JSONObject createRecommendItems(String kakaoUserkey) throws Exception {
         List<Item> findItems = itemRepository.findByDisplayItems();
         if(findItems.isEmpty()) throw new NullPointerException("현재 특가상품이 없습니다.");
-        List items = new ArrayList<>();
+        List commerceCards = new ArrayList<>();
         findItems.stream()
                 .forEach(item ->{
                     List<ButtonVo> buttons = new ArrayList<>();
-                    ButtonVo buttonVo = new ButtonVo("webLink","구매하러가기",item.getThumbnailLink());
-                    ButtonVo payButtonVo = new ButtonVo("webLink","카카오페이 결제","https://www.pointman.shop/kakaochat/v1/kakaopay-ready?itemcode="+item.getItemCode()+"&kakaouserkey="+kakaoUserkey);
-                    buttons.add(buttonVo);
-                    buttons.add(payButtonVo);
+                    ButtonVo buyButton = new ButtonVo("webLink","구매하러가기",item.getThumbnailLink());
+                    ButtonVo payButton = new ButtonVo("webLink","카카오페이 결제","https://www.pointman.shop/kakaochat/v1/kakaopay-ready?itemcode="+item.getItemCode()+"&kakaouserkey="+kakaoUserkey);
+                    buttons.add(buyButton);
+                    buttons.add(payButton);
                     try {
                         JSONObject commerceCard = kakaoJsonUiService.createCommerceCard(
                                 DisplayType.carousel,
@@ -156,39 +159,42 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                                 item.getProfileNickname(),
                                 buttons
                         );
-                        items.add(commerceCard);
+                        commerceCards.add(commerceCard);
                     } catch (ParseException e) {
                         e.printStackTrace();
-                        throw new RuntimeException(e);
+                        throw new RuntimeException("특가상품 정보를 불러오는 데 실패하였습니다.");
                     }
 
                 });
-        return kakaoJsonUiService.createCarousel(CarouselType.commerceCard,items);
+        return kakaoJsonUiService.createCarousel(CarouselType.commerceCard,commerceCards);
     }
     @Override
     public JSONObject createOrderList(String kakaoUserkey) throws Exception {
-        List orderItems = new ArrayList<>();
-        List<Order> maybeOrders = orderRepository.findByApproveOrders(kakaoUserkey);
-        if(maybeOrders.isEmpty()) throw new IllegalStateException("주문하신 상품이 없습니다.");
-        maybeOrders.stream()
+        List basicCards = new ArrayList<>();
+        List<Order> Orders = orderRepository.findByApproveOrders(kakaoUserkey);
+        if(Orders.isEmpty()) throw new NullPointerException("주문하신 상품이 없습니다.");
+
+        Orders.stream()
                 .forEach(order ->{
                     try {
                         Optional<Item> maybeItem = itemRepository.findByItem(order.getItem_code());
-                        if (maybeItem.isEmpty()) return;
+                        if (maybeItem.isEmpty()) throw new NullPointerException("주문내역에 있는 상품을 찾을 수 없습니다.");
+                        Item item = maybeItem.get();
 
-                        List<ButtonVo> buttons = new ArrayList<>();
+
                         Map buttonParams = new HashMap<String,String>();
-                        buttonParams.put("itemCode",maybeItem.get().getItemCode());
+                        buttonParams.put("itemCode",item.getItemCode());
                         buttonParams.put("orderId",order.getOrder_id());
                         buttonParams.put("kakaoUserkey",kakaoUserkey);
-                        ButtonBlockVo orderDetail = new ButtonBlockVo("block","결제 상세보기","",buttonParams);
+                        ButtonBlockVo orderDetailButton = new ButtonBlockVo("block","결제 상세보기","",buttonParams);
 
-                        if(order.getStatus().equals(OrderStatus.결제승인)){
-                            ButtonVo payCancel = new ButtonVo("webLink","결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
-                            buttons.add(payCancel);
+                        List<ButtonVo> buttons = new ArrayList<>();
+                        buttons.add(orderDetailButton);
+
+                        if(order.getStatus().equals(OrderStatus.결제승인)){ //<== 결제승인 완료된 주문만 취소 가능
+                            ButtonVo payCancelButton = new ButtonVo("webLink","결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
+                            buttons.add(payCancelButton);
                         }
-
-                        buttons.add(orderDetail);
 
                         JSONObject basicCard = kakaoJsonUiService.createBasicCard(
                                 DisplayType.carousel,
@@ -196,49 +202,48 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                                 "결제 일자: "+utillity.formatApproveDate(String.valueOf(order.getCreateDate()))+"\n"+
                                         "결제 금액: "+utillity.formatMoney(order.getTotal_amount())+"원\n"
                                 ,
-                                maybeItem.get().getThumbnailImgUrl(),
+                                item.getThumbnailImgUrl(),
                                 buttons
                         );
-                        orderItems.add(basicCard);
+                        basicCards.add(basicCard);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new NullPointerException("주문하신 상품 조회에 실패했습니다.");
                     }
                 });
-        return kakaoJsonUiService.createCarousel(CarouselType.basicCard,orderItems);
+        return kakaoJsonUiService.createCarousel(CarouselType.basicCard,basicCards);
     }
     @Override
     public JSONObject createOrderDetail(String kakaoUserkey, Long orderId) throws Exception {
         JSONObject basicCard;
-        try {
-            Optional<Order> maybeOrder = orderRepository.findByOrder(kakaoUserkey,orderId);
-            if(maybeOrder.isEmpty()) throw new IllegalStateException("주문번호와 일치하는 주문이 없습니다.");
-            Optional<Item> maybeItem = itemRepository.findByItem(maybeOrder.get().getItem_code());
-            if(maybeItem.isEmpty()) throw new IllegalStateException("상품코드와 일치하는 상품이 없습니다.");
 
-            List<ButtonVo> buttons = new ArrayList<>();
-            if(maybeOrder.get().getStatus().equals(OrderStatus.결제승인)){
-                ButtonVo payCancel = new ButtonVo("webLink","결제 취소","https://www.pointman.shop/kakaochat/v1/"+maybeOrder.get().getOrder_id()+"/kakaopay-cancel");
-                buttons.add(payCancel);
-            }
-            PayMethod payMethod = maybeOrder.get().getPayment_method_type()==null?PayMethod.없음:maybeOrder.get().getPayment_method_type();
-            basicCard = kakaoJsonUiService.createBasicCard(
-                    DisplayType.basic,
-                    maybeItem.get().getProfileNickname(),
-                    "주문번호: " + maybeOrder.get().getOrder_id() +"\n"+
-                            "결제일자: " + utillity.formatApproveDate(String.valueOf(maybeOrder.get().getCreateDate())) + "\n" +
-                            "결제금액: " + utillity.formatMoney(maybeOrder.get().getTotal_amount()) + "원\n" +
-                            "결제수량: " + maybeOrder.get().getQuantity() + "개\n" +
-                            "결제수단: " + payMethod+"\n"+
-                            "결제상태: " + maybeOrder.get().getStatus()
-                    ,
-                    maybeItem.get().getThumbnailImgUrl(),
-                    buttons);
+        Optional<Order> maybeOrder = orderRepository.findByOrder(kakaoUserkey,orderId);
+        if(maybeOrder.isEmpty()) throw new NullPointerException("주문번호와 일치하는 주문이 없습니다.");
+        Order order = maybeOrder.get();
 
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new IllegalStateException("주문 상세조회 실패하였습니다.");
+        Optional<Item> maybeItem = itemRepository.findByItem(order.getItem_code());
+        if(maybeItem.isEmpty()) throw new NullPointerException("상품코드와 일치하는 상품이 없습니다.");
+        Item item = maybeItem.get();
+
+        List<ButtonVo> buttons = new ArrayList<>();
+        if(order.getStatus().equals(OrderStatus.결제승인)){ //<==결제 승인된 주문만 취소 가능
+            ButtonVo payCancelButton = new ButtonVo("webLink","결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
+            buttons.add(payCancelButton);
         }
+
+        PayMethod payMethod = order.getPayment_method_type()==null?PayMethod.없음:order.getPayment_method_type();
+        basicCard = kakaoJsonUiService.createBasicCard(
+                DisplayType.basic,
+                item.getProfileNickname(),
+                "주문번호: " + order.getOrder_id() +"\n"+
+                        "결제일자: " + utillity.formatApproveDate(String.valueOf(order.getCreateDate())) + "\n" +
+                        "결제금액: " + utillity.formatMoney(order.getTotal_amount()) + "원\n" +
+                        "결제수량: " + order.getQuantity() + "개\n" +
+                        "결제수단: " + payMethod+"\n"+
+                        "결제상태: " + order.getStatus()
+                ,
+                item.getThumbnailImgUrl(),
+                buttons);
         return basicCard;
     }
 

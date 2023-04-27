@@ -12,6 +12,8 @@ import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.domain.order.OrderStatus;
 import site.pointman.chatbot.domain.order.PayMethod;
+import site.pointman.chatbot.dto.ItemDto;
+import site.pointman.chatbot.dto.OrderDto;
 import site.pointman.chatbot.vo.order.KakaoPayReadyVo;
 import site.pointman.chatbot.vo.naverapi.SearchVo;
 import site.pointman.chatbot.vo.weatherapi.WeatherPropertyCodeVo;
@@ -76,13 +78,13 @@ public class OpenApiServiceImpl implements OpenApiService {
 
     @Override
     public WeatherPropertyCodeVo selectShortTermWeather(KakaoMemberLocation kakaoUserLocation) {
-        WeatherPropertyCodeVo response = new WeatherPropertyCodeVo();
+        WeatherPropertyCodeVo weatherPropertyCodeVo = new WeatherPropertyCodeVo();
         try {
+            log.info("X = {}, Y = {}",kakaoUserLocation.getX(),kakaoUserLocation.getY());
             convertGRID_GPS(kakaoUserLocation,0);
-
             BigDecimal x = kakaoUserLocation.getX();
             BigDecimal y = kakaoUserLocation.getY();
-            log.info("convertX = {}, convertY = {}",x,y);
+            log.info("convert_X = {}, convert_Y = {}",x,y);
 
 
             int formatedTime = currentTimeFormat();
@@ -125,6 +127,7 @@ public class OpenApiServiceImpl implements OpenApiService {
 
             JSONObject responsejsonObject = new JSONObject(responseBody);
             log.info("responsejsonObject={}",responsejsonObject);
+
             JSONObject jsonResponse = responsejsonObject.getJSONObject("response");
             JSONObject jsonHeader =  jsonResponse.getJSONObject("header");
             JSONObject jsonBody =  jsonResponse.getJSONObject("body");
@@ -133,16 +136,18 @@ public class OpenApiServiceImpl implements OpenApiService {
 
             Map<String,String> responsePropertys = new HashMap<>();
             responsePropertys.put("baseDate",formatedDate);
+            responsePropertys.put("hostUrl",hostUrl);
             for (int i = 0; i < jsonItemList.length(); i++) {
                 JSONObject element = (JSONObject) jsonItemList.opt(i);
                 responsePropertys.put(element.optString("category"),element.optString("fcstValue"));
             }
-            response = getWeatherCodeMapping(responsePropertys);
+
+            weatherPropertyCodeVo.mapToVo(responsePropertys);
         } catch ( Exception e) {
             e.printStackTrace();
             throw new IllegalArgumentException("날씨 api 실패");
         }
-        return response;
+        return weatherPropertyCodeVo;
     }
     @Override
     public SearchVo selectNaverSearch(String searchText, String display, String start, String sort) {
@@ -151,10 +156,9 @@ public class OpenApiServiceImpl implements OpenApiService {
             String clientId = naverApiKey; //애플리케이션 클라이언트 아이디
             String clientSecret = naverApiSecretKey; //애플리케이션 클라이언트 시크릿
 
-            String text = searchText;
-            text = getStringEncoded(text);
 
-            //query=%EC%A3%BC%EC%8B%9D&display=10&start=1&sort=sim
+            String text = getStringEncoded(searchText);
+
             String apiURL = "https://openapi.naver.com/v1/search/blog?query=" + text+"&display=" + display + "&start="+start+"&sort="+sort;    // JSON 결과
             //String apiURL = "https://openapi.naver.com/v1/search/blog.xml?query="+ text; // XML 결과
 
@@ -168,6 +172,7 @@ public class OpenApiServiceImpl implements OpenApiService {
 
             JSONArray items = new JSONArray();
             items = (JSONArray) responsejsonObject.get("items");
+
             LocalDate nowDate =  LocalDate.now();
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             String formatedDate = nowDate.format(dateFormatter);
@@ -187,12 +192,12 @@ public class OpenApiServiceImpl implements OpenApiService {
     @Override
     public String kakaoPayReady(Long itemCode, String kakaoUserkey) throws Exception {
         Optional<Item> maybeItem = itemRepository.findByItem(itemCode);
-        if(maybeItem.isEmpty()) throw new IllegalArgumentException("상품이 존재하지 않습니다.");
-        Item item = maybeItem.get();
+        if(maybeItem.isEmpty()) throw new NullPointerException("상품이 존재하지 않습니다.");
+        ItemDto itemDto = maybeItem.get().toItemDto();
 
         int orderQuantity= 1;
-        int total_amount = item.getDiscountedPrice()*orderQuantity;
-        String itemName= item.getProfileNickname().replaceAll(" ","");
+        int total_amount = itemDto.getDiscountedPrice()*orderQuantity;
+        String itemName= itemDto.getProfileNickname().replaceAll(" ","");
 
         KakaoPayReadyVo kakaoPayReadyVo = KakaoPayReadyVo.builder()
                 .kakaoUserkey(kakaoUserkey)
@@ -201,7 +206,7 @@ public class OpenApiServiceImpl implements OpenApiService {
                 .partner_order_id("partner_order_id")
                 .partner_user_id("partner_user_id")
                 .total_amount(total_amount)
-                .item_code(item.getItemCode())
+                .item_code(itemDto.getItemCode())
                 .quantity(orderQuantity)
                 .tax_free_amount(0)
                 .vat_amount(0)
@@ -226,17 +231,18 @@ public class OpenApiServiceImpl implements OpenApiService {
         urlBuilder.append("&" + URLEncoder.encode("fail_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochat/v1/"+orderId+"/kakaopay-fail");
         urlBuilder.append("&" + URLEncoder.encode("cancel_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochat/v1/"+orderId+"/kakaopay-cancel");
 //        urlBuilder.append("&" + URLEncoder.encode("payment_method_type","UTF-8") + "=");
-        log.info("urlBuilder={}",urlBuilder);
+
+        log.info("kakaoReady Request={}",urlBuilder);
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("Authorization", "KakaoAK "+kakaoAdminKey);
         requestHeaders.put("Content-Type", "application/x-www-form-urlencoded");
         String responseBody = post(String.valueOf(urlBuilder),requestHeaders);
-        log.info("responseBody={}",responseBody);
+        log.info("kakaoReady responseBody={}",responseBody);
 
-        JSONObject responsejsonObject = new JSONObject(responseBody);
-        Order readyOrder = Order.builder()
+        JSONObject readyResponseJson = new JSONObject(responseBody);
+        OrderDto orderDto = OrderDto.builder()
                 .cid(kakaoPayReadyVo.getCid())
-                .tid(responsejsonObject.getString("tid"))
+                .tid(readyResponseJson.getString("tid"))
                 .kakao_userkey(kakaoPayReadyVo.getKakaoUserkey())
                 .order_id(orderId)
                 .item_code(kakaoPayReadyVo.getItem_code())
@@ -246,16 +252,17 @@ public class OpenApiServiceImpl implements OpenApiService {
                 .vat_amount(kakaoPayReadyVo.getVat_amount())
                 .tax_free_amount(kakaoPayReadyVo.getTax_free_amount())
                 .status(OrderStatus.결제대기)
-                .ios_app_scheme(responsejsonObject.getString("ios_app_scheme"))
-                .android_app_scheme(responsejsonObject.getString("android_app_scheme"))
+                .ios_app_scheme(readyResponseJson.getString("ios_app_scheme"))
+                .android_app_scheme(readyResponseJson.getString("android_app_scheme"))
                 .partner_order_id(kakaoPayReadyVo.getPartner_order_id())
                 .partner_user_id(kakaoPayReadyVo.getPartner_user_id())
-                .next_redirect_app_url(responsejsonObject.getString("next_redirect_app_url"))
-                .next_redirect_mobile_url(responsejsonObject.getString("next_redirect_mobile_url"))
-                .next_redirect_pc_url(responsejsonObject.getString("next_redirect_pc_url"))
+                .next_redirect_app_url(readyResponseJson.getString("next_redirect_app_url"))
+                .next_redirect_mobile_url(readyResponseJson.getString("next_redirect_mobile_url"))
+                .next_redirect_pc_url(readyResponseJson.getString("next_redirect_pc_url"))
                 .build();
-        orderRepository.savePayReady(readyOrder);
-        return readyOrder.getNext_redirect_mobile_url();
+        Order order = orderDto.toEntity();
+        orderRepository.savePayReady(order);
+        return order.getNext_redirect_mobile_url();
     }
     @Override
     @Transactional
@@ -263,6 +270,7 @@ public class OpenApiServiceImpl implements OpenApiService {
         Optional<Order> maybeReadyOrder = orderRepository.findByReadyOrder(orderId);
         if(maybeReadyOrder.isEmpty()) throw new NullPointerException("결제 승인대기 주문이 없습니다.");
         Order order = maybeReadyOrder.get();
+
         try {
             String apiURL = "https://kapi.kakao.com/v1/payment/approve";    // JSON 결과
             StringBuilder urlBuilder = new StringBuilder(apiURL); /*URL*/
@@ -273,25 +281,25 @@ public class OpenApiServiceImpl implements OpenApiService {
             urlBuilder.append("&" + URLEncoder.encode("pg_token","UTF-8") + "="+pg_token);
             urlBuilder.append("&" + URLEncoder.encode("payload","UTF-8") + "="+"1");
             urlBuilder.append("&" + URLEncoder.encode("total_amount","UTF-8") + "="+ order.getTotal_amount());
-
+            log.info("kakaoApprove Request={}",urlBuilder);
             Map<String, String> requestHeaders = new HashMap<>();
             requestHeaders.put("Authorization", "KakaoAK "+kakaoAdminKey);
             requestHeaders.put("Content-Type", "application/x-www-form-urlencoded");
             String responseBody = post(String.valueOf(urlBuilder),requestHeaders);
             log.info("kakaoApprove responseBody={}",responseBody);
 
-            JSONObject responsejsonObject = new JSONObject(responseBody);
-            PayMethod payMethod = responsejsonObject.getString("payment_method_type").equalsIgnoreCase("MONEY")? PayMethod.카카오페이 :PayMethod.카드;
+            JSONObject approveResponseJsonObject = new JSONObject(responseBody);
+            PayMethod payMethod = approveResponseJsonObject.getString("payment_method_type").equalsIgnoreCase("MONEY")? PayMethod.카카오페이 :PayMethod.카드;
 
-            order.changeApprovedAt(responsejsonObject.getString("approved_at"));
-            order.changeAid(responsejsonObject.getString("aid"));
+            order.changeApprovedAt(approveResponseJsonObject.getString("approved_at"));
+            order.changeAid(approveResponseJsonObject.getString("aid"));
             order.changePayMethod(payMethod);
             order.changeStatus(OrderStatus.결제승인);
-            orderRepository.updatePayApprove(order.getOrder_id(),order);
+            orderRepository.updatePayApprove(order);
             itemRepository.updateItemQuantityMinus(order.getItem_code(), Long.valueOf(order.getQuantity()));
         }catch (Exception e){
             e.printStackTrace();
-            throw new IllegalArgumentException("결제승인 실패하였습니다.");
+            throw new IllegalArgumentException("결제승인에 실패하였습니다.");
         }
     }
 
@@ -312,18 +320,19 @@ public class OpenApiServiceImpl implements OpenApiService {
             urlBuilder.append("&" + URLEncoder.encode("cancel_tax_free_amount","UTF-8") + "="+ orderApproved.getTax_free_amount());
             urlBuilder.append("&" + URLEncoder.encode("cancel_vat_amount","UTF-8") + "="+ orderApproved.getVat_amount());
 
+            log.info("kakao Cancel Request={}",urlBuilder);
             Map<String, String> requestHeaders = new HashMap<>();
             requestHeaders.put("Authorization", "KakaoAK "+kakaoAdminKey);
             requestHeaders.put("Content-Type", "application/x-www-form-urlencoded");
             String responseBody = post(String.valueOf(urlBuilder),requestHeaders);
+            log.info("kakao Cancel responseBody={}",responseBody);
 
-            JSONObject responsejsonObject = new JSONObject(responseBody);
-            log.info("responsejsonObject={}",responsejsonObject);
+            JSONObject cancelResponseJson = new JSONObject(responseBody);
 
-            orderApproved.changeCancelAt(responsejsonObject.getString("canceled_at"));
+            orderApproved.changeCancelAt(cancelResponseJson.getString("canceled_at"));
             orderApproved.changeStatus(OrderStatus.결제취소);
+            orderRepository.updatePayCancel(orderApproved);
 
-            orderRepository.updatePayCancel(orderApproved.getOrder_id(),orderApproved);
             itemRepository.updateItemQuantityPlus(orderApproved.getItem_code(), Long.valueOf(orderApproved.getQuantity()));
         }catch (Exception e){
             e.printStackTrace();
@@ -413,24 +422,6 @@ public class OpenApiServiceImpl implements OpenApiService {
         }
         return text;
     }
-    private WeatherPropertyCodeVo getWeatherCodeMapping(Map<String, String> elementMap) {
-        WeatherPropertyCodeVo weatherPropertyCodeVo = new WeatherPropertyCodeVo();
-        weatherPropertyCodeVo.setBaseDate(elementMap.get("baseDate"));
-        weatherPropertyCodeVo.setPty(Integer.parseInt(elementMap.get("PTY")));
-        weatherPropertyCodeVo.setPop(elementMap.get("POP"));
-        weatherPropertyCodeVo.setPcp(elementMap.get("PCP"));
-        weatherPropertyCodeVo.setReh(elementMap.get("REH"));
-        weatherPropertyCodeVo.setTmp(elementMap.get("TMP"));
-        weatherPropertyCodeVo.setSky(Integer.parseInt(elementMap.get("SKY")));
-        weatherPropertyCodeVo.setUuu(elementMap.get("UUU"));
-        weatherPropertyCodeVo.setVec(elementMap.get("VEC"));
-        weatherPropertyCodeVo.setWav(elementMap.get("WAV"));
-        weatherPropertyCodeVo.setWsd(Float.parseFloat(elementMap.get("WSD")));
-        weatherPropertyCodeVo.setSno(elementMap.get("SNO"));
-        weatherPropertyCodeVo.setVvv(elementMap.get("VVV"));
-        weatherPropertyCodeVo.setHostUrl(hostUrl);
-        return weatherPropertyCodeVo;
-    }
     private  int currentTimeFormat (){
         // 현재 날짜
         ZonedDateTime nowUTC = ZonedDateTime.now(ZoneId.of("UTC"));
@@ -448,7 +439,6 @@ public class OpenApiServiceImpl implements OpenApiService {
         return nowDate.format(dateFormatter);
     }
     private  void convertGRID_GPS(KakaoMemberLocation kakaoUserLocation , int mode ) {
-
         double x = 0;
         double y = 0;
         try {

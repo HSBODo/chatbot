@@ -59,8 +59,8 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Optional<Order> updatePayApprove(Long orderId,Order updateParams) {
-        Order findOrder = em.find(Order.class, orderId);
+    public Optional<Order> updatePayApprove(Order updateParams) {
+        Order findOrder = em.find(Order.class, updateParams.getOrder_id());
         findOrder.changeStatus(updateParams.getStatus());
         findOrder.changeApprovedAt(updateParams.getApproved_at());
         findOrder.changeAid(updateParams.getAid());
@@ -69,8 +69,8 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Optional<Order> updatePayCancel(Long orderId,Order updateParams) {
-        Order findOrder = em.find(Order.class, orderId);
+    public Optional<Order> updatePayCancel(Order updateParams) {
+        Order findOrder = em.find(Order.class, updateParams.getOrder_id());
         findOrder.changeStatus(updateParams.getStatus());
         findOrder.changeCancelAt(updateParams.getCanceled_at());
         return Optional.ofNullable(findOrder);

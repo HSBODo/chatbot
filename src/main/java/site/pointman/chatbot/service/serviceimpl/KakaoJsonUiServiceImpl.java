@@ -86,8 +86,8 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
          buttons	        Array<Button>	    O	        다양한 액션을 수행할 수 있는 버튼입니다.	1개 이상, 3개 이하
 
          */
-        JSONArray buttons = new JSONArray(buttonVoList);
         String resultJson;
+        JSONArray buttons = new JSONArray(buttonVoList);
         if(displayType.equals(DisplayType.carousel)){
             resultJson ="{\n" +
                     "          \"description\": \""+description+"\",\n" +
@@ -144,9 +144,9 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
 
     @Override
     public JSONObject createListCard(DisplayType displayType, String title, List<ListCardItemVo> listCardItemListDto, List<ButtonVo> buttonVoList) throws ParseException {
+        String resultJson;
         JSONArray buttons = new JSONArray(buttonVoList);
         JSONArray listCardItems = new JSONArray(listCardItemListDto);
-        String resultJson;
         if(displayType.equals(DisplayType.carousel)){
             resultJson =
                     "      {\n" +
@@ -220,7 +220,6 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
                 "           }";
 
         JSONObject resultJsonObj = (JSONObject) jsonParser.parse(resultJson);
-
         return resultJsonObj;
     }
 }

@@ -23,6 +23,7 @@ import site.pointman.chatbot.vo.kakaoui.ButtonVo;
 import site.pointman.chatbot.vo.kakaoui.DisplayType;
 import site.pointman.chatbot.vo.kakaoui.ExtraCodeVo;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @Slf4j
@@ -45,7 +46,7 @@ public class KakaoRestAPI {
     @ResponseBody
     @RequestMapping(value = "chat" , headers = {"Accept=application/json; UTF-8"})
     public JSONObject callAPI(@RequestBody KakaoRequestVo params) throws Exception {
-        KakaoResponseVo kakaoResponseVo = new KakaoResponseVo();
+        KakaoResponseVo kakaoResponse = new KakaoResponseVo();
         try {
             String uttr = params.getUttr(); //사용자 발화
             String kakaoUserkey = params.getKakaoUserkey(); //사용자 유저키
@@ -57,49 +58,50 @@ public class KakaoRestAPI {
                     .build();
             KakaoMember member = kakaoMemberDto.toEntity();
             memberService.join(member); //<==중복회원 체크 및 회원가입
-
+            if(!Optional.ofNullable(params.getAction().get("clientExtra")).isEmpty()){
+                JSONObject buttonParmas = new JSONObject((Map) params.getAction().get("clientExtra"));
+            }
             switch (uttr){
                 case "결제 상세보기" :
                     log.info("action={}",params.getAction().get("clientExtra"));
                     ObjectMapper objectMapper = new ObjectMapper();
                     ExtraCodeVo extraCodeVo = objectMapper.convertValue(params.getAction().get("clientExtra"), ExtraCodeVo.class);
 
-                    kakaoResponseVo.addContent(kakaoApiService.createOrderDetail(kakaoUserkey, extraCodeVo.getOrderId()));
+                    kakaoResponse.addContent(kakaoApiService.createOrderDetail(kakaoUserkey, extraCodeVo.getOrderId()));
                     break;
                 case "위치정보 동의 완료" :
-                    kakaoResponseVo.addContent(kakaoApiService.createTodayWeather(kakaoUserkey));
+                    kakaoResponse.addContent(kakaoApiService.createTodayWeather(kakaoUserkey));
                     break;
                 case "오늘의 날씨" :
-                    kakaoResponseVo.addContent(kakaoApiService.createLocationNotice(kakaoUserkey));
+                    kakaoResponse.addContent(kakaoApiService.createLocationNotice(kakaoUserkey));
                     break;
                 case "오늘의 뉴스" :
-                    kakaoResponseVo.addContent(kakaoApiService.createTodayNews("뉴스"));
+                    kakaoResponse.addContent(kakaoApiService.createTodayNews("뉴스"));
                     break;
                 case "오늘의 특가 상품" :
-                    kakaoResponseVo.addContent(kakaoApiService.createRecommendItems(kakaoUserkey));
+                    kakaoResponse.addContent(kakaoApiService.createRecommendItems(kakaoUserkey));
                     break;
                 case "주문조회" :
-                    kakaoResponseVo.addContent(kakaoApiService.createOrderList(kakaoUserkey));
+                    kakaoResponse.addContent(kakaoApiService.createOrderList(kakaoUserkey));
                     break;
                 case "관리자페이지" :
-                    List buttonList = new ArrayList<ButtonVo>();
+                    List buttons = new ArrayList<ButtonVo>();
                     ButtonVo adminPage = new ButtonVo("webLink","관리자페이지","https://www.pointman.shop/admin-page/login");
-                    buttonList.add(adminPage);
-                    kakaoResponseVo.addContent(kakaoJsonUiService.createBasicCard(DisplayType.basic,"관리자페이지","회원관리, 상품관리, 매출관리를 할 수 있어요!!","https://www.pointman.shop/image/%EC%B6%9C%EA%B7%BC%EB%8F%84%EC%9A%B0%EB%AF%B8.png",buttonList));
+                    buttons.add(adminPage);
+                    kakaoResponse.addContent(kakaoJsonUiService.createBasicCard(DisplayType.basic,"관리자페이지","회원관리, 상품관리, 매출관리를 할 수 있어요!!","https://www.pointman.shop/image/%EC%B6%9C%EA%B7%BC%EB%8F%84%EC%9A%B0%EB%AF%B8.png",buttons));
                     break;
                 case "개발자 소개" :
-                    kakaoResponseVo.addContent(kakaoApiService.createDeveloperInfo());
+                    kakaoResponse.addContent(kakaoApiService.createDeveloperInfo());
                     break;
                 default:
-                    kakaoResponseVo.addContent(kakaoJsonUiService.createSimpleText("아직 학습이 부족합니다."));
+                    kakaoResponse.addContent(kakaoJsonUiService.createSimpleText("아직 학습이 부족합니다."));
             }
-
         }catch (Exception e){
             e.printStackTrace();
-            kakaoResponseVo.addContent(kakaoJsonUiService.createSimpleText(e.getMessage()));
+            kakaoResponse.addContent(kakaoJsonUiService.createSimpleText(e.getMessage()));
         }
-        log.info("kakaoResponse = {}", kakaoResponseVo.createKakaoResponse());
-        return kakaoResponseVo.createKakaoResponse();
+        log.info("kakaoResponse = {}", kakaoResponse.createKakaoResponse());
+        return kakaoResponse.createKakaoResponse();
     }
 
     @ResponseBody
@@ -142,8 +144,7 @@ public class KakaoRestAPI {
     @GetMapping(value = "/{orderId}/kakaopay-approve")
     public String kakaoPayApprove (@PathVariable Long orderId, String pg_token) {
         try {
-            log.info("pg_token={}",pg_token);
-            log.info("orderId={}",orderId);
+            log.info("pg_token={} orderId={}",pg_token,orderId);
             openApiService.kakaoPayApprove(pg_token,orderId);
             log.info("kakaopay-approve success");
         }catch (Exception e){
