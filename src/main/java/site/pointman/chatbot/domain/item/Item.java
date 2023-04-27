@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.domain.BaseEntity;
 
 import javax.persistence.*;
@@ -15,6 +16,8 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Table(name = "tb_item")
 @NoArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
+@EntityListeners(AuditingEntityListener.class)
 public class Item extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idx ;
@@ -25,18 +28,22 @@ public class Item extends BaseEntity {
     private String description; //최대 40자
     private String thumbnailImgUrl;
     private String thumbnailLink;
+
     private String profileImgUrl;
     @NotNull
     @NotBlank(message = "상품이름을 적어주세요")
+    @Column(name = "item_name")
     private String ProfileNickname;
     @NotNull
+    @Column(name = "original_price")
     private int price;
     private int discount;
     @NotNull
+    @Column(name = "final_price")
     private int discountedPrice;
     @Max(100)
     private int discountRate;
-    private String currency = "won";
+    private String currency;
     private String is_display;
     @NotNull
     private Long total_quantity;

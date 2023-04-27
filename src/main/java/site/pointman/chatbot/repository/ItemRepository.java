@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemRepository {
+    Item save(Item item);
     List<Item> findByDisplayItems();
     Optional<Item> findByItem(Long itemCode);
-    Optional<Item> updateMinusItemQuantity(Long itemCode,Long quantity);
+    Optional<Item> updateItemQuantityMinus(Long itemCode,Long quantity);
+    Optional<Item> updateItemQuantityPlus(Long itemCode,Long quantity);
 
 }

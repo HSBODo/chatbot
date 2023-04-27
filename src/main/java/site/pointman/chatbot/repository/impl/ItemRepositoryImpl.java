@@ -18,6 +18,12 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
+    public Item save(Item item) {
+        em.persist(item);
+        return item;
+    }
+
+    @Override
     public List<Item> findByDisplayItems() {
         return em.createQuery("select i from Item i where i.is_display=:display", Item.class)
                 .setParameter("display","Y")
@@ -30,9 +36,17 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public Optional<Item> updateMinusItemQuantity(Long itemCode, Long quantity) {
+    public Optional<Item> updateItemQuantityMinus(Long itemCode, Long quantity) {
         Item findItem = em.find(Item.class, itemCode);
         long total = findItem.getTotal_quantity() - quantity;
+        findItem.changeQuantity(total);
+        return Optional.ofNullable(findItem);
+    }
+
+    @Override
+    public Optional<Item> updateItemQuantityPlus(Long itemCode, Long quantity) {
+        Item findItem = em.find(Item.class, itemCode);
+        long total = findItem.getTotal_quantity() + quantity;
         findItem.changeQuantity(total);
         return Optional.ofNullable(findItem);
     }

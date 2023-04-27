@@ -20,6 +20,26 @@ class itemRepositoryTest {
     private ItemRepository itemRepository;
 
     @Test
+    void save() {
+        Item item = Item.builder()
+                .itemCode(7L)
+                .profileNickname("테스트상품")
+                .profileImgUrl("www.")
+                .description("테스트상품설명")
+                .thumbnailImgUrl("상품이미지 url")
+                .thumbnailLink("상품이미지 링크")
+                .price(10000)
+                .discountedPrice(5000)
+                .discount(5000)
+                .discountRate(0)
+                .currency("")
+                .is_display("")
+                .total_quantity(0L)
+                .build();
+        itemRepository.save(item);
+    }
+
+    @Test
     void findByDisplayItems() {
         List<Item> items = itemRepository.findByDisplayItems();
         if(items.isEmpty()) throw new NullPointerException("display 가능한 아이템이 없습니다.");
