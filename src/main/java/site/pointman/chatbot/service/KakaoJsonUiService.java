@@ -2,10 +2,10 @@ package site.pointman.chatbot.service;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import site.pointman.chatbot.dto.kakaoui.ButtonDto;
-import site.pointman.chatbot.dto.kakaoui.CarouselType;
-import site.pointman.chatbot.dto.kakaoui.DisplayType;
-import site.pointman.chatbot.dto.kakaoui.ListCardItemDto;
+import site.pointman.chatbot.vo.kakaoui.ButtonVo;
+import site.pointman.chatbot.vo.kakaoui.CarouselType;
+import site.pointman.chatbot.vo.kakaoui.DisplayType;
+import site.pointman.chatbot.vo.kakaoui.ListCardItemVo;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public interface KakaoJsonUiService {
             String title,
             String msg,
             String thumbnailImgUrl,
-            List<ButtonDto> buttonDtos
+            List<ButtonVo> buttonVos
     ) throws ParseException;
     JSONObject createCommerceCard(
             DisplayType displayType,
@@ -30,14 +30,14 @@ public interface KakaoJsonUiService {
             String thumbnailLink,
             String profileImgUrl,
             String ProfileNickname,
-            List<ButtonDto> buttonsList
+            List<ButtonVo> buttonsList
     ) throws ParseException;
 
     JSONObject createListCard(
             DisplayType displayType,
             String title,
-            List<ListCardItemDto> listCardItemDtos,
-            List<ButtonDto> buttonDtoList
+            List<ListCardItemVo> listCardItemVos,
+            List<ButtonVo> buttonVoList
     ) throws ParseException;
 
     JSONObject createCarousel(CarouselType itemType, List items) throws ParseException;

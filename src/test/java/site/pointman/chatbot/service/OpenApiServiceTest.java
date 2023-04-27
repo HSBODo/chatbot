@@ -5,10 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
-import site.pointman.chatbot.dto.kakaopay.KakaoPayReadyDto;
-import site.pointman.chatbot.dto.naverapi.SearchDto;
-import site.pointman.chatbot.dto.wearherapi.WeatherPropertyCodeDto;
-import site.pointman.chatbot.repository.ItemRepository;
+import site.pointman.chatbot.vo.naverapi.SearchVo;
+import site.pointman.chatbot.vo.weatherapi.WeatherPropertyCodeVo;
 
 import java.math.BigDecimal;
 
@@ -23,11 +21,11 @@ class OpenApiServiceTest {
                 .x(BigDecimal.valueOf(37.4603776))
                 .y(BigDecimal.valueOf(126.8187136))
                 .build();
-        WeatherPropertyCodeDto result = openApiService.selectShortTermWeather(kakaoMemberLocation);
+        WeatherPropertyCodeVo result = openApiService.selectShortTermWeather(kakaoMemberLocation);
    }
    @Test
     void selectNaverSearch() {
-       SearchDto searchDto = openApiService.selectNaverSearch("뉴스", "5", "1", "date");
+       SearchVo searchVo = openApiService.selectNaverSearch("뉴스", "5", "1", "date");
    }
 
     @Test

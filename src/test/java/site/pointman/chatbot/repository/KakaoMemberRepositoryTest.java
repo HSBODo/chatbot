@@ -8,6 +8,8 @@ import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
+import site.pointman.chatbot.dto.KakaoMemberDto;
+import site.pointman.chatbot.dto.KakaoMemberLocationDto;
 import site.pointman.chatbot.service.MemberService;
 
 import java.math.BigDecimal;
@@ -22,10 +24,11 @@ class KakaoMemberRepositoryTest {
     @Test
     @Commit
     void save() {
-        KakaoMember member = KakaoMember.builder()
-                .kakaoUserkey("test1")
-                .partnerId("test")
+        KakaoMemberDto kakaoMemberDto = KakaoMemberDto.builder()
+                .partnerId("")
+                .kakaoUserkey("")
                 .build();
+        KakaoMember member = kakaoMemberDto.toEntity();
         KakaoMember result = kakaoMemberRepository.save(member);
         Assertions.assertThat(result).isEqualTo(member);
     }
@@ -34,13 +37,30 @@ class KakaoMemberRepositoryTest {
     @Test
     @Commit
     void saveLocation() {
-        KakaoMemberLocation kakaoMemberLocation = KakaoMemberLocation.builder()
+        KakaoMemberLocationDto kakaoMemberLocation = KakaoMemberLocationDto.builder()
                 .kakaoUserkey("test")
                 .x(BigDecimal.valueOf(123))
                 .y(BigDecimal.valueOf(456))
                 .build();
-        KakaoMemberLocation savedLocation = kakaoMemberRepository.saveLocation(kakaoMemberLocation);
-        Assertions.assertThat(savedLocation).isEqualTo(kakaoMemberLocation);
+        KakaoMemberLocation kakaoMemberLocationEntity = kakaoMemberLocation.toEntity();
+
+        KakaoMemberLocation savedLocation = kakaoMemberRepository.saveLocation(kakaoMemberLocationEntity);
+        Assertions.assertThat(savedLocation).isEqualTo(kakaoMemberLocationEntity);
+    }
+    @Test
+    void updateLocation(){
+        KakaoMemberLocationDto kakaoMemberLocationDto
+                = KakaoMemberLocationDto.builder()
+                .kakaoUserkey("test")
+                .x(BigDecimal.valueOf(123))
+                .y(BigDecimal.valueOf(456))
+                .build();
+        KakaoMemberLocation kakaoMemberLocationEntity = kakaoMemberLocationDto.toEntity();
+        Optional<KakaoMemberLocation> maybeMemberLocation = kakaoMemberRepository.updateLocation(kakaoMemberLocationEntity.getKakaoUserkey(), kakaoMemberLocationEntity.getX(), kakaoMemberLocationEntity.getY());
+        if (maybeMemberLocation.isEmpty()) throw new NullPointerException("위치정보 업데이트 실패");
+        KakaoMemberLocation kakaoMemberLocation = maybeMemberLocation.get();
+        Assertions.assertThat(kakaoMemberLocation.getX()).isEqualTo(kakaoMemberLocationDto.getX());
+
     }
     @Test
     void findByMember (){
@@ -48,21 +68,11 @@ class KakaoMemberRepositoryTest {
         Optional<KakaoMember> maybeMember = kakaoMemberRepository.findByMember(kakaoUserkey);
         if (maybeMember.isEmpty()) throw new NullPointerException("회원이 존재하지 않습니다.");
         KakaoMember member = maybeMember.get();
-        Assertions.assertThat(member.getKakaoUserkey()).isEqualTo(kakaoUserkey);
+        KakaoMemberDto kakaoMemberDto = member.toKakaoMemberDto();
+        Assertions.assertThat(member.getKakaoUserkey()).isEqualTo( kakaoMemberDto.getKakaoUserkey());
 
     }
-    @Test
-    @Commit
-    void updateLocation(){
-        String kakaoUserkey= "test";
-        BigDecimal x = BigDecimal.valueOf(13);
-        BigDecimal y = BigDecimal.valueOf(456);
-        Optional<KakaoMemberLocation> maybeMemberLocation = kakaoMemberRepository.updateLocation(kakaoUserkey, x, y);
-        if (maybeMemberLocation.isEmpty()) throw new NullPointerException("위치정보 업데이트 실패");
-        KakaoMemberLocation kakaoMemberLocation = maybeMemberLocation.get();
-        Assertions.assertThat(kakaoMemberLocation.getX()).isEqualTo(x);
 
-    }
     @Test
     void findByLocation(){
         String kakaoUserkey= "test";

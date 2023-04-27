@@ -5,10 +5,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.dto.kakaoui.ButtonDto;
-import site.pointman.chatbot.dto.kakaoui.CarouselType;
-import site.pointman.chatbot.dto.kakaoui.DisplayType;
-import site.pointman.chatbot.dto.kakaoui.ListCardItemDto;
+import site.pointman.chatbot.vo.kakaoui.ButtonVo;
+import site.pointman.chatbot.vo.kakaoui.CarouselType;
+import site.pointman.chatbot.vo.kakaoui.DisplayType;
+import site.pointman.chatbot.vo.kakaoui.ListCardItemVo;
 import site.pointman.chatbot.service.KakaoJsonUiService;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
     private JSONParser jsonParser = new JSONParser();
     @Override
-    public JSONObject createBasicCard(DisplayType displayType, String title, String description, String thumbnailImgUrl, List<ButtonDto> buttonDtoList) throws ParseException {
+    public JSONObject createBasicCard(DisplayType displayType, String title, String description, String thumbnailImgUrl, List<ButtonVo> buttonVoList) throws ParseException {
         /**
          Information. description 필드
 
@@ -34,7 +34,7 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
          * social과 profile은 현재 미지원 상태입니다.
 
          */
-        JSONArray buttons = new JSONArray(buttonDtoList);
+        JSONArray buttons = new JSONArray(buttonVoList);
         String resultJson;
         if(displayType.equals(DisplayType.carousel)){
             resultJson ="{\n" +
@@ -63,7 +63,7 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
     }
 
     @Override
-    public JSONObject createCommerceCard(DisplayType displayType,String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, List<ButtonDto> buttonDtoList) throws ParseException {
+    public JSONObject createCommerceCard(DisplayType displayType,String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, List<ButtonVo> buttonVoList) throws ParseException {
         /**
          Information. price, discount, discountedPrice 의 동작 방식
 
@@ -86,7 +86,7 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
          buttons	        Array<Button>	    O	        다양한 액션을 수행할 수 있는 버튼입니다.	1개 이상, 3개 이하
 
          */
-        JSONArray buttons = new JSONArray(buttonDtoList);
+        JSONArray buttons = new JSONArray(buttonVoList);
         String resultJson;
         if(displayType.equals(DisplayType.carousel)){
             resultJson ="{\n" +
@@ -143,8 +143,8 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
     }
 
     @Override
-    public JSONObject createListCard(DisplayType displayType, String title, List<ListCardItemDto> listCardItemListDto, List<ButtonDto> buttonDtoList) throws ParseException {
-        JSONArray buttons = new JSONArray(buttonDtoList);
+    public JSONObject createListCard(DisplayType displayType, String title, List<ListCardItemVo> listCardItemListDto, List<ButtonVo> buttonVoList) throws ParseException {
+        JSONArray buttons = new JSONArray(buttonVoList);
         JSONArray listCardItems = new JSONArray(listCardItemListDto);
         String resultJson;
         if(displayType.equals(DisplayType.carousel)){

@@ -6,9 +6,7 @@ import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import site.pointman.chatbot.dto.kakaoui.KakaoResponseDto;
-
-import static org.assertj.core.api.Assertions.*;
+import site.pointman.chatbot.vo.KakaoResponseVo;
 
 @Slf4j
 @SpringBootTest
@@ -31,19 +29,19 @@ class KakaoApiServiceTest {
 
     @Test
     void createLocationNotice() throws ParseException {
-        KakaoResponseDto kakaoResponseDto = new KakaoResponseDto();
+        KakaoResponseVo kakaoResponseVo = new KakaoResponseVo();
         String kakaoUserkey = "21321312";
-        kakaoResponseDto.addContent(kakaoApiService.createLocationNotice(kakaoUserkey));
-        JSONObject result = kakaoResponseDto.createKakaoResponse();
+        kakaoResponseVo.addContent(kakaoApiService.createLocationNotice(kakaoUserkey));
+        JSONObject result = kakaoResponseVo.createKakaoResponse();
         log.info("createLocationNotice={},",result);
     }
     @Test
     void todayWeather() throws Exception {
-        KakaoResponseDto kakaoResponseDto = new KakaoResponseDto();
+        KakaoResponseVo kakaoResponseVo = new KakaoResponseVo();
         String kakaoUserkey= "QFERwysZbO77";
 
-        kakaoResponseDto.addContent( kakaoApiService.createTodayWeather(kakaoUserkey));
-        JSONObject result = kakaoResponseDto.createKakaoResponse();
+        kakaoResponseVo.addContent( kakaoApiService.createTodayWeather(kakaoUserkey));
+        JSONObject result = kakaoResponseVo.createKakaoResponse();
         log.info("todayWeather={},",result);
 
     }
@@ -59,16 +57,16 @@ class KakaoApiServiceTest {
     void createRecommendItems() throws Exception {
         String kakaoUserkey= "QFERwysZbO77";
         JSONObject recommendItems = kakaoApiService.createRecommendItems(kakaoUserkey);
-        KakaoResponseDto kakaoResponseDto = new KakaoResponseDto();
-        kakaoResponseDto.addContent(recommendItems);
-        log.info("createRecommendItems={}", kakaoResponseDto.createKakaoResponse());
+        KakaoResponseVo kakaoResponseVo = new KakaoResponseVo();
+        kakaoResponseVo.addContent(recommendItems);
+        log.info("createRecommendItems={}", kakaoResponseVo.createKakaoResponse());
 
     }
 
     @Test
     void createTodayNews() throws Exception {
-        KakaoResponseDto kakaoResponseDto = new KakaoResponseDto();
-        kakaoResponseDto.addContent(kakaoApiService.createTodayNews("뉴스"));
-        log.info("createTodayNews={}",  kakaoResponseDto.createKakaoResponse()       );
+        KakaoResponseVo kakaoResponseVo = new KakaoResponseVo();
+        kakaoResponseVo.addContent(kakaoApiService.createTodayNews("뉴스"));
+        log.info("createTodayNews={}",  kakaoResponseVo.createKakaoResponse()       );
     }
 }
