@@ -21,9 +21,9 @@ public class KakaoMemberLocation extends BaseEntity {
     @Id
     @Column(name = "kakao_userkey")
     private String kakaoUserkey ;
-    @Column(name = "X",precision = 10,scale = 7)
+    @Column(name = "X",precision = 10,scale = 7,nullable = false)
     private BigDecimal x ;
-    @Column(name = "Y",precision = 10,scale = 7)
+    @Column(name = "Y",precision = 10,scale = 7,nullable = false)
     private BigDecimal y ;
     @Builder
     public KakaoMemberLocation(String kakaoUserkey, BigDecimal x, BigDecimal y) {

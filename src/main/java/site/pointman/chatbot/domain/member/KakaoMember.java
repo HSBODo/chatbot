@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.domain.BaseEntity;
+import site.pointman.chatbot.dto.KakaoMemberDto;
 
 import javax.persistence.*;
 
@@ -30,5 +31,12 @@ public class KakaoMember extends BaseEntity {
         this.idx = idx;
         this.kakaoUserkey = kakaoUserkey;
         this.partnerId = partnerId;
+    }
+    public KakaoMemberDto toKakaoMemberDto() {
+        return KakaoMemberDto.builder()
+                .idx(this.idx)
+                .kakaoUserkey(this.kakaoUserkey)
+                .partnerId(this.kakaoUserkey)
+                .build();
     }
 }
