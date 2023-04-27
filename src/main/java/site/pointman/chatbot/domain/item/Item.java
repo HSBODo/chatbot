@@ -22,30 +22,24 @@ public class Item extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idx ;
     @Id
-    @Column(name = "item_code")
-    @NotNull
+    @Column(name = "item_code",nullable = false)
     private Long itemCode;
     private String description; //최대 40자
     private String thumbnailImgUrl;
     private String thumbnailLink;
 
     private String profileImgUrl;
-    @NotNull
-    @NotBlank(message = "상품이름을 적어주세요")
-    @Column(name = "item_name")
+    @Column(name = "item_name",nullable = false)
     private String ProfileNickname;
-    @NotNull
-    @Column(name = "original_price")
+    @Column(name = "original_price",nullable = false)
     private int price;
     private int discount;
-    @NotNull
-    @Column(name = "final_price")
+    @Column(name = "final_price",nullable = false)
     private int discountedPrice;
-    @Max(100)
     private int discountRate;
     private String currency;
     private String is_display;
-    @NotNull
+    @Column(nullable = false)
     private Long total_quantity;
 
     @Builder
