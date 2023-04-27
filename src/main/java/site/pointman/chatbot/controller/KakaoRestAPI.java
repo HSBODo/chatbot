@@ -60,10 +60,10 @@ public class KakaoRestAPI {
 
             switch (uttr){
                 case "결제 상세보기" :
-                    params.getAction().get("clientExtra");
                     log.info("action={}",params.getAction().get("clientExtra"));
                     ObjectMapper objectMapper = new ObjectMapper();
                     ExtraCodeVo extraCodeVo = objectMapper.convertValue(params.getAction().get("clientExtra"), ExtraCodeVo.class);
+
                     kakaoResponseVo.addContent(kakaoApiService.createOrderDetail(kakaoUserkey, extraCodeVo.getOrderId()));
                     break;
                 case "위치정보 동의 완료" :

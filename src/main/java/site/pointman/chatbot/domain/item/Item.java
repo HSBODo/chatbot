@@ -3,14 +3,12 @@ package site.pointman.chatbot.domain.item;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.domain.BaseEntity;
+import site.pointman.chatbot.dto.ItemDto;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+
 
 @Entity
 @Getter
@@ -58,6 +56,25 @@ public class Item extends BaseEntity {
         this.currency = currency;
         this.is_display = is_display;
         this.total_quantity = total_quantity;
+    }
+
+    public ItemDto toItemDto(){
+        return ItemDto.builder()
+                .idx(this.idx)
+                .itemCode(this.itemCode)
+                .description(this.description)
+                .thumbnailImgUrl(this.thumbnailImgUrl)
+                .thumbnailLink(this.thumbnailLink)
+                .profileNickname(this.ProfileNickname)
+                .profileImgUrl(this.profileImgUrl)
+                .price(this.price)
+                .discount(this.discount)
+                .discountRate(this.discountRate)
+                .discountedPrice(this.discountedPrice)
+                .currency(this.currency)
+                .is_display(this.is_display)
+                .total_quantity(this.total_quantity)
+                .build();
     }
     public void changeQuantity(Long quantity){
         this.total_quantity = quantity;
