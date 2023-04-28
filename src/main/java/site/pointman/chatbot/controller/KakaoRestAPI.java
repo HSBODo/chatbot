@@ -58,8 +58,10 @@ public class KakaoRestAPI {
                     .build();
             KakaoMember member = kakaoMemberDto.toEntity();
             memberService.join(member); //<==중복회원 체크 및 회원가입
+           // log.info("clientExtra={}",params.getAction().get("clientExtra"));
             if(!Optional.ofNullable(params.getAction().get("clientExtra")).isEmpty()){
                 JSONObject buttonParmas = new JSONObject((Map) params.getAction().get("clientExtra"));
+                log.info("buttonParams={}",buttonParmas);
             }
             switch (uttr){
                 case "결제 상세보기" :

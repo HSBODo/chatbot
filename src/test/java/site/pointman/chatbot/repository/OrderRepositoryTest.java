@@ -91,7 +91,7 @@ class OrderRepositoryTest {
         updateParams.changePayMethod(PayMethod.카드);
         updateParams.changeApprovedAt("승인날짜");
         updateParams.changeAid("업데이트 테스트");
-        Optional<Order> maybeOrder = orderRepository.updatePayApprove(orderId,updateParams);
+        Optional<Order> maybeOrder = orderRepository.updatePayApprove(updateParams);
         if(maybeOrder.isEmpty()) throw  new NullPointerException("주문번호와 일치하는 주문이 없습니다");
         Order order = maybeOrder.get();
         Assertions.assertThat(order.getAid()).isEqualTo(updateParams.getAid());
@@ -105,7 +105,7 @@ class OrderRepositoryTest {
                 .build();
         updateParams.changeCancelAt("취소 테스트");
         updateParams.changeStatus(OrderStatus.결제취소);
-        Optional<Order> maybeOrder = orderRepository.updatePayCancel(orderId,updateParams);
+        Optional<Order> maybeOrder = orderRepository.updatePayCancel(updateParams);
         if(maybeOrder.isEmpty()) throw  new NullPointerException("주문번호와 일치하는 주문이 없습니다");
         Order order = maybeOrder.get();
         Assertions.assertThat(order.getCanceled_at()).isEqualTo(updateParams.getCanceled_at());
