@@ -44,5 +44,6 @@ public interface KakaoJsonUiService {
 
     JSONObject createSimpleText(String msg) throws ParseException;
     JSONObject createSimpleImage(String altText, String imgUrl) throws ParseException;
+    JSONObject createQuickReplies (List<ButtonVo> buttons) throws Exception;
 
 }

@@ -11,4 +11,6 @@ public interface KakaoApiService {
     JSONObject createOrderDetail(String kakaoUserkey, Long orderId) throws Exception;
     JSONObject createRecommendItems(String kakaoUserkey) throws Exception;
     JSONObject createOrderList(String kakaoUserkey) throws Exception;
+
+
 }

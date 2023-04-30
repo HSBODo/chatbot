@@ -16,10 +16,12 @@ public class KakaoRequestVo {
     private JSONObject userRequest;
     private JSONObject bot;
     private JSONObject action;
+    private JSONObject buttonParams;
     private String kakaoUserkey;
-    private String uttr; //사용자 발화
+    private String uttr;
     private String timezone;
     private String partnerId;
+    private String blockCode;
 
 
     public String getKakaoUserkey() {
@@ -37,5 +39,15 @@ public class KakaoRequestVo {
     public String getTimezone() {
         this.timezone = (String) userRequest.get("timezone");
         return timezone;
+    }
+    public JSONObject getButtonParams() {
+        this.buttonParams =  new JSONObject((Map)action.get("clientExtra"));
+        return buttonParams;
+    }
+
+    public String getBlockCode() {
+        getButtonParams();
+        this.blockCode = (String) buttonParams.get("blockCode");
+        return blockCode;
     }
 }

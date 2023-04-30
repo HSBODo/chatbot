@@ -26,8 +26,10 @@ public class Block extends BaseEntity {
     @Column(nullable = false)
     private String blockName;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private BlockType blockType;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private DisplayType displayType;
     private String service;
     @Builder

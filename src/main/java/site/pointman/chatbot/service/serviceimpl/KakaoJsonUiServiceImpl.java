@@ -222,4 +222,15 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
         JSONObject resultJsonObj = (JSONObject) jsonParser.parse(resultJson);
         return resultJsonObj;
     }
+
+    @Override
+    public JSONObject createQuickReplies(List<ButtonVo> buttonVoList) throws Exception {
+        JSONArray buttons = new JSONArray(buttonVoList);
+        String resultJson ="{\n" +
+                "               \"quickReplies\": "+buttons+"\n" +
+                "           }";
+
+        JSONObject resultJsonObj = (JSONObject) jsonParser.parse(resultJson);
+        return resultJsonObj;
+    }
 }

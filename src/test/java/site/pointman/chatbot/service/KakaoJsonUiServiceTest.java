@@ -7,10 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.vo.*;
-import site.pointman.chatbot.vo.kakaoui.ButtonVo;
-import site.pointman.chatbot.vo.kakaoui.CarouselType;
-import site.pointman.chatbot.vo.kakaoui.DisplayType;
-import site.pointman.chatbot.vo.kakaoui.ListCardItemVo;
+import site.pointman.chatbot.vo.kakaoui.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,8 +25,8 @@ class KakaoJsonUiServiceTest {
     @Test
     void createBasicCard() throws ParseException {
         List<ButtonVo> buttonVos = new ArrayList();
-        ButtonVo buttonVo = new ButtonVo("action","laber","www.asdasd.com");
-        ButtonVo buttonVo2 = new ButtonVo("action1","label1","www.asdasd.com1");
+        ButtonVo buttonVo = new ButtonVo(ButtonType.webLink,"laber","www.asdasd.com");
+        ButtonVo buttonVo2 = new ButtonVo(ButtonType.webLink,"label1","www.asdasd.com1");
         buttonVos.add(buttonVo);
         buttonVos.add(buttonVo2);
         JSONObject result = kakaoJsonUiService.createBasicCard(DisplayType.basic,"테스트 제목", "테스트 메세지", "썸네일 url", buttonVos);
@@ -39,7 +36,7 @@ class KakaoJsonUiServiceTest {
     @Test
     void createCommerceCard() throws ParseException {
         List<ButtonVo> buttonVos = new ArrayList<>();
-        ButtonVo buttonVo = new ButtonVo("action","label","www.asdasd.com");
+        ButtonVo buttonVo = new ButtonVo(ButtonType.webLink,"label","www.asdasd.com");
         buttonVos.add(buttonVo);
         JSONObject result = kakaoJsonUiService.createCommerceCard(
                 DisplayType.basic,
@@ -65,7 +62,7 @@ class KakaoJsonUiServiceTest {
         ListCardItemVo listCardItemVo = new ListCardItemVo("title","desc","img",link);
         listCardItemVos.add(listCardItemVo);
         List<ButtonVo> buttonVos = new ArrayList<>();
-        ButtonVo buttonVo = new ButtonVo("ac","la","we");
+        ButtonVo buttonVo = new ButtonVo(ButtonType.webLink,"la","we");
         buttonVos.add(buttonVo);
         JSONObject recommendItems = kakaoJsonUiService.createListCard(DisplayType.basic,"123123", listCardItemVos, buttonVos);
         KakaoResponseVo kakaoResponseVo = new KakaoResponseVo();

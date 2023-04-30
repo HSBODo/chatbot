@@ -99,7 +99,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     }
     @Override
     public JSONObject createLocationNotice(String kakaoUserkey) throws ParseException {
-        ButtonVo locationNoticeButton = new ButtonVo("webLink","위치정보 동의하기","https://www.pointman.shop/kakaochat/v1/location-notice?u="+kakaoUserkey);
+        ButtonVo locationNoticeButton = new ButtonVo(ButtonType.webLink,"위치정보 동의하기","https://www.pointman.shop/kakaochat/v1/location-notice?u="+kakaoUserkey);
         List<ButtonVo> buttons = new ArrayList<>();
         buttons.add(locationNoticeButton);
         return kakaoJsonUiService.createBasicCard(
@@ -115,9 +115,9 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public JSONObject createDeveloperInfo() throws ParseException {
 
-        ButtonVo blogButton = new ButtonVo("webLink","블로그","https://pointman.tistory.com/");
-        ButtonVo gitHubButton = new ButtonVo("webLink","GitHub","https://github.com/HSBODo");
-        ButtonVo portfolioButton = new ButtonVo("webLink","포트폴리오","https://www.pointman.shop");
+        ButtonVo blogButton = new ButtonVo(ButtonType.webLink,"블로그","https://pointman.tistory.com/");
+        ButtonVo gitHubButton = new ButtonVo(ButtonType.webLink,"GitHub","https://github.com/HSBODo");
+        ButtonVo portfolioButton = new ButtonVo(ButtonType.webLink,"포트폴리오","https://www.pointman.shop");
         List buttons = new ArrayList<ButtonVo>();
         buttons.add(blogButton);
         buttons.add(gitHubButton);
@@ -140,8 +140,8 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         findItems.stream()
                 .forEach(item ->{
                     List<ButtonVo> buttons = new ArrayList<>();
-                    ButtonVo buyButton = new ButtonVo("webLink","구매하러가기",item.getThumbnailLink());
-                    ButtonVo payButton = new ButtonVo("webLink","카카오페이 결제","https://www.pointman.shop/kakaochat/v1/kakaopay-ready?itemcode="+item.getItemCode()+"&kakaouserkey="+kakaoUserkey);
+                    ButtonVo buyButton = new ButtonVo(ButtonType.webLink,"구매하러가기",item.getThumbnailLink());
+                    ButtonVo payButton = new ButtonVo(ButtonType.webLink,"카카오페이 결제","https://www.pointman.shop/kakaochat/v1/kakaopay-ready?itemcode="+item.getItemCode()+"&kakaouserkey="+kakaoUserkey);
                     buttons.add(buyButton);
                     buttons.add(payButton);
                     try {
@@ -186,13 +186,13 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                         buttonParams.put("itemCode",item.getItemCode());
                         buttonParams.put("orderId",order.getOrder_id());
                         buttonParams.put("kakaoUserkey",kakaoUserkey);
-                        ButtonBlockVo orderDetailButton = new ButtonBlockVo("block","결제 상세보기","",buttonParams);
+                        ButtonVo orderDetailButton = new ButtonVo(ButtonType.block,"결제 상세보기",buttonParams);
 
                         List<ButtonVo> buttons = new ArrayList<>();
                         buttons.add(orderDetailButton);
 
                         if(order.getStatus().equals(OrderStatus.결제승인)){ //<== 결제승인 완료된 주문만 취소 가능
-                            ButtonVo payCancelButton = new ButtonVo("webLink","결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
+                            ButtonVo payCancelButton = new ButtonVo(ButtonType.webLink,"결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
                             buttons.add(payCancelButton);
                         }
 
@@ -227,7 +227,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
 
         List<ButtonVo> buttons = new ArrayList<>();
         if(order.getStatus().equals(OrderStatus.결제승인)){ //<==결제 승인된 주문만 취소 가능
-            ButtonVo payCancelButton = new ButtonVo("webLink","결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
+            ButtonVo payCancelButton = new ButtonVo(ButtonType.webLink,"결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
             buttons.add(payCancelButton);
         }
 

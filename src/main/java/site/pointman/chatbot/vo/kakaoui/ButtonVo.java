@@ -2,6 +2,9 @@ package site.pointman.chatbot.vo.kakaoui;
 
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Map;
+
 @Getter @Setter
 public class ButtonVo {
     /**
@@ -18,18 +21,21 @@ public class ButtonVo {
      * extra	        Map<String, Any>		                        block이나 message action으로 블록 호출시, 스킬 서버에 추가적으로 제공하는 정보
      */
 
-    private String action;
+    private ButtonType action;
     private String label;
     private String webLinkUrl;
+    private String messageText;
+    private Map<String,String> extra;
 
-    public ButtonVo(String action, String label, String webLinkUrl) {
+    public ButtonVo(ButtonType action, String label, String webLinkUrl) {
         this.action = action;
         this.label = label;
         this.webLinkUrl = webLinkUrl;
     }
 
-    public ButtonVo(String action, String label) {
+    public ButtonVo(ButtonType action, String label, Map<String,String> extra) {
         this.action = action;
         this.label = label;
+        this.extra = extra;
     }
 }

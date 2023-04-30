@@ -10,15 +10,19 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import site.pointman.chatbot.domain.block.Block;
+import site.pointman.chatbot.dto.BlockDto;
 import site.pointman.chatbot.dto.KakaoMemberDto;
 import site.pointman.chatbot.dto.KakaoMemberLocationDto;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
+import site.pointman.chatbot.repository.BlockRepository;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.KakaoJsonUiService;
 import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.service.OpenApiService;
 import site.pointman.chatbot.vo.*;
+import site.pointman.chatbot.vo.kakaoui.ButtonType;
 import site.pointman.chatbot.vo.kakaoui.ButtonVo;
 import site.pointman.chatbot.vo.kakaoui.DisplayType;
 import site.pointman.chatbot.vo.kakaoui.ExtraCodeVo;
@@ -34,22 +38,24 @@ public class KakaoRestAPI {
     private MemberService memberService;
     private OpenApiService openApiService;
     private KakaoJsonUiService kakaoJsonUiService;
+    private BlockRepository blockRepository;
     private JSONParser jsonParser = new JSONParser();
 
-    public KakaoRestAPI(KakaoApiService kakaoApiService, MemberService memberService, OpenApiService openApiService, KakaoJsonUiService kakaoJsonUiService) {
+    public KakaoRestAPI(KakaoApiService kakaoApiService, MemberService memberService, OpenApiService openApiService, KakaoJsonUiService kakaoJsonUiService, BlockRepository blockRepository) {
         this.kakaoApiService = kakaoApiService;
         this.memberService = memberService;
         this.openApiService = openApiService;
         this.kakaoJsonUiService = kakaoJsonUiService;
+        this.blockRepository = blockRepository;
     }
 
     @ResponseBody
     @RequestMapping(value = "chat" , headers = {"Accept=application/json; UTF-8"})
-    public JSONObject callAPI(@RequestBody KakaoRequestVo params) throws Exception {
+    public JSONObject callAPI(@RequestBody KakaoRequestVo request) throws Exception {
         KakaoResponseVo kakaoResponse = new KakaoResponseVo();
         try {
-            String uttr = params.getUttr(); //사용자 발화
-            String kakaoUserkey = params.getKakaoUserkey(); //사용자 유저키
+            String uttr = request.getUttr(); //사용자 발화
+            String kakaoUserkey = request.getKakaoUserkey(); //사용자 유저키
 
             log.info("Request:: uttr ={}, userkey = {}",uttr,kakaoUserkey);
             KakaoMemberDto kakaoMemberDto = KakaoMemberDto.builder()
@@ -58,17 +64,34 @@ public class KakaoRestAPI {
                     .build();
             KakaoMember member = kakaoMemberDto.toEntity();
             memberService.join(member); //<==중복회원 체크 및 회원가입
-           // log.info("clientExtra={}",params.getAction().get("clientExtra"));
-            if(!Optional.ofNullable(params.getAction().get("clientExtra")).isEmpty()){
-                JSONObject buttonParmas = new JSONObject((Map) params.getAction().get("clientExtra"));
-                log.info("buttonParams={}",buttonParmas);
-            }
-            switch (uttr){
-                case "결제 상세보기" :
-                    log.info("action={}",params.getAction().get("clientExtra"));
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    ExtraCodeVo extraCodeVo = objectMapper.convertValue(params.getAction().get("clientExtra"), ExtraCodeVo.class);
 
+            if(!Optional.ofNullable(request.getButtonParams()).isEmpty()){
+                log.info("buttonParams={}",request.getButtonParams());
+                String blockCode = request.getBlockCode();
+                Optional<Block> maybeBlock = blockRepository.findByBlock(blockCode);
+                if (maybeBlock.isEmpty()) throw new NullPointerException("블럭이 존재하지 않습니다.");
+                Block block = maybeBlock.get();
+            }
+
+            switch (uttr){
+                case "옵션":
+                    kakaoResponse.addContent(kakaoJsonUiService.createSimpleText("옵션테스트"));
+                    Map<String,String> buttonParam = new HashMap<>();
+                    buttonParam.put("color","red");
+                    ButtonVo button1= new ButtonVo(ButtonType.block,"옵션1",buttonParam);
+                    ButtonVo button2= new ButtonVo(ButtonType.block,"옵션1",buttonParam);
+                    ButtonVo button3= new ButtonVo(ButtonType.block,"옵션1",buttonParam);
+                    ButtonVo button4= new ButtonVo(ButtonType.block,"옵션1",buttonParam);
+                    kakaoResponse.addQuickButton(button1);
+                    kakaoResponse.addQuickButton(button2);
+                    kakaoResponse.addQuickButton(button3);
+                    kakaoResponse.addQuickButton(button4);
+
+                    break;
+                case "결제 상세보기" :
+                    log.info("action={}",request.getAction().get("clientExtra"));
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    ExtraCodeVo extraCodeVo = objectMapper.convertValue(request.getAction().get("clientExtra"), ExtraCodeVo.class);
                     kakaoResponse.addContent(kakaoApiService.createOrderDetail(kakaoUserkey, extraCodeVo.getOrderId()));
                     break;
                 case "위치정보 동의 완료" :
@@ -88,7 +111,7 @@ public class KakaoRestAPI {
                     break;
                 case "관리자페이지" :
                     List buttons = new ArrayList<ButtonVo>();
-                    ButtonVo adminPage = new ButtonVo("webLink","관리자페이지","https://www.pointman.shop/admin-page/login");
+                    ButtonVo adminPage = new ButtonVo(ButtonType.webLink,"관리자페이지","https://www.pointman.shop/admin-page/login");
                     buttons.add(adminPage);
                     kakaoResponse.addContent(kakaoJsonUiService.createBasicCard(DisplayType.basic,"관리자페이지","회원관리, 상품관리, 매출관리를 할 수 있어요!!","https://www.pointman.shop/image/%EC%B6%9C%EA%B7%BC%EB%8F%84%EC%9A%B0%EB%AF%B8.png",buttons));
                     break;
