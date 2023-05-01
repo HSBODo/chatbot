@@ -17,10 +17,7 @@ import site.pointman.chatbot.dto.KakaoMemberLocationDto;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.repository.BlockRepository;
-import site.pointman.chatbot.service.KakaoApiService;
-import site.pointman.chatbot.service.KakaoJsonUiService;
-import site.pointman.chatbot.service.MemberService;
-import site.pointman.chatbot.service.OpenApiService;
+import site.pointman.chatbot.service.*;
 import site.pointman.chatbot.vo.*;
 import site.pointman.chatbot.vo.kakaoui.ButtonType;
 import site.pointman.chatbot.vo.kakaoui.ButtonVo;
@@ -38,14 +35,17 @@ public class KakaoRestAPI {
     private MemberService memberService;
     private OpenApiService openApiService;
     private KakaoJsonUiService kakaoJsonUiService;
+    private BlockService blockService;
     private BlockRepository blockRepository;
     private JSONParser jsonParser = new JSONParser();
 
-    public KakaoRestAPI(KakaoApiService kakaoApiService, MemberService memberService, OpenApiService openApiService, KakaoJsonUiService kakaoJsonUiService, BlockRepository blockRepository) {
+    public KakaoRestAPI(KakaoApiService kakaoApiService, MemberService memberService, OpenApiService openApiService, KakaoJsonUiService kakaoJsonUiService, BlockService blockService, BlockRepository blockRepository) {
+
         this.kakaoApiService = kakaoApiService;
         this.memberService = memberService;
         this.openApiService = openApiService;
         this.kakaoJsonUiService = kakaoJsonUiService;
+        this.blockService = blockService;
         this.blockRepository = blockRepository;
     }
 
@@ -65,12 +65,15 @@ public class KakaoRestAPI {
             KakaoMember member = kakaoMemberDto.toEntity();
             memberService.join(member); //<==중복회원 체크 및 회원가입
 
-            if(!Optional.ofNullable(request.getButtonParams()).isEmpty()){
+            if(!Optional.ofNullable(request.getBlockCode()).isEmpty()){
                 log.info("buttonParams={}",request.getButtonParams());
                 String blockCode = request.getBlockCode();
                 Optional<Block> maybeBlock = blockRepository.findByBlock(blockCode);
                 if (maybeBlock.isEmpty()) throw new NullPointerException("블럭이 존재하지 않습니다.");
-                Block block = maybeBlock.get();
+                BlockDto blockDto = maybeBlock.get().toBlockDto();
+                JSONObject block = blockService.createBlock(kakaoUserkey, blockDto);
+
+                return block;
             }
 
             switch (uttr){

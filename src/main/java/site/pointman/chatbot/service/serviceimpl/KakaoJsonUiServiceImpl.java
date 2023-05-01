@@ -16,7 +16,7 @@ import java.util.List;
 public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
     private JSONParser jsonParser = new JSONParser();
     @Override
-    public JSONObject createBasicCard(DisplayType displayType, String title, String description, String thumbnailImgUrl, List<ButtonVo> buttonVoList) throws ParseException {
+    public JSONObject createBasicCard(DisplayType displayType, String title, String description, String thumbnailImgUrl, List<ButtonVo> buttonList) throws ParseException {
         /**
          Information. description 필드
 
@@ -34,7 +34,7 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
          * social과 profile은 현재 미지원 상태입니다.
 
          */
-        JSONArray buttons = new JSONArray(buttonVoList);
+        JSONArray buttons = new JSONArray(buttonList);
         String resultJson;
         if(displayType.equals(DisplayType.carousel)){
             resultJson ="{\n" +
@@ -63,7 +63,7 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
     }
 
     @Override
-    public JSONObject createCommerceCard(DisplayType displayType,String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, List<ButtonVo> buttonVoList) throws ParseException {
+    public JSONObject createCommerceCard(DisplayType displayType,String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, List<ButtonVo> buttonList) throws ParseException {
         /**
          Information. price, discount, discountedPrice 의 동작 방식
 
@@ -87,7 +87,7 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
 
          */
         String resultJson;
-        JSONArray buttons = new JSONArray(buttonVoList);
+        JSONArray buttons = new JSONArray(buttonList);
         if(displayType.equals(DisplayType.carousel)){
             resultJson ="{\n" +
                     "          \"description\": \""+description+"\",\n" +
@@ -143,10 +143,10 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
     }
 
     @Override
-    public JSONObject createListCard(DisplayType displayType, String title, List<ListCardItemVo> listCardItemListDto, List<ButtonVo> buttonVoList) throws ParseException {
+    public JSONObject createListCard(DisplayType displayType, String title, List<ListCardItemVo> listCardItemList, List<ButtonVo> buttonList) throws ParseException {
         String resultJson;
-        JSONArray buttons = new JSONArray(buttonVoList);
-        JSONArray listCardItems = new JSONArray(listCardItemListDto);
+        JSONArray buttons = new JSONArray(buttonList);
+        JSONArray listCardItems = new JSONArray(listCardItemList);
         if(displayType.equals(DisplayType.carousel)){
             resultJson =
                     "      {\n" +
@@ -223,14 +223,4 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
         return resultJsonObj;
     }
 
-    @Override
-    public JSONObject createQuickReplies(List<ButtonVo> buttonVoList) throws Exception {
-        JSONArray buttons = new JSONArray(buttonVoList);
-        String resultJson ="{\n" +
-                "               \"quickReplies\": "+buttons+"\n" +
-                "           }";
-
-        JSONObject resultJsonObj = (JSONObject) jsonParser.parse(resultJson);
-        return resultJsonObj;
-    }
 }

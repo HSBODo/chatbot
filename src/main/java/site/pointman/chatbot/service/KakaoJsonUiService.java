@@ -16,7 +16,7 @@ public interface KakaoJsonUiService {
             String title,
             String msg,
             String thumbnailImgUrl,
-            List<ButtonVo> buttonVos
+            List<ButtonVo> buttonList
     ) throws ParseException;
     JSONObject createCommerceCard(
             DisplayType displayType,
@@ -30,20 +30,19 @@ public interface KakaoJsonUiService {
             String thumbnailLink,
             String profileImgUrl,
             String ProfileNickname,
-            List<ButtonVo> buttonsList
+            List<ButtonVo> buttonList
     ) throws ParseException;
 
     JSONObject createListCard(
             DisplayType displayType,
             String title,
-            List<ListCardItemVo> listCardItemVos,
-            List<ButtonVo> buttonVoList
+            List<ListCardItemVo> listCardItemList,
+            List<ButtonVo> buttonList
     ) throws ParseException;
 
     JSONObject createCarousel(CarouselType itemType, List items) throws ParseException;
 
     JSONObject createSimpleText(String msg) throws ParseException;
     JSONObject createSimpleImage(String altText, String imgUrl) throws ParseException;
-    JSONObject createQuickReplies (List<ButtonVo> buttons) throws Exception;
 
 }
