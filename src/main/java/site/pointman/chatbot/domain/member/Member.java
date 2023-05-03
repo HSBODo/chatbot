@@ -19,25 +19,20 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idx ;
 
-    @NotEmpty
     @Id
     private String id;
 
-    @NotEmpty
     private String name;
 
-    @NotEmpty
     private String password;
 
     private String phone;
 
     private String email;
 
-    @NotEmpty
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
 
-    @NotEmpty
     private String partnerId;
 
     @Builder

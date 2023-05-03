@@ -18,13 +18,13 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @NoArgsConstructor
 public class KakaoMemberDto {
-    private Long idx ;
+    private Long id ;
     @NotBlank(message = "유저키는 필수입니다.")
     private String kakaoUserkey ;
     private String partnerId ;
     @Builder
-    public KakaoMemberDto(Long idx, String kakaoUserkey, String partnerId) {
-        this.idx = idx;
+    public KakaoMemberDto(Long id, String kakaoUserkey, String partnerId) {
+        this.id = id;
         this.kakaoUserkey = kakaoUserkey;
         this.partnerId = partnerId;
     }

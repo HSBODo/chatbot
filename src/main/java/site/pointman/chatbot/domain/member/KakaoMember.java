@@ -20,21 +20,21 @@ import javax.persistence.*;
 public class KakaoMember extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
-    private Long idx ;
+    private Long id ;
     @Id
     @Column(name = "kakao_userkey",nullable = false)
     private String kakaoUserkey ;
     @Column(name = "partner_id")
     private String partnerId ;
     @Builder
-    public KakaoMember(Long idx, String kakaoUserkey, String partnerId) {
-        this.idx = idx;
+    public KakaoMember(Long id, String kakaoUserkey, String partnerId) {
+        this.id = id;
         this.kakaoUserkey = kakaoUserkey;
         this.partnerId = partnerId;
     }
     public KakaoMemberDto toKakaoMemberDto() {
         return KakaoMemberDto.builder()
-                .idx(this.idx)
+                .id(this.id)
                 .kakaoUserkey(this.kakaoUserkey)
                 .partnerId(this.kakaoUserkey)
                 .build();

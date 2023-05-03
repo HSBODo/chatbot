@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Getter
 @Setter
-
+@NoArgsConstructor
 public class BlockVo {
     DisplayType displayType ;
     BlockType blockType ;
@@ -28,8 +28,8 @@ public class BlockVo {
     private List<ListCardItemVo> listCardItemList = new ArrayList<>();
     private List<ButtonVo> buttonList = new ArrayList<>();
     private List<ButtonVo> quickButtonList = new ArrayList<>();
-    @Builder
 
+    @Builder
     public BlockVo(DisplayType displayType, BlockType blockType, String title, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String profileNickname, String description, int price, int discount, int discountedPrice, int discountRate, String currency, List<ListCardItemVo> listCardItemList, List<ButtonVo> buttonList, List<ButtonVo> quickButtonList) {
         this.displayType = displayType;
         this.blockType = blockType;
