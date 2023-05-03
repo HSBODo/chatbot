@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
+import site.pointman.chatbot.domain.block.BlockServiceType;
 
 import java.util.Map;
 
@@ -21,7 +22,8 @@ public class KakaoRequestVo {
     private String uttr;
     private String timezone;
     private String partnerId;
-    private String blockCode;
+    private Long blockId;
+    private BlockServiceType blockService;
 
 
     public String getKakaoUserkey() {
@@ -45,9 +47,15 @@ public class KakaoRequestVo {
         return buttonParams;
     }
 
-    public String getBlockCode() {
+    public Long getBlockId() {
         getButtonParams();
-        this.blockCode = (String) buttonParams.get("blockCode");
-        return blockCode;
+        this.blockId = Long.parseLong((String) buttonParams.get("blockId"));
+        return blockId;
+    }
+
+    public BlockServiceType getBlockService() {
+        getButtonParams();
+        this.blockService = BlockServiceType.valueOf((String) buttonParams.get("blockService"));
+        return blockService;
     }
 }

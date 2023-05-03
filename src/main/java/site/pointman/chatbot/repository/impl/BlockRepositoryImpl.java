@@ -23,8 +23,8 @@ public class BlockRepositoryImpl implements BlockRepository {
     }
 
     @Override
-    public Optional<Block> findByBlock(String blockCode) {
-        Block findBlock = em.find(Block.class, blockCode);
+    public Optional<Block> findByBlock(Long blockId) {
+        Block findBlock = em.find(Block.class, blockId);
         return Optional.ofNullable(findBlock);
     }
 }

@@ -5,10 +5,14 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import site.pointman.chatbot.domain.item.Item;
+import site.pointman.chatbot.domain.item.ItemOption;
+import site.pointman.chatbot.domain.item.ItemOptionCategory;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.order.OrderStatus;
 import site.pointman.chatbot.domain.order.PayMethod;
+import site.pointman.chatbot.dto.ItemOptionDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,8 +63,30 @@ class itemRepositoryTest {
         Assertions.assertThat(item.getItemCode()).isEqualTo(itemCode);
 
     }
+    @Test
+    @Commit
+    void saveItemOption(){
+        ItemOptionDto itemOptionDto = ItemOptionDto.builder()
+                .itemCode(3L)
+                .optionName("레드")
+                .optionPrice(0)
+                .category(ItemOptionCategory.색상)
+                .build();
 
+        ItemOption itemOption = itemOptionDto.toEntity();
+        itemRepository.saveItemOption(itemOption);
+    }
 
+    @Test
+    void findByItemOptions(){
+
+        List<ItemOption> maybeItemOptions = itemRepository.findByItemOptions(3L,ItemOptionCategory.색상);
+        if(maybeItemOptions.isEmpty()) new NullPointerException("옵션이 없습니다");
+        maybeItemOptions.stream().forEach(itemOption -> {
+            log.info("optName={}",itemOption.getOptionName());
+        });
+
+    }
 
 
 

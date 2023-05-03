@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface BlockRepository {
 
      Block save(Block block);
-     Optional<Block> findByBlock(String blockCode);
+     Optional<Block> findByBlock(Long blockId);
 }

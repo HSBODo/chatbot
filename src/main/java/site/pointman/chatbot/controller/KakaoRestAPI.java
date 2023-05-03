@@ -65,15 +65,16 @@ public class KakaoRestAPI {
             KakaoMember member = kakaoMemberDto.toEntity();
             memberService.join(member); //<==중복회원 체크 및 회원가입
 
-            if(!Optional.ofNullable(request.getBlockCode()).isEmpty()){
-                log.info("buttonParams={}",request.getButtonParams());
-                String blockCode = request.getBlockCode();
-                Optional<Block> maybeBlock = blockRepository.findByBlock(blockCode);
+            if(!Optional.ofNullable(request.getBlockId()).isEmpty()){
+                JSONObject buttonParams = request.getButtonParams();
+                log.info("buttonParams={}",buttonParams);
+                Long blockId = request.getBlockId();
+                Optional<Block> maybeBlock = blockRepository.findByBlock(blockId);
                 if (maybeBlock.isEmpty()) throw new NullPointerException("블럭이 존재하지 않습니다.");
                 BlockDto blockDto = maybeBlock.get().toBlockDto();
-                JSONObject block = blockService.createBlock(kakaoUserkey, blockDto);
+                JSONObject response = blockService.findByService(kakaoUserkey, blockDto, buttonParams);
 
-                return block;
+                return response;
             }
 
             switch (uttr){

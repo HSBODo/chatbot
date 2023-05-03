@@ -18,11 +18,10 @@ import javax.persistence.*;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 public class Block extends BaseEntity {
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
     @Id
     @Column(nullable = false)
-    private String blockCode;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     @Column(nullable = false)
     private String blockName;
     @Column(nullable = false)
@@ -31,11 +30,12 @@ public class Block extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private DisplayType displayType;
-    private String service;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private BlockServiceType service;
     @Builder
-    public Block(Long id, String blockCode, String blockName, BlockType blockType, DisplayType displayType, String service) {
+    public Block(Long id, String blockName, BlockType blockType, DisplayType displayType, BlockServiceType service) {
         this.id = id;
-        this.blockCode = blockCode;
         this.blockName = blockName;
         this.blockType = blockType;
         this.displayType = displayType;
@@ -45,7 +45,6 @@ public class Block extends BaseEntity {
     public BlockDto toBlockDto(){
         return BlockDto.builder()
                 .id(this.id)
-                .blockCode(this.blockCode)
                 .blockName(this.blockName)
                 .blockType(this.blockType)
                 .displayType(this.displayType)

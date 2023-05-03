@@ -2,6 +2,8 @@ package site.pointman.chatbot.repository.impl;
 
 
 import site.pointman.chatbot.domain.item.Item;
+import site.pointman.chatbot.domain.item.ItemOption;
+import site.pointman.chatbot.domain.item.ItemOptionCategory;
 import site.pointman.chatbot.repository.ItemRepository;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -49,5 +51,20 @@ public class ItemRepositoryImpl implements ItemRepository {
         long total = findItem.getTotal_quantity() + quantity;
         findItem.changeQuantity(total);
         return Optional.ofNullable(findItem);
+    }
+
+    @Override
+    public List<ItemOption> findByItemOptions(Long itemCode, ItemOptionCategory itemOptionCategory) {
+        return em.createQuery("select o from ItemOption o where o.isUse=:is_use and o.itemCode=:itemCode and o.category=:itemOptionCategory", ItemOption.class)
+                .setParameter("is_use","Y")
+                .setParameter("itemCode",itemCode)
+                .setParameter("itemOptionCategory",itemOptionCategory)
+                .getResultList();
+    }
+
+    @Override
+    public ItemOption saveItemOption(ItemOption itemOption) {
+        em.persist(itemOption);
+        return itemOption;
     }
 }

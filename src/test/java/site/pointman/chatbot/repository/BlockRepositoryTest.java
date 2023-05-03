@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 import site.pointman.chatbot.domain.block.Block;
+import site.pointman.chatbot.domain.block.BlockServiceType;
 import site.pointman.chatbot.domain.block.BlockType;
 import site.pointman.chatbot.dto.BlockDto;
 import site.pointman.chatbot.vo.kakaoui.DisplayType;
@@ -24,11 +25,10 @@ class BlockRepositoryTest {
     @Commit
     void save() {
         BlockDto blockDto = BlockDto.builder()
-                .blockCode("123")
                 .blockName("테스트")
                 .blockType(BlockType.basicCard)
                 .displayType(DisplayType.basic)
-                .service("테스트")
+                .service(BlockServiceType.옵션)
                 .build();
         Block block = blockDto.toEntity();
         blockRepository.save(block);
@@ -36,15 +36,15 @@ class BlockRepositoryTest {
     @Test
     void findByBlock() {
         BlockDto blockDto = BlockDto.builder()
-                .blockCode("123")
+                .id(5L)
                 .blockName("테스트")
                 .blockType(BlockType.basicCard)
                 .displayType(DisplayType.basic)
-                .service("테스트")
+                .service(BlockServiceType.옵션)
                 .build();
-        Optional<Block> maybeBlock = blockRepository.findByBlock(blockDto.getBlockCode());
+        Optional<Block> maybeBlock = blockRepository.findByBlock(blockDto.getId());
         if(maybeBlock.isEmpty()) throw new NullPointerException("블럭이 존제하지 않습니다");
         Block block = maybeBlock.get();
-        Assertions.assertThat(block.getBlockCode()).isEqualTo(blockDto.getBlockCode());
+        Assertions.assertThat(block.getId()).isEqualTo(blockDto.getId());
     }
 }

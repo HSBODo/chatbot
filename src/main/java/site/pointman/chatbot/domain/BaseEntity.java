@@ -20,7 +20,7 @@ public class BaseEntity {
     @Column(name = "update_time")
     private LocalDateTime lastModifiedDate;
 
-    @Column(name = "is_use")
-    @ColumnDefault("Y")
-    private String isUse="Y";
+    @Column(name = "is_use",nullable = false)
+    @ColumnDefault("'Y'")
+    private String isUse = "Y";
 }
