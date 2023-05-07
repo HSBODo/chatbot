@@ -14,6 +14,7 @@ import site.pointman.chatbot.domain.order.OrderStatus;
 import site.pointman.chatbot.domain.order.PayMethod;
 import site.pointman.chatbot.dto.ItemDto;
 import site.pointman.chatbot.dto.OrderDto;
+import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.vo.order.KakaoPayReadyVo;
 import site.pointman.chatbot.vo.naverapi.SearchVo;
 import site.pointman.chatbot.vo.weatherapi.WeatherPropertyCodeVo;
@@ -47,6 +48,7 @@ public class OpenApiServiceImpl implements OpenApiService {
 
     private ItemRepository itemRepository;
     private OrderRepository orderRepository;
+    private OrderService orderService;
     @Value("${host.url}")
     private String hostUrl;
     @Value("${weather.api.key}")
@@ -71,9 +73,10 @@ public class OpenApiServiceImpl implements OpenApiService {
 
     private JSONParser jsonParser = new JSONParser();
 
-    public OpenApiServiceImpl(ItemRepository itemRepository, OrderRepository orderRepository) {
+    public OpenApiServiceImpl(ItemRepository itemRepository, OrderRepository orderRepository, OrderService orderService) {
         this.itemRepository = itemRepository;
         this.orderRepository = orderRepository;
+        this.orderService = orderService;
     }
 
     @Override
@@ -190,13 +193,17 @@ public class OpenApiServiceImpl implements OpenApiService {
         return searchVo;
     }
     @Override
-    public String kakaoPayReady(Long itemCode, String kakaoUserkey) throws Exception {
+    public String kakaoPayReady(Long itemCode,Long optionId,int totalPrice,int quantity,String kakaoUserkey) throws Exception {
         Optional<Item> maybeItem = itemRepository.findByItem(itemCode);
         if(maybeItem.isEmpty()) throw new NullPointerException("상품이 존재하지 않습니다.");
         ItemDto itemDto = maybeItem.get().toItemDto();
 
-        int orderQuantity= 1;
-        int total_amount = itemDto.getDiscountedPrice()*orderQuantity;
+        int orderQuantity= quantity;
+        int finalPrice = orderService.calculateTotalPrice(itemCode, optionId, quantity);
+        if(finalPrice!=totalPrice) throw new IllegalArgumentException("결제금액이 잘못되었습니다.");  //<=결제 인증전 마지막 결제금액 검증
+
+
+
         String itemName= itemDto.getProfileNickname().replaceAll(" ","");
 
         KakaoPayReadyVo kakaoPayReadyVo = KakaoPayReadyVo.builder()
@@ -205,7 +212,7 @@ public class OpenApiServiceImpl implements OpenApiService {
                 .item_name(itemName)
                 .partner_order_id("partner_order_id")
                 .partner_user_id("partner_user_id")
-                .total_amount(total_amount)
+                .total_amount(finalPrice)
                 .item_code(itemDto.getItemCode())
                 .quantity(orderQuantity)
                 .tax_free_amount(0)

@@ -37,4 +37,6 @@ class MemberRepositoryTest {
         Optional<Member> byMember = memberRepository.findByMember("123");
         Assertions.assertThat(byMember).isNotEmpty();
     }
+
+
 }

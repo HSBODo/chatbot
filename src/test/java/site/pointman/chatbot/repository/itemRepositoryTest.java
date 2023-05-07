@@ -6,13 +6,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
+import org.springframework.util.CollectionUtils;
 import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.domain.item.ItemOption;
 import site.pointman.chatbot.domain.item.ItemOptionCategory;
+import site.pointman.chatbot.domain.member.MemberAttribute;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.order.OrderStatus;
 import site.pointman.chatbot.domain.order.PayMethod;
 import site.pointman.chatbot.dto.ItemOptionDto;
+import site.pointman.chatbot.dto.MemberAttributeDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -68,9 +71,9 @@ class itemRepositoryTest {
     void saveItemOption(){
         ItemOptionDto itemOptionDto = ItemOptionDto.builder()
                 .itemCode(3L)
-                .optionName("레드")
+                .optionName("260")
                 .optionPrice(0)
-                .category(ItemOptionCategory.색상)
+                .category(ItemOptionCategory.사이즈)
                 .build();
 
         ItemOption itemOption = itemOptionDto.toEntity();
@@ -81,12 +84,16 @@ class itemRepositoryTest {
     void findByItemOptions(){
 
         List<ItemOption> maybeItemOptions = itemRepository.findByItemOptions(3L,ItemOptionCategory.색상);
-        if(maybeItemOptions.isEmpty()) new NullPointerException("옵션이 없습니다");
+        log.info("null",CollectionUtils.isEmpty(maybeItemOptions));
+        if(CollectionUtils.isEmpty(maybeItemOptions)) throw new NullPointerException("옵션이 없습니다");
         maybeItemOptions.stream().forEach(itemOption -> {
             log.info("optName={}",itemOption.getOptionName());
         });
 
     }
+
+
+
 
 
 

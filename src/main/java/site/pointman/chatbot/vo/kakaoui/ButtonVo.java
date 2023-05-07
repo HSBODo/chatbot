@@ -1,11 +1,12 @@
 package site.pointman.chatbot.vo.kakaoui;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Map;
 
-@Getter @Setter
+@Getter @Setter @NoArgsConstructor
 public class ButtonVo {
     /**
      * 필드명	        타입	                필수 여부	                설명	                                                                        제한
@@ -27,6 +28,7 @@ public class ButtonVo {
     private String messageText;
     private Map<String,String> extra;
 
+
     public ButtonVo(ButtonType action, String label, String webLinkUrl) {
         this.action = action;
         this.label = label;
@@ -38,4 +40,6 @@ public class ButtonVo {
         this.label = label;
         this.extra = extra;
     }
+
+
 }

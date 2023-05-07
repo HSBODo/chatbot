@@ -18,8 +18,9 @@ import javax.persistence.*;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 public class KakaoMember extends BaseEntity {
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id ;
     @Id
     @Column(name = "kakao_userkey",nullable = false)

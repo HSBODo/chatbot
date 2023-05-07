@@ -16,6 +16,8 @@ public interface ItemRepository {
     Optional<Item> updateItemQuantityPlus(Long itemCode,Long quantity);
 
     List<ItemOption> findByItemOptions(Long itemCode, ItemOptionCategory itemOptionCategory);
+
+    Optional<ItemOption> findByItemOption(Long optionCode);
     ItemOption saveItemOption(ItemOption itemOption);
 
 }

@@ -10,6 +10,7 @@ import site.pointman.chatbot.domain.item.ItemOption;
 import site.pointman.chatbot.domain.item.ItemOptionCategory;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 @Getter
@@ -24,6 +25,8 @@ public class ItemOptionDto extends BaseEntity {
     @NotBlank(message = "옵션카테고리는 필수입니다.")
     private ItemOptionCategory category;
     private int optionPrice;
+    @Min(0)
+    private int quantity;
     @Builder
     public ItemOptionDto(Long id, Long optionCode, Long itemCode, String optionName, ItemOptionCategory category, int optionPrice) {
         this.id = id;

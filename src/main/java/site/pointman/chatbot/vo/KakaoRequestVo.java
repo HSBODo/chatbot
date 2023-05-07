@@ -25,7 +25,6 @@ public class KakaoRequestVo {
     private Long blockId;
     private BlockServiceType blockService;
 
-
     public String getKakaoUserkey() {
         JSONObject user = new JSONObject((Map)userRequest.get("user"));
         JSONObject properties = new JSONObject((Map)user.get("properties"));
@@ -43,19 +42,19 @@ public class KakaoRequestVo {
         return timezone;
     }
     public JSONObject getButtonParams() {
-        this.buttonParams =  new JSONObject((Map)action.get("clientExtra"));
+        this.buttonParams = new JSONObject((Map)action.get("clientExtra"));
         return buttonParams;
     }
 
     public Long getBlockId() {
-        getButtonParams();
+        if(buttonParams.get("blockId")==null) return blockId;
         this.blockId = Long.parseLong((String) buttonParams.get("blockId"));
         return blockId;
     }
 
     public BlockServiceType getBlockService() {
-        getButtonParams();
-        this.blockService = BlockServiceType.valueOf((String) buttonParams.get("blockService"));
+        if(buttonParams.get("blockService")==null) return blockService;
+        this.blockService =BlockServiceType.valueOf ((String) buttonParams.get("blockService"));
         return blockService;
     }
 }

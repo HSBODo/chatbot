@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
+import site.pointman.chatbot.domain.block.BlockServiceType;
 import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.order.OrderStatus;
@@ -135,15 +136,18 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public JSONObject createRecommendItems(String kakaoUserkey) throws Exception {
         List<Item> findItems = itemRepository.findByDisplayItems();
-        if(findItems.isEmpty()) throw new NullPointerException("현재 특가상품이 없습니다.");
+        if(findItems.isEmpty()) throw new NullPointerException("현재 판매상품이 없습니다.");
         List commerceCards = new ArrayList<>();
         findItems.stream()
                 .forEach(item ->{
                     List<ButtonVo> buttons = new ArrayList<>();
-                    ButtonVo buyButton = new ButtonVo(ButtonType.webLink,"구매하러가기",item.getThumbnailLink());
-                    ButtonVo payButton = new ButtonVo(ButtonType.webLink,"카카오페이 결제","https://www.pointman.shop/kakaochat/v1/kakaopay-ready?itemcode="+item.getItemCode()+"&kakaouserkey="+kakaoUserkey);
+                    ButtonVo detailButton = new ButtonVo(ButtonType.webLink,"상품 상세보기",item.getThumbnailLink());
+                    //"https://www.pointman.shop/kakaochat/v1/kakaopay-ready?itemcode="+item.getItemCode()+"&kakaouserkey="+kakaoUserkey
+                    ButtonParamsVo buttonParamsVo = new ButtonParamsVo("5", BlockServiceType.옵션);
+                    buttonParamsVo.addButtonParam("itemCode", String.valueOf(item.getItemCode()));
+                    ButtonVo buyButton = new ButtonVo(ButtonType.block,"구매하기",buttonParamsVo.createButtonParams());
+                    buttons.add(detailButton);
                     buttons.add(buyButton);
-                    buttons.add(payButton);
                     try {
                         JSONObject commerceCard = kakaoJsonUiService.createCommerceCard(
                                 DisplayType.carousel,
@@ -181,12 +185,11 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                         if (maybeItem.isEmpty()) throw new NullPointerException("주문내역에 있는 상품을 찾을 수 없습니다.");
                         Item item = maybeItem.get();
 
+                        ButtonParamsVo params = new ButtonParamsVo("12",BlockServiceType.주문상세정보);  //<== 다음 블럭
+                        params.addButtonParam("itemCode", String.valueOf(item.getItemCode()));
+                        params.addButtonParam("orderId", String.valueOf(order.getOrder_id()));
 
-                        Map buttonParams = new HashMap<String,String>();
-                        buttonParams.put("itemCode",item.getItemCode());
-                        buttonParams.put("orderId",order.getOrder_id());
-                        buttonParams.put("kakaoUserkey",kakaoUserkey);
-                        ButtonVo orderDetailButton = new ButtonVo(ButtonType.block,"결제 상세보기",buttonParams);
+                        ButtonVo orderDetailButton = new ButtonVo(ButtonType.block,"결제 상세보기",params.createButtonParams());
 
                         List<ButtonVo> buttons = new ArrayList<>();
                         buttons.add(orderDetailButton);

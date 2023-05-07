@@ -63,6 +63,12 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
+    public Optional<ItemOption> findByItemOption(Long id) {
+        ItemOption findItemOption = em.find(ItemOption.class, id);
+        return Optional.ofNullable(findItemOption);
+    }
+
+    @Override
     public ItemOption saveItemOption(ItemOption itemOption) {
         em.persist(itemOption);
         return itemOption;

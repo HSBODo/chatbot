@@ -26,17 +26,21 @@ public class ItemOption extends BaseEntity {
     @Column(nullable = false)
     private String optionName;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ItemOptionCategory category;
     @ColumnDefault("0")
     private int optionPrice;
-    @Builder
-    public ItemOption(Long id, Long itemCode, String optionName, ItemOptionCategory category, int optionPrice) {
-        this.id = id;
+    @ColumnDefault("0")
+    private int quantity;
 
+    @Builder
+    public ItemOption(Long id, Long itemCode, String optionName, ItemOptionCategory category, int optionPrice, int quantity) {
+        this.id = id;
         this.itemCode = itemCode;
         this.optionName = optionName;
         this.category = category;
         this.optionPrice = optionPrice;
+        this.quantity = quantity;
     }
 
     public ItemOptionDto toItemOptionDto(){
@@ -46,6 +50,7 @@ public class ItemOption extends BaseEntity {
                 .optionName(this.optionName)
                 .optionPrice(this.optionPrice)
                 .category(this.category)
+
                 .build();
     }
 }

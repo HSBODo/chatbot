@@ -4,5 +4,5 @@ import org.json.simple.JSONObject;
 
 public interface OrderService {
 
-    JSONObject createItemOption(String kakaoUserkey,Long itemCode, int optionNum) throws Exception;
+     int calculateTotalPrice (Long itemId,Long optionId, int quantity);
 }

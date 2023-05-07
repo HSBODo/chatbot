@@ -8,8 +8,10 @@ import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
+import site.pointman.chatbot.domain.member.MemberAttribute;
 import site.pointman.chatbot.dto.KakaoMemberDto;
 import site.pointman.chatbot.dto.KakaoMemberLocationDto;
+import site.pointman.chatbot.dto.MemberAttributeDto;
 import site.pointman.chatbot.service.MemberService;
 
 import java.math.BigDecimal;
@@ -80,6 +82,23 @@ class KakaoMemberRepositoryTest {
         if (maybeMemberLocation.isEmpty()) throw new NullPointerException("위치정보가 없습니다.");
         KakaoMemberLocation kakaoMemberLocation = maybeMemberLocation.get();
         Assertions.assertThat(kakaoMemberLocation.getKakaoUserkey()).isEqualTo(kakaoUserkey);
+    }
+
+    @Test
+    @Commit
+    void saveAttribute(){
+
+        MemberAttributeDto memberAttributeDto = MemberAttributeDto.builder()
+                .optionCode(1L)
+                .quantity(2)
+                .kakaoUserkey("QFERwysZbO77")
+                .build();
+        MemberAttribute memberAttribute = memberAttributeDto.toEntity();
+        kakaoMemberRepository.saveAttribute(memberAttribute);
+    }
+    @Test
+    void findByAttribute(){
+        Optional<MemberAttribute> maybeAttribute = kakaoMemberRepository.findByAttribute("QFERwysZbO77");
     }
 
 }

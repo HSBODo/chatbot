@@ -4,6 +4,7 @@ package site.pointman.chatbot.repository.impl;
 import lombok.extern.slf4j.Slf4j;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
+import site.pointman.chatbot.domain.member.MemberAttribute;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 
 import javax.persistence.EntityManager;
@@ -49,5 +50,39 @@ public class KakaoMemberRepositoryImpl implements KakaoMemberRepository {
     public Optional<KakaoMemberLocation> findByLocation(String kakaoUserkey) {
         KakaoMemberLocation member = em.find(KakaoMemberLocation.class,kakaoUserkey);
         return Optional.ofNullable(member);
+    }
+
+    @Override
+    public Optional<MemberAttribute> findByAttribute(String kakaoUserkey) {
+        MemberAttribute memberAttribute = em.find(MemberAttribute.class,kakaoUserkey);
+        return Optional.ofNullable(memberAttribute);
+    }
+
+    @Override
+    public MemberAttribute saveAttribute(MemberAttribute memberAttribute) {
+        em.persist(memberAttribute);
+        return memberAttribute;
+    }
+
+    @Override
+    public MemberAttribute updateAttribute(MemberAttribute updateAttribute) {
+        MemberAttribute findMemberAttribute = em.find(MemberAttribute.class,updateAttribute.getKakaoUserkey());
+        findMemberAttribute.changeQuantity(updateAttribute.getQuantity());
+        findMemberAttribute.changeOptionCode(updateAttribute.getOptionCode());
+        return findMemberAttribute;
+    }
+
+    @Override
+    public MemberAttribute updateQuantityAttribute(String kakaoUserkey, int quantity) {
+        MemberAttribute findMemberAttribute = em.find(MemberAttribute.class,kakaoUserkey);
+        findMemberAttribute.changeQuantity(quantity);
+        return findMemberAttribute;
+    }
+
+    @Override
+    public MemberAttribute updateOptionAttribute(String kakaoUserkey, Long optionCode) {
+        MemberAttribute findMemberAttribute = em.find(MemberAttribute.class,kakaoUserkey);
+        findMemberAttribute.changeOptionCode(optionCode);
+        return findMemberAttribute;
     }
 }

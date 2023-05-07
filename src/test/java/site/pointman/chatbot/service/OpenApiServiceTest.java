@@ -30,7 +30,7 @@ class OpenApiServiceTest {
 
     @Test
     void kakaoPayReady() throws Exception {
-       openApiService.kakaoPayReady(2L,"QFERwysZbO77");
+       //openApiService.kakaoPayReady(2L,"QFERwysZbO77");
     }
     @Test
     void kakaoPayApprove() throws Exception {

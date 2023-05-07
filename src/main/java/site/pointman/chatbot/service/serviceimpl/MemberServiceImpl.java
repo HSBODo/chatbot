@@ -1,11 +1,15 @@
 package site.pointman.chatbot.service.serviceimpl;
 
+import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.implementation.bytecode.Duplication;
+import org.json.simple.JSONObject;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
+import site.pointman.chatbot.domain.member.MemberAttribute;
+import site.pointman.chatbot.dto.MemberAttributeDto;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.service.MemberService;
 
@@ -15,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 @Transactional
 @Service
+@Slf4j
 public class MemberServiceImpl implements MemberService {
     KakaoMemberRepository kakaoUserRepository;
 
@@ -52,5 +57,35 @@ public class MemberServiceImpl implements MemberService {
             e.printStackTrace();
             throw new IllegalArgumentException("회원가입에 실패하였습니다.");
         }
+    }
+
+    @Override
+    public void saveAttribute(JSONObject buttonParams, String kakaoUserkey) {
+        try {
+            Long optionId = buttonParams.get("optionId")==null?null:Long.parseLong((String) buttonParams.get("optionId"));
+            int quantity = buttonParams.get("quantity")==null?0:Integer.parseInt((String) buttonParams.get("quantity"));
+            log.info("optionCode={} quantity={}",optionId,quantity);
+            Optional<MemberAttribute> maybeAttribute = kakaoUserRepository.findByAttribute(kakaoUserkey);
+            if (maybeAttribute.isEmpty()){
+                MemberAttributeDto memberAttributeDto = MemberAttributeDto.builder()
+                        .optionCode(optionId)
+                        .quantity(quantity)
+                        .kakaoUserkey(kakaoUserkey)
+                        .build();
+                MemberAttribute memberAttribute = memberAttributeDto.toEntity();
+                kakaoUserRepository.saveAttribute(memberAttribute);
+            }else {
+                if(optionId!=null) kakaoUserRepository.updateOptionAttribute(kakaoUserkey,optionId);
+                if(quantity!=0)kakaoUserRepository.updateQuantityAttribute(kakaoUserkey,quantity);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new IllegalArgumentException("속성저장 실패");
+        }
+    }
+
+    @Override
+    public void updateAttribute(JSONObject buttonParams, String kakaoUserkey) {
+
     }
 }

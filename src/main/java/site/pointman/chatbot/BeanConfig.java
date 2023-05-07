@@ -33,6 +33,10 @@ public class BeanConfig {
     }
     @Bean
     public BlockRepository blockRepository() {return new BlockRepositoryImpl(em);}
+    @Bean
+    public AddressRepository addressRepository(){
+        return  new AddressRepositoryImpl(em);
+    }
 
 
 }
