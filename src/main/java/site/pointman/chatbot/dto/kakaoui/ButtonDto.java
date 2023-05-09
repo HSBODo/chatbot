@@ -1,4 +1,4 @@
-package site.pointman.chatbot.vo.kakaoui;
+package site.pointman.chatbot.dto.kakaoui;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.util.Map;
 
 @Getter @Setter @NoArgsConstructor
-public class ButtonVo {
+public class ButtonDto {
     /**
      * 필드명	        타입	                필수 여부	                설명	                                                                        제한
      * label	        string	                O	                    버튼에 적히는 문구입니다.	                                                    버튼 14자(가로배열 2개 8자)
@@ -29,13 +29,13 @@ public class ButtonVo {
     private Map<String,String> extra;
 
 
-    public ButtonVo(ButtonType action, String label, String webLinkUrl) {
+    public ButtonDto(ButtonType action, String label, String webLinkUrl) {
         this.action = action;
         this.label = label;
         this.webLinkUrl = webLinkUrl;
     }
 
-    public ButtonVo(ButtonType action, String label, Map<String,String> extra) {
+    public ButtonDto(ButtonType action, String label, Map<String,String> extra) {
         this.action = action;
         this.label = label;
         this.extra = extra;

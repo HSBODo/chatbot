@@ -1,4 +1,4 @@
-package site.pointman.chatbot.vo.weatherapi;
+package site.pointman.chatbot.dto.weatherapi;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter @Setter
-public class WeatherPropertyCodeVo {
+public class WeatherPropertyCodeDto {
     private String baseDate;
     private int sky; //하늘상태
     private String pop; //강수확률

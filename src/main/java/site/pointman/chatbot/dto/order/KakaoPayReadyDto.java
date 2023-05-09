@@ -1,11 +1,11 @@
-package site.pointman.chatbot.vo.order;
+package site.pointman.chatbot.dto.order;
 
 import lombok.*;
 
 @Getter
 @Setter
 @Builder
-public class KakaoPayReadyVo {
+public class KakaoPayReadyDto {
     private String kakaoUserkey;
     private String cid;
     private String partner_order_id;

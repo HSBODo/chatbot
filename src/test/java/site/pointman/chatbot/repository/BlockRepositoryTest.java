@@ -10,7 +10,7 @@ import site.pointman.chatbot.domain.block.Block;
 import site.pointman.chatbot.domain.block.BlockServiceType;
 import site.pointman.chatbot.domain.block.BlockType;
 import site.pointman.chatbot.dto.BlockDto;
-import site.pointman.chatbot.vo.kakaoui.DisplayType;
+import site.pointman.chatbot.dto.kakaoui.DisplayType;
 
 import java.util.Optional;
 

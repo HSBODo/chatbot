@@ -5,10 +5,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.vo.kakaoui.ButtonVo;
-import site.pointman.chatbot.vo.kakaoui.CarouselType;
-import site.pointman.chatbot.vo.kakaoui.DisplayType;
-import site.pointman.chatbot.vo.kakaoui.ListCardItemVo;
+import site.pointman.chatbot.dto.kakaoui.ButtonDto;
+import site.pointman.chatbot.dto.kakaoui.CarouselType;
+import site.pointman.chatbot.dto.kakaoui.DisplayType;
+import site.pointman.chatbot.dto.kakaoui.ListCardItemDto;
 import site.pointman.chatbot.service.KakaoJsonUiService;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
     private JSONParser jsonParser = new JSONParser();
     @Override
-    public JSONObject createBasicCard(DisplayType displayType, String title, String description, String thumbnailImgUrl, List<ButtonVo> buttonList) throws ParseException {
+    public JSONObject createBasicCard(DisplayType displayType, String title, String description, String thumbnailImgUrl, List<ButtonDto> buttonList) throws ParseException {
         /**
          Information. description 필드
 
@@ -63,7 +63,7 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
     }
 
     @Override
-    public JSONObject createCommerceCard(DisplayType displayType,String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, List<ButtonVo> buttonList) throws ParseException {
+    public JSONObject createCommerceCard(DisplayType displayType,String description, int price, int discount, int discountedPrice, int discountRate, String currency, String thumbnailImgUrl, String thumbnailLink, String profileImgUrl, String ProfileNickname, List<ButtonDto> buttonList) throws ParseException {
         /**
          Information. price, discount, discountedPrice 의 동작 방식
 
@@ -143,7 +143,7 @@ public class KakaoJsonUiServiceImpl implements KakaoJsonUiService {
     }
 
     @Override
-    public JSONObject createListCard(DisplayType displayType, String title, List<ListCardItemVo> listCardItemList, List<ButtonVo> buttonList) throws ParseException {
+    public JSONObject createListCard(DisplayType displayType, String title, List<ListCardItemDto> listCardItemList, List<ButtonDto> buttonList) throws ParseException {
         String resultJson;
         JSONArray buttons = new JSONArray(buttonList);
         JSONArray listCardItems = new JSONArray(listCardItemList);

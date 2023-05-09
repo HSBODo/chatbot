@@ -11,5 +11,6 @@ public interface AddressRepository {
 
     Address save(Address address);
     Optional<Address> findByAddress(String kakaoUserkey);
+    Optional<Address> findByAddress(Long addressId);
     Optional<Address> update (Address updateAddress);
 }

@@ -9,15 +9,14 @@ import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.block.Block;
 import site.pointman.chatbot.domain.block.BlockServiceType;
 import site.pointman.chatbot.domain.block.BlockType;
-import site.pointman.chatbot.vo.kakaoui.DisplayType;
+import site.pointman.chatbot.dto.kakaoui.DisplayType;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class BlockDto extends BaseEntity {
+public class BlockDto{
     private Long id;
     @NotBlank
     private String blockName;

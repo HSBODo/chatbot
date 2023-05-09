@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
-public class KakaoMemberLocationDto extends BaseEntity {
+public class KakaoMemberLocationDto  {
     @NotBlank(message = "유저키는 필수입니다.")
     private String kakaoUserkey ;
     @NotBlank(message = "경도값은 필수입니다.")

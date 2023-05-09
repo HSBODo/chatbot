@@ -18,10 +18,10 @@ import javax.persistence.*;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 public class Address extends BaseEntity {
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Long id ;
-    @Id
     @Column(name = "kakao_userkey",nullable = false)
     private String kakaoUserkey ;
     @Column(nullable = false)

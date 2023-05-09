@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderDto extends BaseEntity {
+public class OrderDto {
     private Long idx ;
     private String tid;
     private Long order_id;

@@ -1,4 +1,4 @@
-package site.pointman.chatbot.vo.naverapi;
+package site.pointman.chatbot.dto.naverapi;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,7 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 @Getter @Setter
-public class SearchVo {
+public class SearchDto {
 
     private String lastBuildDate;
     private int total;

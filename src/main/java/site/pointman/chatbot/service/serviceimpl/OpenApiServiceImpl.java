@@ -15,9 +15,9 @@ import site.pointman.chatbot.domain.order.PayMethod;
 import site.pointman.chatbot.dto.ItemDto;
 import site.pointman.chatbot.dto.OrderDto;
 import site.pointman.chatbot.service.OrderService;
-import site.pointman.chatbot.vo.order.KakaoPayReadyVo;
-import site.pointman.chatbot.vo.naverapi.SearchVo;
-import site.pointman.chatbot.vo.weatherapi.WeatherPropertyCodeVo;
+import site.pointman.chatbot.dto.order.KakaoPayReadyDto;
+import site.pointman.chatbot.dto.naverapi.SearchDto;
+import site.pointman.chatbot.dto.weatherapi.WeatherPropertyCodeDto;
 import site.pointman.chatbot.repository.ItemRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.service.OpenApiService;
@@ -80,8 +80,8 @@ public class OpenApiServiceImpl implements OpenApiService {
     }
 
     @Override
-    public WeatherPropertyCodeVo selectShortTermWeather(KakaoMemberLocation kakaoUserLocation) {
-        WeatherPropertyCodeVo weatherPropertyCodeVo = new WeatherPropertyCodeVo();
+    public WeatherPropertyCodeDto selectShortTermWeather(KakaoMemberLocation kakaoUserLocation) {
+        WeatherPropertyCodeDto weatherPropertyCodeDto = new WeatherPropertyCodeDto();
         try {
             log.info("X = {}, Y = {}",kakaoUserLocation.getX(),kakaoUserLocation.getY());
             convertGRID_GPS(kakaoUserLocation,0);
@@ -145,16 +145,16 @@ public class OpenApiServiceImpl implements OpenApiService {
                 responsePropertys.put(element.optString("category"),element.optString("fcstValue"));
             }
 
-            weatherPropertyCodeVo.mapToVo(responsePropertys);
+            weatherPropertyCodeDto.mapToVo(responsePropertys);
         } catch ( Exception e) {
             e.printStackTrace();
             throw new IllegalArgumentException("날씨 api 실패");
         }
-        return weatherPropertyCodeVo;
+        return weatherPropertyCodeDto;
     }
     @Override
-    public SearchVo selectNaverSearch(String searchText, String display, String start, String sort) {
-        SearchVo searchVo = new SearchVo();
+    public SearchDto selectNaverSearch(String searchText, String display, String start, String sort) {
+        SearchDto searchDto = new SearchDto();
         try {
             String clientId = naverApiKey; //애플리케이션 클라이언트 아이디
             String clientSecret = naverApiSecretKey; //애플리케이션 클라이언트 시크릿
@@ -181,16 +181,16 @@ public class OpenApiServiceImpl implements OpenApiService {
             String formatedDate = nowDate.format(dateFormatter);
 
 
-            searchVo.setLastBuildDate(formatedDate);
-            searchVo.setTotal((int) responsejsonObject.get("total"));
-            searchVo.setStart((int) responsejsonObject.get("start"));
-            searchVo.setDisplay((int) responsejsonObject.get("display"));
-            searchVo.setItems(items);
+            searchDto.setLastBuildDate(formatedDate);
+            searchDto.setTotal((int) responsejsonObject.get("total"));
+            searchDto.setStart((int) responsejsonObject.get("start"));
+            searchDto.setDisplay((int) responsejsonObject.get("display"));
+            searchDto.setItems(items);
         }catch (Exception e){
             e.printStackTrace();
             throw new IllegalArgumentException("naver 뉴스 정보를 불러오는 데 실패하였습니다.");
         }
-        return searchVo;
+        return searchDto;
     }
     @Override
     public String kakaoPayReady(Long itemCode,Long optionId,int totalPrice,int quantity,String kakaoUserkey) throws Exception {
@@ -206,7 +206,7 @@ public class OpenApiServiceImpl implements OpenApiService {
 
         String itemName= itemDto.getProfileNickname().replaceAll(" ","");
 
-        KakaoPayReadyVo kakaoPayReadyVo = KakaoPayReadyVo.builder()
+        KakaoPayReadyDto kakaoPayReadyDto = KakaoPayReadyDto.builder()
                 .kakaoUserkey(kakaoUserkey)
                 .cid(cid)
                 .item_name(itemName)
@@ -226,14 +226,14 @@ public class OpenApiServiceImpl implements OpenApiService {
 
         String apiURL = "https://kapi.kakao.com/v1/payment/ready";    // JSON 결과
         StringBuilder urlBuilder = new StringBuilder(apiURL); /*URL*/
-        urlBuilder.append("?" + URLEncoder.encode("cid","UTF-8") + "="+ kakaoPayReadyVo.getCid());
-        urlBuilder.append("&" + URLEncoder.encode("partner_order_id","UTF-8") + "="+ kakaoPayReadyVo.getPartner_order_id());
-        urlBuilder.append("&" + URLEncoder.encode("partner_user_id","UTF-8") + "="+ kakaoPayReadyVo.getPartner_user_id());
+        urlBuilder.append("?" + URLEncoder.encode("cid","UTF-8") + "="+ kakaoPayReadyDto.getCid());
+        urlBuilder.append("&" + URLEncoder.encode("partner_order_id","UTF-8") + "="+ kakaoPayReadyDto.getPartner_order_id());
+        urlBuilder.append("&" + URLEncoder.encode("partner_user_id","UTF-8") + "="+ kakaoPayReadyDto.getPartner_user_id());
         urlBuilder.append("&" + URLEncoder.encode("item_name","UTF-8") + "="+itemName);
-        urlBuilder.append("&" + URLEncoder.encode("quantity","UTF-8") + "="+ kakaoPayReadyVo.getQuantity());
-        urlBuilder.append("&" + URLEncoder.encode("total_amount","UTF-8") + "="+ kakaoPayReadyVo.getTotal_amount());
-        urlBuilder.append("&" + URLEncoder.encode("vat_amount","UTF-8") + "="+ kakaoPayReadyVo.getVat_amount());
-        urlBuilder.append("&" + URLEncoder.encode("tax_free_amount","UTF-8") + "="+ kakaoPayReadyVo.getTax_free_amount());
+        urlBuilder.append("&" + URLEncoder.encode("quantity","UTF-8") + "="+ kakaoPayReadyDto.getQuantity());
+        urlBuilder.append("&" + URLEncoder.encode("total_amount","UTF-8") + "="+ kakaoPayReadyDto.getTotal_amount());
+        urlBuilder.append("&" + URLEncoder.encode("vat_amount","UTF-8") + "="+ kakaoPayReadyDto.getVat_amount());
+        urlBuilder.append("&" + URLEncoder.encode("tax_free_amount","UTF-8") + "="+ kakaoPayReadyDto.getTax_free_amount());
         urlBuilder.append("&" + URLEncoder.encode("approval_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochat/v1/"+orderId+"/kakaopay-approve");
         urlBuilder.append("&" + URLEncoder.encode("fail_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochat/v1/"+orderId+"/kakaopay-fail");
         urlBuilder.append("&" + URLEncoder.encode("cancel_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochat/v1/"+orderId+"/kakaopay-cancel");
@@ -248,21 +248,21 @@ public class OpenApiServiceImpl implements OpenApiService {
 
         JSONObject readyResponseJson = new JSONObject(responseBody);
         OrderDto orderDto = OrderDto.builder()
-                .cid(kakaoPayReadyVo.getCid())
+                .cid(kakaoPayReadyDto.getCid())
                 .tid(readyResponseJson.getString("tid"))
-                .kakao_userkey(kakaoPayReadyVo.getKakaoUserkey())
+                .kakao_userkey(kakaoPayReadyDto.getKakaoUserkey())
                 .order_id(orderId)
-                .item_code(kakaoPayReadyVo.getItem_code())
-                .item_name(kakaoPayReadyVo.getItem_name())
-                .quantity(kakaoPayReadyVo.getQuantity())
-                .total_amount(kakaoPayReadyVo.getTotal_amount())
-                .vat_amount(kakaoPayReadyVo.getVat_amount())
-                .tax_free_amount(kakaoPayReadyVo.getTax_free_amount())
+                .item_code(kakaoPayReadyDto.getItem_code())
+                .item_name(kakaoPayReadyDto.getItem_name())
+                .quantity(kakaoPayReadyDto.getQuantity())
+                .total_amount(kakaoPayReadyDto.getTotal_amount())
+                .vat_amount(kakaoPayReadyDto.getVat_amount())
+                .tax_free_amount(kakaoPayReadyDto.getTax_free_amount())
                 .status(OrderStatus.결제대기)
                 .ios_app_scheme(readyResponseJson.getString("ios_app_scheme"))
                 .android_app_scheme(readyResponseJson.getString("android_app_scheme"))
-                .partner_order_id(kakaoPayReadyVo.getPartner_order_id())
-                .partner_user_id(kakaoPayReadyVo.getPartner_user_id())
+                .partner_order_id(kakaoPayReadyDto.getPartner_order_id())
+                .partner_user_id(kakaoPayReadyDto.getPartner_user_id())
                 .next_redirect_app_url(readyResponseJson.getString("next_redirect_app_url"))
                 .next_redirect_mobile_url(readyResponseJson.getString("next_redirect_mobile_url"))
                 .next_redirect_pc_url(readyResponseJson.getString("next_redirect_pc_url"))

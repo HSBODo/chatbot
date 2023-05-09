@@ -6,8 +6,8 @@ import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import site.pointman.chatbot.vo.*;
-import site.pointman.chatbot.vo.kakaoui.*;
+import site.pointman.chatbot.dto.KakaoResponseDto;
+import site.pointman.chatbot.dto.kakaoui.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,20 +24,20 @@ class KakaoJsonUiServiceTest {
 
     @Test
     void createBasicCard() throws ParseException {
-        List<ButtonVo> buttonVos = new ArrayList();
-        ButtonVo buttonVo = new ButtonVo(ButtonType.webLink,"laber","www.asdasd.com");
-        ButtonVo buttonVo2 = new ButtonVo(ButtonType.webLink,"label1","www.asdasd.com1");
-        buttonVos.add(buttonVo);
-        buttonVos.add(buttonVo2);
-        JSONObject result = kakaoJsonUiService.createBasicCard(DisplayType.basic,"테스트 제목", "테스트 메세지", "썸네일 url", buttonVos);
+        List<ButtonDto> buttonDtos = new ArrayList();
+        ButtonDto buttonDto = new ButtonDto(ButtonType.webLink,"laber","www.asdasd.com");
+        ButtonDto buttonDto2 = new ButtonDto(ButtonType.webLink,"label1","www.asdasd.com1");
+        buttonDtos.add(buttonDto);
+        buttonDtos.add(buttonDto2);
+        JSONObject result = kakaoJsonUiService.createBasicCard(DisplayType.basic,"테스트 제목", "테스트 메세지", "썸네일 url", buttonDtos);
         log.info("basicCard={}",result);
     }
 
     @Test
     void createCommerceCard() throws ParseException {
-        List<ButtonVo> buttonVos = new ArrayList<>();
-        ButtonVo buttonVo = new ButtonVo(ButtonType.webLink,"label","www.asdasd.com");
-        buttonVos.add(buttonVo);
+        List<ButtonDto> buttonDtos = new ArrayList<>();
+        ButtonDto buttonDto = new ButtonDto(ButtonType.webLink,"label","www.asdasd.com");
+        buttonDtos.add(buttonDto);
         JSONObject result = kakaoJsonUiService.createCommerceCard(
                 DisplayType.basic,
                 "desc",
@@ -50,24 +50,24 @@ class KakaoJsonUiServiceTest {
                 "www.asdasdzzxcz..zxc",
                 "www.avbc13213",
                 "dsadadasd",
-                buttonVos);
+                buttonDtos);
         log.info("commerceCard={}",result);
     }
 
     @Test
     void createListCard() throws Exception {
-        List<ListCardItemVo> listCardItemVos = new ArrayList<>();
+        List<ListCardItemDto> listCardItemDtos = new ArrayList<>();
         Map<String,String> link = new HashMap<>();
         link.put("web","asdsadsa");
-        ListCardItemVo listCardItemVo = new ListCardItemVo("title","desc","img",link);
-        listCardItemVos.add(listCardItemVo);
-        List<ButtonVo> buttonVos = new ArrayList<>();
-        ButtonVo buttonVo = new ButtonVo(ButtonType.webLink,"la","we");
-        buttonVos.add(buttonVo);
-        JSONObject recommendItems = kakaoJsonUiService.createListCard(DisplayType.basic,"123123", listCardItemVos, buttonVos);
-        KakaoResponseVo kakaoResponseVo = new KakaoResponseVo();
-        kakaoResponseVo.addContent(recommendItems);
-        log.info("listCard={}", kakaoResponseVo.createKakaoResponse());
+        ListCardItemDto listCardItemDto = new ListCardItemDto("title","desc","img",link);
+        listCardItemDtos.add(listCardItemDto);
+        List<ButtonDto> buttonDtos = new ArrayList<>();
+        ButtonDto buttonDto = new ButtonDto(ButtonType.webLink,"la","we");
+        buttonDtos.add(buttonDto);
+        JSONObject recommendItems = kakaoJsonUiService.createListCard(DisplayType.basic,"123123", listCardItemDtos, buttonDtos);
+        KakaoResponseDto kakaoResponseDto = new KakaoResponseDto();
+        kakaoResponseDto.addContent(recommendItems);
+        log.info("listCard={}", kakaoResponseDto.createKakaoResponse());
 
     }
 

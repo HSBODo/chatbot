@@ -11,7 +11,7 @@ import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.order.OrderStatus;
 import site.pointman.chatbot.domain.order.PayMethod;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
-import site.pointman.chatbot.vo.naverapi.SearchVo;
+import site.pointman.chatbot.dto.naverapi.SearchDto;
 import site.pointman.chatbot.repository.ItemRepository;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
@@ -19,8 +19,8 @@ import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.KakaoJsonUiService;
 import site.pointman.chatbot.service.OpenApiService;
 import site.pointman.chatbot.utill.Utillity;
-import site.pointman.chatbot.vo.kakaoui.*;
-import site.pointman.chatbot.vo.weatherapi.WeatherPropertyCodeVo;
+import site.pointman.chatbot.dto.kakaoui.*;
+import site.pointman.chatbot.dto.weatherapi.WeatherPropertyCodeDto;
 
 import java.util.*;
 
@@ -48,11 +48,11 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     public JSONObject createTodayNews(String searchText) throws Exception {
 
         List listCards = new ArrayList<>();
-        List<ButtonVo> buttons = new ArrayList<>();
-        List<ListCardItemVo> listCardItems = new ArrayList<>();
-        SearchVo searchVo = openApiService.selectNaverSearch(searchText,"30","1","date");
-        Optional.ofNullable(searchVo).orElseThrow(() -> new NullPointerException("뉴스정보가 없습니다."));
-        searchVo.getItems().forEach(item -> {
+        List<ButtonDto> buttons = new ArrayList<>();
+        List<ListCardItemDto> listCardItems = new ArrayList<>();
+        SearchDto searchDto = openApiService.selectNaverSearch(searchText,"30","1","date");
+        Optional.ofNullable(searchDto).orElseThrow(() -> new NullPointerException("뉴스정보가 없습니다."));
+        searchDto.getItems().forEach(item -> {
             try {
                 JSONObject searchJsonObject = new JSONObject((JSONObject) jsonParser.parse(item.toString()));
                 Map webLink = new HashMap<>();
@@ -60,12 +60,12 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                 String description =utillity.replaceAll((String) searchJsonObject.get("description"));
                 webLink.put("web", searchJsonObject.get("link"));
 
-                ListCardItemVo listCardItem = new ListCardItemVo(title,description,"https://www.pointman.shop/image/news.jpg",webLink);
+                ListCardItemDto listCardItem = new ListCardItemDto(title,description,"https://www.pointman.shop/image/news.jpg",webLink);
                 listCardItems.add(listCardItem);
 
-                int cnt =  searchVo.getItems().indexOf(item)+1;
+                int cnt =  searchDto.getItems().indexOf(item)+1;
                 if(cnt%5==0){  // <= 케로셀 최대 5개 까지만 표시
-                    listCards.add(kakaoJsonUiService.createListCard(DisplayType.carousel, searchVo.getLastBuildDate()+" 오늘의 뉴스", listCardItems, buttons));
+                    listCards.add(kakaoJsonUiService.createListCard(DisplayType.carousel, searchDto.getLastBuildDate()+" 오늘의 뉴스", listCardItems, buttons));
                     listCardItems.clear();
                 }
 
@@ -81,8 +81,8 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         if(maybeMemberLocation.isEmpty()) throw new NullPointerException("회원의 위치정보가 없습니다.");
         KakaoMemberLocation memberLocation = maybeMemberLocation.get();
 
-        WeatherPropertyCodeVo weatherCode =  openApiService.selectShortTermWeather(memberLocation);
-        List buttonList = new ArrayList<ButtonVo>();
+        WeatherPropertyCodeDto weatherCode =  openApiService.selectShortTermWeather(memberLocation);
+        List buttonList = new ArrayList<ButtonDto>();
         return  kakaoJsonUiService.createBasicCard(DisplayType.basic,
                 weatherCode.getBaseDateValue()+" 오늘의 날씨",
                 " 하늘상태:"+weatherCode.getSkyValue()+"\n" +
@@ -100,8 +100,8 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     }
     @Override
     public JSONObject createLocationNotice(String kakaoUserkey) throws ParseException {
-        ButtonVo locationNoticeButton = new ButtonVo(ButtonType.webLink,"위치정보 동의하기","https://www.pointman.shop/kakaochat/v1/location-notice?u="+kakaoUserkey);
-        List<ButtonVo> buttons = new ArrayList<>();
+        ButtonDto locationNoticeButton = new ButtonDto(ButtonType.webLink,"위치정보 동의하기","https://www.pointman.shop/kakaochat/v1/location-notice?u="+kakaoUserkey);
+        List<ButtonDto> buttons = new ArrayList<>();
         buttons.add(locationNoticeButton);
         return kakaoJsonUiService.createBasicCard(
                 DisplayType.basic,
@@ -116,10 +116,10 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public JSONObject createDeveloperInfo() throws ParseException {
 
-        ButtonVo blogButton = new ButtonVo(ButtonType.webLink,"블로그","https://pointman.tistory.com/");
-        ButtonVo gitHubButton = new ButtonVo(ButtonType.webLink,"GitHub","https://github.com/HSBODo");
-        ButtonVo portfolioButton = new ButtonVo(ButtonType.webLink,"포트폴리오","https://www.pointman.shop");
-        List buttons = new ArrayList<ButtonVo>();
+        ButtonDto blogButton = new ButtonDto(ButtonType.webLink,"블로그","https://pointman.tistory.com/");
+        ButtonDto gitHubButton = new ButtonDto(ButtonType.webLink,"GitHub","https://github.com/HSBODo");
+        ButtonDto portfolioButton = new ButtonDto(ButtonType.webLink,"포트폴리오","https://www.pointman.shop");
+        List buttons = new ArrayList<ButtonDto>();
         buttons.add(blogButton);
         buttons.add(gitHubButton);
         buttons.add(portfolioButton);
@@ -140,12 +140,12 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         List commerceCards = new ArrayList<>();
         findItems.stream()
                 .forEach(item ->{
-                    List<ButtonVo> buttons = new ArrayList<>();
-                    ButtonVo detailButton = new ButtonVo(ButtonType.webLink,"상품 상세보기",item.getThumbnailLink());
+                    List<ButtonDto> buttons = new ArrayList<>();
+                    ButtonDto detailButton = new ButtonDto(ButtonType.webLink,"상품 상세보기",item.getThumbnailLink());
                     //"https://www.pointman.shop/kakaochat/v1/kakaopay-ready?itemcode="+item.getItemCode()+"&kakaouserkey="+kakaoUserkey
-                    ButtonParamsVo buttonParamsVo = new ButtonParamsVo("5", BlockServiceType.옵션);
-                    buttonParamsVo.addButtonParam("itemCode", String.valueOf(item.getItemCode()));
-                    ButtonVo buyButton = new ButtonVo(ButtonType.block,"구매하기",buttonParamsVo.createButtonParams());
+                    ButtonParamsDto buttonParamsDto = new ButtonParamsDto("5", BlockServiceType.옵션);
+                    buttonParamsDto.addButtonParam("itemCode", String.valueOf(item.getItemCode()));
+                    ButtonDto buyButton = new ButtonDto(ButtonType.block,"구매하기", buttonParamsDto.createButtonParams());
                     buttons.add(detailButton);
                     buttons.add(buyButton);
                     try {
@@ -185,17 +185,17 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                         if (maybeItem.isEmpty()) throw new NullPointerException("주문내역에 있는 상품을 찾을 수 없습니다.");
                         Item item = maybeItem.get();
 
-                        ButtonParamsVo params = new ButtonParamsVo("12",BlockServiceType.주문상세정보);  //<== 다음 블럭
+                        ButtonParamsDto params = new ButtonParamsDto("12",BlockServiceType.주문상세정보);  //<== 다음 블럭
                         params.addButtonParam("itemCode", String.valueOf(item.getItemCode()));
                         params.addButtonParam("orderId", String.valueOf(order.getOrder_id()));
 
-                        ButtonVo orderDetailButton = new ButtonVo(ButtonType.block,"결제 상세보기",params.createButtonParams());
+                        ButtonDto orderDetailButton = new ButtonDto(ButtonType.block,"결제 상세보기",params.createButtonParams());
 
-                        List<ButtonVo> buttons = new ArrayList<>();
+                        List<ButtonDto> buttons = new ArrayList<>();
                         buttons.add(orderDetailButton);
 
                         if(order.getStatus().equals(OrderStatus.결제승인)){ //<== 결제승인 완료된 주문만 취소 가능
-                            ButtonVo payCancelButton = new ButtonVo(ButtonType.webLink,"결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
+                            ButtonDto payCancelButton = new ButtonDto(ButtonType.webLink,"결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
                             buttons.add(payCancelButton);
                         }
 
@@ -228,9 +228,9 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         if(maybeItem.isEmpty()) throw new NullPointerException("상품코드와 일치하는 상품이 없습니다.");
         Item item = maybeItem.get();
 
-        List<ButtonVo> buttons = new ArrayList<>();
+        List<ButtonDto> buttons = new ArrayList<>();
         if(order.getStatus().equals(OrderStatus.결제승인)){ //<==결제 승인된 주문만 취소 가능
-            ButtonVo payCancelButton = new ButtonVo(ButtonType.webLink,"결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
+            ButtonDto payCancelButton = new ButtonDto(ButtonType.webLink,"결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
             buttons.add(payCancelButton);
         }
 

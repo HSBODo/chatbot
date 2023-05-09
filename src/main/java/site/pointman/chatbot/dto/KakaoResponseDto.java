@@ -1,22 +1,21 @@
-package site.pointman.chatbot.vo;
+package site.pointman.chatbot.dto;
 
 import lombok.Getter;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import site.pointman.chatbot.vo.kakaoui.ButtonVo;
+import site.pointman.chatbot.dto.kakaoui.ButtonDto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Getter
-public class KakaoResponseVo {
+public class KakaoResponseDto {
     private List outputs;
     private List quickReplies;
 
-    public KakaoResponseVo() {
+    public KakaoResponseDto() {
         this.outputs = new ArrayList();
         this.quickReplies = new ArrayList();
     }
@@ -25,7 +24,7 @@ public class KakaoResponseVo {
     public void addContent(JSONObject content) {
         this.outputs.add(content);
     }
-    public void addQuickButton(ButtonVo button) {
+    public void addQuickButton(ButtonDto button) {
         this.quickReplies.add(button);
     }
     public JSONObject createKakaoResponse() throws ParseException {

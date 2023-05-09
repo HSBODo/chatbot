@@ -1,4 +1,4 @@
-package site.pointman.chatbot.vo.kakaoui;
+package site.pointman.chatbot.dto.kakaoui;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter @Setter
-public class ButtonParamsVo {
+public class ButtonParamsDto {
     String blockId;
     BlockServiceType blockService;
     Map<String,String> buttonParams;
 
-    public ButtonParamsVo(String blockId, BlockServiceType blockService) {
+    public ButtonParamsDto(String blockId, BlockServiceType blockService) {
         this.blockId = blockId;
         this.blockService = blockService;
         this.buttonParams = new HashMap<>();

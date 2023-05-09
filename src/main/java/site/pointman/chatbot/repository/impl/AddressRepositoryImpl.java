@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Transactional
-public class AddressRepositoryImpl implements AddressRepository {
+public class AddressRepositoryImpl  implements AddressRepository  {
     private final EntityManager em;
 
     public AddressRepositoryImpl(EntityManager em) {
@@ -26,6 +26,13 @@ public class AddressRepositoryImpl implements AddressRepository {
     @Override
     public Optional<Address> findByAddress(String kakaoUserkey) {
         Address findAddress = em.find(Address.class, kakaoUserkey);
+
+        return Optional.ofNullable(findAddress);
+    }
+
+    @Override
+    public Optional<Address> findByAddress(Long addressId) {
+        Address findAddress = em.find(Address.class, addressId);
         return Optional.ofNullable(findAddress);
     }
 

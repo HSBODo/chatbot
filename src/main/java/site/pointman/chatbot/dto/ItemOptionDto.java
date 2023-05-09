@@ -16,7 +16,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ItemOptionDto extends BaseEntity {
+public class ItemOptionDto {
     private Long id ;
     @NotBlank(message = "아이템코드는 필수입니다.")
     private Long itemCode;

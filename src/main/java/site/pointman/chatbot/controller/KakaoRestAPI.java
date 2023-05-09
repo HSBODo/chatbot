@@ -6,28 +6,22 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import site.pointman.chatbot.domain.address.Address;
 import site.pointman.chatbot.domain.block.BlockServiceType;
-import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.dto.AddressDto;
-import site.pointman.chatbot.dto.BlockDto;
-import site.pointman.chatbot.dto.KakaoMemberDto;
-import site.pointman.chatbot.dto.KakaoMemberLocationDto;
+import site.pointman.chatbot.dto.*;
 import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.repository.AddressRepository;
 import site.pointman.chatbot.repository.BlockRepository;
 import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.service.*;
-import site.pointman.chatbot.vo.*;
 
-import javax.validation.Valid;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -35,6 +29,8 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "/kakaochat/v1/*")
 public class KakaoRestAPI {
+    @Value("${kakao.channel.url}")
+    private String kakaoChannelUrl;
     private KakaoApiService kakaoApiService;
     private MemberService memberService;
     private OpenApiService openApiService;
@@ -58,7 +54,7 @@ public class KakaoRestAPI {
 
     @ResponseBody
     @RequestMapping(value = "chat" , headers = {"Accept=application/json; UTF-8"})
-    public JSONObject callAPI(@RequestBody KakaoRequestVo request) throws Exception {
+    public JSONObject callAPI(@RequestBody KakaoRequestDto request) throws Exception {
         JSONObject response = new JSONObject();
         try {
             String uttr = request.getUttr(); //사용자 발화
@@ -75,24 +71,23 @@ public class KakaoRestAPI {
             Optional<KakaoMember> maybeMember = kakaoMemberRepository.findByMember(kakaoUserkey);
             if(maybeMember.isEmpty()) blockDto.setService(BlockServiceType.회원가입);
 
-            if(request.getBlockService() != null) memberService.saveAttribute(buttonParams,kakaoUserkey);
+            if(request.getBlockService() != null) memberService.saveAttribute(buttonParams,kakaoUserkey); //<==선택한 버튼 파라미터 저장
 
-            if(blockDto.getService()==null){
+            if(blockDto.getService()==null){ //<== 사용자 발화로 서비스 조회
                 Map<String,BlockServiceType> blockServiceMapping = new HashMap<>();
                 blockServiceMapping.put("판매상품",BlockServiceType.상품조회);
                 blockServiceMapping.put("주문조회",BlockServiceType.주문조회);
                 blockServiceMapping.put("배송지등록완료",BlockServiceType.주문서);
-
-                blockDto.setService( blockServiceMapping.get(uttr) );
+                BlockServiceType findBlockServiceType = blockServiceMapping.get(uttr);
+                blockDto.setService(findBlockServiceType);
             }
-
-            if(blockDto.getService()==null) throw new IllegalArgumentException();
+            if(blockDto.getService()==null) return null; //<== 버튼 파라미터 서비스가 존재하지 않고 발화 서비스가 존재하지않으면 응답 없음
 
              response = blockService.findByService(kakaoUserkey, blockDto, buttonParams);
 
         }catch (Exception e){
             e.printStackTrace();
-            KakaoResponseVo kakaoResponse = new KakaoResponseVo();
+            KakaoResponseDto kakaoResponse = new KakaoResponseDto();
             kakaoResponse.addContent(kakaoJsonUiService.createSimpleText(e.getMessage()));
             return kakaoResponse.createKakaoResponse();
         }
@@ -106,12 +101,11 @@ public class KakaoRestAPI {
     }
 
     @PostMapping(value = "address")
-        public String addAddress(@Validated @ModelAttribute AddressDto addressDto, BindingResult bindingResult)throws Exception{
+    public String addAddress(@Validated @ModelAttribute AddressDto addressDto, BindingResult bindingResult)throws Exception{
         String result;
         if(bindingResult.hasErrors()){//  addressDto 유효성 검증
             return "address/addForm";
         }
-
         try {
             Optional<Address> maybeAddress = addressRepository.findByAddress(addressDto.getKakaoUserkey());
             if(maybeAddress.isEmpty()){
@@ -124,13 +118,11 @@ public class KakaoRestAPI {
         }catch (Exception e){
             e.printStackTrace();
             result= URLEncoder.encode("배송지등록실패","UTF-8");
-            return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/"+result;
+            return "redirect:"+kakaoChannelUrl+"/"+result;
         }
         result= URLEncoder.encode("배송지등록완료","UTF-8");
-        return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/"+result;
+        return "redirect:"+kakaoChannelUrl+"/"+result;
     }
-
-
 
     @GetMapping(value = "kakaopay-ready")
     public String kakaoPayReady(@RequestParam Long itemcode,@RequestParam String kakaouserkey, @RequestParam Long optionId, @RequestParam int totalPrice, @RequestParam int quantity) throws Exception{
@@ -139,31 +131,28 @@ public class KakaoRestAPI {
         String result;
         try {
             redirectUrl = openApiService.kakaoPayReady(itemcode,optionId,totalPrice,quantity, kakaouserkey);
-
         }catch (Exception e){
-
             e.printStackTrace();
             result= URLEncoder.encode("결제실패","UTF-8");
-            redirectUrl="https://plus.kakao.com/talk/bot/@pointman_dev/"+result;
+            redirectUrl=kakaoChannelUrl+"/"+result;
             return "redirect:"+redirectUrl;
         }
         return "redirect:"+redirectUrl;
     }
+
     @GetMapping(value = "/{orderId}/kakaopay-approve")
     public String kakaoPayApprove (@PathVariable Long orderId, String pg_token) throws Exception{
         String result;
         try {
-
             log.info("pg_token={} orderId={}",pg_token,orderId);
             openApiService.kakaoPayApprove(pg_token,orderId);
-
         }catch (Exception e){
             e.printStackTrace();
             result= URLEncoder.encode("결제실패","UTF-8");
-            return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/"+result;
+            return "redirect:"+kakaoChannelUrl+"/"+result;
         }
         result= URLEncoder.encode("결제완료","UTF-8");
-        return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/"+result;
+        return "redirect:"+kakaoChannelUrl+"/"+result;
     }
 
     @GetMapping(value = "/{orderId}/kakaopay-cancel")
@@ -174,10 +163,10 @@ public class KakaoRestAPI {
         }catch (Exception e){
             e.printStackTrace();
             result= URLEncoder.encode("주문취소실패","UTF-8");
-            return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/"+result;
+            return "redirect:"+kakaoChannelUrl+"/"+result;
         }
         result= URLEncoder.encode("주문취소완료","UTF-8");
-        return "redirect:https://plus.kakao.com/talk/bot/@pointman_dev/"+result;
+        return "redirect:"+kakaoChannelUrl+"/"+result;
     }
 
     @ResponseBody
@@ -185,7 +174,6 @@ public class KakaoRestAPI {
     public HashMap<String, String> locationAgree(@RequestBody KakaoMemberLocationDto kakaoMemberLocationDto){
         HashMap<String,String> redirectURL = new HashMap<>();
         try {
-
             KakaoMemberDto kakaoMemberDto = KakaoMemberDto.builder()
                     .kakaoUserkey(kakaoMemberLocationDto.getKakaoUserkey())
                     .build();
@@ -194,10 +182,10 @@ public class KakaoRestAPI {
 
             KakaoMemberLocation kakaoMemberLocation = kakaoMemberLocationDto.toEntity();
             memberService.saveLocation(kakaoMemberLocation); //<== 위치정보 저장 및 업데이트
-            redirectURL.put("redirectURL","https://plus.kakao.com/talk/bot/@pointman_dev/위치정보 동의 완료");
+            redirectURL.put("redirectURL",kakaoChannelUrl+"/위치정보 동의 완료");
         }catch (Exception e){
             e.printStackTrace();
-            redirectURL.put("redirectURL","https://plus.kakao.com/talk/bot/@pointman_dev/위치정보 동의 실패");
+            redirectURL.put("redirectURL",kakaoChannelUrl+"/위치정보 동의 실패");
         }
         return redirectURL;
     }
