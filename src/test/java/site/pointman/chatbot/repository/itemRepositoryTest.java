@@ -10,12 +10,7 @@ import org.springframework.util.CollectionUtils;
 import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.domain.item.ItemOption;
 import site.pointman.chatbot.domain.item.ItemOptionCategory;
-import site.pointman.chatbot.domain.member.MemberAttribute;
-import site.pointman.chatbot.domain.order.Order;
-import site.pointman.chatbot.domain.order.OrderStatus;
-import site.pointman.chatbot.domain.order.PayMethod;
-import site.pointman.chatbot.dto.ItemOptionDto;
-import site.pointman.chatbot.dto.MemberAttributeDto;
+import site.pointman.chatbot.dto.item.ItemOptionDto;
 
 import java.util.List;
 import java.util.Optional;

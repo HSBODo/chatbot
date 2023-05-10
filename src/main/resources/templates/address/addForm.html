@@ -43,7 +43,7 @@
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">배송지 등록</h1>
                         </div>
-                        <form class="user" method="post" action="" th:action th:object="${addressDto}">
+                        <form class="address" method="post" action="" th:action th:object="${addressDto}">
                             <input type="hidden" id="kakaoUserkey"  name="kakaoUserkey" th:value="${param.u}">
                             <div>
                                 <label for="name">받으시는 분:</label>
@@ -84,15 +84,6 @@
                                 <input type="text" id="sample4_extraAddress" placeholder="참고항목" th:field="*{extraAddress}" readonly>
                                 <div class="field-error" th:errors="*{extraAddress}"></div>
                             </div>
-
-
-
-
-
-
-
-
-
                             <button type="submit" class="btn btn-facebook btn-user btn-block">
                                등록
                             </button>

@@ -44,10 +44,10 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Optional<Order> findByApproveOrder(Long orderId) {
-        return Optional.ofNullable(em.createQuery("select o from Order o where o.status=:status AND o.order_id=:orderId", Order.class)
+        return em.createQuery("select o from Order o where o.status=:status AND o.order_id=:orderId", Order.class)
                 .setParameter("status",OrderStatus.결제승인)
                 .setParameter("orderId",orderId)
-                .getSingleResult());
+                .getResultList().stream().findAny();
     }
 
     @Override

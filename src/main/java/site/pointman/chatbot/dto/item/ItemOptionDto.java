@@ -1,4 +1,4 @@
-package site.pointman.chatbot.dto;
+package site.pointman.chatbot.dto.item;
 
 import lombok.Builder;
 import lombok.Getter;

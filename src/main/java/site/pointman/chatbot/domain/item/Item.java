@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.domain.BaseEntity;
-import site.pointman.chatbot.dto.ItemDto;
+import site.pointman.chatbot.dto.item.ItemDto;
 
 import javax.persistence.*;
 

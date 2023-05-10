@@ -19,11 +19,13 @@ public class KakaoRequestDto {
     private JSONObject bot;
     private JSONObject action;
     private JSONObject buttonParams;
+    private JSONObject params;
     private String kakaoUserkey;
     private String uttr;
     private String timezone;
     private String partnerId;
     private Long blockId;
+    private BlockServiceType blockServiceType;
     private BlockServiceType blockService;
 
     public String getKakaoUserkey() {
@@ -40,6 +42,12 @@ public class KakaoRequestDto {
         this.timezone = (String) userRequest.get("timezone");
         return timezone;
     }
+
+    public JSONObject getParams() {
+        this.params = new JSONObject((Map)action.get("params"));
+        return params;
+    }
+
     public JSONObject getButtonParams() {
         this.buttonParams = new JSONObject((Map)action.get("clientExtra"));
         return buttonParams;
@@ -50,8 +58,8 @@ public class KakaoRequestDto {
         return blockId;
     }
     public BlockServiceType getBlockService() {
-        if(buttonParams.get("blockService")==null) return blockService;
-        this.blockService =BlockServiceType.valueOf ((String) buttonParams.get("blockService"));
+        if(buttonParams.get("blockService")!=null)  this.blockService =BlockServiceType.valueOf ((String) buttonParams.get("blockService"));
+        if(params.get("blockService")!=null)   this.blockService =BlockServiceType.valueOf ((String) params.get("blockService"));
         return blockService;
     }
 }

@@ -6,10 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
+
 import site.pointman.chatbot.domain.block.Block;
 import site.pointman.chatbot.domain.block.BlockServiceType;
 import site.pointman.chatbot.domain.block.BlockType;
-import site.pointman.chatbot.dto.BlockDto;
+import site.pointman.chatbot.dto.block.BlockDto;
 import site.pointman.chatbot.dto.kakaoui.DisplayType;
 
 import java.util.Optional;

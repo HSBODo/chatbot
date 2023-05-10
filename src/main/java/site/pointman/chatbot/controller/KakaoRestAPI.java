@@ -14,12 +14,16 @@ import org.springframework.web.bind.annotation.*;
 
 import site.pointman.chatbot.domain.address.Address;
 import site.pointman.chatbot.domain.block.BlockServiceType;
+import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.member.Platform;
+import site.pointman.chatbot.domain.member.RoleType;
 import site.pointman.chatbot.dto.*;
-import site.pointman.chatbot.domain.member.KakaoMember;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
+import site.pointman.chatbot.dto.address.AddressDto;
+import site.pointman.chatbot.dto.block.BlockDto;
+import site.pointman.chatbot.dto.member.MemberLocationDto;
+import site.pointman.chatbot.dto.member.MemberDto;
 import site.pointman.chatbot.repository.AddressRepository;
-import site.pointman.chatbot.repository.BlockRepository;
-import site.pointman.chatbot.repository.KakaoMemberRepository;
 import site.pointman.chatbot.service.*;
 
 import java.net.URLEncoder;
@@ -29,59 +33,58 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "/kakaochat/v1/*")
 public class KakaoRestAPI {
-    @Value("${kakao.channel.url}")
-    private String kakaoChannelUrl;
-    private KakaoApiService kakaoApiService;
+
     private MemberService memberService;
     private OpenApiService openApiService;
     private KakaoJsonUiService kakaoJsonUiService;
     private BlockService blockService;
-    private BlockRepository blockRepository;
-    private KakaoMemberRepository kakaoMemberRepository;
     private AddressRepository addressRepository;
-    private JSONParser jsonParser = new JSONParser();
 
-    public KakaoRestAPI(KakaoApiService kakaoApiService, MemberService memberService, OpenApiService openApiService, KakaoJsonUiService kakaoJsonUiService, BlockService blockService, BlockRepository blockRepository, KakaoMemberRepository kakaoMemberRepository, AddressRepository addressRepository) {
-        this.kakaoApiService = kakaoApiService;
+    public KakaoRestAPI(MemberService memberService, OpenApiService openApiService, KakaoJsonUiService kakaoJsonUiService, BlockService blockService, AddressRepository addressRepository) {
         this.memberService = memberService;
         this.openApiService = openApiService;
         this.kakaoJsonUiService = kakaoJsonUiService;
         this.blockService = blockService;
-        this.blockRepository = blockRepository;
-        this.kakaoMemberRepository = kakaoMemberRepository;
         this.addressRepository = addressRepository;
     }
+
+    @Value("${kakao.channel.url}")
+    private String kakaoChannelUrl;
+    private JSONParser jsonParser = new JSONParser();
+
+
 
     @ResponseBody
     @RequestMapping(value = "chat" , headers = {"Accept=application/json; UTF-8"})
     public JSONObject callAPI(@RequestBody KakaoRequestDto request) throws Exception {
-        JSONObject response = new JSONObject();
+        JSONObject response;
         try {
             String uttr = request.getUttr(); //사용자 발화
             String kakaoUserkey = request.getKakaoUserkey(); //사용자 유저키
             JSONObject buttonParams = request.getButtonParams(); //버튼 파라미터
+            JSONObject params = request.getParams(); //블럭 파라미터
             Long blockId = request.getBlockId(); //블럭Id
             BlockServiceType service = request.getBlockService(); //블럭 서비스
-            log.info("Request:: uttr ={}, userkey = {} buttonParams={}",uttr,kakaoUserkey,buttonParams);
+
+            log.info("Request:: uttr ={}, userkey = {} buttonParams={} params={}",uttr,kakaoUserkey,buttonParams,params);
 
             BlockDto blockDto = BlockDto.builder()
                     .id(blockId)
                     .service(service)
                     .build();
-            Optional<KakaoMember> maybeMember = kakaoMemberRepository.findByMember(kakaoUserkey);
-            if(maybeMember.isEmpty()) blockDto.setService(BlockServiceType.회원가입);
+
+            if(!memberService.isKakaoMember(kakaoUserkey)) blockDto.setService(BlockServiceType.회원가입);
+            if(request.getBlockService()==null) {
+                Map<String, BlockServiceType> uttrToBlockService = new HashMap<>();
+                uttrToBlockService.put("배송지등록완료", BlockServiceType.주문서);
+                BlockServiceType blockServiceType = uttrToBlockService.get(uttr);
+                blockDto.setService(blockServiceType);
+            }
+
+            log.info("service={}",service);
+            if(blockDto.getService()==null) return null; //<== 버튼 파라미터 서비스가 존재하지 않고 발화 서비스가 존재하지않으면 응답 없음
 
             if(request.getBlockService() != null) memberService.saveAttribute(buttonParams,kakaoUserkey); //<==선택한 버튼 파라미터 저장
-
-            if(blockDto.getService()==null){ //<== 사용자 발화로 서비스 조회
-                Map<String,BlockServiceType> blockServiceMapping = new HashMap<>();
-                blockServiceMapping.put("판매상품",BlockServiceType.상품조회);
-                blockServiceMapping.put("주문조회",BlockServiceType.주문조회);
-                blockServiceMapping.put("배송지등록완료",BlockServiceType.주문서);
-                BlockServiceType findBlockServiceType = blockServiceMapping.get(uttr);
-                blockDto.setService(findBlockServiceType);
-            }
-            if(blockDto.getService()==null) return null; //<== 버튼 파라미터 서비스가 존재하지 않고 발화 서비스가 존재하지않으면 응답 없음
 
              response = blockService.findByService(kakaoUserkey, blockDto, buttonParams);
 
@@ -122,6 +125,57 @@ public class KakaoRestAPI {
         }
         result= URLEncoder.encode("배송지등록완료","UTF-8");
         return "redirect:"+kakaoChannelUrl+"/"+result;
+    }
+
+    @GetMapping(value = "kakaoJoinForm")
+    public String kakaoMemberJoinForm(@ModelAttribute MemberDto memberDto){
+        return "member/kakaoJoinForm";
+    }
+    @PostMapping(value = "kakao-member")
+    public String kakaoMemberJoin(@Validated @ModelAttribute MemberDto memberDto, BindingResult bindingResult)throws Exception{
+        String result;
+        if(bindingResult.hasErrors()){//  addressDto 유효성 검증
+            return "member/kakaoJoinForm";
+        }
+        try {
+            if(memberDto.getKakaoUserkey()=="") throw new NullPointerException("유저키가 없습니다.");
+            memberDto.setPlatform(Platform.KAKAO);
+            memberDto.setRoleType(RoleType.MEMBER);
+            memberService.join(memberDto);
+            result= URLEncoder.encode("회원가입성공","UTF-8");
+            return "redirect:"+kakaoChannelUrl+"/"+result;
+        }catch (Exception e){
+            e.printStackTrace();
+            result= URLEncoder.encode("회원가입실패","UTF-8");
+            return "redirect:"+kakaoChannelUrl+"/"+result;
+        }
+    }
+    @GetMapping(value = "kakaoMemeberDeleteForm")
+    public String kakaoMemberDeleteForm(){
+        return "member/kakaoDeleteForm";
+    }
+
+    @ResponseBody
+    @DeleteMapping(value = "kakao-member/{kakaoUserkey}")
+    public HashMap<String, String> kakaoMemberDelete(@PathVariable String kakaoUserkey)throws Exception{
+        HashMap<String,String> redirectURL = new HashMap<>();
+        String result;
+        String msg;
+        try {
+            if(!memberService.isKakaoMember(kakaoUserkey)) throw new NullPointerException("회원이아닙니다.");
+            if(memberService.isWithdrawalKakaoMember(kakaoUserkey))  throw new NullPointerException("이미 탈퇴 회원입니다.");
+            memberService.Withdrawal(kakaoUserkey);
+            msg="회원탈퇴성공";
+            result= URLEncoder.encode(msg,"UTF-8");
+            redirectURL.put("redirectURL",kakaoChannelUrl+"/"+result);
+            return redirectURL;
+        }catch (Exception e){
+            e.printStackTrace();
+            msg = e.getMessage();
+            result= URLEncoder.encode(msg,"UTF-8");
+            redirectURL.put("redirectURL",kakaoChannelUrl+"/"+result);
+            return redirectURL;
+        }
     }
 
     @GetMapping(value = "kakaopay-ready")
@@ -171,23 +225,23 @@ public class KakaoRestAPI {
 
     @ResponseBody
     @PostMapping(value = "location-agree" , headers = {"Accept=application/json; UTF-8"})
-    public HashMap<String, String> locationAgree(@RequestBody KakaoMemberLocationDto kakaoMemberLocationDto){
+    public HashMap<String, String> locationAgree(@RequestBody MemberLocationDto memberLocationDto){
         HashMap<String,String> redirectURL = new HashMap<>();
         try {
-            KakaoMemberDto kakaoMemberDto = KakaoMemberDto.builder()
-                    .kakaoUserkey(kakaoMemberLocationDto.getKakaoUserkey())
+            MemberDto memberDto = MemberDto.builder()
+                    .kakaoUserkey(memberLocationDto.getKakaoUserkey())
                     .build();
-            KakaoMember member = kakaoMemberDto.toEntity();
-            memberService.join(member); //<==회원 체크 및 회원 가입
+            memberService.join(memberDto); //<==회원 체크 및 회원 가입
 
-            KakaoMemberLocation kakaoMemberLocation = kakaoMemberLocationDto.toEntity();
+            KakaoMemberLocation kakaoMemberLocation = memberLocationDto.toEntity();
             memberService.saveLocation(kakaoMemberLocation); //<== 위치정보 저장 및 업데이트
             redirectURL.put("redirectURL",kakaoChannelUrl+"/위치정보 동의 완료");
+            return redirectURL;
         }catch (Exception e){
             e.printStackTrace();
             redirectURL.put("redirectURL",kakaoChannelUrl+"/위치정보 동의 실패");
+            return redirectURL;
         }
-        return redirectURL;
     }
     @GetMapping(value = "location-notice")
     public String locationNotice(){

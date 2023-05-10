@@ -12,13 +12,15 @@ import site.pointman.chatbot.domain.block.BlockType;
 import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.domain.item.ItemOption;
 import site.pointman.chatbot.domain.item.ItemOptionCategory;
+import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.member.MemberAttribute;
-import site.pointman.chatbot.dto.*;
-import site.pointman.chatbot.dto.kakaoui.BlockDto;
-import site.pointman.chatbot.repository.AddressRepository;
-import site.pointman.chatbot.repository.BlockRepository;
-import site.pointman.chatbot.repository.ItemRepository;
-import site.pointman.chatbot.repository.KakaoMemberRepository;
+import site.pointman.chatbot.dto.address.AddressDto;
+import site.pointman.chatbot.dto.block.BlockDto;
+import site.pointman.chatbot.dto.item.ItemDto;
+import site.pointman.chatbot.dto.item.ItemOptionDto;
+import site.pointman.chatbot.dto.member.MemberAttributeDto;
+import site.pointman.chatbot.dto.member.MemberDto;
+import site.pointman.chatbot.repository.*;
 import site.pointman.chatbot.service.BlockService;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.KakaoJsonUiService;
@@ -36,7 +38,7 @@ public class BlockServiceImpl implements BlockService {
     ItemRepository itemRepository;
     BlockRepository blockRepository;
     KakaoApiService kakaoApiService;
-    KakaoMemberRepository kakaoMemberRepository;
+    MemberRepository memberRepository;
     AddressRepository addressRepository;
     OrderService orderService;
     Utillity utillity;
@@ -44,12 +46,12 @@ public class BlockServiceImpl implements BlockService {
     @Value("${host.url}")
     private String hostUrl;
 
-    public BlockServiceImpl(KakaoJsonUiService kakaoJsonUiService, ItemRepository itemRepository, BlockRepository blockRepository, KakaoApiService kakaoApiService, KakaoMemberRepository kakaoMemberRepository, AddressRepository addressRepository, OrderService orderService) {
+    public BlockServiceImpl(KakaoJsonUiService kakaoJsonUiService, ItemRepository itemRepository, BlockRepository blockRepository, KakaoApiService kakaoApiService, MemberRepository memberRepository, AddressRepository addressRepository, OrderService orderService) {
         this.kakaoJsonUiService = kakaoJsonUiService;
         this.itemRepository = itemRepository;
         this.blockRepository = blockRepository;
         this.kakaoApiService = kakaoApiService;
-        this.kakaoMemberRepository = kakaoMemberRepository;
+        this.memberRepository = memberRepository;
         this.addressRepository = addressRepository;
         this.orderService = orderService;
     }
@@ -97,34 +99,53 @@ public class BlockServiceImpl implements BlockService {
     }
 
     @Override
-    public JSONObject findByService(String kakaoUserkey, site.pointman.chatbot.dto.BlockDto blockDto, JSONObject buttonParams) throws Exception {
+    public JSONObject findByService(String kakaoUserkey, BlockDto blockDto, JSONObject buttonParams) throws Exception {
         BlockServiceType service = blockDto.getService();
 
         Optional<Block> maybeBlock = blockRepository.findByBlock(service);
         if (maybeBlock.isEmpty()) throw new NullPointerException("블럭이 존재하지 않습니다.");
-        site.pointman.chatbot.dto.BlockDto findBlockDto  = maybeBlock.get().toBlockDto();
+        BlockDto findBlockDto  = maybeBlock.get().toBlockDto();
 
         KakaoResponseDto kakaoResponse = new KakaoResponseDto();
         List<ButtonDto> buttons = new ArrayList<>();
-        BlockDto block;
         switch (findBlockDto.getService()){
             case 회원가입:
-                ButtonDto joinButton = new ButtonDto(ButtonType.webLink,"회원가입하기",hostUrl+"/admin-page/join?u="+kakaoUserkey);
+                ButtonDto joinButton = new ButtonDto(ButtonType.webLink,"회원가입하기",hostUrl+"/kakaochat/v1/kakaoJoinForm?u="+kakaoUserkey);
                 buttons.add(joinButton);
+                BlockDto 회원가입 = findBlockDto.basicCard(
+                        findBlockDto.getBlockType(),
+                        findBlockDto.getDisplayType(),
+                        "회원가입",
+                        "고객님, 회원이 아니시군요... 회원가입이 필요합니다.",
+                        "https://www.pointman.shop/image/Ryan1.jpg",
+                        buttons
+                );
 
-                block = BlockDto.builder()
-                        .blockType(findBlockDto.getBlockType())
-                        .displayType(findBlockDto.getDisplayType())
-                        .title("회원가입")
-                        .description("고객님, 회원이 아니시군요... 회원가입이 필요합니다.")
-                        .thumbnailImgUrl("https://www.pointman.shop/image/Ryan1.jpg")
-                        .buttonList(buttons)
-                        .build();
-
-                JSONObject joinNotice = createBlock(block);
+                JSONObject joinNotice = createBlock(회원가입);
                 kakaoResponse.addContent(joinNotice);
                 return kakaoResponse.createKakaoResponse() ;
 
+            case 회원정보조회:
+                Optional<Member> maybeMember = memberRepository.findByMember(kakaoUserkey);
+                if(maybeMember.isEmpty()) throw new NullPointerException("회원이 아닙니다.");
+                MemberDto memberDto = maybeMember.get().toMemberDto();
+
+                ButtonDto withdrawalButton = new ButtonDto(ButtonType.webLink,"회원탈퇴",hostUrl+"/kakaochat/v1/kakaoMemeberDeleteForm?u="+kakaoUserkey);
+                buttons.add(withdrawalButton);
+                BlockDto 회원정보 = findBlockDto.basicCard(
+                        findBlockDto.getBlockType(),
+                        findBlockDto.getDisplayType(),
+                        "나의 회원정보",
+                        "이름: "+memberDto.getName()+"\n"+
+                                "연락처: "+memberDto.getPhone()+"\n"+
+                                "이메일: "+memberDto.getEmail()+"\n"
+                        ,
+                        "",
+                        buttons
+                );
+                JSONObject memberInfo = createBlock(회원정보);
+                kakaoResponse.addContent(memberInfo);
+                return kakaoResponse.createKakaoResponse() ;
             case 상품조회:
                 JSONObject recommendItems = kakaoApiService.createRecommendItems(kakaoUserkey);
                 kakaoResponse.addContent(recommendItems);
@@ -139,13 +160,12 @@ public class BlockServiceImpl implements BlockService {
                 long itemCode = Long.parseLong((String) buttonParams.get("itemCode"));
                 List<ItemOption> maybeItemOptions = itemRepository.findByItemOptions(itemCode, ItemOptionCategory.사이즈);
                 if(CollectionUtils.isEmpty(maybeItemOptions)) throw  new NullPointerException("옵션이 존재하지 않습니다");
-
-                block = BlockDto.builder()
-                    .blockType(findBlockDto.getBlockType())
-                    .displayType(findBlockDto.getDisplayType())
-                    .description(ItemOptionCategory.사이즈+"을 선택하세요.")
-                    .build();
-                JSONObject optionList = createBlock(block);
+                BlockDto 옵션 = findBlockDto.simpleText(
+                        findBlockDto.getBlockType(),
+                        findBlockDto.getDisplayType(),
+                        ItemOptionCategory.사이즈 + "을 선택하세요."
+                );
+                JSONObject optionList = createBlock(옵션);
                 kakaoResponse.addContent(optionList);
 
                 maybeItemOptions.stream().forEach(itemOption -> {
@@ -159,12 +179,13 @@ public class BlockServiceImpl implements BlockService {
                 return kakaoResponse.createKakaoResponse();
 
             case 수량선택:
-                block = BlockDto.builder()
-                        .blockType(findBlockDto.getBlockType())
-                        .displayType(findBlockDto.getDisplayType())
-                        .description("수량을 선택하세요.")
-                        .build();
-                JSONObject quantityList = createBlock(block);
+
+                BlockDto 수량선택 = findBlockDto.simpleText(
+                        findBlockDto.getBlockType(),
+                        findBlockDto.getDisplayType(),
+                        "수량을 선택하세요."
+                );
+                JSONObject quantityList = createBlock(수량선택);
                 kakaoResponse.addContent(quantityList);
 
                 for(int q=1; q<=10;q++){
@@ -179,20 +200,21 @@ public class BlockServiceImpl implements BlockService {
             case 배송지입력:
                 ButtonDto addressButton = new ButtonDto(ButtonType.webLink,"배송지입력하기",hostUrl+"/kakaochat/v1/address?u="+kakaoUserkey);
                 buttons.add(addressButton);
-                block = BlockDto.builder()
-                        .blockType(findBlockDto.getBlockType())
-                        .displayType(findBlockDto.getDisplayType())
-                        .title("배송지등록")
-                        .description("배송지를 입력해 주세요.")
-                        .thumbnailImgUrl("https://www.pointman.shop/image/Ryan1.jpg")
-                        .buttonList(buttons)
-                        .build();
-                JSONObject addAddress = createBlock(block);
+
+                BlockDto 배송지입력 = findBlockDto.basicCard(
+                        findBlockDto.getBlockType(),
+                        findBlockDto.getDisplayType(),
+                        "배송지등록",
+                        "배송지를 입력해 주세요.",
+                        "https://www.pointman.shop/image/Ryan1.jpg",
+                        buttons
+                );
+                JSONObject addAddress = createBlock(배송지입력);
                 kakaoResponse.addContent(addAddress);
                 return kakaoResponse.createKakaoResponse();
 
             case 주문서:
-                Optional<MemberAttribute> maybeMemberAttribute = kakaoMemberRepository.findByAttribute(kakaoUserkey);
+                Optional<MemberAttribute> maybeMemberAttribute = memberRepository.findByAttribute(kakaoUserkey);
                 if(maybeMemberAttribute.isEmpty()) throw new NullPointerException("주문서를 불러오기에 실패하였습니다.");
                 MemberAttributeDto memberAttributeDto = maybeMemberAttribute.get().toMemberAttributeDto();
 
@@ -220,24 +242,22 @@ public class BlockServiceImpl implements BlockService {
                 );
                 buttons.add(buyButton);
 
-                block = BlockDto.builder()
-                        .blockType(findBlockDto.getBlockType())
-                        .displayType(findBlockDto.getDisplayType())
-                        .title(itemDto.getProfileNickname())
-                        .description(
-                                        "아래의 내용이맞는지 꼼꼼히 확인해주시기 바랍니다.\n\n"+
-                                        "총 결제금액은 "+utillity.formatMoney(totalPrice)+"원 입니다. \n\n"+
-                                        "상품명:"+itemDto.getProfileNickname()+"\n"+
-                                        "사이즈:"+itemOptionDto.getOptionName()+"\n"+
-                                        "수량:"+memberAttributeDto.getQuantity()+"개\n"+
-                                        "받으시는 분:"+addressDto.getName()+"\n"+
-                                        "연락처:"+addressDto.getPhone()+"\n"+
-                                        "배송지:"+address+"\n"
-                        )
-                        .thumbnailImgUrl(itemDto.getThumbnailImgUrl())
-                        .buttonList(buttons)
-                        .build();
-                JSONObject order = createBlock(block);
+                BlockDto 주문서 = findBlockDto.basicCard(
+                        findBlockDto.getBlockType(),
+                        findBlockDto.getDisplayType(),
+                        itemDto.getProfileNickname(),
+                        "아래의 내용이맞는지 꼼꼼히 확인해주시기 바랍니다.\n\n"+
+                                "총 결제금액은 "+utillity.formatMoney(totalPrice)+"원 입니다. \n\n"+
+                                "상품명:"+itemDto.getProfileNickname()+"\n"+
+                                "사이즈:"+itemOptionDto.getOptionName()+"\n"+
+                                "수량:"+memberAttributeDto.getQuantity()+"개\n"+
+                                "받으시는 분:"+addressDto.getName()+"\n"+
+                                "연락처:"+addressDto.getPhone()+"\n"+
+                                "배송지:"+address+"\n",
+                        itemDto.getThumbnailImgUrl(),
+                        buttons
+                );
+                JSONObject order = createBlock(주문서);
                 kakaoResponse.addContent(order);
                 return kakaoResponse.createKakaoResponse();
 

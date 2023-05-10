@@ -13,7 +13,7 @@ import site.pointman.chatbot.domain.order.PayMethod;
 import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.dto.naverapi.SearchDto;
 import site.pointman.chatbot.repository.ItemRepository;
-import site.pointman.chatbot.repository.KakaoMemberRepository;
+import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.service.KakaoApiService;
 import site.pointman.chatbot.service.KakaoJsonUiService;
@@ -29,17 +29,17 @@ import java.util.*;
 @Service
 public class KakaoApiServiceImpl implements KakaoApiService {
     private ItemRepository itemRepository;
-    private KakaoMemberRepository KakaoMemberRepository;
     private OrderRepository orderRepository;
+    private MemberRepository memberRepository;
     private OpenApiService openApiService;
     private KakaoJsonUiService kakaoJsonUiService;
     private JSONParser jsonParser = new JSONParser();
     private Utillity utillity;
 
-    public KakaoApiServiceImpl(ItemRepository itemRepository, KakaoMemberRepository kakaoMemberRepository, OrderRepository orderRepository, OpenApiService openApiService, KakaoJsonUiService kakaoJsonUiService) {
+    public KakaoApiServiceImpl(ItemRepository itemRepository, OrderRepository orderRepository, MemberRepository memberRepository, OpenApiService openApiService, KakaoJsonUiService kakaoJsonUiService) {
         this.itemRepository = itemRepository;
-        this.KakaoMemberRepository = kakaoMemberRepository;
         this.orderRepository = orderRepository;
+        this.memberRepository = memberRepository;
         this.openApiService = openApiService;
         this.kakaoJsonUiService = kakaoJsonUiService;
     }
@@ -77,7 +77,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     }
     @Override
     public JSONObject createTodayWeather(String kakaoUserkey) throws Exception {
-        Optional<KakaoMemberLocation> maybeMemberLocation = KakaoMemberRepository.findByLocation(kakaoUserkey);
+        Optional<KakaoMemberLocation> maybeMemberLocation = memberRepository.findByLocation(kakaoUserkey);
         if(maybeMemberLocation.isEmpty()) throw new NullPointerException("회원의 위치정보가 없습니다.");
         KakaoMemberLocation memberLocation = maybeMemberLocation.get();
 
@@ -141,7 +141,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         findItems.stream()
                 .forEach(item ->{
                     List<ButtonDto> buttons = new ArrayList<>();
-                    ButtonDto detailButton = new ButtonDto(ButtonType.webLink,"상품 상세보기",item.getThumbnailLink());
+                    ButtonDto detailButton = new ButtonDto(ButtonType.webLink,"상세정보",item.getThumbnailLink());
                     //"https://www.pointman.shop/kakaochat/v1/kakaopay-ready?itemcode="+item.getItemCode()+"&kakaouserkey="+kakaoUserkey
                     ButtonParamsDto buttonParamsDto = new ButtonParamsDto("5", BlockServiceType.옵션);
                     buttonParamsDto.addButtonParam("itemCode", String.valueOf(item.getItemCode()));

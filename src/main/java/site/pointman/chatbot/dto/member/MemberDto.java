@@ -1,33 +1,32 @@
-package site.pointman.chatbot.domain.member;
+package site.pointman.chatbot.dto.member;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import site.pointman.chatbot.domain.BaseEntity;
-import site.pointman.chatbot.dto.member.MemberDto;
+import lombok.Setter;
+import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.member.Platform;
+import site.pointman.chatbot.domain.member.RoleType;
 
-import javax.persistence.*;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 @Getter
-@Entity
-@Table(name = "tb_member")
-@NoArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
-@EntityListeners(AuditingEntityListener.class)
-public class Member extends BaseEntity {
-    @Id
+@Setter
+public class MemberDto {
+
     private String kakaoUserkey ;
     private String id;
-
+    @NotBlank(message = "이름을 입력해 주세요.")
     private String name;
 
     private String password;
-
+    @NotBlank(message = "전화번호를 입력해 주세요.")
     private String phone;
-
+    @NotBlank(message = "이메일을 입력해 주세요.")
+    @Email
     private String email;
-
     private String baseAddress;
 
     @Enumerated(EnumType.STRING)
@@ -35,7 +34,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Platform platform;
     @Builder
-    public Member(String kakaoUserkey, String id, String name, String password, String phone, String email, String baseAddress, RoleType roleType, Platform platform) {
+    public MemberDto(String kakaoUserkey, String id, String name, String password, String phone, String email, String baseAddress, RoleType roleType, Platform platform) {
         this.kakaoUserkey = kakaoUserkey;
         this.id = id;
         this.name = name;
@@ -47,8 +46,8 @@ public class Member extends BaseEntity {
         this.platform = platform;
     }
 
-    public MemberDto toMemberDto(){
-        return MemberDto.builder()
+    public Member toEntity(){
+        return Member.builder()
                 .kakaoUserkey(this.kakaoUserkey)
                 .id(this.id)
                 .name(this.name)
@@ -56,10 +55,8 @@ public class Member extends BaseEntity {
                 .phone(this.phone)
                 .email(this.email)
                 .baseAddress(this.baseAddress)
+                .roleType(this.roleType)
+                .platform(this.platform)
                 .build();
-    }
-
-    public void Withdrawal(){
-        super.changeIsUse("N");
     }
 }

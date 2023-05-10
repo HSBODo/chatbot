@@ -6,8 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.domain.BaseEntity;
-import site.pointman.chatbot.dto.AddressDto;
-import site.pointman.chatbot.dto.KakaoMemberDto;
+import site.pointman.chatbot.dto.address.AddressDto;
 
 import javax.persistence.*;
 
@@ -18,10 +17,11 @@ import javax.persistence.*;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 public class Address extends BaseEntity {
-    @Id
+
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Long id ;
+    @Id
     @Column(name = "kakao_userkey",nullable = false)
     private String kakaoUserkey ;
     @Column(nullable = false)

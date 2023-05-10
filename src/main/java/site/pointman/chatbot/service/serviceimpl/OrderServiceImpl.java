@@ -1,13 +1,11 @@
 package site.pointman.chatbot.service.serviceimpl;
 
-import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.item.Item;
 import site.pointman.chatbot.domain.item.ItemOption;
-import site.pointman.chatbot.dto.ItemDto;
-import site.pointman.chatbot.dto.ItemOptionDto;
+import site.pointman.chatbot.dto.item.ItemDto;
+import site.pointman.chatbot.dto.item.ItemOptionDto;
 import site.pointman.chatbot.repository.ItemRepository;
-import site.pointman.chatbot.service.KakaoJsonUiService;
 import site.pointman.chatbot.service.OrderService;
 
 import java.util.Optional;

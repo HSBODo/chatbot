@@ -18,10 +18,6 @@ public class BeanConfig {
     }
 
     @Bean
-    public KakaoMemberRepository kakaoMemberRepository(){
-        return  new KakaoMemberRepositoryImpl(em);
-    }
-    @Bean
     public ItemRepository kaKaoItemRepository (){
         return  new ItemRepositoryImpl(em);
     }

@@ -6,8 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.domain.BaseEntity;
-import site.pointman.chatbot.dto.ItemDto;
-import site.pointman.chatbot.dto.ItemOptionDto;
+import site.pointman.chatbot.dto.item.ItemOptionDto;
 
 import javax.persistence.*;
 
