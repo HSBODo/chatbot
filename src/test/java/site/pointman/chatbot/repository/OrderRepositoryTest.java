@@ -3,6 +3,7 @@ package site.pointman.chatbot.repository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.order.OrderStatus;
 import site.pointman.chatbot.domain.order.PayMethod;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class OrderRepositoryTest {
     @Autowired
     private OrderRepository orderRepository;
@@ -109,5 +111,10 @@ class OrderRepositoryTest {
         if(maybeOrder.isEmpty()) throw  new NullPointerException("주문번호와 일치하는 주문이 없습니다");
         Order order = maybeOrder.get();
         Assertions.assertThat(order.getCanceled_at()).isEqualTo(updateParams.getCanceled_at());
+    }
+
+    @Test
+    void findBySalesRank(){
+       orderRepository.findBySalesRank();
     }
 }

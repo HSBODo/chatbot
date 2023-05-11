@@ -8,6 +8,7 @@ import site.pointman.chatbot.dto.item.ItemOptionDto;
 import site.pointman.chatbot.repository.ItemRepository;
 import site.pointman.chatbot.service.OrderService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,5 +36,11 @@ public class OrderServiceImpl implements OrderService {
 
 
         return totalPrice;
+    }
+
+
+    @Override
+    public List<Item> findBySalesRank() {
+        return null;
     }
 }

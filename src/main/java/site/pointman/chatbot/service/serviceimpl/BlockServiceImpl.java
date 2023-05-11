@@ -103,7 +103,7 @@ public class BlockServiceImpl implements BlockService {
         BlockServiceType service = blockDto.getService();
 
         Optional<Block> maybeBlock = blockRepository.findByBlock(service);
-        if (maybeBlock.isEmpty()) throw new NullPointerException("블럭이 존재하지 않습니다.");
+        if (maybeBlock.isEmpty()) throw new NullPointerException("아직 개발중입니다.");
         BlockDto findBlockDto  = maybeBlock.get().toBlockDto();
 
         KakaoResponseDto kakaoResponse = new KakaoResponseDto();
@@ -266,6 +266,13 @@ public class BlockServiceImpl implements BlockService {
                 JSONObject orderDetail = kakaoApiService.createOrderDetail(kakaoUserkey, orderId);
                 kakaoResponse.addContent(orderDetail);
                 return kakaoResponse.createKakaoResponse();
+            case 판매랭킹:
+                return null;
+            case 이벤트:
+                return null;
+            case 장바구니:
+                return null;
+
             default:
 
         }

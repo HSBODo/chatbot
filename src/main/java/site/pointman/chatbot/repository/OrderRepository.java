@@ -12,6 +12,6 @@ public interface OrderRepository {
     Optional<Order> findByApproveOrder(Long orderId);
     Optional<Order> findByOrder(String kakaoUserkey, Long orderId);
     Optional<Order> updatePayApprove(Order updateParams);
-
     Optional<Order> updatePayCancel(Order updateParams);
+    List<Order> findBySalesRank();
 }

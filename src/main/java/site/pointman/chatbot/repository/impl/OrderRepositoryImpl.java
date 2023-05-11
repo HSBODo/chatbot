@@ -1,5 +1,6 @@
 package site.pointman.chatbot.repository.impl;
 
+import org.springframework.data.jpa.repository.query.JpaQueryMethodFactory;
 import org.springframework.stereotype.Repository;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.order.OrderStatus;
@@ -74,5 +75,13 @@ public class OrderRepositoryImpl implements OrderRepository {
         findOrder.changeStatus(updateParams.getStatus());
         findOrder.changeCancelAt(updateParams.getCanceled_at());
         return Optional.ofNullable(findOrder);
+    }
+
+    @Override
+    public List<Order> findBySalesRank() {
+        List<Order> orderList = em.createQuery("select SUM(o.quantity) as quantity, o.item_code from Order o where  o.status=:status group by o.item_code order by o.item_code desc", Order.class)
+                .setParameter("status", OrderStatus.결제승인)
+                .getResultList();
+        return orderList;
     }
 }

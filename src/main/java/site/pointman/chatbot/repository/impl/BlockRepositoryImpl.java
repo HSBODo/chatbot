@@ -33,8 +33,8 @@ public class BlockRepositoryImpl implements BlockRepository {
 
     @Override
     public Optional<Block> findByBlock(BlockServiceType blockServiceType) {
-        return Optional.ofNullable(em.createQuery("select b from Block b where  b.service=:service", Block.class)
+        return em.createQuery("select b from Block b where  b.service=:service", Block.class)
                 .setParameter("service",blockServiceType)
-                .getSingleResult());
+                .getResultList().stream().findAny();
     }
 }
