@@ -57,7 +57,7 @@ public class BlockServiceImpl implements BlockService {
     }
 
     @Override
-    public JSONObject createBlock(BlockDto blockDto) throws Exception {
+    public JSONObject createBlock(BlockDto blockDto){
         Map<BlockType,JSONObject> kakaoJsonUiServiceMap= new HashMap<>();
 
         DisplayType displayType = blockDto.getDisplayType();
@@ -76,24 +76,27 @@ public class BlockServiceImpl implements BlockService {
         String currency = blockDto.getCurrency();
         List<ListCardItemDto> listCardItemList = blockDto.getListCardItemList();
         List<ButtonDto> buttonList = blockDto.getButtonList();
+        try {
+            kakaoJsonUiServiceMap.put(BlockType.basicCard,kakaoJsonUiService.createBasicCard(displayType,title,description,thumbnailImgUrl,buttonList));
+            kakaoJsonUiServiceMap.put(BlockType.simpleText,kakaoJsonUiService.createSimpleText(description));
+            kakaoJsonUiServiceMap.put(BlockType.commerceCard,kakaoJsonUiService.createCommerceCard(displayType,
+                    description,
+                    price,
+                    discount,
+                    discountedPrice,
+                    discountRate,
+                    currency,
+                    thumbnailImgUrl,
+                    thumbnailLink,
+                    profileImgUrl,
+                    profileNickname,
+                    buttonList));
+            kakaoJsonUiServiceMap.put(BlockType.listCard,kakaoJsonUiService.createListCard(displayType,title,listCardItemList,buttonList));
+            kakaoJsonUiServiceMap.put(BlockType.simpleImage,kakaoJsonUiService.createSimpleImage("123",thumbnailImgUrl));
 
-        kakaoJsonUiServiceMap.put(BlockType.basicCard,kakaoJsonUiService.createBasicCard(displayType,title,description,thumbnailImgUrl,buttonList));
-        kakaoJsonUiServiceMap.put(BlockType.simpleText,kakaoJsonUiService.createSimpleText(description));
-        kakaoJsonUiServiceMap.put(BlockType.commerceCard,kakaoJsonUiService.createCommerceCard(displayType,
-                description,
-                price,
-                discount,
-                discountedPrice,
-                discountRate,
-                currency,
-                thumbnailImgUrl,
-                thumbnailLink,
-                profileImgUrl,
-                profileNickname,
-                buttonList));
-        kakaoJsonUiServiceMap.put(BlockType.listCard,kakaoJsonUiService.createListCard(displayType,title,listCardItemList,buttonList));
-        kakaoJsonUiServiceMap.put(BlockType.simpleImage,kakaoJsonUiService.createSimpleImage("123",thumbnailImgUrl));
-
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         JSONObject createBlock = kakaoJsonUiServiceMap.get(blockType);
         return createBlock;
     }
@@ -191,22 +194,50 @@ public class BlockServiceImpl implements BlockService {
     }
 
     @Override
-    public JSONObject createAddAddressBlock(BlockDto blockDto, String kakaoUserkey) throws Exception {
+    public JSONObject createAddAddressBlock(String kakaoUserkey) throws Exception {
         KakaoResponseDto kakaoResponse = new KakaoResponseDto();
-        List<ButtonDto> buttons = new ArrayList<>();
-        ButtonDto addressButton = new ButtonDto(ButtonType.webLink,"배송지입력하기",hostUrl+"/kakaochat/v1/address?u="+kakaoUserkey);
-        buttons.add(addressButton);
 
-        BlockDto 배송지입력 = blockDto.basicCard(
-                blockDto.getBlockType(),
-                blockDto.getDisplayType(),
-                "배송지등록",
-                "배송지를 입력해 주세요.",
-                "https://www.pointman.shop/image/Ryan1.jpg",
+        List<Address> memberAddressList = addressRepository.findByMemberAddressAll(kakaoUserkey);
+        if(memberAddressList.isEmpty()) throw new NullPointerException("배송지가 없습니다");
+        List basicCards = new ArrayList<>();
+        memberAddressList.stream().forEach(address -> {
+            BlockDto 최근배송지 = new BlockDto();
+            List<ButtonDto> buttons = new ArrayList<>();
+            ButtonDto selectAddressButton = new ButtonDto(ButtonType.webLink,"선택하기",hostUrl+"/kakaochat/v1/address?u="+kakaoUserkey);
+            buttons.add(selectAddressButton);
+            String sumAddress = "["+address.getPostCode()+"] "+address.getRoadAddress()+" "+address.getExtraAddress();
+            최근배송지 = 최근배송지.basicCard(
+                    BlockType.basicCard,
+                    DisplayType.carousel,
+                    "최근배송지",
+                    "받으시는 분: "+address.getName()+"\n"+
+                            "연락처: "+address.getPhone()+"\n"+
+                            "주소: "+sumAddress+"\n"+
+                            "상세주소: "+address.getDetailAddress()+"\n"
+                    ,
+                    "",
+                    buttons
+            );
+            JSONObject addAddress = createBlock(최근배송지);
+            basicCards.add(addAddress);
+        });
+        BlockDto 배송지입력 = new BlockDto();
+        List<ButtonDto> buttons = new ArrayList<>();
+        ButtonDto addressButton = new ButtonDto(ButtonType.webLink,"배송지등록하기",hostUrl+"/kakaochat/v1/address?u="+kakaoUserkey);
+        buttons.add(addressButton);
+        배송지입력 = 배송지입력.basicCard(
+                BlockType.basicCard,
+                DisplayType.carousel,
+                "",
+                "",
+                "https://www.pointman.shop/image/delivery.png",
                 buttons
         );
         JSONObject addAddress = createBlock(배송지입력);
-        kakaoResponse.addContent(addAddress);
+        basicCards.add(addAddress);
+
+        JSONObject carousel = kakaoJsonUiService.createCarousel(CarouselType.basicCard, basicCards);
+        kakaoResponse.addContent(carousel);
         return kakaoResponse.createKakaoResponse();
     }
 
@@ -290,7 +321,7 @@ public class BlockServiceImpl implements BlockService {
             case 수량선택:
                 return createItemQuantityBlock(findBlockDto);
             case 배송지입력:
-                return createAddAddressBlock(findBlockDto, kakaoUserkey);
+                return createAddAddressBlock(kakaoUserkey);
             case 주문서:
                 return createEstimateBlock(findBlockDto,kakaoUserkey);
             case 주문상세정보:

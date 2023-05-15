@@ -5,7 +5,7 @@ import site.pointman.chatbot.domain.block.BlockServiceType;
 import site.pointman.chatbot.dto.block.BlockDto;
 
 public interface BlockService {
-    JSONObject createBlock(BlockDto blockDto) throws Exception;
+    JSONObject createBlock(BlockDto blockDto);
     JSONObject chatBotController(String kakaoUserkey, BlockServiceType blockService, JSONObject buttonParams) throws Exception;
 
     JSONObject createJoinBlock(BlockDto blockDto, String kakaoUserkey) throws Exception;
@@ -14,7 +14,7 @@ public interface BlockService {
     JSONObject createItemOptionBlock(BlockDto blockDto, String kakaoUserkey, Long itemCode) throws Exception;
 
     JSONObject createItemQuantityBlock(BlockDto blockDto) throws Exception;
-    JSONObject createAddAddressBlock(BlockDto blockDto, String kakaoUserkey) throws Exception;
+    JSONObject createAddAddressBlock(String kakaoUserkey) throws Exception;
 
     JSONObject createEstimateBlock(BlockDto blockDto, String kakaoUserkey) throws Exception;
 }

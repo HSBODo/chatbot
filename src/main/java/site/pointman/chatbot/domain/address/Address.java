@@ -20,8 +20,9 @@ public class Address extends BaseEntity {
 
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
-    private Long id ;
     @Id
+    private Long id ;
+
     @Column(name = "kakao_userkey",nullable = false)
     private String kakaoUserkey ;
     @Column(nullable = false)
