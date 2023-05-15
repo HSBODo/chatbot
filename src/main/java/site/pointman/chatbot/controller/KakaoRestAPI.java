@@ -47,7 +47,6 @@ public class KakaoRestAPI {
         this.blockService = blockService;
         this.addressRepository = addressRepository;
     }
-
     @Value("${kakao.channel.url}")
     private String kakaoChannelUrl;
     private JSONParser jsonParser = new JSONParser();
@@ -63,39 +62,31 @@ public class KakaoRestAPI {
             String kakaoUserkey = request.getKakaoUserkey(); //사용자 유저키
             JSONObject buttonParams = request.getButtonParams(); //버튼 파라미터
             JSONObject params = request.getParams(); //블럭 파라미터
-            Long blockId = request.getBlockId(); //블럭Id
             BlockServiceType service = request.getBlockService(); //블럭 서비스
 
             log.info("Request:: uttr ={}, userkey = {} buttonParams={} params={}",uttr,kakaoUserkey,buttonParams,params);
 
-            BlockDto blockDto = BlockDto.builder()
-                    .id(blockId)
-                    .service(service)
-                    .build();
 
-            if(!memberService.isKakaoMember(kakaoUserkey)) blockDto.setService(BlockServiceType.회원가입);
-            if(request.getBlockService()==null) {
+            if(!memberService.isKakaoMember(kakaoUserkey)) service=BlockServiceType.회원가입;
+            if(service==null) {
                 Map<String, BlockServiceType> uttrToBlockService = new HashMap<>();
                 uttrToBlockService.put("배송지등록완료", BlockServiceType.주문서);
                 BlockServiceType blockServiceType = uttrToBlockService.get(uttr);
-                blockDto.setService(blockServiceType);
+                service=blockServiceType;
             }
-
             log.info("service={}",service);
-            if(blockDto.getService()==null) return null; //<== 버튼 파라미터 서비스가 존재하지 않고 발화 서비스가 존재하지않으면 응답 없음
+            if(service==null) return null; //<== 버튼 파라미터 서비스가 존재하지 않고 발화 서비스가 존재하지않으면 응답 없음
+            memberService.saveAttribute(buttonParams,kakaoUserkey); //<==선택한 버튼 파라미터 저장
 
-            if(request.getBlockService() != null) memberService.saveAttribute(buttonParams,kakaoUserkey); //<==선택한 버튼 파라미터 저장
-
-             response = blockService.findByService(kakaoUserkey, blockDto, buttonParams);
-
+            response = blockService.chatBotController(kakaoUserkey, service, buttonParams);
+            log.info("kakaoResponse = {}", response);
+            return response;
         }catch (Exception e){
             e.printStackTrace();
             KakaoResponseDto kakaoResponse = new KakaoResponseDto();
             kakaoResponse.addContent(kakaoJsonUiService.createSimpleText(e.getMessage()));
             return kakaoResponse.createKakaoResponse();
         }
-        log.info("kakaoResponse = {}", response);
-        return response;
     }
 
     @GetMapping(value = "address")
