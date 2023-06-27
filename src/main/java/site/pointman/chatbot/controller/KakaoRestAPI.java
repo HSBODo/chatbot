@@ -26,6 +26,7 @@ import site.pointman.chatbot.dto.member.MemberDto;
 import site.pointman.chatbot.repository.AddressRepository;
 import site.pointman.chatbot.service.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -50,6 +51,16 @@ public class KakaoRestAPI {
     @Value("${kakao.channel.url}")
     private String kakaoChannelUrl;
     private JSONParser jsonParser = new JSONParser();
+
+    @ResponseBody
+    @RequestMapping(value = "test" , headers = {"Accept=application/json; UTF-8"})
+    public JSONObject connectionTest(@RequestBody String request) throws Exception {
+
+            log.info("request::={}",request);
+            KakaoResponseDto kakaoResponse = new KakaoResponseDto();
+            return kakaoResponse.createKakaoResponse();
+
+    }
 
 
 

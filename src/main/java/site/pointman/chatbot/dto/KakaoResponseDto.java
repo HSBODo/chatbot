@@ -36,6 +36,28 @@ public class KakaoResponseDto {
                 "        \"outputs\":"+outputs+ ",\n"+
                 "        \"quickReplies\":"+buttons+ "\n"+
                 "    }\n" +
+                ",\"contexts\": [\n" +
+                "        {\n" +
+                "            \"name\": \"member\",\n" +
+                "            \"lifespan\": 5,\n" +
+                "            \"ttl\": 600,\n" +
+                "            \"params\": {\n" +
+                "                \"blockId\": {\n" +
+                "                    \"value\": \"6498e5f55a9dc36fa608b22d\",\n" +
+                "                    \"resolvedValue\": \"6498e5f55a9dc36fa608b22d\"\n" +
+                "                },\n" +
+                "                \"preBlockId\": {\n" +
+                "                    \"value\": \"6498e5f55a9dc36fa608b22d\",\n" +
+                "                    \"resolvedValue\": \"6498e5f55a9dc36fa608b22d\"\n" +
+                "                },\n" +
+                "                \"step\": {\n" +
+                "                    \"value\": \"1123\",\n" +
+                "                    \"resolvedValue\": \"1123\"\n" +
+                "                },\n" +
+                "            }\n" +
+                "        }\n" +
+                "    ]"+
+                ""+
                 "}";
 
         JSONObject resultJsonObj = (JSONObject) jsonParser.parse(resultJson);

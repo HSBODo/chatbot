@@ -92,7 +92,7 @@ public class BlockServiceImpl implements BlockService {
                     profileNickname,
                     buttonList));
             kakaoJsonUiServiceMap.put(BlockType.listCard,kakaoJsonUiService.createListCard(displayType,title,listCardItemList,buttonList));
-            kakaoJsonUiServiceMap.put(BlockType.simpleImage,kakaoJsonUiService.createSimpleImage("123",thumbnailImgUrl));
+            kakaoJsonUiServiceMap.put(BlockType.simpleImage,kakaoJsonUiService.createSimpleImage("",thumbnailImgUrl));
 
         }catch (Exception e){
             e.printStackTrace();

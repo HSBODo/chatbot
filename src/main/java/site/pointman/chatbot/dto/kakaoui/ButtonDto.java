@@ -25,6 +25,7 @@ public class ButtonDto {
     private ButtonType action;
     private String label;
     private String webLinkUrl;
+    private String blockId;
     private String messageText;
     private Map<String,String> extra;
 
@@ -34,7 +35,20 @@ public class ButtonDto {
         this.label = label;
         this.webLinkUrl = webLinkUrl;
     }
+    public ButtonDto createButtonBlock(String label,String blockId,Map<String,String> params){
+        this.action = ButtonType.block;
+        this.label = label;
+        this.blockId= blockId;
+        this.extra = params;
+        return this;
+    }
+    public ButtonDto createButtonBlock(String label,String blockId){
+        this.action = ButtonType.block;
+        this.label = label;
+        this.blockId= blockId;
 
+        return this;
+    }
     public ButtonDto(ButtonType action, String label, Map<String,String> extra) {
         this.action = action;
         this.label = label;
