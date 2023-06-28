@@ -23,6 +23,13 @@ public class RequestDto {
     private String step;
     private String param;
 
+    private String image;
+
+    @JsonProperty("value")
+    private void value(Map<String,Object> value) {
+        this.image = (String) value.get("resolved");
+    }
+
 
 
     @SuppressWarnings("unchecked")
