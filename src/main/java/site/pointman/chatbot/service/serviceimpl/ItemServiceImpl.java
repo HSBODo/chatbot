@@ -48,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
         KakaoResponseDto resDto = new KakaoResponseDto();
         ButtonDto quickButton1 = new ButtonDto();
         ButtonDto quickButton2 = new ButtonDto();
-        JSONObject simpleText = kakaoJsonUiService.createSimpleText("상품명을 " + uttr + "으/로 등록하시려면 다음으로 버튼을 눌러 주세요");
+        JSONObject simpleText = kakaoJsonUiService.createSimpleText("상품명을 [" + uttr + "] 으/로 등록하시려면 다음으로 버튼을 눌러 주세요");
         resDto.addContent(simpleText);
         ButtonDto 다음으로 = quickButton1.createButtonBlock("다음으로", "649bece6200f9a46fce3df65");
         ButtonDto 처음으로 = quickButton2.createButtonBlock("처음으로", "64993967368ce63259b3faca");

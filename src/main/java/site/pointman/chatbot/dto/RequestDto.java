@@ -3,7 +3,10 @@ package site.pointman.chatbot.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import site.pointman.chatbot.vo.ContextsVo;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,6 +27,7 @@ public class RequestDto {
     private String param;
 
     private String image;
+    private ContextsVo contexts;
 
     @JsonProperty("value")
     private void value(Map<String,Object> value) {
@@ -54,8 +58,8 @@ public class RequestDto {
         Map<String,String> params = (Map<String,String>)action.get("params");
         this.step = params.get("step");
 
-        Map<String,String> clientExtra = (Map<String,String>)action.get("clientExtra");
-        this.param = clientExtra.get("opt1");
+//        Map<String,String> clientExtra = (Map<String,String>)action.get("clientExtra");
+//        this.param = clientExtra.get("opt1");
 
     }
     @SuppressWarnings("unchecked")
@@ -70,6 +74,11 @@ public class RequestDto {
         this.userKey = properties.get("plusfriendUserKey");
 
 
+    }
+    @SuppressWarnings("unchecked")
+    @JsonProperty("contexts")
+    private void contexts(ArrayList<ContextsVo> contexts) {
+        this.contexts = contexts.get(0);
     }
 
 }
