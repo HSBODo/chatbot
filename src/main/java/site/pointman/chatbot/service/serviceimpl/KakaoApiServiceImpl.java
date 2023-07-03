@@ -100,7 +100,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     }
     @Override
     public JSONObject createLocationNotice(String kakaoUserkey) throws ParseException {
-        ButtonDto locationNoticeButton = new ButtonDto(ButtonType.webLink,"위치정보 동의하기","https://www.pointman.shop/kakaochat/v1/location-notice?u="+kakaoUserkey);
+        ButtonDto locationNoticeButton = new ButtonDto(ButtonAction.webLink,"위치정보 동의하기","https://www.pointman.shop/kakaochat/v1/location-notice?u="+kakaoUserkey);
         List<ButtonDto> buttons = new ArrayList<>();
         buttons.add(locationNoticeButton);
         return kakaoJsonUiService.createBasicCard(
@@ -116,9 +116,9 @@ public class KakaoApiServiceImpl implements KakaoApiService {
     @Override
     public JSONObject createDeveloperInfo() throws ParseException {
 
-        ButtonDto blogButton = new ButtonDto(ButtonType.webLink,"블로그","https://pointman.tistory.com/");
-        ButtonDto gitHubButton = new ButtonDto(ButtonType.webLink,"GitHub","https://github.com/HSBODo");
-        ButtonDto portfolioButton = new ButtonDto(ButtonType.webLink,"포트폴리오","https://www.pointman.shop");
+        ButtonDto blogButton = new ButtonDto(ButtonAction.webLink,"블로그","https://pointman.tistory.com/");
+        ButtonDto gitHubButton = new ButtonDto(ButtonAction.webLink,"GitHub","https://github.com/HSBODo");
+        ButtonDto portfolioButton = new ButtonDto(ButtonAction.webLink,"포트폴리오","https://www.pointman.shop");
         List buttons = new ArrayList<ButtonDto>();
         buttons.add(blogButton);
         buttons.add(gitHubButton);
@@ -141,11 +141,11 @@ public class KakaoApiServiceImpl implements KakaoApiService {
         findItems.stream()
                 .forEach(item ->{
                     List<ButtonDto> buttons = new ArrayList<>();
-                    ButtonDto detailButton = new ButtonDto(ButtonType.webLink,"상세정보",item.getThumbnailLink());
+                    ButtonDto detailButton = new ButtonDto(ButtonAction.webLink,"상세정보",item.getThumbnailLink());
                     //"https://www.pointman.shop/kakaochat/v1/kakaopay-ready?itemcode="+item.getItemCode()+"&kakaouserkey="+kakaoUserkey
                     ButtonParamsDto buttonParamsDto = new ButtonParamsDto("5", BlockServiceType.옵션);
                     buttonParamsDto.addButtonParam("itemCode", String.valueOf(item.getItemCode()));
-                    ButtonDto buyButton = new ButtonDto(ButtonType.block,"구매하기", buttonParamsDto.createButtonParams());
+                    ButtonDto buyButton = new ButtonDto(ButtonAction.block,"구매하기", buttonParamsDto.createButtonParams());
                     buttons.add(detailButton);
                     buttons.add(buyButton);
                     try {
@@ -189,13 +189,13 @@ public class KakaoApiServiceImpl implements KakaoApiService {
                         params.addButtonParam("itemCode", String.valueOf(item.getItemCode()));
                         params.addButtonParam("orderId", String.valueOf(order.getOrder_id()));
 
-                        ButtonDto orderDetailButton = new ButtonDto(ButtonType.block,"결제 상세보기",params.createButtonParams());
+                        ButtonDto orderDetailButton = new ButtonDto(ButtonAction.block,"결제 상세보기",params.createButtonParams());
 
                         List<ButtonDto> buttons = new ArrayList<>();
                         buttons.add(orderDetailButton);
 
                         if(order.getStatus().equals(OrderStatus.결제승인)){ //<== 결제승인 완료된 주문만 취소 가능
-                            ButtonDto payCancelButton = new ButtonDto(ButtonType.webLink,"결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
+                            ButtonDto payCancelButton = new ButtonDto(ButtonAction.webLink,"결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
                             buttons.add(payCancelButton);
                         }
 
@@ -230,7 +230,7 @@ public class KakaoApiServiceImpl implements KakaoApiService {
 
         List<ButtonDto> buttons = new ArrayList<>();
         if(order.getStatus().equals(OrderStatus.결제승인)){ //<==결제 승인된 주문만 취소 가능
-            ButtonDto payCancelButton = new ButtonDto(ButtonType.webLink,"결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
+            ButtonDto payCancelButton = new ButtonDto(ButtonAction.webLink,"결제 취소","https://www.pointman.shop/kakaochat/v1/"+order.getOrder_id()+"/kakaopay-cancel");
             buttons.add(payCancelButton);
         }
 

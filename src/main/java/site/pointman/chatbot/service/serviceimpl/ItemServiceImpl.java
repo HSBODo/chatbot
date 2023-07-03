@@ -4,6 +4,7 @@ import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.dto.KakaoResponseDto;
 import site.pointman.chatbot.dto.RequestDto;
+import site.pointman.chatbot.dto.kakaoui.ButtonAction;
 import site.pointman.chatbot.dto.kakaoui.ButtonDto;
 import site.pointman.chatbot.dto.kakaoui.DisplayType;
 import site.pointman.chatbot.dto.member.MemberDto;
@@ -12,6 +13,9 @@ import site.pointman.chatbot.service.KakaoJsonUiService;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static site.pointman.chatbot.utill.ConstantBlockId.*;
+
 @Service
 public class ItemServiceImpl implements ItemService {
 
@@ -36,8 +40,8 @@ public class ItemServiceImpl implements ItemService {
                 "https://newsimg.sedaily.com/2021/03/09/22JQPRY173_3.jpg",
                 null);
         resDto.addContent(basicCard);
-        ButtonDto 상품등록하기 = quickButton.createButtonBlock("상품등록하기", "649be953acaa9c34a7564b0b");
-        resDto.addQuickButton(상품등록하기);
+        ButtonDto 상품등록하기 = quickButton.createQuickButton("상품등록하기", "649be953acaa9c34a7564b0b");
+        resDto.addQuickButton(ButtonAction.block,"상품등록하기",BLK_ITEM_ADD_NAME);
         return resDto.createKakaoResponse();
     }
 
@@ -46,14 +50,11 @@ public class ItemServiceImpl implements ItemService {
     public JSONObject createItemName(RequestDto requestDto) throws Exception {
         String uttr = requestDto.getUtterance();
         KakaoResponseDto resDto = new KakaoResponseDto();
-        ButtonDto quickButton1 = new ButtonDto();
-        ButtonDto quickButton2 = new ButtonDto();
+
         JSONObject simpleText = kakaoJsonUiService.createSimpleText("상품명을 [" + uttr + "] 으/로 등록하시려면 다음으로 버튼을 눌러 주세요");
         resDto.addContent(simpleText);
-        ButtonDto 다음으로 = quickButton1.createButtonBlock("다음으로", "649bece6200f9a46fce3df65");
-        ButtonDto 처음으로 = quickButton2.createButtonBlock("처음으로", "64993967368ce63259b3faca");
-        resDto.addQuickButton(다음으로);
-        resDto.addQuickButton(처음으로);
+        resDto.addQuickButton(ButtonAction.block,"다음으로",BLK_ITEM_ADD_PRICE);
+        resDto.addQuickButton(ButtonAction.block,"처음으로",BLK_MAIN);
 
 
         return resDto.createKakaoResponse();

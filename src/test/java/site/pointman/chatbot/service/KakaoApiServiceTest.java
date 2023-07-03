@@ -28,7 +28,7 @@ class KakaoApiServiceTest {
     }
 
     @Test
-    void createLocationNotice() throws ParseException {
+    void createLocationNotice() throws Exception {
         KakaoResponseDto kakaoResponseDto = new KakaoResponseDto();
         String kakaoUserkey = "21321312";
         kakaoResponseDto.addContent(kakaoApiService.createLocationNotice(kakaoUserkey));

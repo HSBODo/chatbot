@@ -13,6 +13,7 @@ import site.pointman.chatbot.domain.member.KakaoMemberLocation;
 import site.pointman.chatbot.domain.order.OrderStatus;
 import site.pointman.chatbot.domain.order.PayMethod;
 import site.pointman.chatbot.dto.item.ItemDto;
+import site.pointman.chatbot.dto.member.MemberDto;
 import site.pointman.chatbot.dto.order.OrderDto;
 import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.dto.order.KakaoPayReadyDto;
@@ -36,6 +37,7 @@ import java.time.format.DateTimeFormatter;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -345,6 +347,27 @@ public class OpenApiServiceImpl implements OpenApiService {
             e.printStackTrace();
             throw new IllegalAccessException("결제취소 실패하였습니다.");
         }
+    }
+
+    @Override
+    public MemberDto getMemberProfile(String otp, String restApiKey) throws Exception {
+
+        String apiURL = otp;
+        StringBuilder urlBuilder = new StringBuilder(apiURL); /*URL*/
+        urlBuilder.append("?" + URLEncoder.encode("rest_api_key","UTF-8") + "="+restApiKey);
+        log.info("urlBuilder={}",urlBuilder);
+        Map<String, String> requestHeaders = new HashMap<>();
+        requestHeaders.put("Content-type", "application/json");
+        String responseBody = get(String.valueOf(urlBuilder),requestHeaders);
+        log.info("res={}",responseBody);
+        JSONObject readyResponseJson = new JSONObject(responseBody);
+        String name = readyResponseJson.getString("nickname");
+        String phone = readyResponseJson.getString("phone_number");
+        MemberDto member = MemberDto.builder()
+                .name(name)
+                .phone(phone)
+                .build();
+        return member;
     }
 
     public  Long createOrderId(){

@@ -95,8 +95,8 @@ public class ItemController {
         Map<String,String> data = new HashMap<>();
         data.put("","");
         log.info("value={}",value);
-        ContextsVo contexts = reqDto.getContexts();
-        log.info("contexts={}",contexts.getName());
+        //ContextsVo contexts = reqDto.getContexts();
+        //log.info("contexts={}",contexts.getName());
 
         ValidateApiResponse response = new ValidateApiResponse(ValidationApiStatusType.SUCCESS,value,data);
         return response.createJsonResponse();

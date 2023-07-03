@@ -7,7 +7,7 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.dto.KakaoResponseDto;
 import site.pointman.chatbot.dto.RequestDto;
 import site.pointman.chatbot.dto.kakaoui.ButtonDto;
-import site.pointman.chatbot.dto.kakaoui.ButtonType;
+import site.pointman.chatbot.dto.kakaoui.ButtonAction;
 import site.pointman.chatbot.dto.kakaoui.DisplayType;
 import site.pointman.chatbot.dto.member.MemberDto;
 import site.pointman.chatbot.repository.MemberRepository;
@@ -17,6 +17,8 @@ import site.pointman.chatbot.service.KakaoJsonUiService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static site.pointman.chatbot.utill.ConstantBlockId.*;
 
 @Service
 @Slf4j
@@ -36,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
         ButtonDto quickButton = new ButtonDto();
         List<ButtonDto> buttons = new ArrayList<>();
 
-        ButtonDto selectAddressButton = new ButtonDto(ButtonType.webLink,"인증하기","https://newsimg.sedaily.com/2021/03/09/22JQPRY173_3.jpg");
+        ButtonDto selectAddressButton = new ButtonDto(ButtonAction.webLink,"인증하기","https://newsimg.sedaily.com/2021/03/09/22JQPRY173_3.jpg");
         buttons.add(selectAddressButton);
         JSONObject basicCard = kakaoJsonUiService.createBasicCard(
                 DisplayType.basic,
@@ -45,7 +47,8 @@ public class AuthServiceImpl implements AuthService {
                 "https://newsimg.sedaily.com/2021/03/09/22JQPRY173_3.jpg",
                 buttons);
         resDto.addContent(basicCard);
-        resDto.addQuickButton(quickButton.createButtonBlock("인증완료","649911032e776341af591d70"));
+
+        resDto.addQuickButton(ButtonAction.block,"인증완료",BLK_AUTH_INFO);
 
         return resDto.createKakaoResponse();
     }
@@ -53,12 +56,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public JSONObject createAuthInfo(RequestDto reqDto) throws Exception {
         KakaoResponseDto resDto = new KakaoResponseDto();
-        ButtonDto quickButton = new ButtonDto();
         List<ButtonDto> buttons = new ArrayList<>();
 
-        ButtonDto button = new ButtonDto();
-        ButtonDto buttonBlock = button.createButtonBlock("인증철회","64991a325a9dc36fa608b667");
-        buttons.add(buttonBlock);
+        ButtonDto button =  new ButtonDto(ButtonAction.block,"인증철회",BLK_AUTH_CANCEL);
+        buttons.add(button);
 
         MemberDto memberDto = MemberDto.builder()
                 .name("홍길동")
@@ -72,9 +73,9 @@ public class AuthServiceImpl implements AuthService {
                         "연락처: " + memberDto.getPhone() + "\n",
                 "https://newsimg.sedaily.com/2021/03/09/22JQPRY173_3.jpg",
                 buttons);
+
         resDto.addContent(basicCard);
-        ButtonDto 처음으로 = quickButton.createButtonBlock("처음으로", "");
-        resDto.addQuickButton(처음으로);
+        resDto.addQuickButton(ButtonAction.block,"처음으로",BLK_MAIN);
 
         return resDto.createKakaoResponse();
     }
@@ -86,9 +87,7 @@ public class AuthServiceImpl implements AuthService {
 
         JSONObject simpleText = kakaoJsonUiService.createSimpleText("인증철회가 왼료 되었습니다,");
         resDto.addContent(simpleText);
-
-        ButtonDto 처음으로 = quickButton.createButtonBlock("처음으로", "");
-        resDto.addQuickButton(처음으로);
+        resDto.addQuickButton(ButtonAction.block,"처음으로",BLK_MAIN);
         return resDto.createKakaoResponse();
     }
 
@@ -105,6 +104,17 @@ public class AuthServiceImpl implements AuthService {
             return true;
         }
         return true;
+    }
+
+    @Override
+    public JSONObject createProfileSuccessMessage(String msg) throws Exception {
+        KakaoResponseDto resDto = new KakaoResponseDto();
+        ButtonDto quickButton = new ButtonDto();
+
+        JSONObject simpleText = kakaoJsonUiService.createSimpleText(msg);
+        resDto.addContent(simpleText);
+        resDto.addQuickButton(ButtonAction.block,"다음으로","649e512b90088a2cf5c391e4");
+        return resDto.createKakaoResponse();
     }
 
     @Override

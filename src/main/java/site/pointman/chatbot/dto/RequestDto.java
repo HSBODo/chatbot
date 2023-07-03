@@ -1,5 +1,6 @@
 package site.pointman.chatbot.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,10 +25,10 @@ public class RequestDto {
     private String lang;
     private String timezone;
     private String step;
-    private String param;
+    private String profile;
 
     private String image;
-    private ContextsVo contexts;
+    //private ContextsVo contexts;
 
     @JsonProperty("value")
     private void value(Map<String,Object> value) {
@@ -56,6 +57,7 @@ public class RequestDto {
         this.skillName = (String)action.get("name");
 
         Map<String,String> params = (Map<String,String>)action.get("params");
+        this.profile = params.get("profile");
         this.step = params.get("step");
 
 //        Map<String,String> clientExtra = (Map<String,String>)action.get("clientExtra");
@@ -75,10 +77,15 @@ public class RequestDto {
 
 
     }
-    @SuppressWarnings("unchecked")
-    @JsonProperty("contexts")
-    private void contexts(ArrayList<ContextsVo> contexts) {
-        this.contexts = contexts.get(0);
-    }
+//    @SuppressWarnings("unchecked")
+//    @JsonProperty("contexts")
+//    private void contexts(ArrayList<ContextsVo> contexts) {
+//        if(contexts.get(0)==null){
+//            this.contexts = null;
+//        }else {
+//            this.contexts = contexts.get(0);
+//        }
+//
+//    }
 
 }

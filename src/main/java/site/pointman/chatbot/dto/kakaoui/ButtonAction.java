@@ -1,5 +1,5 @@
 package site.pointman.chatbot.dto.kakaoui;
 
-public enum ButtonType {
+public enum ButtonAction {
     webLink,message,block,phone
 }

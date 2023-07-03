@@ -105,7 +105,7 @@ public class BlockServiceImpl implements BlockService {
     public JSONObject createJoinBlock(BlockDto blockDto, String kakaoUserkey) throws Exception {
         KakaoResponseDto kakaoResponse = new KakaoResponseDto();
         List<ButtonDto> buttons = new ArrayList<>();
-        ButtonDto joinButton = new ButtonDto(ButtonType.webLink,"회원가입하기",hostUrl+"/kakaochat/v1/kakaoJoinForm?u="+kakaoUserkey);
+        ButtonDto joinButton = new ButtonDto(ButtonAction.webLink,"회원가입하기",hostUrl+"/kakaochat/v1/kakaoJoinForm?u="+kakaoUserkey);
         buttons.add(joinButton);
         BlockDto 회원가입 = blockDto.basicCard(
                 blockDto.getBlockType(),
@@ -129,7 +129,7 @@ public class BlockServiceImpl implements BlockService {
         KakaoResponseDto kakaoResponse = new KakaoResponseDto();
         List<ButtonDto> buttons = new ArrayList<>();
 
-        ButtonDto withdrawalButton = new ButtonDto(ButtonType.webLink,"회원탈퇴",hostUrl+"/kakaochat/v1/kakaoMemeberDeleteForm?u="+kakaoUserkey);
+        ButtonDto withdrawalButton = new ButtonDto(ButtonAction.webLink,"회원탈퇴",hostUrl+"/kakaochat/v1/kakaoMemeberDeleteForm?u="+kakaoUserkey);
         buttons.add(withdrawalButton);
         BlockDto 회원정보 = blockDto.basicCard(
                 blockDto.getBlockType(),
@@ -165,8 +165,8 @@ public class BlockServiceImpl implements BlockService {
             ButtonParamsDto params = new ButtonParamsDto("10",BlockServiceType.수량선택);  //<== 다음 블럭
             params.addButtonParam("itemCode", String.valueOf(itemOption.getItemCode()));
             params.addButtonParam("optionId", String.valueOf(itemOption.getId()));
-            ButtonDto quickButton = new ButtonDto(ButtonType.block,itemOption.getOptionName(),params.createButtonParams());
-            kakaoResponse.addQuickButton(quickButton);
+            ButtonDto quickButton = new ButtonDto(ButtonAction.block,itemOption.getOptionName(),params.createButtonParams());
+            kakaoResponse.addQuickButton(ButtonAction.block,itemOption.getOptionName(),params.createButtonParams());
         });
 
         return kakaoResponse.createKakaoResponse();
@@ -186,8 +186,8 @@ public class BlockServiceImpl implements BlockService {
         for(int q=1; q<=10;q++){
             ButtonParamsDto params = new ButtonParamsDto("9",BlockServiceType.배송지입력); //<== 다음 블럭
             params.addButtonParam("quantity", String.valueOf(q));
-            ButtonDto quickButton = new ButtonDto(ButtonType.block,q+"개",params.createButtonParams());
-            kakaoResponse.addQuickButton(quickButton);
+
+            kakaoResponse.addQuickButton(ButtonAction.block,q+"개",params.createButtonParams());
         }
 
         return kakaoResponse.createKakaoResponse();
@@ -203,7 +203,7 @@ public class BlockServiceImpl implements BlockService {
         memberAddressList.stream().forEach(address -> {
             BlockDto 최근배송지 = new BlockDto();
             List<ButtonDto> buttons = new ArrayList<>();
-            ButtonDto selectAddressButton = new ButtonDto(ButtonType.webLink,"선택하기",hostUrl+"/kakaochat/v1/address?u="+kakaoUserkey);
+            ButtonDto selectAddressButton = new ButtonDto(ButtonAction.webLink,"선택하기",hostUrl+"/kakaochat/v1/address?u="+kakaoUserkey);
             buttons.add(selectAddressButton);
             String sumAddress = "["+address.getPostCode()+"] "+address.getRoadAddress()+" "+address.getExtraAddress();
             최근배송지 = 최근배송지.basicCard(
@@ -223,7 +223,7 @@ public class BlockServiceImpl implements BlockService {
         });
         BlockDto 배송지입력 = new BlockDto();
         List<ButtonDto> buttons = new ArrayList<>();
-        ButtonDto addressButton = new ButtonDto(ButtonType.webLink,"배송지등록하기",hostUrl+"/kakaochat/v1/address?u="+kakaoUserkey);
+        ButtonDto addressButton = new ButtonDto(ButtonAction.webLink,"배송지등록하기",hostUrl+"/kakaochat/v1/address?u="+kakaoUserkey);
         buttons.add(addressButton);
         배송지입력 = 배송지입력.basicCard(
                 BlockType.basicCard,
@@ -264,7 +264,7 @@ public class BlockServiceImpl implements BlockService {
 
         int totalPrice = orderService.calculateTotalPrice(itemDto.getItemCode(), itemOptionDto.getId(), memberAttributeDto.getQuantity());
 
-        ButtonDto buyButton = new ButtonDto(ButtonType.webLink,"결제하기",hostUrl+"/kakaochat/v1/kakaopay-ready?" +
+        ButtonDto buyButton = new ButtonDto(ButtonAction.webLink,"결제하기",hostUrl+"/kakaochat/v1/kakaopay-ready?" +
                 "itemcode="+itemDto.getItemCode()+
                 "&kakaouserkey="+kakaoUserkey+
                 "&optionId="+itemOptionDto.getId()+

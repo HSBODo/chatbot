@@ -25,8 +25,8 @@ class KakaoJsonUiServiceTest {
     @Test
     void createBasicCard() throws ParseException {
         List<ButtonDto> buttonDtos = new ArrayList();
-        ButtonDto buttonDto = new ButtonDto(ButtonType.webLink,"laber","www.asdasd.com");
-        ButtonDto buttonDto2 = new ButtonDto(ButtonType.webLink,"label1","www.asdasd.com1");
+        ButtonDto buttonDto = new ButtonDto(ButtonAction.webLink,"laber","www.asdasd.com");
+        ButtonDto buttonDto2 = new ButtonDto(ButtonAction.webLink,"label1","www.asdasd.com1");
         buttonDtos.add(buttonDto);
         buttonDtos.add(buttonDto2);
         JSONObject result = kakaoJsonUiService.createBasicCard(DisplayType.basic,"테스트 제목", "테스트 메세지", "썸네일 url", buttonDtos);
@@ -36,7 +36,7 @@ class KakaoJsonUiServiceTest {
     @Test
     void createCommerceCard() throws ParseException {
         List<ButtonDto> buttonDtos = new ArrayList<>();
-        ButtonDto buttonDto = new ButtonDto(ButtonType.webLink,"label","www.asdasd.com");
+        ButtonDto buttonDto = new ButtonDto(ButtonAction.webLink,"label","www.asdasd.com");
         buttonDtos.add(buttonDto);
         JSONObject result = kakaoJsonUiService.createCommerceCard(
                 DisplayType.basic,
@@ -62,7 +62,7 @@ class KakaoJsonUiServiceTest {
         ListCardItemDto listCardItemDto = new ListCardItemDto("title","desc","img",link);
         listCardItemDtos.add(listCardItemDto);
         List<ButtonDto> buttonDtos = new ArrayList<>();
-        ButtonDto buttonDto = new ButtonDto(ButtonType.webLink,"la","we");
+        ButtonDto buttonDto = new ButtonDto(ButtonAction.webLink,"la","we");
         buttonDtos.add(buttonDto);
         JSONObject recommendItems = kakaoJsonUiService.createListCard(DisplayType.basic,"123123", listCardItemDtos, buttonDtos);
         KakaoResponseDto kakaoResponseDto = new KakaoResponseDto();

@@ -2,12 +2,11 @@ package site.pointman.chatbot.dto.kakaoui;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.Map;
 
-@Getter @Setter @NoArgsConstructor
-public class ButtonDto {
+@Getter  @NoArgsConstructor
+public class ButtonVo {
     /**
      * 필드명	        타입	                필수 여부	                설명	                                                                        제한
      * label	        string	                O	                    버튼에 적히는 문구입니다.	                                                    버튼 14자(가로배열 2개 8자)
@@ -30,28 +29,26 @@ public class ButtonDto {
     private Map<String,String> extra;
 
 
-    public ButtonDto(ButtonAction action, String label, String webLinkUrl) {
+
+
+    public ButtonVo(ButtonAction action, String label, String blockId, Map<String,String> params) {
         this.action = action;
-        this.label = label;
-        this.webLinkUrl = webLinkUrl;
-    }
-    public ButtonDto(ButtonAction action, String label, Map<String,String> extra) {
-        this.action = action;
-        this.label = label;
-        this.extra = extra;
-    }
-    public ButtonDto createQuickButton(String label,String blockId,Map<String,String> params){
-        this.action = ButtonAction.block;
         this.label = label;
         this.blockId= blockId;
         this.extra = params;
-        return this;
     }
-    public ButtonDto createQuickButton(String label,String blockId){
-        this.action = ButtonAction.block;
+
+    public ButtonVo(ButtonAction action, String label, String blockId) {
+        this.action = action;
         this.label = label;
         this.blockId= blockId;
+    }
 
+
+    public ButtonVo createWebLinkButton(){
+        this.action = ButtonAction.webLink;
+        this.label = label;
+        this.webLinkUrl = webLinkUrl;
         return this;
     }
 

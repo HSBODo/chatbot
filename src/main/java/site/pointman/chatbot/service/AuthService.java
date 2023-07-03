@@ -9,6 +9,6 @@ public interface AuthService {
     JSONObject createAuthInfo(RequestDto reqDto) throws Exception;
     JSONObject createAuthCancel(RequestDto reqDto) throws Exception;
     boolean isAuthMember(String userKey);
-
+    JSONObject createProfileSuccessMessage(String msg) throws Exception;
     JSONObject createFailMessage(String msg) throws Exception;
 }
