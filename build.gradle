@@ -43,3 +43,7 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+//d- jar 파일이 2개가 생기며 Docker Image 가 생성되지 않을 수 있다.  (Boot 2.5v 이후)
+jar {
+	enabled = false
+}
