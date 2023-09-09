@@ -29,9 +29,9 @@ public class TestController {
 
     @ResponseBody
     @RequestMapping(value = "str" , headers = {"Accept=application/json; UTF-8"})
-    public RequestDto callAPI(@RequestBody String request) throws Exception {
+    public String str(@RequestBody String request) throws Exception {
         log.info("request::={}",request);
-        return null;
+        return request;
     }
 
 }
