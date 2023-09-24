@@ -14,5 +14,4 @@ public class RequestDto {
     private Bot bot;
     private Action action;
     private List<Context> contexts;
-
 }
