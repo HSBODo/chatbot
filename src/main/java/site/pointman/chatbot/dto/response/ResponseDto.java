@@ -11,18 +11,18 @@ import java.util.List;
 
 
 @Getter
-@JsonInclude()
 public class ResponseDto {
     private String version;
     private Template template;
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private Context context;
+    private Values context;
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private Data data;
 
     public ResponseDto() {
         this.version ="2.0";
         this.template = new Template();
+        this.context = new Values();
     }
     public void addQuickButton(QuickReplyButtons quickReplyButtons){
         this.template.setQuickReplies(quickReplyButtons.getQuickReplyButtons());
@@ -188,4 +188,8 @@ public class ResponseDto {
         this.template.getOutputs().add(component);
     }
 
+    public void addContext(Context context ){
+
+        this.context.addContext(context);
+    }
 }

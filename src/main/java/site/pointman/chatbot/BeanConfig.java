@@ -1,8 +1,9 @@
 package site.pointman.chatbot;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import site.pointman.chatbot.repository.*;
-import site.pointman.chatbot.repository.impl.*;
+import site.pointman.chatbot.dto.repository.*;
+import site.pointman.chatbot.dto.repository.impl.*;
+
 
 import javax.persistence.EntityManager;
 

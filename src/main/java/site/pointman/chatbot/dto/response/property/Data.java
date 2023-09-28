@@ -6,6 +6,5 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@JsonInclude()
 public class Data {
 }

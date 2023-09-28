@@ -7,7 +7,6 @@ import site.pointman.chatbot.dto.request.propery.*;
 import java.util.List;
 
 @Getter
-@JsonInclude()
 public class RequestDto {
     private Intent intent;
     private UserRequest userRequest;
