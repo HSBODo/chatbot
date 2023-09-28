@@ -23,6 +23,8 @@ import site.pointman.chatbot.dto.address.AddressDto;
 import site.pointman.chatbot.dto.block.BlockDto;
 import site.pointman.chatbot.dto.member.MemberLocationDto;
 import site.pointman.chatbot.dto.member.MemberDto;
+import site.pointman.chatbot.dto.request.RequestDto;
+import site.pointman.chatbot.dto.response.ResponseDto;
 import site.pointman.chatbot.repository.AddressRepository;
 import site.pointman.chatbot.service.*;
 
@@ -52,51 +54,18 @@ public class KakaoRestAPI {
     private String kakaoChannelUrl;
     private JSONParser jsonParser = new JSONParser();
 
-    @ResponseBody
-    @RequestMapping(value = "test" , headers = {"Accept=application/json; UTF-8"})
-    public JSONObject connectionTest(@RequestBody String request) throws Exception {
 
-            log.info("request::={}",request);
-            KakaoResponseDto kakaoResponse = new KakaoResponseDto();
-            return kakaoResponse.createKakaoResponse();
-
-    }
 
 
 
     @ResponseBody
     @RequestMapping(value = "chat" , headers = {"Accept=application/json; UTF-8"})
-    public JSONObject callAPI(@RequestBody KakaoRequestDto request) throws Exception {
-        JSONObject response;
+    public ResponseDto login(@RequestBody RequestDto request) throws Exception {
+        ResponseDto response = new ResponseDto();
         try {
-            String uttr = request.getUttr(); //사용자 발화
-            String kakaoUserkey = request.getKakaoUserkey(); //사용자 유저키
-            JSONObject buttonParams = request.getButtonParams(); //버튼 파라미터
-            JSONObject params = request.getParams(); //블럭 파라미터
-            BlockServiceType service = request.getBlockService(); //블럭 서비스
-
-            log.info("Request:: uttr ={}, userkey = {} buttonParams={} params={}",uttr,kakaoUserkey,buttonParams,params);
-
-
-            if(!memberService.isKakaoMember(kakaoUserkey)) service=BlockServiceType.회원가입;
-            if(service==null) {
-                Map<String, BlockServiceType> uttrToBlockService = new HashMap<>();
-                uttrToBlockService.put("배송지등록완료", BlockServiceType.주문서);
-                BlockServiceType blockServiceType = uttrToBlockService.get(uttr);
-                service=blockServiceType;
-            }
-            log.info("service={}",service);
-            if(service==null) return null; //<== 버튼 파라미터 서비스가 존재하지 않고 발화 서비스가 존재하지않으면 응답 없음
-            memberService.saveAttribute(buttonParams,kakaoUserkey); //<==선택한 버튼 파라미터 저장
-
-            response = blockService.chatBotController(kakaoUserkey, service, buttonParams);
-            log.info("kakaoResponse = {}", response);
             return response;
         }catch (Exception e){
-            e.printStackTrace();
-            KakaoResponseDto kakaoResponse = new KakaoResponseDto();
-            kakaoResponse.addContent(kakaoJsonUiService.createSimpleText(e.getMessage()));
-            return kakaoResponse.createKakaoResponse();
+            return response;
         }
     }
 
