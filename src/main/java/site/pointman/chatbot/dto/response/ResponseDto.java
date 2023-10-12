@@ -108,17 +108,14 @@ public class ResponseDto {
         }
         Thumbnail thumbnail = new Thumbnail(thumbnailImgUrl);
 
-        List<Thumbnail> thumbnails = new ArrayList<>();
-        thumbnails.add(thumbnail);
-
         commerceCard.setTitle(title);
         commerceCard.setDescription(description);
         commerceCard.setPrice(price);
         commerceCard.setDiscount(discount);
         commerceCard.setDiscountRate(discountRate);
-        commerceCard.setDicountedPrice(dicountedPrice);
-        commerceCard.setThumbnails(thumbnails);
-        commerceCard.setButtons(buttons.getButtons());
+        commerceCard.setDiscountedPrice(dicountedPrice);
+        commerceCard.setThumbnails(thumbnail);
+        commerceCard.setButtons(buttons);
 
         Component component = new Component(commerceCard);
         this.template.getOutputs().add(component);
@@ -148,16 +145,15 @@ public class ResponseDto {
             Profile profile = new Profile(profileNickname,profileImgUrl);
             commerceCard.setProfile(profile);
         }
-        Thumbnail thumbnail = new Thumbnail(thumbnailImgUrl);
-        List<Thumbnail> thumbnails = new ArrayList<>();
-        thumbnails.add(thumbnail);
 
+        Thumbnail thumbnail = new Thumbnail(thumbnailImgUrl);
+;
         commerceCard.setTitle(title);
         commerceCard.setDescription(description);
         commerceCard.setPrice(price);
         commerceCard.setDiscount(discount);
-        commerceCard.setThumbnails(thumbnails);
-        commerceCard.setButtons(buttons.getButtons());
+        commerceCard.setThumbnails(thumbnail);
+        commerceCard.setButtons(buttons);
 
         Component component = new Component(commerceCard);
         this.template.getOutputs().add(component);
@@ -189,7 +185,8 @@ public class ResponseDto {
     }
 
     public void addContext(Context context ){
-
         this.context.addContext(context);
     }
+
+
 }

@@ -3,10 +3,10 @@ package site.pointman.chatbot.utill;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-public class Utillity {
+
+public class StringUtils {
+
     public static String replaceAll (String text){
         text=text.replaceAll("<(/)?([a-zA-Z]*)(\\\\s[a-zA-Z]*=[^>]*)?(\\\\s)*(/)?>","");
         text=text.replaceAll("&gt;",">");
@@ -27,4 +27,5 @@ public class Utillity {
         String formatDate = date.substring(0, 10);
         return formatDate;
     }
+
 }

@@ -16,5 +16,4 @@ public class BasicCard {
     private Thumbnail thumbnail;
     private Profile profile;
     private List<Button> buttons;
-
 }
