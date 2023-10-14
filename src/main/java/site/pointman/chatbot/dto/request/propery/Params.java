@@ -6,7 +6,8 @@ import lombok.Getter;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Params {
-    private String ignoreMe;
-    private String joinName;
-    private String joinPhone;
+
+    private String enterName;
+    private String enterPhone;
+    private String enterAccount;
 }

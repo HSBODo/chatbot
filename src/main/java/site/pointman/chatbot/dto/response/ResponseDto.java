@@ -35,6 +35,18 @@ public class ResponseDto {
         this.template.getOutputs().add(component);
     }
 
+    public void addException(String text){
+        SimpleText simpleText = new SimpleText();
+        simpleText.setText(text);
+        Component component = new Component(simpleText);
+
+        QuickReplyButtons quickReplyButtons = new QuickReplyButtons();
+        Extra extra = new Extra();
+        quickReplyButtons.addBlockQuickButton("처음으로","65262b36ddb57b43495c18f8",extra);
+        addQuickButton(quickReplyButtons);
+        this.template.getOutputs().add(component);
+    }
+
     public void addSimpleImage(String imgUrl, String altText){
         SimpleImage simpleImage =new SimpleImage();
         simpleImage.setImageUrl(imgUrl);

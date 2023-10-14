@@ -2,20 +2,14 @@ package site.pointman.chatbot.controller;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
-import site.pointman.chatbot.dto.product.ProductListDto;
 import site.pointman.chatbot.dto.request.RequestDto;
 import site.pointman.chatbot.dto.response.ResponseDto;
-import site.pointman.chatbot.dto.response.property.common.Extra;
-import site.pointman.chatbot.dto.response.property.common.QuickReplyButtons;
-import site.pointman.chatbot.service.AuthService;
-import site.pointman.chatbot.service.KakaoProductService;
-import site.pointman.chatbot.service.ProductService;
+import site.pointman.chatbot.service.CustomerService;
 
 
 @Slf4j
@@ -23,32 +17,22 @@ import site.pointman.chatbot.service.ProductService;
 @RequestMapping(value = "/kakaochatbot/customer")
 public class CustomerController {
 
-    @Value("${kakao.channel.url}")
-    private String kakaoChannelUrl;
+    CustomerService customerService;
 
-    AuthService authService;
-    ProductService productService;
-    KakaoProductService kakaoProductService;
-
-    public CustomerController(AuthService authService, ProductService productService, KakaoProductService kakaoProductService) {
-        this.authService = authService;
-        this.productService = productService;
-        this.kakaoProductService = kakaoProductService;
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
     }
-    @ResponseBody
-    @RequestMapping(value = "join" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto join(@RequestBody RequestDto request) throws Exception {
-        ResponseDto response = new ResponseDto();
 
+    @ResponseBody
+    @PostMapping(value = "join" , headers = {"Accept=application/json; UTF-8"})
+    public ResponseDto join(@RequestBody String requestDto) throws Exception {
+        ResponseDto response = new ResponseDto();
+        log.info("req ={}", requestDto);
         try {
-            log.info("req = {}", request.getAction().getParams().getJoinName());
-            QuickReplyButtons quickReplyButtons = new QuickReplyButtons();
-            Extra extra = new Extra();
-            quickReplyButtons.addBlockQuickButton("처음으로","65262b36ddb57b43495c18f8",extra);
-            response.addSimpleText("회원가입을 완료하였습니다.");
-            response.addQuickButton(quickReplyButtons);
+            //response = customerService.join(requestDto);
             return response;
         }catch (Exception e){
+            log.info("error = {}", e.getMessage());
             response.addSimpleText("시스템 오류");
             return response;
         }

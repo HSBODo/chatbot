@@ -12,6 +12,7 @@ public class HttpUtils {
     /**
      * POST METHOD
      * @param url
+     * @param headers
      * @param body
      * @param mediaType
      * @return
@@ -46,6 +47,7 @@ public class HttpUtils {
     /**
      * GET METHOD
      * @param url
+     * @param headers
      * @return
      */
     public static String get(String url,Map<String, Object> headers) {
