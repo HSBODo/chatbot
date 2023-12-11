@@ -1,6 +1,6 @@
 package site.pointman.chatbot.repository.impl;
 
-import site.pointman.chatbot.domain.customer.Customer;
+import site.pointman.chatbot.service.domain.customer.Customer;
 import site.pointman.chatbot.repository.CustomerRepository;
 
 import javax.persistence.EntityManager;

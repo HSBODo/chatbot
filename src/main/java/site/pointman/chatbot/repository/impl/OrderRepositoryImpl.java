@@ -1,9 +1,7 @@
 package site.pointman.chatbot.repository.impl;
 
-import org.springframework.data.jpa.repository.query.JpaQueryMethodFactory;
-import org.springframework.stereotype.Repository;
-import site.pointman.chatbot.domain.order.Order;
-import site.pointman.chatbot.domain.order.OrderStatus;
+import site.pointman.chatbot.service.domain.order.Order;
+import site.pointman.chatbot.service.domain.order.OrderStatus;
 import site.pointman.chatbot.repository.OrderRepository;
 
 import javax.persistence.EntityManager;

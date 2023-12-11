@@ -1,7 +1,7 @@
 package site.pointman.chatbot.dto.customer;
 
 import lombok.Builder;
-import site.pointman.chatbot.domain.customer.Customer;
+import site.pointman.chatbot.service.domain.customer.Customer;
 
 public class CustomerDto {
     private String userKey;

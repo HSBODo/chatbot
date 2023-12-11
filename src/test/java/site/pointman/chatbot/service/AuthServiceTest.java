@@ -1,11 +1,13 @@
 package site.pointman.chatbot.service;
 
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
+import site.pointman.chatbot.dto.request.RequestDto;
 import site.pointman.chatbot.service.AuthService;
 
 @Slf4j
@@ -26,5 +28,14 @@ class AuthServiceTest {
         OAuthTokenDto token = authService.createToken();
         log.info("토큰 = {}",token.getAccessToken());
         Assertions.assertThat(token).isInstanceOf(OAuthTokenDto.class);
+    }
+
+    @Test
+    void createJwtToken() {
+        RequestDto requestDto = new RequestDto();
+        String jwtToken = authService.createJwtToken(requestDto);
+        log.info("jwtToken={}",jwtToken);
+
+        Claims parseToekn = authService.parseClaims(jwtToken);
     }
 }

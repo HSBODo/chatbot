@@ -25,11 +25,10 @@ public class CustomerController {
 
     @ResponseBody
     @PostMapping(value = "join" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto join(@RequestBody String requestDto) throws Exception {
+    public ResponseDto join(@RequestBody RequestDto requestDto) throws Exception {
         ResponseDto response = new ResponseDto();
-        log.info("req ={}", requestDto);
         try {
-            //response = customerService.join(requestDto);
+            response = customerService.join(requestDto);
             return response;
         }catch (Exception e){
             log.info("error = {}", e.getMessage());

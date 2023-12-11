@@ -1,4 +1,4 @@
-package site.pointman.chatbot.domain.customer;
+package site.pointman.chatbot.service.domain.customer;
 
 import java.io.Serializable;
 

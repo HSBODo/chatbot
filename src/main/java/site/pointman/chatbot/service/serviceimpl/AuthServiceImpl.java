@@ -1,19 +1,26 @@
 package site.pointman.chatbot.service.serviceimpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
+import site.pointman.chatbot.dto.request.RequestDto;
+import site.pointman.chatbot.dto.response.ResponseDto;
+import site.pointman.chatbot.dto.response.property.Context;
 import site.pointman.chatbot.service.AuthService;
 import site.pointman.chatbot.utill.HttpUtils;
+import io.jsonwebtoken.Jwts;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
+import java.security.Key;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +33,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Value("${naver.api.client.secret_sign}")
     private String naverApiClientSecretSign;
+
+    @Value("${secret.encrypt.key}")
+    private  String SECRET_ENCRYPT;
+
+    private static String iv;
+    private static Key keySpec;
 
     HttpUtils httpUtils;
 
@@ -69,5 +82,77 @@ public class AuthServiceImpl implements AuthService {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String createJwtToken(RequestDto requestDto) {
+        Date currentDate = new Date(System.currentTimeMillis());
+        Long expiration = 1000* 60L * 60L * 1L; //유효시간
+        Date expirationDate = new Date(currentDate.getTime()+ expiration);
+        // Header
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("typ", "JWT");
+        headers.put("alg", "HS256");
+
+        // Payload
+        String userKey = requestDto.getUserKey();
+        Map<String, Object> payloads = new HashMap<>();
+        payloads.put("userKey", userKey);
+
+        return    Jwts.builder()
+                .setSubject("token")
+                .setHeader(headers)
+                .setClaims(payloads)
+                .signWith(SignatureAlgorithm.HS256,SECRET_ENCRYPT)
+                .setIssuedAt(currentDate)
+                .setExpiration(expirationDate)
+                .compact();
+    }
+
+    @Override
+    public Claims parseClaims(String accessToken) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(SECRET_ENCRYPT)
+                .parseClaimsJws(accessToken)
+                .getBody();
+        return claims;
+    }
+
+    @Override
+    public boolean isExpired(String accessToken) {
+        return Jwts.parser().setSigningKey(SECRET_ENCRYPT).parseClaimsJws(accessToken)
+                .getBody().getExpiration().before(new Date());
+    }
+
+    @Override
+    public boolean isAuth(RequestDto requestDto) {
+        try {
+            String accessToken = requestDto.getAccessToken();
+            String userKey = requestDto.getUserKey();
+            Claims claims = parseClaims(accessToken);
+
+            boolean isExpired = isExpired(accessToken);
+            if(isExpired){
+
+                return false;
+            }
+
+            if(userKey.equals(claims.get("userKey",String.class))){
+
+                return true;
+            }
+            return false;
+        } catch (Exception e){
+            return false;
+        }
+
+    }
+
+    @Override
+    public ResponseDto addJwtToken(ResponseDto responseDto, String accessToken) {
+        Context context = new Context("token",1,600);
+        context.addParam("accessToken",accessToken);
+        responseDto.addContext(context);
+        return responseDto;
     }
 }

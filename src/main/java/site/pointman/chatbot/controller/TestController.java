@@ -33,9 +33,9 @@ public class TestController {
         try {
 
             ResponseDto responseDto = new ResponseDto();
-            Context context = new Context("session",3);
+            Context context = new Context("session",3,600);
             context.addParam("test","12312");
-            Context context2 = new Context("test",3);
+            Context context2 = new Context("test",3,600);
             context2.addParam("asdasdccd","99999999");
             QuickReplyButtons quickReplyButtons =new QuickReplyButtons();
             Extra extra = new Extra();

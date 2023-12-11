@@ -1,5 +1,4 @@
-package site.pointman.chatbot.dto;
-
+package site.pointman.chatbot.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -15,9 +14,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @AutoConfigureMockMvc
 @SpringBootTest
-class ResponseDtoTest {
+class TestControllerTest {
     @Autowired
     MockMvc mockMvc;
 
@@ -56,7 +56,7 @@ class ResponseDtoTest {
                 .andExpect(jsonPath("version").value("2.0"))
                 .andExpect(jsonPath(expectBySimpleImgUrl).value("https://www.youtube.com/"))
                 .andExpect(jsonPath(expectBySimpleAltText).value("유튜브 이미지"))
-                ;
+        ;
     }
 
     @Test
@@ -77,7 +77,7 @@ class ResponseDtoTest {
                 .andExpect(jsonPath("version").value("2.0"))
                 .andExpect(jsonPath(expectByTextCardText).value("텍스트카드 테스트"))
                 .andExpect(jsonPath(expectByTextCardButton).isNotEmpty())
-                ;
+        ;
     }
 
     @Test
@@ -155,4 +155,5 @@ class ResponseDtoTest {
                 .andExpect(status().isOk()) // response status 200 검증
         ;
     }
+
 }

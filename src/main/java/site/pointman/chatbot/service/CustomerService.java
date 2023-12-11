@@ -5,4 +5,5 @@ import site.pointman.chatbot.dto.response.ResponseDto;
 
 public interface CustomerService {
     ResponseDto join(RequestDto requestDto);
+    boolean isCustomer(RequestDto requestDto);
 }

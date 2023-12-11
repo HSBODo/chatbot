@@ -1,4 +1,4 @@
-package site.pointman.chatbot.domain.order;
+package site.pointman.chatbot.service.domain.order;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

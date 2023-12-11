@@ -2,7 +2,6 @@ package site.pointman.chatbot.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.repository.*;
 import site.pointman.chatbot.repository.impl.*;
 

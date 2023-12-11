@@ -1,11 +1,10 @@
-package site.pointman.chatbot.domain.order;
+package site.pointman.chatbot.service.domain.order;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import site.pointman.chatbot.domain.BaseEntity;
+import site.pointman.chatbot.service.domain.BaseEntity;
 
 import javax.persistence.*;
 
