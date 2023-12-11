@@ -1,7 +1,7 @@
 package site.pointman.chatbot.repository.impl;
 
-import site.pointman.chatbot.service.domain.order.Order;
-import site.pointman.chatbot.service.domain.order.OrderStatus;
+import site.pointman.chatbot.domain.order.Order;
+import site.pointman.chatbot.domain.order.OrderStatus;
 import site.pointman.chatbot.repository.OrderRepository;
 
 import javax.persistence.EntityManager;
@@ -9,7 +9,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@Transactional
+
 public class OrderRepositoryImpl implements OrderRepository {
     private final EntityManager em;
 

@@ -1,10 +1,10 @@
-package site.pointman.chatbot.service.domain.customer;
+package site.pointman.chatbot.domain.customer;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import site.pointman.chatbot.service.domain.BaseEntity;
+import site.pointman.chatbot.domain.BaseEntity;
 
 
 import javax.persistence.*;
@@ -19,7 +19,6 @@ import javax.persistence.*;
 @IdClass(CustomerId.class)
 public class Customer extends BaseEntity {
 
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq ;
 
@@ -30,10 +29,15 @@ public class Customer extends BaseEntity {
     private String name;
     private String phone;
 
+
     @Builder
     public Customer(String userKey, String name, String phone) {
         this.userKey = userKey;
         this.name = name;
         this.phone = phone;
+    }
+
+    public void changePhone(String updatePhone){
+        phone = updatePhone;
     }
 }

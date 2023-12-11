@@ -15,6 +15,18 @@ public class QuickReplyButtons {
         quickReplyButtons.add(quickReplyButton);
     }
 
+    public void addBlockQuickButton(String buttonName,String blockId){
+        QuickReplyButton quickReplyButton = new QuickReplyButton();
+        quickReplyButton.createBlockQuickButton(buttonName,blockId);
+        quickReplyButtons.add(quickReplyButton);
+    }
+
+    public void addBlockQuickButton(String buttonName){
+        QuickReplyButton quickReplyButton = new QuickReplyButton();
+        quickReplyButton.createBlockQuickButton(buttonName);
+        quickReplyButtons.add(quickReplyButton);
+    }
+
     public void addMessageQuickButton(String buttonName,String messageText,Extra extra){
         QuickReplyButton quickReplyButton = new QuickReplyButton();
         quickReplyButton.createMessageQuickButton(buttonName,messageText,extra);

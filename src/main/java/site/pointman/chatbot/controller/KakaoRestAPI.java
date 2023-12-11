@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
 import site.pointman.chatbot.dto.product.ProductListDto;
-import site.pointman.chatbot.dto.request.RequestDto;
+import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.dto.response.ResponseDto;
 import site.pointman.chatbot.service.AuthService;
 import site.pointman.chatbot.service.KakaoProductService;
@@ -34,7 +34,7 @@ public class KakaoRestAPI {
 
     @ResponseBody
     @RequestMapping(value = "productsInfo" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto productsInfo(@RequestBody RequestDto request) throws Exception {
+    public ResponseDto productsInfo(@RequestBody ChatBotRequest request) throws Exception {
         ResponseDto response = new ResponseDto();
 
         try {

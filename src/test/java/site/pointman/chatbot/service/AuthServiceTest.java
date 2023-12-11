@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
-import site.pointman.chatbot.dto.request.RequestDto;
-import site.pointman.chatbot.service.AuthService;
+import site.pointman.chatbot.domain.request.ChatBotRequest;
 
 @Slf4j
 @SpringBootTest
@@ -32,8 +31,8 @@ class AuthServiceTest {
 
     @Test
     void createJwtToken() {
-        RequestDto requestDto = new RequestDto();
-        String jwtToken = authService.createJwtToken(requestDto);
+        ChatBotRequest chatBotRequest = new ChatBotRequest();
+        String jwtToken = authService.createJwtToken(chatBotRequest);
         log.info("jwtToken={}",jwtToken);
 
         Claims parseToekn = authService.parseClaims(jwtToken);

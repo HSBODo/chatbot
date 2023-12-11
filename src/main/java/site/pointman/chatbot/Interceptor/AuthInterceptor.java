@@ -7,7 +7,7 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.ContentCachingResponseWrapper;
-import site.pointman.chatbot.dto.request.RequestDto;
+import site.pointman.chatbot.domain.request.ChatBotRequest;
 
 
 import javax.servlet.ServletInputStream;
@@ -27,7 +27,6 @@ public class AuthInterceptor implements HandlerInterceptor {
     //	Controller 진입 전 실행
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.info("preHandle");
-
         return true;
 //
 //
@@ -50,12 +49,12 @@ public class AuthInterceptor implements HandlerInterceptor {
         return new ContentCachingResponseWrapper(response);
     }
 
-    private RequestDto getRequestDtoFromHttpServletRequest(HttpServletRequest request) throws IOException {
+    private ChatBotRequest getRequestDtoFromHttpServletRequest(HttpServletRequest request) throws IOException {
         ServletInputStream inputStream = request.getInputStream();
         String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
-        RequestDto requestDto = objectMapper.readValue(messageBody, RequestDto.class);
-        return requestDto;
+        ChatBotRequest chatBotRequest = objectMapper.readValue(messageBody, ChatBotRequest.class);
+        return chatBotRequest;
     }
 
 

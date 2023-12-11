@@ -8,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import site.pointman.chatbot.dto.request.RequestDto;
+import site.pointman.chatbot.domain.request.ChatBotRequest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -24,8 +24,8 @@ class TestControllerTest {
     @Test
     @DisplayName("Response SimpleText")
     void SimpleText() throws Exception{
-        RequestDto requestDto = new RequestDto();
-        String content = new ObjectMapper().writeValueAsString(requestDto);
+        ChatBotRequest chatBotRequest = new ChatBotRequest();
+        String content = new ObjectMapper().writeValueAsString(chatBotRequest);
         String expectBySimpleText = "$.template.outputs[0].simpleText.text";
         mockMvc
                 .perform(
@@ -41,8 +41,8 @@ class TestControllerTest {
     @Test
     @DisplayName("Response SimpleImage")
     void SimpleImage() throws Exception{
-        RequestDto requestDto = new RequestDto();
-        String content = new ObjectMapper().writeValueAsString(requestDto);
+        ChatBotRequest chatBotRequest = new ChatBotRequest();
+        String content = new ObjectMapper().writeValueAsString(chatBotRequest);
         String expectBySimpleImgUrl = "$.template.outputs[0].simpleImage.imageUrl";
         String expectBySimpleAltText = "$.template.outputs[0].simpleImage.altText";
         mockMvc
@@ -62,8 +62,8 @@ class TestControllerTest {
     @Test
     @DisplayName("Response TextCard")
     void TextCard() throws Exception{
-        RequestDto requestDto = new RequestDto();
-        String content = new ObjectMapper().writeValueAsString(requestDto);
+        ChatBotRequest chatBotRequest = new ChatBotRequest();
+        String content = new ObjectMapper().writeValueAsString(chatBotRequest);
         String expectByTextCardText = "$.template.outputs[0].textCard.text";
         String expectByTextCardButton = "$.template.outputs[0].textCard.buttons";
         mockMvc
@@ -83,8 +83,8 @@ class TestControllerTest {
     @Test
     @DisplayName("Response BasicCard")
     void BasicCard() throws Exception{
-        RequestDto requestDto = new RequestDto();
-        String content = new ObjectMapper().writeValueAsString(requestDto);
+        ChatBotRequest chatBotRequest = new ChatBotRequest();
+        String content = new ObjectMapper().writeValueAsString(chatBotRequest);
         String expectByBasicCardTitle = "$.template.outputs[0].basicCard.title";
         String expectByBasicCardDescription = "$.template.outputs[0].basicCard.description";
         String expectByBasicCardThumbnail = "$.template.outputs[0].basicCard.thumbnail.imageUrl";
@@ -108,8 +108,8 @@ class TestControllerTest {
     @Test
     @DisplayName("Response CommerceCard")
     void CommerceCard() throws Exception{
-        RequestDto requestDto = new RequestDto();
-        String content = new ObjectMapper().writeValueAsString(requestDto);
+        ChatBotRequest chatBotRequest = new ChatBotRequest();
+        String content = new ObjectMapper().writeValueAsString(chatBotRequest);
 
         mockMvc
                 .perform(
@@ -125,8 +125,8 @@ class TestControllerTest {
     @Test
     @DisplayName("Response ListCard")
     void ListCard() throws Exception{
-        RequestDto requestDto = new RequestDto();
-        String content = new ObjectMapper().writeValueAsString(requestDto);
+        ChatBotRequest chatBotRequest = new ChatBotRequest();
+        String content = new ObjectMapper().writeValueAsString(chatBotRequest);
 
         mockMvc
                 .perform(
@@ -142,8 +142,8 @@ class TestControllerTest {
     @Test
     @DisplayName("Response Carousel")
     void Carousel() throws Exception{
-        RequestDto requestDto = new RequestDto();
-        String content = new ObjectMapper().writeValueAsString(requestDto);
+        ChatBotRequest chatBotRequest = new ChatBotRequest();
+        String content = new ObjectMapper().writeValueAsString(chatBotRequest);
 
         mockMvc
                 .perform(

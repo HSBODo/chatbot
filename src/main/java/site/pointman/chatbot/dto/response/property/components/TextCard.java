@@ -8,6 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 public class TextCard {
+    private String title;
     private String text;
     private List<Button> buttons;
 }

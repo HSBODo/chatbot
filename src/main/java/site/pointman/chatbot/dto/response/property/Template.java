@@ -17,5 +17,6 @@ public class Template {
 
     public Template() {
         this.outputs = new ArrayList<>();
+        this.quickReplies = new ArrayList<>();
     }
 }

@@ -17,10 +17,10 @@ public class BeanConfig {
         this.em = em;
     }
 
-    @Bean
-    public OrderRepository orderRepository(){
-        return new OrderRepositoryImpl(em);
-    }
+//    @Bean
+//    public OrderRepository orderRepository(){
+//        return new OrderRepositoryImpl(em);
+//    }
 
     @Bean
     public CustomerRepository customerRepository(){

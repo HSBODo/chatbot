@@ -3,9 +3,7 @@ package site.pointman.chatbot.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import site.pointman.chatbot.dto.request.RequestDto;
-
-import static org.junit.jupiter.api.Assertions.*;
+import site.pointman.chatbot.domain.request.ChatBotRequest;
 
 @SpringBootTest
 class CustomerServiceTest {
@@ -14,7 +12,7 @@ class CustomerServiceTest {
 
     @Test
     void join() {
-        RequestDto requestDto = new RequestDto();
-        customerService.join(requestDto);
+        ChatBotRequest chatBotRequest = new ChatBotRequest();
+        customerService.join(chatBotRequest);
     }
 }

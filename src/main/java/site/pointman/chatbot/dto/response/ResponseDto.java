@@ -5,6 +5,7 @@ import lombok.Getter;
 import site.pointman.chatbot.dto.response.property.*;
 import site.pointman.chatbot.dto.response.property.common.*;
 import site.pointman.chatbot.dto.response.property.components.*;
+import site.pointman.chatbot.utill.BlockId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,26 +25,29 @@ public class ResponseDto {
         this.template = new Template();
         this.context = new Values();
     }
-    public void addQuickButton(QuickReplyButtons quickReplyButtons){
-        this.template.setQuickReplies(quickReplyButtons.getQuickReplyButtons());
+    public void addQuickButton(String buttonName, String blockId, Extra extra){
+        QuickReplyButton quickReplyButton = new QuickReplyButton();
+        quickReplyButton.createBlockQuickButton(buttonName,blockId,extra);
+        this.template.getQuickReplies().add(quickReplyButton);
     }
+
+    public void addQuickButton(String buttonName, String blockId){
+        QuickReplyButton quickReplyButton = new QuickReplyButton();
+        quickReplyButton.createBlockQuickButton(buttonName,blockId);
+        this.template.getQuickReplies().add(quickReplyButton);
+    }
+
+    public void addQuickButton(String buttonName){
+        QuickReplyButton quickReplyButton = new QuickReplyButton();
+        quickReplyButton.createBlockQuickButton(buttonName);
+        this.template.getQuickReplies().add(quickReplyButton);
+    }
+
     public void addSimpleText(String text){
         SimpleText simpleText = new SimpleText();
         simpleText.setText(text);
         Component component = new Component(simpleText);
 
-        this.template.getOutputs().add(component);
-    }
-
-    public void addException(String text){
-        SimpleText simpleText = new SimpleText();
-        simpleText.setText(text);
-        Component component = new Component(simpleText);
-
-        QuickReplyButtons quickReplyButtons = new QuickReplyButtons();
-        Extra extra = new Extra();
-        quickReplyButtons.addBlockQuickButton("처음으로","65262b36ddb57b43495c18f8",extra);
-        addQuickButton(quickReplyButtons);
         this.template.getOutputs().add(component);
     }
 
@@ -55,13 +59,31 @@ public class ResponseDto {
 
         this.template.getOutputs().add(component);
     }
-    public void addTextCard(String text, Buttons buttons){
+    public void addTextCard(String title, String text, Buttons buttons){
         if(buttons.getButtons().size()>3){
             throw new IllegalArgumentException("버튼은 최대 3개까지만 추가할 수 있습니다.");
         }
         TextCard textCard = new TextCard();
+        textCard.setTitle(title);
         textCard.setText(text);
         textCard.setButtons(buttons.getButtons());
+        Component component = new Component(textCard);
+
+        this.template.getOutputs().add(component);
+    }
+
+    public void addTextCard(String title,String text){
+        TextCard textCard = new TextCard();
+        textCard.setTitle(title);
+        textCard.setText(text);
+        Component component = new Component(textCard);
+
+        this.template.getOutputs().add(component);
+    }
+
+    public void addTextCard(String text){
+        TextCard textCard = new TextCard();
+        textCard.setText(text);
         Component component = new Component(textCard);
 
         this.template.getOutputs().add(component);

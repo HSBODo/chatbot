@@ -9,7 +9,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
-import site.pointman.chatbot.dto.request.RequestDto;
+import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.dto.response.ResponseDto;
 import site.pointman.chatbot.dto.response.property.Context;
 import site.pointman.chatbot.service.AuthService;
@@ -85,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String createJwtToken(RequestDto requestDto) {
+    public String createJwtToken(ChatBotRequest chatBotRequest) {
         Date currentDate = new Date(System.currentTimeMillis());
         Long expiration = 1000* 60L * 60L * 1L; //유효시간
         Date expirationDate = new Date(currentDate.getTime()+ expiration);
@@ -95,7 +95,7 @@ public class AuthServiceImpl implements AuthService {
         headers.put("alg", "HS256");
 
         // Payload
-        String userKey = requestDto.getUserKey();
+        String userKey = chatBotRequest.getUserKey();
         Map<String, Object> payloads = new HashMap<>();
         payloads.put("userKey", userKey);
 
@@ -125,10 +125,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public boolean isAuth(RequestDto requestDto) {
+    public boolean isAuth(ChatBotRequest chatBotRequest) {
         try {
-            String accessToken = requestDto.getAccessToken();
-            String userKey = requestDto.getUserKey();
+            String accessToken = chatBotRequest.getAccessToken();
+            String userKey = chatBotRequest.getUserKey();
             Claims claims = parseClaims(accessToken);
 
             boolean isExpired = isExpired(accessToken);
