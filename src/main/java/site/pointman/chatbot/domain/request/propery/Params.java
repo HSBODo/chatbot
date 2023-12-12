@@ -12,4 +12,6 @@ public class Params {
     private String productDescription;
     private String productImg;
     private String productPrice;
+    private String kakaoOpenChatUrl;
+    private String tradingLocation;
 }

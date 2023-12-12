@@ -47,6 +47,14 @@ public class ChatBotRequest {
             return null;
         }
     }
+    public String getTradingLocation(){
+        return action.getParams().getTradingLocation();
+    }
+
+    public String getKakaoOpenChatUrl(){
+        return action.getParams().getKakaoOpenChatUrl();
+    }
+
     public String getValidationData(){
         return value.getOrigin();
     }
