@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
 import org.springframework.stereotype.Service;
 
+import site.pointman.chatbot.domain.response.ValidationResponse;
 import site.pointman.chatbot.dto.exception.ExceptionResponseDto;
 import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
 import site.pointman.chatbot.dto.product.ProductImgDto;
@@ -23,6 +24,8 @@ import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.CustomerService;
 import site.pointman.chatbot.utill.BlockId;
 import site.pointman.chatbot.utill.HttpUtils;
+import site.pointman.chatbot.utill.NumberUtils;
+import site.pointman.chatbot.utill.StringUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,6 +35,8 @@ import java.util.Map;
 @Slf4j
 @Service
 public class ProductServiceImpl implements ProductService {
+    private final String KAKAO_OPEN_CHAT_URL_REQUIRED = "https://open.kakao.com/o";
+
 
     AuthService authService;
     CustomerService customerService;
@@ -98,16 +103,15 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public ResponseDto createAddValidation(ChatBotRequest chatBotRequest) {
+    public ResponseDto createProductInfoPreview(ChatBotRequest chatBotRequest) {
         ResponseDto responseDto = new ResponseDto();
-        Buttons buttons = new Buttons();
         Carousel<BasicCard> basicCardCarousel = new Carousel<>();
-
+        Context productContext = new Context("product",1,600);
 
         String accessToken = chatBotRequest.getAccessToken();
         String productName = chatBotRequest.getProductName();
-        String productDescription = chatBotRequest.getProductDescription();
-        int productPrice = Integer.parseInt(chatBotRequest.getProductPrice());
+        String productDescription = formatProductDescription(chatBotRequest);
+
         ProductImg productImg = chatBotRequest.getProductImg();
         List<String> imgUrlList = productImg.getImgUrlList();
 
@@ -118,17 +122,25 @@ public class ProductServiceImpl implements ProductService {
             basicCardCarousel.addComponent(basicCard);
         });
 
-        Context productContext = new Context("product",1,600);
-        productContext.addParam("accessToken",accessToken);
-
+        productContext.addParam("accessToken","테스트");
 
         responseDto.addCarousel(basicCardCarousel);
-        responseDto.addCommerceCard(productName,productDescription,productPrice,0,imgUrlList.get(0),"","",buttons);
-        responseDto.addQuickButton("취소","65262b36ddb57b43495c18f8");
-        responseDto.addQuickButton("등록","652e659087e33b27c8ba3a4a");
+        responseDto.addTextCard(productName,productDescription);
+        responseDto.addQuickButton("취소",BlockId.MAIN.getBlockId());
+        responseDto.addQuickButton("등록",BlockId.PRODUCT_ADD.getBlockId());
         responseDto.addContext(productContext);
 
         return responseDto;
+    }
+
+    private String formatProductDescription(ChatBotRequest chatBotRequest){
+        String productDescription = chatBotRequest.getProductDescription();
+        String productPrice = chatBotRequest.getProductPrice();
+        String tradingLocation = chatBotRequest.getTradingLocation();
+        String kakaoOpenChatUrl = chatBotRequest.getKakaoOpenChatUrl();
+
+        productDescription = StringUtils.formatProductDetail(productPrice,productDescription,tradingLocation,kakaoOpenChatUrl);
+        return productDescription;
     }
 
     @Override
@@ -146,5 +158,68 @@ public class ProductServiceImpl implements ProductService {
         responseDto.addQuickButton("등록하기", BlockId.PRODUCT_ADD_INFO.getBlockId());
 
         return responseDto;
+    }
+
+    @Override
+    public ValidationResponse validationProductName(ChatBotRequest chatBotRequest) {
+        ValidationResponse validationResponse = new ValidationResponse();
+        String productName = chatBotRequest.getValidationData();
+        if(productName.length()>30){
+            validationResponse.validationFail();
+            return validationResponse;
+        }
+        validationResponse.validationSuccess(productName);
+        return validationResponse;
+    }
+
+    @Override
+    public ValidationResponse validationProductPrice(ChatBotRequest chatBotRequest) {
+        ValidationResponse validationResponse = new ValidationResponse();
+        String productPrice= chatBotRequest.getValidationData();
+
+        if(!NumberUtils.isNumber(productPrice)){
+            validationResponse.validationFail();
+            return validationResponse;
+        }
+
+        validationResponse.validationSuccess(productPrice);
+        return validationResponse;
+    }
+
+    @Override
+    public ValidationResponse validationProductDescription(ChatBotRequest chatBotRequest) {
+        ValidationResponse validationResponse = new ValidationResponse();
+        String productDescription= chatBotRequest.getValidationData();
+
+        if(productDescription.length()>400){
+            validationResponse.validationFail();
+            return validationResponse;
+        }
+
+        validationResponse.validationSuccess(productDescription);
+        return validationResponse;
+    }
+
+    @Override
+    public ValidationResponse validationKakaoOpenChatUrl(ChatBotRequest chatBotRequest) {
+        ValidationResponse validationResponse = new ValidationResponse();
+        String kakaoOpenChayUrl= chatBotRequest.getValidationData();
+
+        if(kakaoOpenChayUrl.contains(KAKAO_OPEN_CHAT_URL_REQUIRED)){
+            validationResponse.validationSuccess(kakaoOpenChayUrl);
+            return validationResponse;
+        }
+
+        validationResponse.validationFail();
+        return validationResponse;
+    }
+
+    @Override
+    public ValidationResponse validationTradingLocation(ChatBotRequest chatBotRequest) {
+        ValidationResponse validationResponse = new ValidationResponse();
+        String tradingLocation= chatBotRequest.getValidationData();
+
+        validationResponse.validationSuccess(tradingLocation);
+        return validationResponse;
     }
 }

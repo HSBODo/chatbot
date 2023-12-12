@@ -28,6 +28,15 @@ public class StringUtils {
         return formatDate;
     }
 
+    public static String formatProductDetail(String price, String description, String tradingLocation, String kakaoOpenChatUrl){
+        String productDetail =
+                "판매가격: "+ price+"원" + "\n"+
+                "상품 설명: "+ description + "\n"+
+                "거래 희망 장소: "+ tradingLocation + "\n"+
+                "카카오 오픈 채팅방: "+ kakaoOpenChatUrl + "\n";
+        return productDetail;
+    }
+
 
 
 }
