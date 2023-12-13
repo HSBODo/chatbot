@@ -5,9 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.domain.BaseEntity;
+import site.pointman.chatbot.domain.product.Product;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -28,6 +31,9 @@ public class Customer extends BaseEntity {
 
     private String name;
     private String phone;
+
+    @OneToMany(mappedBy = "customer")
+    private List<Product> products = new ArrayList<>();
 
 
     @Builder

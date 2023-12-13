@@ -9,15 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.dto.notice.NoticeDto;
 import site.pointman.chatbot.dto.notice.NoticeListDto;
 import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
-import site.pointman.chatbot.dto.product.ProductListDto;
 import site.pointman.chatbot.service.AuthService;
 import site.pointman.chatbot.utill.HttpUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest

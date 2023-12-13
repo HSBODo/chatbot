@@ -6,14 +6,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.dto.response.ResponseDto;
-import site.pointman.chatbot.dto.response.property.Context;
-import site.pointman.chatbot.dto.response.property.common.QuickReplyButtons;
-import site.pointman.chatbot.dto.response.property.common.Buttons;
-import site.pointman.chatbot.dto.response.property.common.Extra;
-import site.pointman.chatbot.dto.response.property.common.ListItems;
-import site.pointman.chatbot.dto.response.property.components.BasicCard;
-import site.pointman.chatbot.dto.response.property.components.Carousel;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.property.Context;
+import site.pointman.chatbot.domain.response.property.common.QuickReplyButtons;
+import site.pointman.chatbot.domain.response.property.common.Buttons;
+import site.pointman.chatbot.domain.response.property.common.Extra;
+import site.pointman.chatbot.domain.response.property.common.ListItems;
+import site.pointman.chatbot.domain.response.property.components.BasicCard;
+import site.pointman.chatbot.domain.response.property.components.Carousel;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -25,14 +25,14 @@ import java.nio.charset.StandardCharsets;
 public class TestController {
     @ResponseBody
     @PostMapping(value = "test" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto test(HttpServletRequest httpRequest) throws Exception {
+    public ChatBotResponse test(HttpServletRequest httpRequest) throws Exception {
         ServletInputStream inputStream = httpRequest.getInputStream();
         String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
         log.info("http request = {}", messageBody);
 
         try {
 
-            ResponseDto responseDto = new ResponseDto();
+            ChatBotResponse chatBotResponse = new ChatBotResponse();
             Context context = new Context("session",3,600);
             context.addParam("test","12312");
             Context context2 = new Context("test",3,600);
@@ -41,11 +41,11 @@ public class TestController {
             Extra extra = new Extra();
             extra.addChoiceParam("선택 파라미터");
 
-            responseDto.addSimpleText("심플텍스트 테스트");
-            responseDto.addQuickButton("테스트2","65140667e6fda240f3fedc4f",extra);
-            responseDto.addContext(context);
-            responseDto.addContext(context2);
-            return responseDto;
+            chatBotResponse.addSimpleText("심플텍스트 테스트");
+            chatBotResponse.addQuickButton("테스트2","65140667e6fda240f3fedc4f",extra);
+            chatBotResponse.addContext(context);
+            chatBotResponse.addContext(context2);
+            return chatBotResponse;
         }catch (Exception e){
             log.info("exception = {}",e.getMessage());
             return null;
@@ -55,11 +55,11 @@ public class TestController {
 
     @ResponseBody
     @PostMapping(value = "simpleText" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto createSimpleText(@RequestBody ChatBotRequest request, HttpServletRequest httpRequest) throws Exception {
+    public ChatBotResponse createSimpleText(@RequestBody ChatBotRequest request, HttpServletRequest httpRequest) throws Exception {
         try {
-            ResponseDto responseDto = new ResponseDto();
-            responseDto.addSimpleText("심플텍스트 테스트");
-            return responseDto;
+            ChatBotResponse chatBotResponse = new ChatBotResponse();
+            chatBotResponse.addSimpleText("심플텍스트 테스트");
+            return chatBotResponse;
         }catch (Exception e){
             log.info("exception = {}",e.getMessage());
             log.info("exception = {}",e.getMessage());
@@ -70,64 +70,64 @@ public class TestController {
 
     @ResponseBody
     @PostMapping(value = "simpleImg" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto createSimpleImg(@RequestBody ChatBotRequest request)throws Exception {
-        ResponseDto responseDto = new ResponseDto();
-        responseDto.addSimpleImage("https://www.youtube.com/","유튜브 이미지");
-        return responseDto;
+    public ChatBotResponse createSimpleImg(@RequestBody ChatBotRequest request)throws Exception {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+        chatBotResponse.addSimpleImage("https://www.youtube.com/","유튜브 이미지");
+        return chatBotResponse;
     }
 
     @ResponseBody
     @PostMapping(value = "textCard" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto createTextCard(@RequestBody ChatBotRequest request)throws Exception {
-        ResponseDto responseDto = new ResponseDto();
+    public ChatBotResponse createTextCard(@RequestBody ChatBotRequest request)throws Exception {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
         Buttons buttons = new Buttons();
         buttons.addWebLinkButton("웹링크버튼","https://www.youtube.com/");
-        responseDto.addTextCard("제목","텍스트카드 테스트",buttons);
-        return responseDto;
+        chatBotResponse.addTextCard("제목","텍스트카드 테스트",buttons);
+        return chatBotResponse;
     }
 
     @ResponseBody
     @PostMapping(value = "basicCard" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto createBasicCard(@RequestBody ChatBotRequest request)throws Exception {
-        ResponseDto responseDto = new ResponseDto();
+    public ChatBotResponse createBasicCard(@RequestBody ChatBotRequest request)throws Exception {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
         Buttons buttons = new Buttons();
         Extra extra = new Extra();
         extra.addChoiceParam("선택 파라미터");
 
         buttons.addBlockButton("블록버튼","danklnclsv123115vdf");
-        responseDto.addBasicCard("제목","설명","섬네일 URL https://www.youtube.com/","","",buttons);
-        responseDto.addQuickButton("블록퀵버튼","블록아이디",extra);
-        return responseDto;
+        chatBotResponse.addBasicCard("제목","설명","섬네일 URL https://www.youtube.com/","","",buttons);
+        chatBotResponse.addQuickButton("블록퀵버튼","블록아이디",extra);
+        return chatBotResponse;
     }
 
     @ResponseBody
     @PostMapping(value = "commerceCard" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto createCommerceCard(@RequestBody ChatBotRequest request)throws Exception {
-        ResponseDto responseDto = new ResponseDto();
+    public ChatBotResponse createCommerceCard(@RequestBody ChatBotRequest request)throws Exception {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
         Buttons buttons = new Buttons();
         buttons.addPhoneButton("전화버튼","01000000000");
-        responseDto.addCommerceCard("제목","설명",10000,50,"123123","","",buttons);
-        return responseDto;
+        chatBotResponse.addCommerceCard("제목","설명",10000,50,"123123","","",buttons);
+        return chatBotResponse;
     }
 
     @ResponseBody
     @PostMapping(value = "listCard" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto createListCard(@RequestBody ChatBotRequest request)throws Exception {
-        ResponseDto responseDto = new ResponseDto();
+    public ChatBotResponse createListCard(@RequestBody ChatBotRequest request)throws Exception {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
         Buttons buttons = new Buttons();
         buttons.addPhoneButton("전화버튼","01000000000");
         ListItems listItems = new ListItems();
         listItems.addBlockItem("소제목","설명","이미지URL","블록아이디", null);
         listItems.addLinkItem("소제목","설명","이미지URL","클릭시 이동링크");
         listItems.addMessageItem("소제목","설명","이미지URL","발화내용", null);
-        responseDto.addListCard("리스트카드 대제목",listItems,buttons);
-        return responseDto;
+        chatBotResponse.addListCard("리스트카드 대제목",listItems,buttons);
+        return chatBotResponse;
     }
 
     @ResponseBody
     @PostMapping(value = "carousel" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto createCarousel(@RequestBody ChatBotRequest request)throws Exception {
-        ResponseDto responseDto = new ResponseDto();
+    public ChatBotResponse createCarousel(@RequestBody ChatBotRequest request)throws Exception {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<BasicCard> carousel = new Carousel<>();
         BasicCard basicCard1 = new BasicCard();
         basicCard1.setTitle("1");
@@ -135,8 +135,8 @@ public class TestController {
         basicCard2.setTitle("2");
         carousel.addComponent(basicCard1);
         carousel.addComponent(basicCard2);
-        responseDto.addCarousel(carousel);
-        return responseDto;
+        chatBotResponse.addCarousel(carousel);
+        return chatBotResponse;
     }
 
 }

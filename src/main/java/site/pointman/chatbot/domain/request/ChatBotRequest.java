@@ -4,7 +4,9 @@ package site.pointman.chatbot.domain.request;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
+import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.request.propery.*;
+import site.pointman.chatbot.dto.product.ProductDto;
 
 import java.util.List;
 
@@ -18,7 +20,16 @@ public class ChatBotRequest {
     private Action action;
     private Value value;
     private List<Context> contexts;
-
+    public ProductDto createProductDto(Customer customer){
+        return ProductDto.builder()
+                .customer(customer)
+                .productName(getProductName())
+                .productPrice(Long.parseLong(getProductPrice()))
+                .productDescription(getProductDescription())
+                .tradingLocation(getTradingLocation())
+                .kakaoOpenChatUrl(getKakaoOpenChatUrl())
+                .build();
+    }
     public String getUserKey(){
         return userRequest.getUser().getProperties().getPlusfriendUserKey();
     }
@@ -50,11 +61,9 @@ public class ChatBotRequest {
     public String getTradingLocation(){
         return action.getParams().getTradingLocation();
     }
-
     public String getKakaoOpenChatUrl(){
         return action.getParams().getKakaoOpenChatUrl();
     }
-
     public String getValidationData(){
         return value.getOrigin();
     }

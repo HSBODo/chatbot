@@ -5,13 +5,12 @@ import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.dto.customer.CustomerDto;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.dto.exception.ExceptionResponseDto;
-import site.pointman.chatbot.dto.response.ResponseDto;
+import site.pointman.chatbot.domain.response.ExceptionResponse;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.ValidationResponse;
-import site.pointman.chatbot.dto.response.property.common.QuickReplyButtons;
 import site.pointman.chatbot.repository.CustomerRepository;
 import site.pointman.chatbot.service.CustomerService;
-import site.pointman.chatbot.utill.BlockId;
+import site.pointman.chatbot.constant.BlockId;
 import site.pointman.chatbot.utill.NumberUtils;
 
 import java.util.Optional;
@@ -28,14 +27,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ResponseDto join(ChatBotRequest chatBotRequest) {
-        ResponseDto responseDto = new ResponseDto();
+    public ChatBotResponse join(ChatBotRequest chatBotRequest) {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
         String userKey = chatBotRequest.getUserKey();
 
         if (isCustomer(chatBotRequest)) {
-            ExceptionResponseDto exceptionResponseDto = new ExceptionResponseDto();
+            ExceptionResponse exceptionResponseDto = new ExceptionResponse();
             exceptionResponseDto.addException("이미 존재하는 회원입니다.");
-            return responseDto;
+            return chatBotResponse;
         }
 
         String joinName = chatBotRequest.getCustomerName();
@@ -50,8 +49,8 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerDto.toEntity();
 
         customerRepository.insert(customer);
-        responseDto.addSimpleText("회원가입이 완료 되었습니다.");
-        return responseDto;
+        chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.");
+        return chatBotResponse;
     }
 
     @Override
@@ -90,54 +89,54 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ResponseDto getCustomerInfo(ChatBotRequest chatBotRequest) {
-        ResponseDto responseDto = new ResponseDto();
+    public ChatBotResponse getCustomerInfo(ChatBotRequest chatBotRequest) {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
         String userKey = chatBotRequest.getUserKey();
 
         if (!isCustomer(chatBotRequest)) {
-            responseDto.addSimpleText("회원이 아닙니다.");
-            responseDto.addQuickButton("처음으로", BlockId.MAIN.getBlockId());
-            responseDto.addQuickButton("회원가입", BlockId.CUSTOMER_JOIN.getBlockId());
-            return responseDto;
+            chatBotResponse.addSimpleText("회원이 아닙니다.");
+            chatBotResponse.addQuickButton("처음으로", BlockId.MAIN.getBlockId());
+            chatBotResponse.addQuickButton("회원가입", BlockId.CUSTOMER_JOIN.getBlockId());
+            return chatBotResponse;
         }
 
         Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
         Customer customer = mayBeCustomer.get();
 
-        responseDto.addTextCard("회원정보",
+        chatBotResponse.addTextCard("회원정보",
                 "이름: "+customer.getName()+"\n"+
                 "연락처: "+customer.getPhone()+"\n"+
                 "가입일자: "+customer.getCreateDate());
-        responseDto.addQuickButton("탈퇴하기",BlockId.CUSTOMER_ASK_DELETE.getBlockId());
-        responseDto.addQuickButton("연락처변경",BlockId.CUSTOMER_UPDATE_PHONE_NUMBER.getBlockId());
-        responseDto.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton("탈퇴하기",BlockId.CUSTOMER_ASK_DELETE.getBlockId());
+        chatBotResponse.addQuickButton("연락처변경",BlockId.CUSTOMER_UPDATE_PHONE_NUMBER.getBlockId());
+        chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
 
-        return responseDto;
+        return chatBotResponse;
     }
 
     @Override
-    public ResponseDto updateCustomerPhoneNumber(ChatBotRequest chatBotRequest) {
-        ResponseDto responseDto = new ResponseDto();
+    public ChatBotResponse updateCustomerPhoneNumber(ChatBotRequest chatBotRequest) {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
         String userKey = chatBotRequest.getUserKey();
         String updatePhoneNumber = chatBotRequest.getCustomerPhone();
 
         customerRepository.updateCustomerPhoneNumber(userKey, updatePhoneNumber);
 
-        responseDto.addSimpleText("연락처 변경이 완료 되었습니다.");
-        responseDto.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+        chatBotResponse.addSimpleText("연락처 변경이 완료 되었습니다.");
+        chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
 
-        return responseDto;
+        return chatBotResponse;
     }
 
     @Override
-    public ResponseDto deleteCustomer(ChatBotRequest chatBotRequest) {
-        ResponseDto responseDto = new ResponseDto();
+    public ChatBotResponse deleteCustomer(ChatBotRequest chatBotRequest) {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
         String userKey = chatBotRequest.getUserKey();
 
         customerRepository.delete(userKey);
 
-        responseDto.addSimpleText("회원탈퇴가 완료 되었습니다.");
-        responseDto.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
-        return responseDto;
+        chatBotResponse.addSimpleText("회원탈퇴가 완료 되었습니다.");
+        chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+        return chatBotResponse;
     }
 }

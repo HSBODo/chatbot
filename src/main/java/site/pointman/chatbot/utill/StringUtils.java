@@ -1,8 +1,13 @@
 package site.pointman.chatbot.utill;
 
 
+import site.pointman.chatbot.dto.product.ProductDto;
+
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 public class StringUtils {
@@ -36,6 +41,14 @@ public class StringUtils {
                 "카카오 오픈 채팅방: "+ kakaoOpenChatUrl + "\n";
         return productDetail;
     }
+    public static String createImgFileName(ProductDto productDto){
+        String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String currentTimeStamp = String.valueOf(System.currentTimeMillis());
+        String imgFileName = productDto.getCustomer().getUserKey()+"_"+productDto.getProductName()+"_"+currentDate+"_"+currentTimeStamp;
+        return imgFileName;
+    }
+
+
 
 
 

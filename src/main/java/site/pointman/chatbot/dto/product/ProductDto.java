@@ -1,36 +1,39 @@
 package site.pointman.chatbot.dto.product;
 
+import lombok.Builder;
 import lombok.Getter;
+import site.pointman.chatbot.domain.customer.Customer;
+import site.pointman.chatbot.domain.product.Product;
 
 @Getter
 public class ProductDto {
-    private String originProductNo;
-    private String channelProductNo;
-    private String channelServiceType;
-    private String categoryId;
-    private String name;
-    private String sellerManagementCode;
-    private String statusType;
-    private String channelProductDisplayStatusType;
-    private int salePrice;
-    private int discountedPrice;
-    private int mobileDiscountedPrice;
-    private int stockQuantity;
-    private Boolean knowledgeShoppingProductRegistration;
-    private String deliveryAttributeType;
-    private int deliveryFee;
-    private int returnFee;
-    private int exchangeFee;
-    private int sellerPurchasePoint;
-    private String sellerPurchasePointUnitType;
-    private int managerPurchasePoint;
-    private int textReviewPoint;
-    private int photoVideoReviewPoint;
-    private String regDate;
-    private String modifiedDate;
-    private String imageUrl;
+    private Long id ;
+    private Customer customer;
+    private String productName;
+    private Long productPrice;
+    private String productDescription;
+    private String tradingLocation;
+    private String kakaoOpenChatUrl;
 
-    public void setImageUrl(String imgUrl){
-        this.imageUrl = imgUrl;
-    };
+    @Builder
+    public ProductDto(Long id, Customer customer, String productName, Long productPrice, String productDescription, String tradingLocation, String kakaoOpenChatUrl) {
+        this.id =id;
+        this.customer = customer;
+        this.productName = productName;
+        this.productPrice = productPrice;
+        this.productDescription = productDescription;
+        this.tradingLocation = tradingLocation;
+        this.kakaoOpenChatUrl = kakaoOpenChatUrl;
+    }
+
+    public Product toEntity(){
+        return Product.builder()
+                .customer(customer)
+                .name(productName)
+                .price(productPrice)
+                .description(productDescription)
+                .tradingLocation(tradingLocation)
+                .kakaoOpenChatUrl(kakaoOpenChatUrl)
+                .build();
+    }
 }

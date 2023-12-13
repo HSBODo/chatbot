@@ -4,7 +4,7 @@ package site.pointman.chatbot.service;
 import io.jsonwebtoken.Claims;
 import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.dto.response.ResponseDto;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
 
 public interface AuthService {
     String createSignature (Long timestamp);
@@ -16,6 +16,6 @@ public interface AuthService {
     boolean isExpired (String accessToken);
 
     boolean isAuth (ChatBotRequest chatBotRequest);
-    ResponseDto addJwtToken(ResponseDto responseDto, String accessToken);
+    ChatBotResponse addJwtToken(ChatBotResponse chatBotResponse, String accessToken);
 }
 

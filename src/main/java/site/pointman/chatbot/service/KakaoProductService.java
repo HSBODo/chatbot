@@ -1,8 +1,7 @@
 package site.pointman.chatbot.service;
 
-import site.pointman.chatbot.dto.product.ProductListDto;
-import site.pointman.chatbot.dto.response.ResponseDto;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
 
 public interface KakaoProductService {
-    ResponseDto createProductsInfo(ProductListDto productListDto);
+    ChatBotResponse createProductsInfo();
 }

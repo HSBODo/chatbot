@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.dto.response.ResponseDto;
-import site.pointman.chatbot.dto.response.property.Context;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.property.Context;
 import site.pointman.chatbot.service.AuthService;
 import site.pointman.chatbot.utill.HttpUtils;
 import io.jsonwebtoken.Jwts;
@@ -28,13 +28,13 @@ import java.util.Map;
 @Slf4j
 public class AuthServiceImpl implements AuthService {
 
-    @Value("${naver.api.client.id}")
+    @Value("naver.api.client.id")
     private String naverApiClientId;
 
-    @Value("${naver.api.client.secret_sign}")
+    @Value("naver.api.client.secret_sign")
     private String naverApiClientSecretSign;
 
-    @Value("${secret.encrypt.key}")
+    @Value("secret.encrypt.key")
     private  String SECRET_ENCRYPT;
 
     private static String iv;
@@ -149,10 +149,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseDto addJwtToken(ResponseDto responseDto, String accessToken) {
+    public ChatBotResponse addJwtToken(ChatBotResponse chatBotResponse, String accessToken) {
         Context context = new Context("token",1,600);
         context.addParam("accessToken",accessToken);
-        responseDto.addContext(context);
-        return responseDto;
+        chatBotResponse.addContext(context);
+        return chatBotResponse;
     }
 }

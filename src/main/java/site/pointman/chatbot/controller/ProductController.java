@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.dto.response.ResponseDto;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.ValidationResponse;
 import site.pointman.chatbot.service.AuthService;
 import site.pointman.chatbot.service.CustomerService;
@@ -30,8 +30,8 @@ public class ProductController {
 
     @ResponseBody
     @PostMapping(value = "auth" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto auth(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
-        ResponseDto response = productService.validationCustomer(chatBotRequest);
+    public ChatBotResponse auth(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
+        ChatBotResponse response = productService.validationCustomer(chatBotRequest);
         return response;
     }
 
@@ -67,17 +67,19 @@ public class ProductController {
 
     @ResponseBody
     @PostMapping(value = "preview" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto preview(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
-        ResponseDto response = productService.createProductInfoPreview(chatBotRequest);
-        return response;
+    public ChatBotResponse preview(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
+        return productService.createProductInfoPreview(chatBotRequest);
     }
-
-
 
     @ResponseBody
     @PostMapping(value = "add" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto add(@RequestBody String chatBotRequest) throws Exception {
-        log.info("request={}",chatBotRequest);
-        return null;
+    public ChatBotResponse add(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
+        return productService.addProduct(chatBotRequest);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "search" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse search(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
+        return productService.addProduct(chatBotRequest);
     }
 }

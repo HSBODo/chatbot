@@ -4,107 +4,107 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import site.pointman.chatbot.constant.ProductStatus;
+import site.pointman.chatbot.domain.customer.Customer;
+import site.pointman.chatbot.domain.product.Product;
+import site.pointman.chatbot.domain.product.ProductImage;
 import site.pointman.chatbot.domain.response.ValidationResponse;
-import site.pointman.chatbot.dto.exception.ExceptionResponseDto;
+import site.pointman.chatbot.domain.response.ExceptionResponse;
 import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
-import site.pointman.chatbot.dto.product.ProductImgDto;
-import site.pointman.chatbot.dto.product.ProductListDto;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.request.propery.ProductImg;
-import site.pointman.chatbot.dto.response.ResponseDto;
-import site.pointman.chatbot.dto.response.property.Context;
-import site.pointman.chatbot.dto.response.property.common.Buttons;
-import site.pointman.chatbot.dto.response.property.common.Thumbnail;
-import site.pointman.chatbot.dto.response.property.components.BasicCard;
-import site.pointman.chatbot.dto.response.property.components.Carousel;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.property.Context;
+import site.pointman.chatbot.domain.response.property.common.Thumbnail;
+import site.pointman.chatbot.domain.response.property.components.BasicCard;
+import site.pointman.chatbot.domain.response.property.components.Carousel;
+import site.pointman.chatbot.dto.product.ProductDto;
+import site.pointman.chatbot.dto.product.ProductImageDto;
+import site.pointman.chatbot.repository.CustomerRepository;
+import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.service.AuthService;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.CustomerService;
-import site.pointman.chatbot.utill.BlockId;
+import site.pointman.chatbot.constant.BlockId;
+import site.pointman.chatbot.service.S3FileService;
 import site.pointman.chatbot.utill.HttpUtils;
 import site.pointman.chatbot.utill.NumberUtils;
 import site.pointman.chatbot.utill.StringUtils;
+import site.pointman.chatbot.utill.UrlResourceDownloader;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
 public class ProductServiceImpl implements ProductService {
-    private final String KAKAO_OPEN_CHAT_URL_REQUIRED = "https://open.kakao.com/o";
 
+    private final String KAKAO_OPEN_CHAT_URL_REQUIRED = "https://open.kakao.com/o";
 
     AuthService authService;
     CustomerService customerService;
+    S3FileService s3FileService;
+    ProductRepository productRepository;
+    CustomerRepository customerRepository;
 
-    public ProductServiceImpl(AuthService authService, CustomerService customerService) {
+    public ProductServiceImpl(AuthService authService, CustomerService customerService, S3FileService s3FileService, ProductRepository productRepository, CustomerRepository customerRepository) {
         this.authService = authService;
         this.customerService = customerService;
+        this.s3FileService = s3FileService;
+        this.productRepository = productRepository;
+        this.customerRepository = customerRepository;
     }
 
-    HttpUtils httpUtils;
-
     @Override
-    public ProductListDto getProducts(OAuthTokenDto tokenDto) {
-        ProductListDto productDto = null;
+    public ChatBotResponse addProduct(ChatBotRequest chatBotRequest) {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+        String userKey = chatBotRequest.getUserKey();
 
-        MediaType mediaType = MediaType.parse("application/json");
-        String productsUrl = "https://api.commerce.naver.com/external/v1/products/search";
+        Optional<Customer> maybeCustomer = customerRepository.findByCustomer(userKey);
 
-        Map<String,Object> headers = new HashMap<>();
-        headers.put("Authorization","Bearer "+tokenDto.getAccessToken());
-        headers.put("Content-type","application/json");
-
-        Map<String,Object> body = new HashMap<>();
-        body.put("searchKeywordType","SELLER_CODE");
-//      body.put("channelProductNos","");
-//      body.put("originProductNos","");
-        body.put("sellerManagementCode","1");
-        body.put("productStatusTypes","SALE");
-        body.put("page","1");
-        body.put("size","10");
-        body.put("orderType","NO");
-        body.put("periodType","SALE_START_DAY");
-        body.put("fromDate","2023-01-01");
-        body.put("toDate","2023-10-03");
-
-        String httpResponse = httpUtils.post(productsUrl,headers, body, mediaType);
-
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
-            productDto = mapper.readValue(httpResponse, ProductListDto.class);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+        if(maybeCustomer.isEmpty()){
+            ExceptionResponse exceptionResponseDto = new ExceptionResponse();
+            exceptionResponseDto.addNotCustomerException();
+            return exceptionResponseDto;
         }
 
-        // 상품 이미지 세팅
-        for(int i = 0 ; i < productDto.getProductListDto().size(); i++){
-            String url = "https://api.commerce.naver.com/external/v2/products/origin-products/"+productDto.getProduct(i).getOriginProductNo();
-            httpResponse = httpUtils.get(url,headers);
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
-                ProductImgDto productImgDto = mapper.readValue(httpResponse, ProductImgDto.class);
-                productDto.getProduct(i).setImageUrl(productImgDto.getImageUrl());
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
-        }
+        Customer customer = maybeCustomer.get();
+        ProductDto productDto = chatBotRequest.createProductDto(customer);
+        productRepository.save(productDto);
 
-        return productDto;
+        List<String> imgUrlList =chatBotRequest.getProductImg().getImgUrlList();
+        saveProductImage(imgUrlList,productDto);
+
+        chatBotResponse.addSimpleText("상품을 정상적으로 등록하셨습니다.");
+        chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+
+        return chatBotResponse;
     }
 
+    private void saveProductImage(List<String> imgUrlList,ProductDto productDto){
+        final String ext = ".jpg";
+        final String dir = "image";
+        ProductImageDto productImageDto = new ProductImageDto();
+
+        imgUrlList.forEach(imgUrl -> {
+            final String fileName = StringUtils.createImgFileName(productDto);
+            UrlResourceDownloader urlResourceDownloader = new UrlResourceDownloader( dir+"/"+fileName+ext);
+            urlResourceDownloader.download(imgUrl);
+            File file = new File(dir+"/"+fileName+ext);
+            String uploadReturnUrl = s3FileService.upload(file, dir);
+            productImageDto.getImageUrl().add(uploadReturnUrl);
+        });
+
+        productRepository.productImageSave(productImageDto);
+    }
 
     @Override
-    public ResponseDto createProductInfoPreview(ChatBotRequest chatBotRequest) {
-        ResponseDto responseDto = new ResponseDto();
+    public ChatBotResponse createProductInfoPreview(ChatBotRequest chatBotRequest) {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<BasicCard> basicCardCarousel = new Carousel<>();
         Context productContext = new Context("product",1,600);
 
@@ -112,8 +112,7 @@ public class ProductServiceImpl implements ProductService {
         String productName = chatBotRequest.getProductName();
         String productDescription = formatProductDescription(chatBotRequest);
 
-        ProductImg productImg = chatBotRequest.getProductImg();
-        List<String> imgUrlList = productImg.getImgUrlList();
+        List<String> imgUrlList =chatBotRequest.getProductImg().getImgUrlList();
 
         imgUrlList.forEach(imgUrl -> {
             BasicCard basicCard = new BasicCard();
@@ -124,13 +123,13 @@ public class ProductServiceImpl implements ProductService {
 
         productContext.addParam("accessToken","테스트");
 
-        responseDto.addCarousel(basicCardCarousel);
-        responseDto.addTextCard(productName,productDescription);
-        responseDto.addQuickButton("취소",BlockId.MAIN.getBlockId());
-        responseDto.addQuickButton("등록",BlockId.PRODUCT_ADD.getBlockId());
-        responseDto.addContext(productContext);
+        chatBotResponse.addCarousel(basicCardCarousel);
+        chatBotResponse.addTextCard(productName,productDescription);
+        chatBotResponse.addQuickButton("취소",BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton("등록",BlockId.PRODUCT_ADD.getBlockId());
+        chatBotResponse.addContext(productContext);
 
-        return responseDto;
+        return chatBotResponse;
     }
 
     private String formatProductDescription(ChatBotRequest chatBotRequest){
@@ -144,20 +143,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ResponseDto validationCustomer(ChatBotRequest chatBotRequest) {
-        ResponseDto responseDto = new ResponseDto();
+    public ChatBotResponse validationCustomer(ChatBotRequest chatBotRequest) {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         if(!customerService.isCustomer(chatBotRequest)){
-             ExceptionResponseDto exceptionResponseDto = new ExceptionResponseDto();
+             ExceptionResponse exceptionResponseDto = new ExceptionResponse();
              exceptionResponseDto.addNotCustomerException();
             return exceptionResponseDto;
         }
 
-        responseDto.addSimpleText("상품을 등록하시겠습니까?");
-        responseDto.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
-        responseDto.addQuickButton("등록하기", BlockId.PRODUCT_ADD_INFO.getBlockId());
+        chatBotResponse.addSimpleText("상품을 등록하시겠습니까?");
+        chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton("등록하기", BlockId.PRODUCT_ADD_INFO.getBlockId());
 
-        return responseDto;
+        return chatBotResponse;
     }
 
     @Override

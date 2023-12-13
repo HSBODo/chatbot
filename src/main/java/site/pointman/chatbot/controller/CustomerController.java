@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.dto.response.ResponseDto;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.ValidationResponse;
 import site.pointman.chatbot.service.CustomerService;
 
@@ -26,7 +26,7 @@ public class CustomerController {
 
     @ResponseBody
     @PostMapping(value = "join" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto join(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse join(@RequestBody ChatBotRequest chatBotRequest) {
         return customerService.join(chatBotRequest);
     }
 
@@ -39,19 +39,19 @@ public class CustomerController {
 
     @ResponseBody
     @PostMapping(value = "info" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto info(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse info(@RequestBody ChatBotRequest chatBotRequest) {
         return customerService.getCustomerInfo(chatBotRequest);
     }
 
     @ResponseBody
     @PostMapping(value = "update/PhoneNumber" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto updatePhoneNumber(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse updatePhoneNumber(@RequestBody ChatBotRequest chatBotRequest) {
         return customerService.updateCustomerPhoneNumber(chatBotRequest);
     }
 
     @ResponseBody
     @PostMapping(value = "delete" , headers = {"Accept=application/json; UTF-8"})
-    public ResponseDto delete(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse delete(@RequestBody ChatBotRequest chatBotRequest) {
         return customerService.deleteCustomer(chatBotRequest);
     }
 

@@ -26,5 +26,9 @@ public class BeanConfig {
     public CustomerRepository customerRepository(){
         return new CustomerRepositoryImpl(em) ;
     }
+    @Bean
+    public ProductRepository productRepository(){
+        return new ProductRepositoryImpl(em);
+    }
 
 }
