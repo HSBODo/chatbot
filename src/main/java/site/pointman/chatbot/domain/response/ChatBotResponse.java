@@ -100,15 +100,12 @@ public class ChatBotResponse {
 
         BasicCard basicCard = new BasicCard();
         if(!profileImgUrl.isBlank() && !profileNickname.isBlank() ){
-            Profile profile = new Profile(profileImgUrl,profileNickname);
-            basicCard.setProfile(profile);
+            basicCard.setProfile(profileNickname, profileImgUrl);
         }
-
-        Thumbnail thumbnail = new Thumbnail(thumbnailImgUrl);
 
         basicCard.setTitle(title);
         basicCard.setDescription(description);
-        basicCard.setThumbnail(thumbnail);
+        basicCard.setThumbnail(thumbnailImgUrl);
         basicCard.setButtons(buttons.getButtons());
 
         Component component = new Component(basicCard);

@@ -29,12 +29,10 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ChatBotResponse join(ChatBotRequest chatBotRequest) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
+        ExceptionResponse exceptionResponse = new ExceptionResponse();
         String userKey = chatBotRequest.getUserKey();
 
-        if (isCustomer(chatBotRequest)) {
-            ExceptionResponse exceptionResponse = new ExceptionResponse();
-            return exceptionResponse.createException("이미 존재하는 회원입니다.");
-        }
+        if (isCustomer(chatBotRequest)) return exceptionResponse.createException("이미 존재하는 회원입니다.");
 
         String joinName = chatBotRequest.getCustomerName();
         String joinPhone = chatBotRequest.getCustomerPhone();
@@ -50,6 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.insert(customer);
 
         chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.");
+        chatBotResponse.addQuickButton("메인메뉴",BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
 
@@ -59,9 +58,8 @@ public class CustomerServiceImpl implements CustomerService {
             String userKey = chatBotRequest.getUserKey();
             Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
 
-            if (mayBeCustomer.isEmpty()) {
-                return false;
-            }
+            if (mayBeCustomer.isEmpty()) return false;
+
             return true;
         } catch (Exception e){
             return false;
@@ -74,9 +72,7 @@ public class CustomerServiceImpl implements CustomerService {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
         String userKey = chatBotRequest.getUserKey();
 
-        if (!isCustomer(chatBotRequest)) {
-            return exceptionResponse.notCustomerException();
-        }
+        if (!isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
 
         Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
         Customer customer = mayBeCustomer.get();
