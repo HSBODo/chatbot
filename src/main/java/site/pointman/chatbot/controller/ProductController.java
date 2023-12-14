@@ -78,8 +78,26 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "search" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse search(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
-        return productService.addProduct(chatBotRequest);
+    @PostMapping(value = "get" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse getProducts(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
+        return productService.getCustomerProducts(chatBotRequest);
     }
+
+    @ResponseBody
+    @PostMapping(value = "get/detail" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse getProductDetail(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
+        return productService.getCustomerProductDetail(chatBotRequest);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "update/status" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse updateProductStatus(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
+        return productService.updateProductStatus(chatBotRequest);
+    }
+    @ResponseBody
+    @PostMapping(value = "delete" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse delete(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
+        return productService.deleteProduct(chatBotRequest);
+    }
+
 }

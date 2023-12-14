@@ -7,8 +7,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import site.pointman.chatbot.domain.product.ProductImage;
+import site.pointman.chatbot.dto.product.ProductDto;
+import site.pointman.chatbot.dto.product.ProductImageDto;
+import site.pointman.chatbot.utill.StringUtils;
+import site.pointman.chatbot.utill.UrlResourceDownloader;
 
 import java.io.File;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +24,25 @@ public class S3FileService {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+
+    public ProductImageDto uploadProductImage(List<String> imgUrlList, String userKey, String productName){
+        final String EXT = ".jpg";
+        final String DIR = "image";
+
+        ProductImageDto productImageDto = new ProductImageDto();
+        imgUrlList.forEach(imgUrl -> {
+            final String fileName = StringUtils.createImgFileName(userKey,productName);
+
+            UrlResourceDownloader urlResourceDownloader = new UrlResourceDownloader( DIR+"/"+fileName+EXT);
+            urlResourceDownloader.download(imgUrl);
+
+            File file = new File(DIR+"/"+fileName+EXT);
+            String uploadReturnUrl = upload(file, DIR);
+
+            productImageDto.getImageUrl().add(uploadReturnUrl);
+        });
+        return productImageDto;
+    }
 
     public String upload(File uploadFile, String dirName) {
         String fileName = dirName + "/" + uploadFile.getName();
@@ -29,7 +54,6 @@ public class S3FileService {
     }
 
     private String putS3(File uploadFile, String fileName) {
-        log.info("buketName={}",bucket);
         amazonS3Client.putObject(
                 new PutObjectRequest(bucket, fileName, uploadFile)
                         .withCannedAcl(CannedAccessControlList.PublicRead)	// PublicRead 권한으로 업로드 됨

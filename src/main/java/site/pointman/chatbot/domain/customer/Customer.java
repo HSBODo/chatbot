@@ -32,10 +32,6 @@ public class Customer extends BaseEntity {
     private String name;
     private String phone;
 
-    @OneToMany(mappedBy = "customer")
-    private List<Product> products = new ArrayList<>();
-
-
     @Builder
     public Customer(String userKey, String name, String phone) {
         this.userKey = userKey;

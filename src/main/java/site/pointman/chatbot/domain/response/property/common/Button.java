@@ -4,6 +4,8 @@ package site.pointman.chatbot.domain.response.property.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 
+import java.util.Map;
+
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -15,6 +17,7 @@ public class Button {
     private String blockId;
     private String phoneNumber;
     private String messageText;
+    private Extra extra;
 
     public void createWebLinkButton(String buttonName,String webLinkUrl){
         this.action = "webLink";
@@ -22,6 +25,12 @@ public class Button {
         this.webLinkUrl = webLinkUrl;
     }
 
+    public void createBlockButton(String buttonName,String blockId,Extra extra){
+        this.action = "block";
+        this.label = buttonName;
+        this.blockId = blockId;
+        this.extra = extra;
+    }
     public void createBlockButton(String buttonName,String blockId){
         this.action = "block";
         this.label = buttonName;

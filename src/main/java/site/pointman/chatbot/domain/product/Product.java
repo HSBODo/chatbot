@@ -9,6 +9,7 @@ import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.customer.Customer;
 
 import javax.persistence.*;
+import java.util.Random;
 
 
 @Getter
@@ -20,8 +21,7 @@ import javax.persistence.*;
 public class Product extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id ;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_key")
@@ -40,12 +40,13 @@ public class Product extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
-    @OneToOne(mappedBy = "product")
+    @OneToOne
+    @JoinColumn(name = "product_images_id")
     private ProductImage productImages;
 
     @Builder
     public Product(Long id, Customer customer, String buyerUserKey, String reservation, String name, Long price, String description, String tradingLocation, String kakaoOpenChatUrl, ProductStatus status) {
-        this.Id = id;
+        this.id = id;
         this.customer = customer;
         this.buyerUserKey = buyerUserKey;
         this.reservation = reservation;
@@ -57,7 +58,11 @@ public class Product extends BaseEntity {
         this.status = status;
     }
 
-
-
+    public void changeProductImage(ProductImage productImage){
+        this.productImages = productImage;
+    }
+    public void changeStatus(ProductStatus productStatus){
+        this.status = productStatus;
+    }
 
 }

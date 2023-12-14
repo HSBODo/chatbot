@@ -32,9 +32,9 @@ public class CustomerServiceImpl implements CustomerService {
         String userKey = chatBotRequest.getUserKey();
 
         if (isCustomer(chatBotRequest)) {
-            ExceptionResponse exceptionResponseDto = new ExceptionResponse();
-            exceptionResponseDto.addException("이미 존재하는 회원입니다.");
-            return chatBotResponse;
+            ExceptionResponse exceptionResponse = new ExceptionResponse();
+
+            return exceptionResponse.createException("이미 존재하는 회원입니다.");
         }
 
         String joinName = chatBotRequest.getCustomerName();
@@ -109,6 +109,7 @@ public class CustomerServiceImpl implements CustomerService {
                 "가입일자: "+customer.getCreateDate());
         chatBotResponse.addQuickButton("탈퇴하기",BlockId.CUSTOMER_ASK_DELETE.getBlockId());
         chatBotResponse.addQuickButton("연락처변경",BlockId.CUSTOMER_UPDATE_PHONE_NUMBER.getBlockId());
+        chatBotResponse.addQuickButton("등록상품조회",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
         chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
 
         return chatBotResponse;

@@ -7,6 +7,7 @@ import lombok.Getter;
 import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.request.propery.*;
 import site.pointman.chatbot.dto.product.ProductDto;
+import site.pointman.chatbot.dto.product.ProductImageDto;
 
 import java.util.List;
 
@@ -20,12 +21,13 @@ public class ChatBotRequest {
     private Action action;
     private Value value;
     private List<Context> contexts;
+
     public ProductDto createProductDto(Customer customer){
         return ProductDto.builder()
                 .customer(customer)
-                .productName(getProductName())
-                .productPrice(Long.parseLong(getProductPrice()))
-                .productDescription(getProductDescription())
+                .name(getProductName())
+                .price(Long.parseLong(getProductPrice()))
+                .description(getProductDescription())
                 .tradingLocation(getTradingLocation())
                 .kakaoOpenChatUrl(getKakaoOpenChatUrl())
                 .build();
@@ -48,12 +50,12 @@ public class ChatBotRequest {
     public String getProductPrice(){
         return action.getParams().getProductPrice();
     }
-    public ProductImg getProductImg(){
+    public List<String> getProductImages(){
         try {
             ObjectMapper mapper = new ObjectMapper();
             String ProductImgStr = this.action.getParams().getProductImg();
             ProductImg productImg = mapper.readValue(ProductImgStr, ProductImg.class);
-            return productImg;
+            return productImg.getImgUrlList();
         }catch (Exception e){
             return null;
         }
@@ -73,5 +75,8 @@ public class ChatBotRequest {
         }catch (Exception e){
             return null;
         }
+    }
+    public String getUtterance(){
+        return userRequest.getUtterance();
     }
 }

@@ -7,14 +7,13 @@ public class CustomerDto {
     private String userKey;
     private String name;
     private String phone;
-    private String address;
+
 
     @Builder
-    public CustomerDto(String userKey, String name, String phone, String address) {
+    public CustomerDto(String userKey, String name, String phone) {
         this.userKey = userKey;
         this.name = name;
         this.phone = phone;
-        this.address = address;
     }
 
     public Customer toEntity(){
@@ -22,7 +21,6 @@ public class CustomerDto {
                 .userKey(userKey)
                 .name(name)
                 .phone(phone)
-
                 .build();
     }
 }

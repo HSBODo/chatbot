@@ -1,5 +1,5 @@
 package site.pointman.chatbot.constant;
 
 public enum ProductStatus {
-    등록,숨김,예약,결제완료,대기,거래완료
+    판매,숨김,예약,예약취소,결제완료,대기,판매완료,삭제
 }

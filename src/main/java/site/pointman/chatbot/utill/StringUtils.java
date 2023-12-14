@@ -1,6 +1,8 @@
 package site.pointman.chatbot.utill;
 
 
+import site.pointman.chatbot.constant.ProductStatus;
+import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.dto.product.ProductDto;
 
 import java.text.DecimalFormat;
@@ -35,16 +37,34 @@ public class StringUtils {
 
     public static String formatProductDetail(String price, String description, String tradingLocation, String kakaoOpenChatUrl){
         String productDetail =
-                "판매가격: "+ price+"원" + "\n"+
-                "상품 설명: "+ description + "\n"+
+                "판매가격: "+ price+"원" + "\n\n"+
+                "상품 설명: "+ description + "\n\n"+
                 "거래 희망 장소: "+ tradingLocation + "\n"+
                 "카카오 오픈 채팅방: "+ kakaoOpenChatUrl + "\n";
         return productDetail;
     }
-    public static String createImgFileName(ProductDto productDto){
+    public static String formatProductDetail(ProductStatus productStatus, String price, String description, String tradingLocation, String kakaoOpenChatUrl, String createDate){
+        String productDetail =
+                "상품상태: " + productStatus + "\n"+
+                "판매가격: " + price+"원" + "\n\n"+
+                "상품 설명: " + description + "\n\n"+
+                "거래 희망 장소: " + tradingLocation + "\n"+
+                "카카오 오픈 채팅방: " + kakaoOpenChatUrl + "\n\n"+
+                "등록일자: " + createDate ;
+                ;
+        return productDetail;
+    }
+    public static String formatProductInfo(String price, ProductStatus productStatus){
+        String productDetail =
+                "상품 상태: "+ productStatus + "\n"+
+                "판매가격: "+ price+"원" + "\n";
+        return productDetail;
+    }
+
+    public static String createImgFileName(String userKey, String productName){
         String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String currentTimeStamp = String.valueOf(System.currentTimeMillis());
-        String imgFileName = productDto.getCustomer().getUserKey()+"_"+productDto.getProductName()+"_"+currentDate+"_"+currentTimeStamp;
+        String imgFileName = userKey+"_"+productName+"_"+currentDate+"_"+currentTimeStamp;
         return imgFileName;
     }
 
