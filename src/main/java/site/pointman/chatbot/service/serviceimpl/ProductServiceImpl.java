@@ -45,9 +45,6 @@ import java.util.*;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final String KAKAO_OPEN_CHAT_URL_REQUIRED = "https://open.kakao.com/o";
-
-
     CustomerService customerService;
     S3FileService s3FileService;
     ProductRepository productRepository;
@@ -79,7 +76,7 @@ public class ProductServiceImpl implements ProductService {
 
             ProductImageDto productImageDto = s3FileService.uploadProductImage(imgUrlList, userKey,productDto.getName());
 
-            productDto.setStatus(ProductStatus.판매);
+            productDto.setStatus(ProductStatus.판매중);
             productDto.setId(PRODUCT_ID);
             productRepository.addProduct(productDto,productImageDto);
 
@@ -203,13 +200,13 @@ public class ProductServiceImpl implements ProductService {
         chatBotResponse.addCarousel(basicCardCarousel);
         chatBotResponse.addTextCard(productName,productDescription);
 
-        if(status.equals(ProductStatus.판매)){
+        if(status.equals(ProductStatus.판매중)){
             chatBotResponse.addQuickButton("숨김",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
             chatBotResponse.addQuickButton("예약",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
             chatBotResponse.addQuickButton("판매완료",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
         }
         if(status.equals(ProductStatus.숨김)){
-            chatBotResponse.addQuickButton("판매",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+            chatBotResponse.addQuickButton("판매중",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
         }
         if(status.equals(ProductStatus.예약)){
             chatBotResponse.addQuickButton("예약취소",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
@@ -247,8 +244,8 @@ public class ProductServiceImpl implements ProductService {
             return chatBotResponse;
         }
 
-        if(utterance.equals(ProductStatus.판매.name()) ||utterance.equals(ProductStatus.예약취소.name())){
-            productRepository.updateStatus(productId,ProductStatus.판매);
+        if(utterance.equals(ProductStatus.판매중.name()) ||utterance.equals(ProductStatus.예약취소.name())){
+            productRepository.updateStatus(productId,ProductStatus.판매중);
             chatBotResponse.addSimpleText("상품 판매 상태로 변경하였습니다.");
             chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
             return chatBotResponse;
@@ -313,69 +310,6 @@ public class ProductServiceImpl implements ProductService {
         chatBotResponse.addQuickButton("등록하기", BlockId.PRODUCT_ADD_INFO.getBlockId());
 
         return chatBotResponse;
-    }
-
-    @Override
-    public ValidationResponse validationProductName(ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
-        String productName = chatBotRequest.getValidationData();
-        if(productName.length()>30){
-            validationResponse.validationFail();
-            return validationResponse;
-        }
-        validationResponse.validationSuccess(productName);
-        return validationResponse;
-    }
-
-    @Override
-    public ValidationResponse validationProductPrice(ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
-        String productPrice= chatBotRequest.getValidationData();
-
-        if(!NumberUtils.isNumber(productPrice)){
-            validationResponse.validationFail();
-            return validationResponse;
-        }
-
-        validationResponse.validationSuccess(productPrice);
-        return validationResponse;
-    }
-
-    @Override
-    public ValidationResponse validationProductDescription(ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
-        String productDescription= chatBotRequest.getValidationData();
-
-        if(productDescription.length()>400){
-            validationResponse.validationFail();
-            return validationResponse;
-        }
-
-        validationResponse.validationSuccess(productDescription);
-        return validationResponse;
-    }
-
-    @Override
-    public ValidationResponse validationKakaoOpenChatUrl(ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
-        String kakaoOpenChayUrl= chatBotRequest.getValidationData();
-
-        if(kakaoOpenChayUrl.contains(KAKAO_OPEN_CHAT_URL_REQUIRED)){
-            validationResponse.validationSuccess(kakaoOpenChayUrl);
-            return validationResponse;
-        }
-
-        validationResponse.validationFail();
-        return validationResponse;
-    }
-
-    @Override
-    public ValidationResponse validationTradingLocation(ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
-        String tradingLocation= chatBotRequest.getValidationData();
-
-        validationResponse.validationSuccess(tradingLocation);
-        return validationResponse;
     }
 
     private String formatPreviewProductDescription(ChatBotRequest chatBotRequest){

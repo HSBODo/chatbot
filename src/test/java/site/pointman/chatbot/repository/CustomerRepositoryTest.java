@@ -33,8 +33,7 @@ class CustomerRepositoryTest {
         String userKey = "QFJSyeIZbO77";
         Optional<Customer> byCustomer = customerRepository.findByCustomer(userKey);
         Customer customer = byCustomer.get();
-        List<Product> products = customer.getProducts();
-        System.out.println("products = " + products.get(0).getId());
+
 
     }
 

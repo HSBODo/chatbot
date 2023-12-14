@@ -14,11 +14,5 @@ public interface ProductService {
     ChatBotResponse getCustomerProducts(ChatBotRequest chatBotRequest);
     ChatBotResponse getCustomerProductDetail(ChatBotRequest chatBotRequest);
     ChatBotResponse updateProductStatus(ChatBotRequest chatBotRequest);
-
     ChatBotResponse deleteProduct(ChatBotRequest chatBotRequest);
-    ValidationResponse validationProductName(ChatBotRequest chatBotRequest);
-    ValidationResponse validationProductPrice(ChatBotRequest chatBotRequest);
-    ValidationResponse validationProductDescription(ChatBotRequest chatBotRequest);
-    ValidationResponse validationKakaoOpenChatUrl(ChatBotRequest chatBotRequest);
-    ValidationResponse validationTradingLocation(ChatBotRequest chatBotRequest);
 }

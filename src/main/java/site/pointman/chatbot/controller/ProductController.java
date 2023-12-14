@@ -36,36 +36,6 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "priceValidation" , headers = {"Accept=application/json; UTF-8"})
-    public ValidationResponse priceValidation(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
-        return productService.validationProductPrice(chatBotRequest);
-    }
-
-    @ResponseBody
-    @PostMapping(value = "nameValidation" , headers = {"Accept=application/json; UTF-8"})
-    public ValidationResponse nameValidation(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
-        return productService.validationProductName(chatBotRequest);
-    }
-
-    @ResponseBody
-    @PostMapping(value = "descriptionValidation" , headers = {"Accept=application/json; UTF-8"})
-    public ValidationResponse descriptionValidation(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
-        return productService.validationProductDescription(chatBotRequest);
-    }
-
-    @ResponseBody
-    @PostMapping(value = "kakaoOpenChatUrlValidation" , headers = {"Accept=application/json; UTF-8"})
-    public ValidationResponse kakaoOpenChatUrlValidation(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
-        return productService.validationKakaoOpenChatUrl(chatBotRequest);
-    }
-
-    @ResponseBody
-    @PostMapping(value = "tradingLocationValidation" , headers = {"Accept=application/json; UTF-8"})
-    public ValidationResponse tradingLocationValidation(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
-        return productService.validationTradingLocation(chatBotRequest);
-    }
-
-    @ResponseBody
     @PostMapping(value = "preview" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse preview(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
         return productService.createProductInfoPreview(chatBotRequest);

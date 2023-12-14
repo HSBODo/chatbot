@@ -33,7 +33,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         if (isCustomer(chatBotRequest)) {
             ExceptionResponse exceptionResponse = new ExceptionResponse();
-
             return exceptionResponse.createException("이미 존재하는 회원입니다.");
         }
 
@@ -49,6 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerDto.toEntity();
 
         customerRepository.insert(customer);
+
         chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.");
         return chatBotResponse;
     }
@@ -69,48 +69,27 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ValidationResponse validationFormatPhoneNumber(ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
-        String inputPhone = chatBotRequest.getValidationData();
-        inputPhone = inputPhone.replaceAll("-", "");
-
-        if(!NumberUtils.isNumber(inputPhone)){
-            validationResponse.validationFail();
-            return validationResponse;
-        }
-
-        if (inputPhone.length() != 11) {
-            validationResponse.validationFail();
-            return validationResponse;
-        }
-
-        validationResponse.validationSuccess(inputPhone);
-        return validationResponse;
-    }
-
-    @Override
     public ChatBotResponse getCustomerInfo(ChatBotRequest chatBotRequest) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
+        ExceptionResponse exceptionResponse = new ExceptionResponse();
         String userKey = chatBotRequest.getUserKey();
 
         if (!isCustomer(chatBotRequest)) {
-            chatBotResponse.addSimpleText("회원이 아닙니다.");
-            chatBotResponse.addQuickButton("처음으로", BlockId.MAIN.getBlockId());
-            chatBotResponse.addQuickButton("회원가입", BlockId.CUSTOMER_JOIN.getBlockId());
-            return chatBotResponse;
+            return exceptionResponse.notCustomerException();
         }
 
         Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
         Customer customer = mayBeCustomer.get();
 
         chatBotResponse.addTextCard("회원정보",
-                "이름: "+customer.getName()+"\n"+
+            "닉네임: "+customer.getName()+"\n"+
                 "연락처: "+customer.getPhone()+"\n"+
                 "가입일자: "+customer.getCreateDate());
-        chatBotResponse.addQuickButton("탈퇴하기",BlockId.CUSTOMER_ASK_DELETE.getBlockId());
+
+        chatBotResponse.addQuickButton("회원탈퇴",BlockId.CUSTOMER_ASK_DELETE.getBlockId());
         chatBotResponse.addQuickButton("연락처변경",BlockId.CUSTOMER_UPDATE_PHONE_NUMBER.getBlockId());
-        chatBotResponse.addQuickButton("등록상품조회",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
-        chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton("판매내역",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
+        chatBotResponse.addQuickButton("메인메뉴",BlockId.MAIN.getBlockId());
 
         return chatBotResponse;
     }

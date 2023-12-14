@@ -31,14 +31,7 @@ public class CustomerController {
     }
 
     @ResponseBody
-    @PostMapping(value = "isPhone" , headers = {"Accept=application/json; UTF-8"})
-    public ValidationResponse isPhone(@RequestBody ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResultResponse = customerService.validationFormatPhoneNumber(chatBotRequest);
-        return validationResultResponse;
-    }
-
-    @ResponseBody
-    @PostMapping(value = "info" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "get/info" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse info(@RequestBody ChatBotRequest chatBotRequest) {
         return customerService.getCustomerInfo(chatBotRequest);
     }
