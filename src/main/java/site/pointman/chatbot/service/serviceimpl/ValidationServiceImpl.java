@@ -1,9 +1,7 @@
 package site.pointman.chatbot.service.serviceimpl;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.ValidationResponse;
 import site.pointman.chatbot.service.ValidationService;
 import site.pointman.chatbot.utill.NumberUtils;

@@ -53,9 +53,7 @@ public class ProductServiceImpl implements ProductService {
             String userKey = chatBotRequest.getUserKey();
             List<String> imgUrlList = chatBotRequest.getProductImages();
 
-            if(!customerService.isCustomer(chatBotRequest)){
-                return exceptionResponse.notCustomerException();
-            }
+            if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
 
             Customer customer = customerRepository.findByCustomer(userKey).get();
 
@@ -114,14 +112,10 @@ public class ProductServiceImpl implements ProductService {
             Carousel<BasicCard> carousel = new Carousel<>();
             String userKey = chatBotRequest.getUserKey();
 
-            if(!customerService.isCustomer(chatBotRequest)){
-                return exceptionResponse.notCustomerException();
-            }
-            List<Product> products = productRepository.findByUserKey(userKey);
+            if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
 
-            if(products.isEmpty()){
-                return exceptionResponse.createException("등록된 상품이 없습니다");
-            }
+            List<Product> products = productRepository.findByUserKey(userKey);
+            if(products.isEmpty()) return exceptionResponse.createException("등록된 상품이 없습니다");
 
             products.forEach(product -> {
                 BasicCard basicCard = new BasicCard();
@@ -181,23 +175,7 @@ public class ProductServiceImpl implements ProductService {
             chatBotResponse.addCarousel(carouselImage);
             chatBotResponse.addTextCard(productName,productDescription);
 
-            if(status.equals(ProductStatus.판매중)){
-                chatBotResponse.addQuickButton("숨김",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-                chatBotResponse.addQuickButton("예약",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-                chatBotResponse.addQuickButton("판매완료",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-            }
-            if(status.equals(ProductStatus.숨김)){
-                chatBotResponse.addQuickButton("판매중",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-            }
-            if(status.equals(ProductStatus.예약)){
-                chatBotResponse.addQuickButton("예약취소",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-                chatBotResponse.addQuickButton("이전으로",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
-                chatBotResponse.addQuickButton("판매완료",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-                return chatBotResponse;
-            }
-
-            chatBotResponse.addQuickButton("삭제",BlockId.PRODUCT_DELETE.getBlockId(),extra);
-            chatBotResponse.addQuickButton("이전으로",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
+            chatBotResponse = createStatusQuickButtons(chatBotResponse, status, extra);
 
             return chatBotResponse;
         }catch (Exception e){
@@ -229,7 +207,7 @@ public class ProductServiceImpl implements ProductService {
 
             if(utterance.equals(ProductStatus.판매중.name()) ||utterance.equals(ProductStatus.예약취소.name())){
                 productRepository.updateStatus(productId,ProductStatus.판매중);
-                chatBotResponse.addSimpleText("상품 판매 상태로 변경하였습니다.");
+                chatBotResponse.addSimpleText("상품 판매중 상태로 변경하였습니다.");
                 chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
                 return chatBotResponse;
             }
@@ -326,5 +304,25 @@ public class ProductServiceImpl implements ProductService {
             basicCardCarousel.addComponent(basicCard);
         });
         return basicCardCarousel;
+    }
+
+    private ChatBotResponse createStatusQuickButtons(ChatBotResponse chatBotResponse, ProductStatus status, Extra extra){
+        if(status.equals(ProductStatus.판매중)){
+            chatBotResponse.addQuickButton("숨김",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+            chatBotResponse.addQuickButton("예약",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+            chatBotResponse.addQuickButton("판매완료",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+        }
+        if(status.equals(ProductStatus.숨김)){
+            chatBotResponse.addQuickButton("판매중",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+        }
+        if(status.equals(ProductStatus.예약)){
+            chatBotResponse.addQuickButton("예약취소",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+            chatBotResponse.addQuickButton("이전으로",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
+            chatBotResponse.addQuickButton("판매완료",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+            return chatBotResponse;
+        }
+        chatBotResponse.addQuickButton("삭제",BlockId.PRODUCT_DELETE.getBlockId(),extra);
+        chatBotResponse.addQuickButton("이전으로",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
+        return chatBotResponse;
     }
 }
