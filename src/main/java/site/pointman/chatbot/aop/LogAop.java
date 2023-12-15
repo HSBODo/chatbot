@@ -78,6 +78,7 @@ public class LogAop {
         }
 
         ChatBotResponse chatBotResponse = (ChatBotResponse) joinPoint.proceed();
+
         log.info("==== AOP ENDPOINT ====");
         logService.insert(logEntity,chatBotResponse);
         return chatBotResponse;

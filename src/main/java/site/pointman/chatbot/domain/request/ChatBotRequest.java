@@ -22,9 +22,8 @@ public class ChatBotRequest {
     private Value value;
     private List<Context> contexts;
 
-    public ProductDto createProductDto(Customer customer){
+    public ProductDto createProductDto(){
         return ProductDto.builder()
-                .customer(customer)
                 .name(getProductName())
                 .price(Long.parseLong(getProductPrice()))
                 .description(getProductDescription())
