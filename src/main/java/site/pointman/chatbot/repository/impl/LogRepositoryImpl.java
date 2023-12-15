@@ -15,8 +15,7 @@ public class LogRepositoryImpl implements LogRepository {
     }
 
     @Override
-    public Long save(Log log) {
+    public void save(Log log) {
         em.persist(log);
-        return log.getId();
     }
 }
