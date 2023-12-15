@@ -20,6 +20,11 @@ public class BasicCard {
         this.thumbnail = thumbnail;
     }
 
+    public void setThumbnail(String imageUrl, boolean fixedRatio){
+        Thumbnail thumbnail = new Thumbnail(imageUrl,fixedRatio);
+        this.thumbnail = thumbnail;
+    }
+
     public void setThumbnail(String imageUrl, Link link){
         Thumbnail thumbnail = new Thumbnail(imageUrl,link);
         this.thumbnail = thumbnail;

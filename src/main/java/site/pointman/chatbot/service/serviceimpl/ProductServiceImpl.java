@@ -254,7 +254,7 @@ public class ProductServiceImpl implements ProductService {
         Carousel<BasicCard> basicCardCarousel = new Carousel<>();
         imageUrls.forEach(imageUrl -> {
             BasicCard basicCard = new BasicCard();
-            basicCard.setThumbnail(imageUrl);
+            basicCard.setThumbnail(imageUrl,true);
             basicCardCarousel.addComponent(basicCard);
         });
         return basicCardCarousel;

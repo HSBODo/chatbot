@@ -25,4 +25,9 @@ public class Thumbnail {
         this.link = link;
         this.fixedRatio = fixedRatio;
     }
+
+    public Thumbnail(String imageUrl, boolean fixedRatio) {
+        this.imageUrl = imageUrl;
+        this.fixedRatio = fixedRatio;
+    }
 }
