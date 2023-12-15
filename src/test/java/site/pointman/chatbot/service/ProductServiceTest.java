@@ -19,7 +19,7 @@ import java.util.List;
 
 @Slf4j
 @SpringBootTest
-@Transactional
+
 class ProductServiceTest {
 
     @Autowired
@@ -32,6 +32,7 @@ class ProductServiceTest {
     private ChatBotRequest chatBotRequest;
 
     @Test
+    @Transactional
     void validationCustomer() throws Exception{
         String useKey = "QFJSyeIZbO77";
         String body="{\"bot\":{\"id\":\"65262a2d31101d1cb1106082!\",\"name\":\"중계나라\"},\"intent\":{\"id\":\"657bc60c11c58311fd9c9fa4\",\"name\":\"테스트\",\"extra\":{\"reason\":{\"code\":1,\"message\":\"OK\"}}},\"action\":{\"id\":\"657bc62306b53a111f7c354e\",\"name\":\"테스트_Json\",\"params\":{},\"detailParams\":{},\"clientExtra\":{}},\"userRequest\":{\"block\":{\"id\":\"657bc60c11c58311fd9c9fa4\",\"name\":\"테스트\"},\"user\":{\"id\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"type\":\"botUserKey\",\"properties\":{\"botUserKey\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"isFriend\":true,\"plusfriendUserKey\":\""+useKey+"\",\"bot_user_key\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"plusfriend_user_key\":\"QFJSyeIZbO77\"}},\"utterance\":\"테스트\",\"params\":{\"surface\":\"Kakaotalk.plusfriend\"},\"lang\":\"ko\",\"timezone\":\"Asia/Seoul\"},\"contexts\":[]}\n";
@@ -44,6 +45,7 @@ class ProductServiceTest {
     }
 
     @Test
+    @Transactional
     void createProductInfoPreview() throws Exception{
         //give
         String body="{\"intent\":{\"id\":\"652a0a9a27e3c4125a33f6eb\",\"name\":\"상품정보 입력 및 미리보기\"},\"userRequest\":{\"params\":{},\"block\":{\"id\":\"652a0a9a27e3c4125a33f6eb\",\"name\":\"상품정보 입력 및 미리보기\"},\"utterance\":\"등록하기\",\"lang\":\"ko\",\"user\":{\"id\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"type\":\"botUserKey\",\"properties\":{\"botUserKey\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"isFriend\":false,\"plusfriendUserKey\":\"QFJSyeIZbO77\",\"bot_user_key\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"plusfriend_user_key\":\"QFJSyeIZbO77\"}}},\"bot\":{\"id\":\"65262a2d31101d1cb1106082!\",\"name\":\"중계나라\"},\"action\":{\"name\":\"상품_정보입력_미리보기\",\"clientExtra\":{},\"params\":{\"productName\":\"상품이름\",\"productDescription\":\"상품설명\",\"productImg\":\"{\\\"privacyAgreement\\\":\\\"Y\\\",\\\"imageQuantity\\\":\\\"1\\\",\\\"secureUrls\\\":\\\"List(http://secure.kakaocdn.net/dna/eAWeuk/K6beei5MQR/XXX/img_org.jpg?credential\\u003dKq0eSbCrZgKIq51jh41Uf1jLsUh7VWcz\\u0026expires\\u003d1702641400\\u0026allow_ip\\u003d\\u0026allow_referer\\u003d\\u0026signature\\u003ddI2NZTDK5C4LsQ2u8E2gpmazuPM%3D)\\\",\\\"expire\\\":\\\"2023-12-15T11:56:40+0000\\\"}\",\"productPrice\":\"100000\",\"kakaoOpenChatUrl\":\"https://open.kakao.com/o/slfrEtXf\",\"tradingLocation\":\"부천시\"},\"id\":\"652e18c39df46e7601eb27eb\",\"detailParams\":{}},\"contexts\":[]}";
@@ -75,6 +77,7 @@ class ProductServiceTest {
 
 
     @Test
+    @Transactional
     void getCustomerProducts() throws JsonProcessingException {
         //give
         String useKey = "QFJSyeIZbO77";
@@ -91,6 +94,7 @@ class ProductServiceTest {
     }
 
     @Test
+    @Transactional
     void getCustomerProductDetail() throws JsonProcessingException {
         //give
         String productId = "5942";
@@ -128,6 +132,7 @@ class ProductServiceTest {
     }
 
     @Test
+    @Transactional
     void deleteProduct() throws JsonProcessingException {
         //give
         String productId = "5942";
