@@ -214,7 +214,7 @@ public class ProductServiceImpl implements ProductService {
             Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
             if(mayBeProduct.isEmpty())   return exceptionResponse.createException("상품이 존재하지 않습니다.");
 
-            if(utterance.equals("삭제")){
+            if(ProductStatus.삭제.equals(utterance)){
                 productRepository.deleteProduct(productId);
                 chatBotResponse.addSimpleText("상품을 정상적으로 삭제하였습니다.");
                 chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
