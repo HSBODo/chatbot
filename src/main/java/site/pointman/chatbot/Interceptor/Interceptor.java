@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 
 
 @Slf4j
-public class AuthInterceptor implements HandlerInterceptor {
+public class Interceptor implements HandlerInterceptor {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -26,16 +26,8 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     //	Controller 진입 전 실행
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("preHandle");
+        log.info("인터셉터-preHandle");
         return true;
-//
-//
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        ResponseDto responseDto = new ResponseDto();
-//        responseDto.addSimpleText("인증실패");
-//        String responseBody = objectMapper.writeValueAsString(responseDto);
-//        response.getWriter().write(responseBody);
     }
 
     private String getResponseBody(ContentCachingResponseWrapper responseWrapper) {
@@ -60,11 +52,11 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        log.info("postHandle");
+        log.info("인터셉터-postHandle");
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        log.info("afterCompletion");
+        log.info("인터셉터-afterCompletion");
     }
 }
