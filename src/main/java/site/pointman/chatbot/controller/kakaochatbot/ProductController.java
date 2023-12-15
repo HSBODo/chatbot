@@ -1,4 +1,4 @@
-package site.pointman.chatbot.controller;
+package site.pointman.chatbot.controller.kakaochatbot;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -6,10 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import site.pointman.chatbot.domain.log.Log;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.service.CustomerService;
 import site.pointman.chatbot.service.LogService;
 import site.pointman.chatbot.service.ProductService;
 

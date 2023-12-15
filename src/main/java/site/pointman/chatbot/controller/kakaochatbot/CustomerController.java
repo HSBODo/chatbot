@@ -1,4 +1,4 @@
-package site.pointman.chatbot.controller;
+package site.pointman.chatbot.controller.kakaochatbot;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.ValidationResponse;
 import site.pointman.chatbot.service.CustomerService;
 
 

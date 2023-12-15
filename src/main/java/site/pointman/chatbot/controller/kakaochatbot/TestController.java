@@ -1,23 +1,18 @@
-package site.pointman.chatbot.controller;
+package site.pointman.chatbot.controller.kakaochatbot;
 
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.property.Context;
-import site.pointman.chatbot.domain.response.property.common.QuickReplyButtons;
 import site.pointman.chatbot.domain.response.property.common.Buttons;
 import site.pointman.chatbot.domain.response.property.common.Extra;
 import site.pointman.chatbot.domain.response.property.common.ListItems;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.Carousel;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Controller
