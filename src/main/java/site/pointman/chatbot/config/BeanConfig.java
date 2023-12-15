@@ -30,5 +30,9 @@ public class BeanConfig {
     public ProductRepository productRepository(){
         return new ProductRepositoryImpl(em);
     }
+    @Bean
+    public LogRepository logRepository(){
+        return new LogRepositoryImpl(em);
+    }
 
 }
