@@ -36,17 +36,19 @@ public class StringUtils {
     }
 
     public static String formatProductDetail(String price, String description, String tradingLocation, String kakaoOpenChatUrl){
+        String formatPrice = NumberUtils.formatPrice(Integer.parseInt(price));
         String productDetail =
-                "판매가격: "+ price+"원" + "\n\n"+
-                "상품 설명: "+ description + "\n\n"+
-                "거래 희망 장소: "+ tradingLocation + "\n"+
-                "카카오 오픈 채팅방: "+ kakaoOpenChatUrl + "\n";
+                "판매가격: " + formatPrice +"원" + "\n\n"+
+                "상품 설명: " + description + "\n\n"+
+                "거래 희망 장소: " + tradingLocation + "\n"+
+                "카카오 오픈 채팅방: " + kakaoOpenChatUrl + "\n";
         return productDetail;
     }
-    public static String formatProductDetail(ProductStatus productStatus, String price, String description, String tradingLocation, String kakaoOpenChatUrl, String createDate){
+    public static String formatProductDetail(ProductStatus productStatus, Long price, String description, String tradingLocation, String kakaoOpenChatUrl, String createDate){
+        String formatPrice = NumberUtils.formatPrice(price);
         String productDetail =
                 "상품상태: " + productStatus + "\n"+
-                "판매가격: " + price+"원" + "\n\n"+
+                "판매가격: " + formatPrice+"원" + "\n\n"+
                 "상품 설명: " + description + "\n\n"+
                 "거래 희망 장소: " + tradingLocation + "\n"+
                 "카카오 오픈 채팅방: " + kakaoOpenChatUrl + "\n\n"+
