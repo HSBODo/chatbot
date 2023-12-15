@@ -19,9 +19,13 @@ class LogRepositoryTest {
     @Test
     @Transactional
     void save() {
+        //give
         Log logEntity = Log.builder()
                 .userKey("asdasd")
                 .build();
+        //when
         logRepository.save(logEntity);
+
+        //then
     }
 }

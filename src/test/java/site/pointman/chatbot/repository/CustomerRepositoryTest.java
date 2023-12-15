@@ -45,11 +45,23 @@ class CustomerRepositoryTest {
 
     @Test
     void updateCustomerPhoneNumber() {
-        customerRepository.updateCustomerPhoneNumber("QFJSyeIZbO77","01011112222");
+        //give
+        String userKey = "QFJSyeIZbO77";
+        String phoneNumber = "01011112222";
+        //when
+        customerRepository.updateCustomerPhoneNumber(userKey,phoneNumber);
+
+        //then
     }
 
     @Test
     void delete() {
+        //give
+        String userKey = "QFJSyeIZbO77";
+
+        //when
         customerRepository.delete("QFJSyeIZbO77");
+
+        //then
     }
 }
