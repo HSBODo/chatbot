@@ -6,10 +6,8 @@ import java.util.Optional;
 
 public interface CustomerRepository {
     void insert(Customer customer);
-
     Optional<Customer> findByCustomer(String userKey);
-
     void updateCustomerPhoneNumber(String userKey, String phoneNumber);
-
     void delete(String userKey);
+
 }
