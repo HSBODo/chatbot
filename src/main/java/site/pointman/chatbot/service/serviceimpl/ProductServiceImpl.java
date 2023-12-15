@@ -286,14 +286,14 @@ public class ProductServiceImpl implements ProductService {
 
         if(utterance.equals(ProductStatus.숨김.name())){
             productRepository.updateStatus(productId,ProductStatus.숨김);
-            chatBotResponse.addSimpleText("상품을 숨기기 상태로 변경하였습니다.");
+            chatBotResponse.addSimpleText("상품을 숨김 상태로 변경하였습니다.");
             chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
             return chatBotResponse;
         }
 
         if(utterance.equals(ProductStatus.판매중.name()) ||utterance.equals(ProductStatus.예약취소.name())){
             productRepository.updateStatus(productId,ProductStatus.판매중);
-            chatBotResponse.addSimpleText("상품 판매중 상태로 변경하였습니다.");
+            chatBotResponse.addSimpleText("상품을 판매중 상태로 변경하였습니다.");
             chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
             return chatBotResponse;
         }
