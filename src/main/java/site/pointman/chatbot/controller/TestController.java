@@ -23,34 +23,12 @@ import java.nio.charset.StandardCharsets;
 @Controller
 @RequestMapping(value = "/test/*")
 public class TestController {
+
     @ResponseBody
-    @PostMapping(value = "test" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse test(HttpServletRequest httpRequest) throws Exception {
-        ServletInputStream inputStream = httpRequest.getInputStream();
-        String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
-        log.info("http request = {}", messageBody);
-
-        try {
-
-            ChatBotResponse chatBotResponse = new ChatBotResponse();
-            Context context = new Context("session",3,600);
-            context.addParam("test","12312");
-            Context context2 = new Context("test",3,600);
-            context2.addParam("asdasdccd","99999999");
-            QuickReplyButtons quickReplyButtons =new QuickReplyButtons();
-            Extra extra = new Extra();
-            extra.addChoiceParam("선택 파라미터");
-
-            chatBotResponse.addSimpleText("심플텍스트 테스트");
-            chatBotResponse.addQuickButton("테스트2","65140667e6fda240f3fedc4f",extra);
-            chatBotResponse.addContext(context);
-            chatBotResponse.addContext(context2);
-            return chatBotResponse;
-        }catch (Exception e){
-            log.info("exception = {}",e.getMessage());
-            return null;
-        }
-
+    @PostMapping(value = "json" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse test(@RequestBody String request) throws Exception {
+        log.info("http request = {}", request);
+        return null;
     }
 
     @ResponseBody
