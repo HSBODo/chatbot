@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import site.pointman.chatbot.domain.log.Log;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.ValidationResponse;
-import site.pointman.chatbot.service.AuthService;
 import site.pointman.chatbot.service.CustomerService;
+import site.pointman.chatbot.service.LogService;
 import site.pointman.chatbot.service.ProductService;
 
 @Slf4j
@@ -18,14 +18,12 @@ import site.pointman.chatbot.service.ProductService;
 @RequestMapping(value = "/kakaochatbot/product")
 public class ProductController {
 
-    CustomerService customerService;
-    AuthService authService;
     ProductService productService;
+    LogService logService;
 
-    public ProductController(CustomerService customerService, AuthService authService, ProductService productService) {
-        this.customerService = customerService;
-        this.authService = authService;
+    public ProductController(ProductService productService, LogService logService) {
         this.productService = productService;
+        this.logService = logService;
     }
 
     @ResponseBody

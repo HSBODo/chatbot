@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.request.propery.*;
+import site.pointman.chatbot.domain.response.property.common.Extra;
 import site.pointman.chatbot.dto.product.ProductDto;
-import site.pointman.chatbot.dto.product.ProductImageDto;
 
 import java.util.List;
 
@@ -65,6 +65,18 @@ public class ChatBotRequest {
     }
     public String getKakaoOpenChatUrl(){
         return action.getParams().getKakaoOpenChatUrl();
+    }
+    public String getProductId(){
+        action.getClientExtra().getProductId();
+        if(!action.getClientExtra().getProductId().isEmpty()){
+            return action.getClientExtra().getProductId();
+        }
+        Extra extraObj = new Extra(action.getClientExtra().getExtra());
+        return extraObj.getProductId();
+    }
+    public String getChoiceParam(){
+        Extra extraObj = new Extra(action.getClientExtra().getExtra());
+        return extraObj.getChoiceParam();
     }
     public String getValidationData(){
         return value.getOrigin();

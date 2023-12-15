@@ -11,17 +11,4 @@ import java.util.Map;
 public class ClientExtra {
     private Map<String,String> extra;
     private String productId;
-
-    public String getProductId(){
-        if(!productId.isEmpty()){
-            return productId;
-        }
-        Extra extraObj = new Extra(extra);
-        return extraObj.getProductId();
-    }
-
-    public String getChoiceParam(){
-        Extra extraObj = new Extra(extra);
-        return extraObj.getChoiceParam();
-    }
 }

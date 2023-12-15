@@ -14,8 +14,10 @@ import site.pointman.chatbot.domain.response.property.components.*;
 public class ChatBotResponse {
     private String version;
     private Template template;
+
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private Values context;
+
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private Data data;
 

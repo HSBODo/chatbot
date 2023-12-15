@@ -152,7 +152,7 @@ public class ProductServiceImpl implements ProductService {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
 
         try {
-            final Long productId = Long.parseLong(chatBotRequest.getAction().getClientExtra().getProductId());
+            final Long productId = Long.parseLong(chatBotRequest.getProductId());
 
             Extra extra = new Extra();
             extra.addProductId(String.valueOf(productId));
@@ -186,7 +186,7 @@ public class ProductServiceImpl implements ProductService {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         ExceptionResponse exceptionResponse = new ExceptionResponse();
         try {
-            final Long productId = Long.parseLong(chatBotRequest.getAction().getClientExtra().getProductId());
+            final Long productId = Long.parseLong(chatBotRequest.getProductId());
             final String utterance = chatBotRequest.getUtterance();
 
             if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
@@ -206,7 +206,7 @@ public class ProductServiceImpl implements ProductService {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
 
         try {
-            final Long productId = Long.parseLong(chatBotRequest.getAction().getClientExtra().getProductId());
+            final Long productId = Long.parseLong(chatBotRequest.getProductId());
             final String utterance = chatBotRequest.getUtterance();
 
             if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();

@@ -5,16 +5,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import site.pointman.chatbot.Interceptor.AuthInterceptor;
+import site.pointman.chatbot.Interceptor.Interceptor;
 import site.pointman.filter.InitSettingFilter;
-
-import javax.servlet.Filter;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new AuthInterceptor())
+        registry.addInterceptor(new Interceptor())
                 .excludePathPatterns("/css/**", "/images/**", "/js/**");
 //        addPathPatterns		Interceptor 적용 대상
 //        excludePathPatterns		Interceptor 제외 대상
