@@ -32,6 +32,7 @@ public class ProductServiceImpl implements ProductService {
 
     CustomerService customerService;
     S3FileService s3FileService;
+
     ProductRepository productRepository;
     CustomerRepository customerRepository;
 
@@ -49,16 +50,15 @@ public class ProductServiceImpl implements ProductService {
 
         try {
             final Long PRODUCT_ID = NumberUtils.createProductId();
-
-            String userKey = chatBotRequest.getUserKey();
-            List<String> imgUrlList = chatBotRequest.getProductImages();
+            final String USER_KEY = chatBotRequest.getUserKey();
 
             if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
+            Customer customer = customerRepository.findByCustomer(USER_KEY).get();
 
-            Customer customer = customerRepository.findByCustomer(userKey).get();
+            List<String> imgUrlList = chatBotRequest.getProductImages();
 
             ProductDto productDto = chatBotRequest.createProductDto(customer);
-            ProductImageDto productImageDto = s3FileService.uploadProductImage(imgUrlList, userKey,productDto.getName());
+            ProductImageDto productImageDto = s3FileService.uploadProductImage(imgUrlList, USER_KEY,productDto.getName());
 
             productDto.setStatus(ProductStatus.판매중);
             productDto.setId(PRODUCT_ID);
@@ -83,8 +83,7 @@ public class ProductServiceImpl implements ProductService {
             Context productContext = new Context("product",1,600);
 
             String productName = chatBotRequest.getProductName();
-            String productDescription = formatPreviewProductDescription(chatBotRequest);
-
+            String productDescription = previewProductDescription(chatBotRequest);
             List<String> imageUrls =chatBotRequest.getProductImages();
 
             Carousel<BasicCard> carouselImage = createCarouselImage(imageUrls);
@@ -162,19 +161,17 @@ public class ProductServiceImpl implements ProductService {
 
             Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
             if(mayBeProduct.isEmpty()) return exceptionResponse.createException("상품이 존재하지 않습니다.");
-
             Product product = mayBeProduct.get();
 
             ProductStatus status = product.getStatus();
             String productName = product.getName();
-            String productDescription = formatProductDetailDescription(product);
+            String productDescription = product.getProductDetailDescription();
             List<String> imageUrls = product.getProductImages().getImageUrl();
 
             Carousel<BasicCard> carouselImage = createCarouselImage(imageUrls);
 
             chatBotResponse.addCarousel(carouselImage);
             chatBotResponse.addTextCard(productName,productDescription);
-
             chatBotResponse = createStatusQuickButtons(chatBotResponse, status, extra);
 
             return chatBotResponse;
@@ -190,43 +187,14 @@ public class ProductServiceImpl implements ProductService {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
         try {
             final Long productId = Long.parseLong(chatBotRequest.getAction().getClientExtra().getProductId());
-
-            String utterance = chatBotRequest.getUtterance();
+            final String utterance = chatBotRequest.getUtterance();
 
             if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
 
             Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
             if(mayBeProduct.isEmpty())  return exceptionResponse.createException("상품이 존재하지 않습니다.");
 
-            if(utterance.equals(ProductStatus.숨김.name())){
-                productRepository.updateStatus(productId,ProductStatus.숨김);
-                chatBotResponse.addSimpleText("상품을 숨기기 상태로 변경하였습니다.");
-                chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
-                return chatBotResponse;
-            }
-
-            if(utterance.equals(ProductStatus.판매중.name()) ||utterance.equals(ProductStatus.예약취소.name())){
-                productRepository.updateStatus(productId,ProductStatus.판매중);
-                chatBotResponse.addSimpleText("상품 판매중 상태로 변경하였습니다.");
-                chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
-                return chatBotResponse;
-            }
-
-            if(utterance.equals(ProductStatus.예약.name())){
-                productRepository.updateStatus(productId,ProductStatus.예약);
-                chatBotResponse.addSimpleText("상품을 예약 상태로 변경하였습니다.");
-                chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
-                return chatBotResponse;
-            }
-
-            if(utterance.equals(ProductStatus.판매완료.name())){
-                productRepository.updateStatus(productId,ProductStatus.판매완료);
-                chatBotResponse.addSimpleText("상품을 판매완료 상태로 변경하였습니다.");
-                chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
-                return chatBotResponse;
-            }
-
-            return exceptionResponse.createException("상태변경을 실패하였습니다.");
+            return updateStatus(utterance, productId, chatBotResponse,exceptionResponse);
         }catch (Exception e){
             return exceptionResponse.createException();
         }
@@ -239,8 +207,7 @@ public class ProductServiceImpl implements ProductService {
 
         try {
             final Long productId = Long.parseLong(chatBotRequest.getAction().getClientExtra().getProductId());
-
-            String utterance = chatBotRequest.getUtterance();
+            final String utterance = chatBotRequest.getUtterance();
 
             if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
 
@@ -274,25 +241,12 @@ public class ProductServiceImpl implements ProductService {
         return chatBotResponse;
     }
 
-    private String formatPreviewProductDescription(ChatBotRequest chatBotRequest){
+    private String previewProductDescription(ChatBotRequest chatBotRequest){
         String productDescription = chatBotRequest.getProductDescription();
         String productPrice = chatBotRequest.getProductPrice();
         String tradingLocation = chatBotRequest.getTradingLocation();
         String kakaoOpenChatUrl = chatBotRequest.getKakaoOpenChatUrl();
-
         productDescription = StringUtils.formatProductDetail(productPrice,productDescription,tradingLocation,kakaoOpenChatUrl);
-        return productDescription;
-    }
-
-    private String formatProductDetailDescription(Product product){
-        ProductStatus productStatus = product.getStatus();
-        String productDescription = product.getDescription();
-        String productPrice = String.valueOf(product.getPrice());
-        String tradingLocation = product.getTradingLocation();
-        String kakaoOpenChatUrl = product.getKakaoOpenChatUrl();
-        String productCreateDate = product.getCreateDate();
-
-        productDescription = StringUtils.formatProductDetail(productStatus,productPrice,productDescription,tradingLocation,kakaoOpenChatUrl,productCreateDate);
         return productDescription;
     }
 
@@ -307,6 +261,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private ChatBotResponse createStatusQuickButtons(ChatBotResponse chatBotResponse, ProductStatus status, Extra extra){
+        if(status.equals(ProductStatus.예약)){
+            chatBotResponse.addQuickButton("예약취소",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+            chatBotResponse.addQuickButton("이전으로",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
+            chatBotResponse.addQuickButton("판매완료",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+            return chatBotResponse;
+        }
+
         if(status.equals(ProductStatus.판매중)){
             chatBotResponse.addQuickButton("숨김",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
             chatBotResponse.addQuickButton("예약",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
@@ -315,14 +276,42 @@ public class ProductServiceImpl implements ProductService {
         if(status.equals(ProductStatus.숨김)){
             chatBotResponse.addQuickButton("판매중",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
         }
-        if(status.equals(ProductStatus.예약)){
-            chatBotResponse.addQuickButton("예약취소",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-            chatBotResponse.addQuickButton("이전으로",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
-            chatBotResponse.addQuickButton("판매완료",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-            return chatBotResponse;
-        }
+
         chatBotResponse.addQuickButton("삭제",BlockId.PRODUCT_DELETE.getBlockId(),extra);
         chatBotResponse.addQuickButton("이전으로",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
         return chatBotResponse;
+    }
+
+    private ChatBotResponse updateStatus(String utterance, Long productId, ChatBotResponse chatBotResponse,ExceptionResponse exceptionResponse ){
+
+        if(utterance.equals(ProductStatus.숨김.name())){
+            productRepository.updateStatus(productId,ProductStatus.숨김);
+            chatBotResponse.addSimpleText("상품을 숨기기 상태로 변경하였습니다.");
+            chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+            return chatBotResponse;
+        }
+
+        if(utterance.equals(ProductStatus.판매중.name()) ||utterance.equals(ProductStatus.예약취소.name())){
+            productRepository.updateStatus(productId,ProductStatus.판매중);
+            chatBotResponse.addSimpleText("상품 판매중 상태로 변경하였습니다.");
+            chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+            return chatBotResponse;
+        }
+
+        if(utterance.equals(ProductStatus.예약.name())){
+            productRepository.updateStatus(productId,ProductStatus.예약);
+            chatBotResponse.addSimpleText("상품을 예약 상태로 변경하였습니다.");
+            chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+            return chatBotResponse;
+        }
+
+        if(utterance.equals(ProductStatus.판매완료.name())){
+            productRepository.updateStatus(productId,ProductStatus.판매완료);
+            chatBotResponse.addSimpleText("상품을 판매완료 상태로 변경하였습니다.");
+            chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+            return chatBotResponse;
+        }
+
+        return exceptionResponse.createException("상태변경을 실패하였습니다.");
     }
 }

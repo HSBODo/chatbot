@@ -7,9 +7,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.customer.Customer;
+import site.pointman.chatbot.utill.StringUtils;
 
 import javax.persistence.*;
-import java.util.Random;
 
 
 @Getter
@@ -33,7 +33,7 @@ public class Product extends BaseEntity {
     private String reservation;
     private String name;
     private Long price;
-    private String Description;
+    private String description;
     private String tradingLocation;
     private String kakaoOpenChatUrl;
 
@@ -52,7 +52,7 @@ public class Product extends BaseEntity {
         this.reservation = reservation;
         this.name = name;
         this.price = price;
-        this.Description = description;
+        this.description = description;
         this.tradingLocation = tradingLocation;
         this.kakaoOpenChatUrl = kakaoOpenChatUrl;
         this.status = status;
@@ -63,6 +63,15 @@ public class Product extends BaseEntity {
     }
     public void changeStatus(ProductStatus productStatus){
         this.status = productStatus;
+    }
+    public String getProductDetailDescription(){
+        return StringUtils.formatProductDetail(status,
+                String.valueOf(price),
+                description,
+                tradingLocation,
+                kakaoOpenChatUrl,
+                getCreateDate()
+        );
     }
 
 }
