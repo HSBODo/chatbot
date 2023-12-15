@@ -17,21 +17,29 @@ class CustomerRepositoryTest {
     CustomerRepository customerRepository;
 
     @Test
-    void insertCustomer() {
+    void save() {
+        //give
         Customer customer = Customer.builder()
                 .userKey("테스트12")
                 .name("테스트")
                 .phone("01000000000")
                 .build();
-                customerRepository.insert(customer);
+        //when
+        customerRepository.save(customer);
+
+        //then
     }
 
     @Test
     void findByCustomer() {
+        //give
         String userKey = "QFJSyeIZbO77";
+
+        //when
         Optional<Customer> byCustomer = customerRepository.findByCustomer(userKey);
         Customer customer = byCustomer.get();
 
+        //then
         Assertions.assertThat(customer.getUserKey()).isEqualTo(userKey);
     }
 
@@ -41,7 +49,7 @@ class CustomerRepositoryTest {
     }
 
     @Test
-    void deleteCustomer() {
+    void delete() {
         customerRepository.delete("QFJSyeIZbO77");
     }
 }

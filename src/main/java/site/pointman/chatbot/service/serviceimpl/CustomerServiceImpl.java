@@ -45,7 +45,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         Customer customer = customerDto.toEntity();
 
-        customerRepository.insert(customer);
+        customerRepository.save(customer);
 
         chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.");
         chatBotResponse.addQuickButton("메인메뉴",BlockId.MAIN.getBlockId());

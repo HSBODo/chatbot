@@ -19,7 +19,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public void insert(Customer customer) {
+    public void save(Customer customer) {
         em.persist(customer);
     }
 
