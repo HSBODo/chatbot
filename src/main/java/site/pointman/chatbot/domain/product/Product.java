@@ -66,7 +66,7 @@ public class Product extends BaseEntity {
     }
     public String getProductDetailDescription(){
         return StringUtils.formatProductDetail(status,
-                String.valueOf(price),
+                price,
                 description,
                 tradingLocation,
                 kakaoOpenChatUrl,

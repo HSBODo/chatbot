@@ -34,7 +34,7 @@ public class ProductController {
     @ResponseBody
     @PostMapping(value = "preview" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse preview(@RequestBody ChatBotRequest chatBotRequest) throws Exception {
-        return productService.createProductInfoPreview(chatBotRequest);
+        return productService.getProductInfoPreview(chatBotRequest);
     }
 
     @ResponseBody
