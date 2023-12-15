@@ -2,20 +2,15 @@ package site.pointman.chatbot.aop;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.aspectj.lang.reflect.MethodSignature;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import site.pointman.chatbot.domain.log.Log;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.service.LogService;
-
-import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Method;
 
 @Aspect
 @Component
@@ -29,8 +24,8 @@ public class LogAop {
         this.logService = logService;
     }
 
-    @Pointcut("execution(* site.pointman.chatbot.controller.*.*(..))") //Pointcut
-    public void controllerPointcut() {
+    @Pointcut("execution(* site.pointman.chatbot.controller.kakaochatbot.*.*(..)) && !@annotation(site.pointman.chatbot.annotation.SkipLogging)") //Pointcut
+    public void chatBotControllerPointcut() {
     }
 //    @Before("controllerPointcut()")
 //    public void before(JoinPoint joinPoint) throws Exception {
@@ -63,7 +58,7 @@ public class LogAop {
 //    }
 
 
-    @Around("controllerPointcut()")
+    @Around("chatBotControllerPointcut()")
     public ChatBotResponse log(ProceedingJoinPoint joinPoint) throws Throwable {
         Log logEntity = new Log();
 
