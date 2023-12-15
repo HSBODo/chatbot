@@ -1,7 +1,6 @@
 package site.pointman.chatbot.repository;
 
 import site.pointman.chatbot.constant.ProductStatus;
-import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
 import site.pointman.chatbot.dto.product.ProductDto;
@@ -17,7 +16,6 @@ public interface ProductRepository {
     void updateStatus(Long productId, ProductStatus productStatus);
     void deleteProduct(Long productId);
     List<Product> findByUserKey(String userKey);
-
     Optional<Product> findByProductId(Long productId);
 
 }

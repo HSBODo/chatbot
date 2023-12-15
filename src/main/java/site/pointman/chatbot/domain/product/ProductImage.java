@@ -25,7 +25,7 @@ public class ProductImage extends BaseEntity {
     private List<String> imageUrl;
 
     @Builder
-    public ProductImage(Product product, List<String> imageUrl) {
+    public ProductImage(List<String> imageUrl) {
         this.imageUrl = imageUrl;
     }
 }

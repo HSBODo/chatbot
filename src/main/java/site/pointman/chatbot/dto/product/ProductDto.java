@@ -20,13 +20,15 @@ public class ProductDto {
     private ProductStatus status;
 
     @Builder
-    public ProductDto(Customer customer, String name, Long price, String description, String tradingLocation, String kakaoOpenChatUrl) {
+    public ProductDto(Long id, Customer customer, String name, Long price, String description, String tradingLocation, String kakaoOpenChatUrl, ProductStatus status) {
+        this.id = id;
         this.customer = customer;
         this.name = name;
         this.price = price;
         this.description = description;
         this.tradingLocation = tradingLocation;
         this.kakaoOpenChatUrl = kakaoOpenChatUrl;
+        this.status = status;
     }
 
     public Product toEntity(){
