@@ -72,6 +72,7 @@ public class Product extends BaseEntity {
     public String getProductDetailDescription(){
         return StringUtils.formatProductDetail(
                 status,
+                category.getValue(),
                 StringUtils.formatPrice(price),
                 description,
                 tradingLocation,
