@@ -1,10 +1,12 @@
 package site.pointman.chatbot.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.product.Product;
@@ -17,6 +19,7 @@ import java.util.List;
 
 @SpringBootTest
 @Transactional
+@Slf4j
 class ProductRepositoryTest {
 
     @Autowired
@@ -151,5 +154,21 @@ class ProductRepositoryTest {
         // then
         Assertions.assertThat(product.getCustomer().getUserKey()).isEqualTo(customer.getUserKey());
         Assertions.assertThat(product.getName()).isEqualTo(productDto.getName());
+    }
+
+    @Test
+    void findByCategory() {
+        //give
+        Category category = Category.getCategory("취미/게임/음반");
+        ProductStatus status = ProductStatus.판매중;
+
+        //when
+        List<Product> products = productRepository.findByCategory(category,status);
+
+        //then
+        products.forEach(product -> {
+            Assertions.assertThat(product.getCategory()).isEqualTo(category);
+            Assertions.assertThat(product.getStatus()).isEqualTo(status);
+        });
     }
 }
