@@ -19,14 +19,6 @@ public class NumberUtils {
         return Long.valueOf(num);
     }
 
-    public static String formatPrice(int price){
-        DecimalFormat df = new DecimalFormat("###,###");
-        return df.format(price);
-    }
 
-    public static String formatPrice(Long price){
-        DecimalFormat df = new DecimalFormat("###,###");
-        return df.format(price);
-    }
 
 }
