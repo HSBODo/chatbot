@@ -85,6 +85,52 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ChatBotResponse getProductCategory(ChatBotRequest chatBotRequest) {
+        return selectCategoryResponse(BlockId.FIND_PRODUCTS_BY_CATEGORY);
+    }
+
+    @Override
+    public ChatBotResponse getProductsByCategory(ChatBotRequest chatBotRequest) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse();
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+        try {
+            Category category = Category.getCategory(chatBotRequest.getChoiceParam());
+            List<Product> products = productRepository.findByCategory(category,ProductStatus.판매중);
+
+            if(products.isEmpty()) return exceptionResponse.createException("등록된 상품이 없습니다.");
+
+            Carousel<BasicCard> carousel = new Carousel<>();
+
+            products.forEach(product -> {
+                BasicCard basicCard = new BasicCard();
+                Extra extra = new Extra();
+
+                ProductStatus productStatus = product.getStatus();
+                String productName = product.getName();
+                String productPrice = StringUtils.formatPrice(product.getPrice());
+                String productDescription = StringUtils.formatProductInfo(productPrice,productStatus);
+                String thumbnailImageUrl = product.getProductImages().getImageUrl().get(0);
+                String productId = String.valueOf(product.getId());
+
+
+                basicCard.setThumbnail(thumbnailImageUrl);
+                basicCard.setTitle(productName);
+                basicCard.setDescription(productDescription);
+                extra.addProductId(productId);
+                basicCard.setBlockButton("상세보기",BlockId.CUSTOMER_GET_PRODUCT_DETAIL.getBlockId(),extra);
+                carousel.addComponent(basicCard);
+            });
+
+            chatBotResponse.addCarousel(carousel);
+            chatBotResponse.addQuickButton(ButtonName.이전으로,BlockId.PRODUCT_GET_CATEGORIES.getBlockId());
+
+            return chatBotResponse;
+        }catch (Exception e) {
+            return exceptionResponse.createException();
+        }
+    }
+
+    @Override
     public ChatBotResponse getProductInfoPreview(ChatBotRequest chatBotRequest) {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
 
@@ -335,7 +381,7 @@ public class ProductServiceImpl implements ProductService {
 
         List<Category> categories = Arrays.stream(Category.values()).collect(Collectors.toList());
 
-        chatBotResponse.addSimpleText("상품의 카테고리를 선택해주세요.");
+        chatBotResponse.addSimpleText("카테고리를 선택해주세요.");
 
         categories.forEach(category -> {
             Extra extra = new Extra();
