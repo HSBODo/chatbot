@@ -38,6 +38,18 @@ public class ProductController {
     }
 
     @ResponseBody
+    @PostMapping(value = "product/get/category" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse getCategory(@RequestBody ChatBotRequest chatBotRequest) {
+        return productService.getProductCategory(chatBotRequest);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "product/get/all/byCategory" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse getProductsByCategory(@RequestBody ChatBotRequest chatBotRequest) {
+        return productService.getProductsByCategory(chatBotRequest);
+    }
+
+    @ResponseBody
     @PostMapping(value = "product/preview" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse preview(@RequestBody ChatBotRequest chatBotRequest) {
         return productService.getProductInfoPreview(chatBotRequest);
