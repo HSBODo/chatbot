@@ -32,6 +32,12 @@ public class ProductController {
     }
 
     @ResponseBody
+    @PostMapping(value = "product/add/category" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse addCategory(@RequestBody ChatBotRequest chatBotRequest) {
+        return productService.addCategory(chatBotRequest);
+    }
+
+    @ResponseBody
     @PostMapping(value = "product/preview" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse preview(@RequestBody ChatBotRequest chatBotRequest) {
         return productService.getProductInfoPreview(chatBotRequest);
