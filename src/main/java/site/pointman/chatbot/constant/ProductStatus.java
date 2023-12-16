@@ -16,6 +16,7 @@ public enum ProductStatus {
 
 
     private static final int STATUS_INDEX = 0;
+
     private final String utterance;
 
     ProductStatus(String utterance) {

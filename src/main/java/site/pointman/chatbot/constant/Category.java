@@ -1,5 +1,9 @@
 package site.pointman.chatbot.constant;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public enum Category {
     패션_잡화("패션/잡화"),
     생활가전("생활가전"),
@@ -13,13 +17,24 @@ public enum Category {
     기타("기타"),
     ;
 
-    private final String name;
+    private static final int CATEGORY_INDEX = 0;
+
+    private final String value;
 
     Category(String value) {
-        this.name = value;
+        this.value = value;
     }
 
-    public String getName() {
-        return name;
+    public static Category getCategory(String value){
+        List<Category> categories = Arrays.stream(Category.values())
+                .filter(category ->
+                    category.getValue().equals(value)
+                ).collect(Collectors.toList());
+
+        return categories.get(CATEGORY_INDEX);
+    }
+
+    public String getValue() {
+        return value;
     }
 }
