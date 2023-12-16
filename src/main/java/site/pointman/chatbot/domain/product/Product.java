@@ -10,6 +10,7 @@ import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.utill.StringUtils;
 
 import javax.persistence.*;
+import java.text.ParseException;
 
 
 @Getter
@@ -65,13 +66,18 @@ public class Product extends BaseEntity {
         this.status = productStatus;
     }
     public String getProductDetailDescription(){
-        return StringUtils.formatProductDetail(status,
-                price,
+        return StringUtils.formatProductDetail(
+                status,
+                StringUtils.formatPrice(price),
                 description,
                 tradingLocation,
                 kakaoOpenChatUrl,
-                getCreateDate()
+                getFormatCreateDate()
         );
     }
 
+    public String getFormatCreateDate() {
+        String createDate = getCreateDate();
+        return StringUtils.dateFormat(createDate, "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
+    }
 }

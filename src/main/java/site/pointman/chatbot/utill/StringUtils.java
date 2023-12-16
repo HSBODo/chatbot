@@ -74,12 +74,16 @@ public class StringUtils {
         return imgFileName;
     }
 
-    public static String dateFormat(String date,String beforeFormatType, String afterFormatType) throws ParseException {
-        SimpleDateFormat beforeFormat = new SimpleDateFormat(beforeFormatType);
-        SimpleDateFormat afterFormat = new SimpleDateFormat(afterFormatType);
+    public static String dateFormat(String date,String beforeFormatType, String afterFormatType){
+        try {
+            SimpleDateFormat beforeFormat = new SimpleDateFormat(beforeFormatType);
+            SimpleDateFormat afterFormat = new SimpleDateFormat(afterFormatType);
 
-        Date beforeFormatParseDate = beforeFormat.parse(date);
+            Date beforeFormatParseDate = beforeFormat.parse(date);
 
-        return afterFormat.format(beforeFormatParseDate);
+            return afterFormat.format(beforeFormatParseDate);
+        }catch (ParseException e){
+            return "****-**-**";
+        }
     }
 }

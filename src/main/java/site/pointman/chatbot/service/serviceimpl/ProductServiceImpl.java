@@ -58,8 +58,8 @@ public class ProductServiceImpl implements ProductService {
             ProductDto productDto = chatBotRequest.createProductDto();
             String productName = productDto.getName();
 
-            productDto.setCustomer(customer);
             productDto.setStatus(ProductStatus.판매중);
+            productDto.setCustomer(customer);
             productDto.setId(PRODUCT_ID);
 
             ProductImageDto productImageDto = s3FileService.uploadProductImage(IMAGE_URLS, USER_KEY,productName);
@@ -79,9 +79,12 @@ public class ProductServiceImpl implements ProductService {
         try {
             List<String> imageUrls = chatBotRequest.getProductImages();
             String productName = chatBotRequest.getProductName();
-            String productDescription = previewProductDescription(chatBotRequest);
+            String productDescription = chatBotRequest.getProductDescription();
+            String productPrice = StringUtils.formatPrice(Integer.parseInt(chatBotRequest.getProductPrice()));
+            String tradingLocation = chatBotRequest.getTradingLocation();
+            String kakaoOpenChatUrl = chatBotRequest.getKakaoOpenChatUrl();
 
-            return getProductInfoPreviewSuccessResponse(imageUrls,productName,productDescription);
+            return getProductInfoPreviewSuccessResponse(imageUrls,productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl);
         }catch (Exception e){
             return exceptionResponse.createException();
         }
@@ -185,15 +188,6 @@ public class ProductServiceImpl implements ProductService {
         return validationCustomerSuccessResponse();
     }
 
-    private String previewProductDescription(ChatBotRequest chatBotRequest){
-        String productDescription = chatBotRequest.getProductDescription();
-        String productPrice = chatBotRequest.getProductPrice();
-        String tradingLocation = chatBotRequest.getTradingLocation();
-        String kakaoOpenChatUrl = chatBotRequest.getKakaoOpenChatUrl();
-        productDescription = StringUtils.formatProductDetail(productPrice,productDescription,tradingLocation,kakaoOpenChatUrl);
-        return productDescription;
-    }
-
     private Carousel<BasicCard> createCarouselImage(List<String> imageUrls){
         Carousel<BasicCard> basicCardCarousel = new Carousel<>();
         imageUrls.forEach(imageUrl -> {
@@ -208,8 +202,8 @@ public class ProductServiceImpl implements ProductService {
         switch (status){
             case 판매중:
                 chatBotResponse.addQuickButton("숨김",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-                chatBotResponse.addQuickButton("삭제",BlockId.PRODUCT_DELETE.getBlockId(),extra);
                 chatBotResponse.addQuickButton("예약",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+                chatBotResponse.addQuickButton("삭제",BlockId.PRODUCT_DELETE.getBlockId(),extra);
                 chatBotResponse.addQuickButton("판매완료",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
                 chatBotResponse.addQuickButton("이전으로",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
                 return chatBotResponse;
@@ -278,7 +272,7 @@ public class ProductServiceImpl implements ProductService {
 
             ProductStatus productStatus = product.getStatus();
             String productName = product.getName();
-            String productPrice = String.valueOf(product.getPrice());
+            String productPrice = StringUtils.formatPrice(product.getPrice());
             String productDescription = StringUtils.formatProductInfo(productPrice,productStatus);
             String thumbnailImageUrl = product.getProductImages().getImageUrl().get(0);
             String productId = String.valueOf(product.getId());
@@ -298,10 +292,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-    private ChatBotResponse getProductInfoPreviewSuccessResponse(List<String> imageUrls, String productName, String productDescription){
+    private ChatBotResponse getProductInfoPreviewSuccessResponse(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Context productContext = new Context("product",1,600);
         //productContext.addParam("accessToken","테스트");
+
+        productDescription = StringUtils.formatProductDetail(productPrice,productDescription,tradingLocation,kakaoOpenChatUrl);
 
         Carousel<BasicCard> carouselImage = createCarouselImage(imageUrls);
         chatBotResponse.addCarousel(carouselImage);
