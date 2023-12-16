@@ -54,7 +54,7 @@ class CustomerServiceTest {
         //give
 
         //when
-        ChatBotResponse response = customerService.getCustomerInfo(chatBotRequest);
+        ChatBotResponse response = customerService.getCustomerProfile(chatBotRequest);
         String responseTitle = response.getTemplate().getOutputs().get(0).getTextCard().getTitle();
 
         //then

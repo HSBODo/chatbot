@@ -30,9 +30,9 @@ public class CustomerController {
     }
 
     @ResponseBody
-    @PostMapping(value = "get/info" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse info(@RequestBody ChatBotRequest chatBotRequest) {
-        return customerService.getCustomerInfo(chatBotRequest);
+    @PostMapping(value = "get/profile" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse profile(@RequestBody ChatBotRequest chatBotRequest) {
+        return customerService.getCustomerProfile(chatBotRequest);
     }
 
     @ResponseBody

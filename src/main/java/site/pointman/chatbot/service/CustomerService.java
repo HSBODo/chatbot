@@ -6,7 +6,7 @@ import site.pointman.chatbot.domain.response.ValidationResponse;
 
 public interface CustomerService {
     ChatBotResponse join(ChatBotRequest chatBotRequest);
-    ChatBotResponse getCustomerInfo(ChatBotRequest chatBotRequest);
+    ChatBotResponse getCustomerProfile(ChatBotRequest chatBotRequest);
     ChatBotResponse updateCustomerPhoneNumber(ChatBotRequest chatBotRequest);
     ChatBotResponse deleteCustomer(ChatBotRequest chatBotRequest);
     boolean isCustomer(ChatBotRequest chatBotRequest);

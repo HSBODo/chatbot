@@ -67,7 +67,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ChatBotResponse getCustomerInfo(ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getCustomerProfile(ChatBotRequest chatBotRequest) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         ExceptionResponse exceptionResponse = new ExceptionResponse();
         String userKey = chatBotRequest.getUserKey();

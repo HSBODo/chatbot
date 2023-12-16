@@ -18,7 +18,4 @@ public enum ButtonName {
     판매내역,
     회원가입,
     처음으로,
-
-
-
 }
