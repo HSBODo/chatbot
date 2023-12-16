@@ -3,6 +3,7 @@ package site.pointman.chatbot.service.serviceimpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.BlockId;
+import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
@@ -47,7 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.save(customer);
 
         chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.");
-        chatBotResponse.addQuickButton("메인메뉴",BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.메인으로,BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
 
@@ -81,10 +82,10 @@ public class CustomerServiceImpl implements CustomerService {
                 "연락처: "+customer.getPhone()+"\n"+
                 "가입일자: "+joinDate);
 
-        chatBotResponse.addQuickButton("회원탈퇴",BlockId.CUSTOMER_ASK_DELETE.getBlockId());
-        chatBotResponse.addQuickButton("연락처변경",BlockId.CUSTOMER_UPDATE_PHONE_NUMBER.getBlockId());
-        chatBotResponse.addQuickButton("판매내역",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
-        chatBotResponse.addQuickButton("메인메뉴",BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.회원탈퇴,BlockId.CUSTOMER_ASK_DELETE.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.연락처변경,BlockId.CUSTOMER_UPDATE_PHONE_NUMBER.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.판매내역,BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
 
         return chatBotResponse;
     }
@@ -98,7 +99,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.updateCustomerPhoneNumber(userKey, updatePhoneNumber);
 
         chatBotResponse.addSimpleText("연락처 변경이 완료 되었습니다.");
-        chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
 
         return chatBotResponse;
     }
@@ -111,7 +112,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.delete(userKey);
 
         chatBotResponse.addSimpleText("회원탈퇴가 완료 되었습니다.");
-        chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
 }

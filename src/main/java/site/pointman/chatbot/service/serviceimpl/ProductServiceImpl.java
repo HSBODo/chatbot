@@ -3,6 +3,7 @@ package site.pointman.chatbot.service.serviceimpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.BlockId;
+import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.product.Product;
@@ -201,25 +202,25 @@ public class ProductServiceImpl implements ProductService {
     private ChatBotResponse createStatusQuickButtons(ChatBotResponse chatBotResponse, ProductStatus status, Extra extra){
         switch (status){
             case 판매중:
-                chatBotResponse.addQuickButton("숨김",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-                chatBotResponse.addQuickButton("예약",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-                chatBotResponse.addQuickButton("삭제",BlockId.PRODUCT_DELETE.getBlockId(),extra);
-                chatBotResponse.addQuickButton("판매완료",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-                chatBotResponse.addQuickButton("이전으로",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
+                chatBotResponse.addQuickButton(ButtonName.숨김,BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+                chatBotResponse.addQuickButton(ButtonName.예약,BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+                chatBotResponse.addQuickButton(ButtonName.삭제,BlockId.PRODUCT_DELETE.getBlockId(),extra);
+                chatBotResponse.addQuickButton(ButtonName.판매완료,BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+                chatBotResponse.addQuickButton(ButtonName.이전으로,BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
                 return chatBotResponse;
             case 숨김:
-                chatBotResponse.addQuickButton("판매중",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-                chatBotResponse.addQuickButton("삭제",BlockId.PRODUCT_DELETE.getBlockId(),extra);
-                chatBotResponse.addQuickButton("이전으로",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
+                chatBotResponse.addQuickButton(ButtonName.판매중,BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+                chatBotResponse.addQuickButton(ButtonName.삭제,BlockId.PRODUCT_DELETE.getBlockId(),extra);
+                chatBotResponse.addQuickButton(ButtonName.이전으로,BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
                 return chatBotResponse;
             case 예약:
-                chatBotResponse.addQuickButton("예약취소",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-                chatBotResponse.addQuickButton("판매완료",BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
-                chatBotResponse.addQuickButton("이전으로",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
+                chatBotResponse.addQuickButton(ButtonName.예약취소,BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+                chatBotResponse.addQuickButton(ButtonName.판매완료,BlockId.PRODUCT_UPDATE_STATUS.getBlockId(),extra);
+                chatBotResponse.addQuickButton(ButtonName.이전으로,BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
                 return chatBotResponse;
             default:
-                chatBotResponse.addQuickButton("삭제",BlockId.PRODUCT_DELETE.getBlockId(),extra);
-                chatBotResponse.addQuickButton("이전으로",BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
+                chatBotResponse.addQuickButton(ButtonName.삭제,BlockId.PRODUCT_DELETE.getBlockId(),extra);
+                chatBotResponse.addQuickButton(ButtonName.이전으로,BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
                 return chatBotResponse;
         }
     }
@@ -228,7 +229,7 @@ public class ProductServiceImpl implements ProductService {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("상품을 "+productStatus+" 상태로 변경하였습니다.");
-        chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
 
@@ -236,7 +237,7 @@ public class ProductServiceImpl implements ProductService {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("상품을 정상적으로 삭제하였습니다.");
-        chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
 
@@ -244,8 +245,8 @@ public class ProductServiceImpl implements ProductService {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("상품을 등록하시겠습니까?");
-        chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
-        chatBotResponse.addQuickButton("등록하기", BlockId.PRODUCT_ADD_INFO.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.등록하기, BlockId.PRODUCT_ADD_INFO.getBlockId());
         return chatBotResponse;
     }
 
@@ -287,7 +288,7 @@ public class ProductServiceImpl implements ProductService {
         });
 
         chatBotResponse.addCarousel(carousel);
-        chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
 
@@ -302,8 +303,8 @@ public class ProductServiceImpl implements ProductService {
         Carousel<BasicCard> carouselImage = createCarouselImage(imageUrls);
         chatBotResponse.addCarousel(carouselImage);
         chatBotResponse.addTextCard(productName,productDescription);
-        chatBotResponse.addQuickButton("취소",BlockId.MAIN.getBlockId());
-        chatBotResponse.addQuickButton("등록",BlockId.PRODUCT_ADD.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.취소,BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.등록,BlockId.PRODUCT_ADD.getBlockId());
         chatBotResponse.addContext(productContext);
         return chatBotResponse;
     }
@@ -312,7 +313,7 @@ public class ProductServiceImpl implements ProductService {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("상품을 정상적으로 등록하셨습니다.");
-        chatBotResponse.addQuickButton("메인으로",BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
 }

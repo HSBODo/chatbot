@@ -4,6 +4,7 @@ package site.pointman.chatbot.controller.kakaochatbot;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.common.Buttons;
@@ -69,7 +70,7 @@ public class TestController {
 
         buttons.addBlockButton("블록버튼","danklnclsv123115vdf");
         chatBotResponse.addBasicCard("제목","설명","섬네일 URL https://www.youtube.com/","","",buttons);
-        chatBotResponse.addQuickButton("블록퀵버튼","블록아이디",extra);
+        chatBotResponse.addQuickButton(ButtonName.이전으로,"블록아이디",extra);
         return chatBotResponse;
     }
 

@@ -2,6 +2,7 @@ package site.pointman.chatbot.domain.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.domain.response.property.Component;
 import site.pointman.chatbot.domain.response.property.Context;
 import site.pointman.chatbot.domain.response.property.Data;
@@ -26,21 +27,21 @@ public class ChatBotResponse {
         this.template = new Template();
         this.context = new Values();
     }
-    public void addQuickButton(String buttonName, String blockId, Extra extra){
+    public void addQuickButton(ButtonName buttonName, String blockId, Extra extra){
         QuickReplyButton quickReplyButton = new QuickReplyButton();
-        quickReplyButton.createBlockQuickButton(buttonName,blockId,extra);
+        quickReplyButton.createBlockQuickButton(buttonName.name(),blockId,extra);
         this.template.getQuickReplies().add(quickReplyButton);
     }
 
-    public void addQuickButton(String buttonName, String blockId){
+    public void addQuickButton(ButtonName buttonName, String blockId){
         QuickReplyButton quickReplyButton = new QuickReplyButton();
-        quickReplyButton.createBlockQuickButton(buttonName,blockId);
+        quickReplyButton.createBlockQuickButton(buttonName.name(),blockId);
         this.template.getQuickReplies().add(quickReplyButton);
     }
 
-    public void addQuickButton(String buttonName){
+    public void addQuickButton(ButtonName buttonName){
         QuickReplyButton quickReplyButton = new QuickReplyButton();
-        quickReplyButton.createBlockQuickButton(buttonName);
+        quickReplyButton.createBlockQuickButton(buttonName.name());
         this.template.getQuickReplies().add(quickReplyButton);
     }
 
