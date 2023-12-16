@@ -8,6 +8,7 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 public interface ProductService {
 
     ChatBotResponse validationCustomer(ChatBotRequest chatBotRequest);
+    ChatBotResponse addCategory(ChatBotRequest chatBotRequest);
     ChatBotResponse getProductInfoPreview(ChatBotRequest chatBotRequest);
     ChatBotResponse getCustomerProducts(ChatBotRequest chatBotRequest);
     ChatBotResponse getCustomerProductDetail(ChatBotRequest chatBotRequest);

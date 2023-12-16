@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.BlockId;
 import site.pointman.chatbot.constant.ButtonName;
+import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.product.Product;
@@ -24,8 +25,10 @@ import site.pointman.chatbot.service.S3FileService;
 import site.pointman.chatbot.utill.NumberUtils;
 import site.pointman.chatbot.utill.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -52,6 +55,8 @@ public class ProductServiceImpl implements ProductService {
             final Long PRODUCT_ID = NumberUtils.createProductId();
             final String USER_KEY = chatBotRequest.getUserKey();
             final List<String> IMAGE_URLS = chatBotRequest.getProductImages();
+            final Category productCategory = Category.getCategory(chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue());
+
 
             if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
             Customer customer = customerRepository.findByCustomer(USER_KEY).get();
@@ -60,6 +65,7 @@ public class ProductServiceImpl implements ProductService {
             String productName = productDto.getName();
 
             productDto.setStatus(ProductStatus.판매중);
+            productDto.setCategory(productCategory);
             productDto.setCustomer(customer);
             productDto.setId(PRODUCT_ID);
 
@@ -74,6 +80,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ChatBotResponse addCategory(ChatBotRequest chatBotRequest) {
+        return selectCategoryResponse(BlockId.PRODUCT_PROFILE_PREVIEW);
+    }
+
+    @Override
     public ChatBotResponse getProductInfoPreview(ChatBotRequest chatBotRequest) {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
 
@@ -84,8 +95,9 @@ public class ProductServiceImpl implements ProductService {
             String productPrice = StringUtils.formatPrice(Integer.parseInt(chatBotRequest.getProductPrice()));
             String tradingLocation = chatBotRequest.getTradingLocation();
             String kakaoOpenChatUrl = chatBotRequest.getKakaoOpenChatUrl();
+            String category = chatBotRequest.getChoiceParam();
 
-            return getProductInfoPreviewSuccessResponse(imageUrls,productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl);
+            return getProductInfoPreviewSuccessResponse(imageUrls, category, productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl);
         }catch (Exception e){
             return exceptionResponse.createException();
         }
@@ -293,12 +305,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-    private ChatBotResponse getProductInfoPreviewSuccessResponse(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl){
+    private ChatBotResponse getProductInfoPreviewSuccessResponse(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Context productContext = new Context("product",1,600);
+        productContext.addParam("productCategory",category);
         //productContext.addParam("accessToken","테스트");
 
-        productDescription = StringUtils.formatProductDetail(productPrice,productDescription,tradingLocation,kakaoOpenChatUrl);
+        productDescription = StringUtils.formatProductDetail(category,productPrice,productDescription,tradingLocation,kakaoOpenChatUrl);
 
         Carousel<BasicCard> carouselImage = createCarouselImage(imageUrls);
         chatBotResponse.addCarousel(carouselImage);
@@ -312,7 +325,24 @@ public class ProductServiceImpl implements ProductService {
     private ChatBotResponse addProductSuccessResponse(){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
-        chatBotResponse.addSimpleText("상품을 정상적으로 등록하셨습니다.");
+        chatBotResponse.addSimpleText("상품을 정상적으로 등록하였습니다.");
+        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
+        return chatBotResponse;
+    }
+
+    private ChatBotResponse selectCategoryResponse(BlockId nextBlockId){
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+
+        List<Category> categories = Arrays.stream(Category.values()).collect(Collectors.toList());
+
+        chatBotResponse.addSimpleText("상품의 카테고리를 선택해주세요.");
+
+        categories.forEach(category -> {
+            Extra extra = new Extra();
+            extra.addChoiceParam(category.getValue());
+            chatBotResponse.addQuickButton(category,nextBlockId.getBlockId(),extra);
+        });
+
         chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
