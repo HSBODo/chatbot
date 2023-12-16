@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.customer.Customer;
@@ -37,6 +38,9 @@ public class Product extends BaseEntity {
     private String tradingLocation;
     private String kakaoOpenChatUrl;
 
+    @Convert(converter = CategoryEnumConverter.class)
+    private Category category;
+
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
@@ -45,7 +49,7 @@ public class Product extends BaseEntity {
     private ProductImage productImages;
 
     @Builder
-    public Product(Long id, Customer customer, String buyerUserKey, String reservation, String name, Long price, String description, String tradingLocation, String kakaoOpenChatUrl, ProductStatus status) {
+    public Product(Long id, Customer customer, String buyerUserKey, String reservation, String name, Long price, String description, String tradingLocation, String kakaoOpenChatUrl, Category category, ProductStatus status) {
         this.id = id;
         this.customer = customer;
         this.buyerUserKey = buyerUserKey;
@@ -55,6 +59,7 @@ public class Product extends BaseEntity {
         this.description = description;
         this.tradingLocation = tradingLocation;
         this.kakaoOpenChatUrl = kakaoOpenChatUrl;
+        this.category = category;
         this.status = status;
     }
 
