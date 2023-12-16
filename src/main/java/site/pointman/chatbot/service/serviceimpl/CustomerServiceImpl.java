@@ -12,6 +12,7 @@ import site.pointman.chatbot.repository.CustomerRepository;
 import site.pointman.chatbot.service.CustomerService;
 import site.pointman.chatbot.constant.BlockId;
 import site.pointman.chatbot.utill.NumberUtils;
+import site.pointman.chatbot.utill.StringUtils;
 
 import java.util.Optional;
 
@@ -76,11 +77,11 @@ public class CustomerServiceImpl implements CustomerService {
 
         Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
         Customer customer = mayBeCustomer.get();
-
+        String joinDate = StringUtils.dateFormat(customer.getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
         chatBotResponse.addTextCard("회원정보",
             "닉네임: "+customer.getName()+"\n"+
                 "연락처: "+customer.getPhone()+"\n"+
-                "가입일자: "+customer.getCreateDate());
+                "가입일자: "+joinDate);
 
         chatBotResponse.addQuickButton("회원탈퇴",BlockId.CUSTOMER_ASK_DELETE.getBlockId());
         chatBotResponse.addQuickButton("연락처변경",BlockId.CUSTOMER_UPDATE_PHONE_NUMBER.getBlockId());
