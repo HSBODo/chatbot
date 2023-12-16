@@ -5,7 +5,6 @@ import site.pointman.chatbot.domain.order.OrderStatus;
 import site.pointman.chatbot.repository.OrderRepository;
 
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 

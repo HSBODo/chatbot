@@ -2,13 +2,10 @@ package site.pointman.chatbot.utill;
 
 
 import site.pointman.chatbot.constant.ProductStatus;
-import site.pointman.chatbot.domain.product.Product;
-import site.pointman.chatbot.dto.product.ProductDto;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;

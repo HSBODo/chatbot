@@ -10,7 +10,6 @@ import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.utill.StringUtils;
 
 import javax.persistence.*;
-import java.text.ParseException;
 
 
 @Getter

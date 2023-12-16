@@ -2,16 +2,14 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import site.pointman.chatbot.constant.BlockId;
 import site.pointman.chatbot.domain.customer.Customer;
-import site.pointman.chatbot.dto.customer.CustomerDto;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.ExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.ValidationResponse;
+import site.pointman.chatbot.domain.response.ExceptionResponse;
+import site.pointman.chatbot.dto.customer.CustomerDto;
 import site.pointman.chatbot.repository.CustomerRepository;
 import site.pointman.chatbot.service.CustomerService;
-import site.pointman.chatbot.constant.BlockId;
-import site.pointman.chatbot.utill.NumberUtils;
 import site.pointman.chatbot.utill.StringUtils;
 
 import java.util.Optional;

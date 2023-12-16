@@ -4,7 +4,6 @@ package site.pointman.chatbot.domain.request;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
-import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.request.propery.*;
 import site.pointman.chatbot.domain.response.property.common.Extra;
 import site.pointman.chatbot.dto.product.ProductDto;
