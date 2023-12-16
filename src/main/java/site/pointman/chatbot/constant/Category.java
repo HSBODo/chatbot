@@ -17,8 +17,6 @@ public enum Category {
     기타("기타"),
     ;
 
-    private static final int CATEGORY_INDEX = 0;
-
     private final String value;
 
     Category(String value) {
@@ -26,12 +24,10 @@ public enum Category {
     }
 
     public static Category getCategory(String value){
-        List<Category> categories = Arrays.stream(Category.values())
-                .filter(category ->
-                    category.getValue().equals(value)
-                ).collect(Collectors.toList());
-
-        return categories.get(CATEGORY_INDEX);
+        return Arrays.stream(Category.values())
+                .filter(category -> category.getValue().equals(value))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("상품 카테고리에 %s가 존재하지 않습니다.", value)));
     }
 
     public String getValue() {

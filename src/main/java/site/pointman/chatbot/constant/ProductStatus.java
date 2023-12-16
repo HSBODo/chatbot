@@ -15,24 +15,22 @@ public enum ProductStatus {
     삭제("삭제");
 
 
-    private static final int STATUS_INDEX = 0;
 
-    private final String utterance;
 
-    ProductStatus(String utterance) {
-        this.utterance = utterance;
+    private final String value;
+
+    ProductStatus(String value) {
+        this.value = value;
     }
 
-    public static ProductStatus getProductStatus(String utterance){
-        List<ProductStatus> status = Arrays.stream(ProductStatus.values())
-                .filter(productStatus ->
-                    productStatus.getUtterance().equals(utterance)
-                ).collect(Collectors.toList());
-
-        return status.get(STATUS_INDEX);
+    public static ProductStatus getProductStatus(String value){
+        return Arrays.stream(ProductStatus.values())
+                .filter(productStatus -> productStatus.getValue().equals(value))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("상품 상태에 %s가 존재하지 않습니다.", value)));
     }
 
-    public String getUtterance() {
-        return utterance;
+    public String getValue() {
+        return value;
     }
 }
