@@ -1,5 +1,6 @@
 package site.pointman.chatbot.repository.impl;
 
+import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
@@ -56,6 +57,16 @@ public class ProductRepositoryImpl implements ProductRepository {
                 .setParameter("id", productId)
                 .getResultList()
                 .stream().findAny();
+    }
+
+    @Override
+    public List<Product> findByCategory(Category category,ProductStatus status) {
+        List<Product> customers = em.createQuery("select p from Product p where p.category=:category AND p.status =:status", Product.class)
+                .setParameter("category", category)
+                .setParameter("status", status)
+                .setMaxResults(10)
+                .getResultList();
+        return customers;
     }
 
     @Override
