@@ -73,8 +73,7 @@ public class ChatBotRequest {
         return extraObj.getProductId();
     }
     public String getChoiceParam(){
-        Extra extraObj = new Extra(action.getClientExtra().getExtra());
-        return extraObj.getChoiceParam();
+        return action.getClientExtra().getChoice();
     }
     public String getValidationData(){
         return value.getOrigin();

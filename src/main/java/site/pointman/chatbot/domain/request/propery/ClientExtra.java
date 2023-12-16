@@ -11,4 +11,5 @@ import java.util.Map;
 public class ClientExtra {
     private Map<String,String> extra;
     private String productId;
+    private String choice;
 }

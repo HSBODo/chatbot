@@ -3,6 +3,7 @@ package site.pointman.chatbot.dto.product;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.product.Product;
@@ -17,10 +18,11 @@ public class ProductDto {
     private String description;
     private String tradingLocation;
     private String kakaoOpenChatUrl;
+    private Category category;
     private ProductStatus status;
 
     @Builder
-    public ProductDto(Long id, Customer customer, String name, Long price, String description, String tradingLocation, String kakaoOpenChatUrl, ProductStatus status) {
+    public ProductDto(Long id, Customer customer, String name, Long price, String description, String tradingLocation, String kakaoOpenChatUrl, Category category, ProductStatus status) {
         this.id = id;
         this.customer = customer;
         this.name = name;
@@ -28,6 +30,7 @@ public class ProductDto {
         this.description = description;
         this.tradingLocation = tradingLocation;
         this.kakaoOpenChatUrl = kakaoOpenChatUrl;
+        this.category = category;
         this.status = status;
     }
 
@@ -40,6 +43,7 @@ public class ProductDto {
                 .description(description)
                 .tradingLocation(tradingLocation)
                 .kakaoOpenChatUrl(kakaoOpenChatUrl)
+                .category(category)
                 .status(status)
                 .build();
     }
