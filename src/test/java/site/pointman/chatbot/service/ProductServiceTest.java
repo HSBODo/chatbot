@@ -124,13 +124,10 @@ class ProductServiceTest {
     @Transactional
     void getCustomerProductDetail() throws JsonProcessingException {
         //give
-        String body="{\"intent\":{\"id\":\"657aa39383cd6b068ef93501\",\"name\":\"회원 등록상품 상세보기 \"},\"userRequest\":{\"params\":{},\"block\":{\"id\":\"657aa39383cd6b068ef93501\",\"name\":\"회원 등록상품 상세보기 \"},\"utterance\":\"상세보기\",\"lang\":\"ko\",\"user\":{\"id\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"type\":\"botUserKey\",\"properties\":{\"botUserKey\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"isFriend\":false,\"plusfriendUserKey\":\"QFJSyeIZbO77\",\"bot_user_key\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"plusfriend_user_key\":\"QFJSyeIZbO77\"}}},\"bot\":{\"id\":\"65262a2d31101d1cb1106082!\",\"name\":\"중계나라\"},\"action\":{\"name\":\"회원_등록상품_상세보기\",\"clientExtra\":{\"extra\":{\"productId\":\"7810\"},\"productId\":\""+productId+"\"},\"params\":{},\"id\":\"657aa3fc83cd6b068ef93510\",\"detailParams\":{}},\"contexts\":[]}";
-        chatBotRequest = mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false)
-                .readValue(body, ChatBotRequest.class);
         Product product = productRepository.findByProductId(Long.parseLong(productId)).get();
 
         //when
-        ChatBotResponse customerProductDetail = productService.getProductProfile(chatBotRequest);
+        ChatBotResponse customerProductDetail = productService.getProductProfile(productId,userKey);
         String title = customerProductDetail.getTemplate().getOutputs().get(1).getTextCard().getTitle();
 
         //then

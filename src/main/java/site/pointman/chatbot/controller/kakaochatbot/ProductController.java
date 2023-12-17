@@ -110,9 +110,14 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "get" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse getProduct(@RequestBody ChatBotRequest chatBotRequest) {
-        return productService.getProductProfile(chatBotRequest);
+    @PostMapping(value = "get/profile" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse getProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
+        final String productId = chatBotRequest.getProductId();
+        final String userKey = chatBotRequest.getUserKey();
+
+        if(!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+
+        return productService.getProductProfile(productId, userKey);
     }
 
     @ResponseBody

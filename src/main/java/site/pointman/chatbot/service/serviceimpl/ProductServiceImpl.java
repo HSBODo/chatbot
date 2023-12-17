@@ -142,15 +142,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse getProductProfile(ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getProductProfile(String productId, String userKey) {
         try {
-            final Long PRODUCT_ID = Long.parseLong(chatBotRequest.getProductId());
-            final String USER_KEY = chatBotRequest.getUserKey();
+            Optional<Product> mayBeProduct = productRepository.findByProductId(Long.parseLong(productId));
 
-            if(!customerService.isCustomer(chatBotRequest)) return chatBotExceptionResponse.notCustomerException();
-
-            Optional<Product> mayBeProduct = productRepository.findByProductId(PRODUCT_ID);
             if(mayBeProduct.isEmpty()) return chatBotExceptionResponse.createException("상품이 존재하지 않습니다.");
+
             Product product = mayBeProduct.get();
 
             String productUserKey = product.getCustomer().getUserKey();
@@ -159,7 +156,7 @@ public class ProductServiceImpl implements ProductService {
             ProductStatus status = product.getStatus();
             List<String> imageUrls = product.getProductImages().getImageUrl();
 
-            return getProductProfileSuccessResponse(USER_KEY, productUserKey, imageUrls,productName,productDescription,String.valueOf(PRODUCT_ID),status);
+            return getProductProfileSuccessResponse(userKey, productUserKey, imageUrls,productName,productDescription,productId,status);
         }catch (Exception e){
             return chatBotExceptionResponse.createException();
         }
