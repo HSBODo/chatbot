@@ -83,11 +83,9 @@ public class ProductServiceImpl implements ProductService {
     public ChatBotResponse getProductCategory(ChatBotRequest chatBotRequest) {
         String requestBlockId = chatBotRequest.getRequestBlockId();
 
-        if(requestBlockId.equals(BlockId.PRODUCT_ADD_INFO.getBlockId())){
-            return selectCategoryResponse(BlockId.PRODUCT_PROFILE_PREVIEW);
-        }
+        if(requestBlockId.equals(BlockId.PRODUCT_ADD_INFO.getBlockId()))  return getCategoryChatBotResponse(BlockId.PRODUCT_PROFILE_PREVIEW);
 
-        return selectCategoryResponse(BlockId.FIND_PRODUCTS_BY_CATEGORY);
+        return getCategoryChatBotResponse(BlockId.FIND_PRODUCTS_BY_CATEGORY);
     }
 
     @Override
@@ -383,7 +381,7 @@ public class ProductServiceImpl implements ProductService {
         return chatBotResponse;
     }
 
-    private ChatBotResponse selectCategoryResponse(BlockId nextBlockId){
+    private ChatBotResponse getCategoryChatBotResponse(BlockId nextBlockId){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         List<Category> categories = Arrays.stream(Category.values()).collect(Collectors.toList());
