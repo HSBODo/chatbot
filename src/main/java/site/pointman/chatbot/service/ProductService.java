@@ -12,7 +12,6 @@ public interface ProductService {
     ChatBotResponse getProductProfile(ChatBotRequest chatBotRequest);
     ChatBotResponse getProductsByCategory(ChatBotRequest chatBotRequest);
     ChatBotResponse addProduct(ChatBotRequest chatBotRequest);
-    ChatBotResponse addCategory(ChatBotRequest chatBotRequest);
     ChatBotResponse updateProductStatus(ChatBotRequest chatBotRequest);
     ChatBotResponse deleteProduct(ChatBotRequest chatBotRequest);
 }

@@ -13,7 +13,7 @@ import site.pointman.chatbot.service.ProductService;
 
 @Slf4j
 @Controller
-@RequestMapping(value = "/kakaochatbot/")
+@RequestMapping(value = "/kakaochatbot/product")
 public class ProductController {
 
     ProductService productService;
@@ -25,62 +25,56 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "customer/add/product/auth" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse auth(@RequestBody ChatBotRequest chatBotRequest) {
+    @PostMapping(value = "post/verification/customer" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse verificationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         ChatBotResponse response = productService.validationCustomer(chatBotRequest);
         return response;
     }
 
     @ResponseBody
-    @PostMapping(value = "product/add/category" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse addCategory(@RequestBody ChatBotRequest chatBotRequest) {
-        return productService.addCategory(chatBotRequest);
-    }
-
-    @ResponseBody
-    @PostMapping(value = "product/get/category" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "get/category" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getCategory(@RequestBody ChatBotRequest chatBotRequest) {
         return productService.getProductCategory(chatBotRequest);
     }
 
     @ResponseBody
-    @PostMapping(value = "product/get/all/byCategory" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "get/all/byCategory" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getProductsByCategory(@RequestBody ChatBotRequest chatBotRequest) {
         return productService.getProductsByCategory(chatBotRequest);
     }
 
     @ResponseBody
-    @PostMapping(value = "product/preview" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "preview" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse preview(@RequestBody ChatBotRequest chatBotRequest) {
         return productService.getProductInfoPreview(chatBotRequest);
     }
 
     @ResponseBody
-    @PostMapping(value = "product/add" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "add" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse add(@RequestBody ChatBotRequest chatBotRequest){
         return productService.addProduct(chatBotRequest);
     }
 
     @ResponseBody
-    @PostMapping(value = "product/get/all/byUserKey" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "get/all/byUserKey" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getProductsByUserKey(@RequestBody ChatBotRequest chatBotRequest) {
         return productService.getProductsByUserKey(chatBotRequest);
     }
 
     @ResponseBody
-    @PostMapping(value = "product/get" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "get" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getProduct(@RequestBody ChatBotRequest chatBotRequest) {
         return productService.getProductProfile(chatBotRequest);
     }
 
     @ResponseBody
-    @PostMapping(value = "product/update/status" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "update/status" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse updateProductStatus(@RequestBody ChatBotRequest chatBotRequest) {
         return productService.updateProductStatus(chatBotRequest);
     }
 
     @ResponseBody
-    @PostMapping(value = "product/delete" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "delete" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse delete(@RequestBody ChatBotRequest chatBotRequest) {
         return productService.deleteProduct(chatBotRequest);
     }

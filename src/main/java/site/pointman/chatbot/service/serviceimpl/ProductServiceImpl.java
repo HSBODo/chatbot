@@ -80,12 +80,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse addCategory(ChatBotRequest chatBotRequest) {
-        return selectCategoryResponse(BlockId.PRODUCT_PROFILE_PREVIEW);
-    }
-
-    @Override
     public ChatBotResponse getProductCategory(ChatBotRequest chatBotRequest) {
+        String requestBlockId = chatBotRequest.getRequestBlockId();
+
+        if(requestBlockId.equals(BlockId.PRODUCT_ADD_INFO.getBlockId())){
+            return selectCategoryResponse(BlockId.PRODUCT_PROFILE_PREVIEW);
+        }
+
         return selectCategoryResponse(BlockId.FIND_PRODUCTS_BY_CATEGORY);
     }
 

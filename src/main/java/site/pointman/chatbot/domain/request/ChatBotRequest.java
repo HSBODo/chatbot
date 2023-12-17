@@ -88,4 +88,7 @@ public class ChatBotRequest {
     public String getUtterance(){
         return userRequest.getUtterance();
     }
+    public String getRequestBlockId(){
+        return userRequest.getBlock().getId();
+    }
 }
