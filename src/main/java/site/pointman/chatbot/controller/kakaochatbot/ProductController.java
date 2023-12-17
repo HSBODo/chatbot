@@ -36,7 +36,7 @@ public class ProductController {
     @ResponseBody
     @PostMapping(value = "post/verificationCustomer" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse verificationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
-        String userKey = chatBotRequest.getUserKey();
+        final String userKey = chatBotRequest.getUserKey();
 
         if (!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
@@ -46,7 +46,7 @@ public class ProductController {
     @ResponseBody
     @PostMapping(value = "get/category" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getCategory(@RequestBody ChatBotRequest chatBotRequest) {
-        String requestBlockId = chatBotRequest.getRequestBlockId();
+        final String requestBlockId = chatBotRequest.getRequestBlockId();
 
         return productService.getProductCategory(requestBlockId);
     }
