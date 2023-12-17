@@ -93,7 +93,7 @@ class ProductServiceTest {
                 .readValue(body, ChatBotRequest.class);
         List<Product> products = productRepository.findByUserKey(useKey);
         //when
-        ChatBotResponse customerProducts = productService.getCustomerProducts(chatBotRequest);
+        ChatBotResponse customerProducts = productService.getProductsByUserKey(chatBotRequest);
         int customerProductsSize = customerProducts.getTemplate().getOutputs().get(0).getCarousel().getItems().size();
 
         //then
@@ -110,7 +110,7 @@ class ProductServiceTest {
         Product product = productRepository.findByProductId(Long.parseLong(productId)).get();
 
         //when
-        ChatBotResponse customerProductDetail = productService.getCustomerProductDetail(chatBotRequest);
+        ChatBotResponse customerProductDetail = productService.getProductProfile(chatBotRequest);
         String title = customerProductDetail.getTemplate().getOutputs().get(1).getTextCard().getTitle();
 
         //then
