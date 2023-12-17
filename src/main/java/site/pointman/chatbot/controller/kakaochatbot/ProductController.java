@@ -7,15 +7,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.constant.Category;
-import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.dto.product.ProductDto;
-import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.CustomerService;
+import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.utill.NumberUtils;
-import site.pointman.chatbot.utill.StringUtils;
 
 import java.util.List;
 
@@ -43,7 +41,7 @@ public class ProductController {
     @ResponseBody
     @PostMapping(value = "POST/verificationCustomer" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse verificationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
-        final String userKey = chatBotRequest.getUserKey();
+        String userKey = chatBotRequest.getUserKey();
 
         if (!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
@@ -53,7 +51,7 @@ public class ProductController {
     @ResponseBody
     @PostMapping(value = "GET/category" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getCategory(@RequestBody ChatBotRequest chatBotRequest) {
-        final String requestBlockId = chatBotRequest.getRequestBlockId();
+        String requestBlockId = chatBotRequest.getRequestBlockId();
 
         return productService.getProductCategory(requestBlockId);
     }
@@ -64,7 +62,7 @@ public class ProductController {
         List<String> imageUrls = chatBotRequest.getProductImages();
         String productName = chatBotRequest.getProductName();
         String productDescription = chatBotRequest.getProductDescription();
-        String productPrice = StringUtils.formatPrice(Integer.parseInt(chatBotRequest.getProductPrice()));
+        String productPrice = chatBotRequest.getProductPrice();
         String tradingLocation = chatBotRequest.getTradingLocation();
         String kakaoOpenChatUrl = chatBotRequest.getKakaoOpenChatUrl();
         String category = chatBotRequest.getChoiceParam();
@@ -83,11 +81,11 @@ public class ProductController {
     @ResponseBody
     @PostMapping(value = "POST" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse add(@RequestBody ChatBotRequest chatBotRequest){
-        final Long productId = NumberUtils.createProductId();
-        final String userKey = chatBotRequest.getUserKey();
-        final List<String> imageUrls = chatBotRequest.getProductImages();
-        final Category productCategory = Category.getCategory(chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue());
-        final ProductDto productDto = chatBotRequest.createProductDto();
+        Long productId = NumberUtils.createProductId();
+        String userKey = chatBotRequest.getUserKey();
+        List<String> imageUrls = chatBotRequest.getProductImages();
+        String productCategory = chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue();
+        ProductDto productDto = chatBotRequest.createProductDto();
 
         if(!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
@@ -113,8 +111,8 @@ public class ProductController {
     @ResponseBody
     @PostMapping(value = "GET/profile" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
-        final String productId = chatBotRequest.getProductId();
-        final String userKey = chatBotRequest.getUserKey();
+        String productId = chatBotRequest.getProductId();
+        String userKey = chatBotRequest.getUserKey();
 
         if(!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 

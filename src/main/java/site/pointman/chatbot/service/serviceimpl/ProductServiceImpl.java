@@ -47,14 +47,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, Category productCategory) {
+    public ChatBotResponse addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory) {
         try {
+            Category category = Category.getCategory(productCategory);
             Customer customer = customerRepository.findByCustomer(userKey).get();
-
             String productName = productDto.getName();
 
             productDto.setStatus(ProductStatus.판매중);
-            productDto.setCategory(productCategory);
+            productDto.setCategory(category);
             productDto.setCustomer(customer);
             productDto.setId(productId);
 
@@ -118,7 +118,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ChatBotResponse getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category) {
         try {
-            return getProductInfoPreviewSuccessChatBotResponse(imageUrls, category, productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl);
+            String formatPrice = StringUtils.formatPrice(Integer.parseInt(productPrice));
+
+            return getProductInfoPreviewSuccessChatBotResponse(imageUrls, category, productName,productDescription,formatPrice,tradingLocation,kakaoOpenChatUrl);
         }catch (Exception e){
             return chatBotExceptionResponse.createException();
         }

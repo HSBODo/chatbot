@@ -16,7 +16,7 @@ public interface ProductService {
     ChatBotResponse getProductsByUserKey(String userKey);
     ChatBotResponse getProductProfile(String productId, String userKey);
     ChatBotResponse getProductsByCategory(Category category);
-    ChatBotResponse addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, Category productCategory);
+    ChatBotResponse addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory);
     ChatBotResponse updateProductStatus(String productId, String utterance);
     ChatBotResponse deleteProduct(String productId, String utterance);
 }

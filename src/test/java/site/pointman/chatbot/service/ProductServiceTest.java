@@ -94,7 +94,7 @@ class ProductServiceTest {
         Long productId = NumberUtils.createProductId();
         String userKey = chatBotRequest.getUserKey();
         List<String> imageUrls = chatBotRequest.getProductImages();
-        Category productCategory = Category.getCategory(chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue());
+        String productCategory = chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue();
         ProductDto productDto = chatBotRequest.createProductDto();
 
         //when
