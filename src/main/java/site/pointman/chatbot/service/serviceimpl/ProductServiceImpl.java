@@ -51,30 +51,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse addProduct(ChatBotRequest chatBotRequest) {
+    public ChatBotResponse addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, Category productCategory) {
         try {
-            final Long PRODUCT_ID = NumberUtils.createProductId();
-            final String USER_KEY = chatBotRequest.getUserKey();
-            final List<String> IMAGE_URLS = chatBotRequest.getProductImages();
-            final Category productCategory = Category.getCategory(chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue());
+            Customer customer = customerRepository.findByCustomer(userKey).get();
 
-
-            if(!customerService.isCustomer(chatBotRequest)) return chatBotExceptionResponse.notCustomerException();
-            Customer customer = customerRepository.findByCustomer(USER_KEY).get();
-
-            ProductDto productDto = chatBotRequest.createProductDto();
             String productName = productDto.getName();
 
             productDto.setStatus(ProductStatus.판매중);
             productDto.setCategory(productCategory);
             productDto.setCustomer(customer);
-            productDto.setId(PRODUCT_ID);
+            productDto.setId(productId);
 
-            ProductImageDto productImageDto = s3FileService.uploadProductImage(IMAGE_URLS, USER_KEY,productName);
+            ProductImageDto productImageDto = s3FileService.uploadProductImage(imageUrls, userKey,productName);
 
             productRepository.addProduct(productDto,productImageDto);
 
-            return addProductSuccessResponse();
+            return addProductSuccessChatBotResponse();
         }catch (Exception e){
             return  chatBotExceptionResponse.createException();
         }
@@ -131,7 +123,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ChatBotResponse getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category) {
         try {
-            return getProductInfoPreviewSuccessResponse(imageUrls, category, productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl);
+            return getProductInfoPreviewChatBotSuccessResponse(imageUrls, category, productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl);
         }catch (Exception e){
             return chatBotExceptionResponse.createException();
         }
@@ -333,7 +325,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-    private ChatBotResponse getProductInfoPreviewSuccessResponse(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl){
+    private ChatBotResponse getProductInfoPreviewChatBotSuccessResponse(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Context productContext = new Context("product",1,600);
         productContext.addParam("productCategory",category);
@@ -350,7 +342,7 @@ public class ProductServiceImpl implements ProductService {
         return chatBotResponse;
     }
 
-    private ChatBotResponse addProductSuccessResponse(){
+    private ChatBotResponse addProductSuccessChatBotResponse(){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("상품을 정상적으로 등록하였습니다.");

@@ -1,7 +1,9 @@
 package site.pointman.chatbot.service;
 
+import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.dto.product.ProductDto;
 
 import java.util.List;
 
@@ -13,7 +15,7 @@ public interface ProductService {
     ChatBotResponse getProductsByUserKey(ChatBotRequest chatBotRequest);
     ChatBotResponse getProductProfile(ChatBotRequest chatBotRequest);
     ChatBotResponse getProductsByCategory(ChatBotRequest chatBotRequest);
-    ChatBotResponse addProduct(ChatBotRequest chatBotRequest);
+    ChatBotResponse addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, Category productCategory);
     ChatBotResponse updateProductStatus(ChatBotRequest chatBotRequest);
     ChatBotResponse deleteProduct(ChatBotRequest chatBotRequest);
 }

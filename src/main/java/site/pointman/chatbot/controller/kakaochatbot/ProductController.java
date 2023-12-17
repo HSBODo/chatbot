@@ -6,11 +6,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
+import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.CustomerService;
+import site.pointman.chatbot.utill.NumberUtils;
 import site.pointman.chatbot.utill.StringUtils;
 
 import java.util.List;
@@ -75,9 +78,23 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "add" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "post" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse add(@RequestBody ChatBotRequest chatBotRequest){
-        return productService.addProduct(chatBotRequest);
+        final Long productId = NumberUtils.createProductId();
+        final String userKey = chatBotRequest.getUserKey();
+        final List<String> imageUrls = chatBotRequest.getProductImages();
+        final Category productCategory = Category.getCategory(chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue());
+        final ProductDto productDto = chatBotRequest.createProductDto();
+
+        if(!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+
+        return productService.addProduct(
+                productDto,
+                productId,
+                userKey,
+                imageUrls,
+                productCategory
+                );
     }
 
     @ResponseBody

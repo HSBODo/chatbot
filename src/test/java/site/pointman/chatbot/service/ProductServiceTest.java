@@ -14,7 +14,9 @@ import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.repository.ProductRepository;
+import site.pointman.chatbot.utill.NumberUtils;
 import site.pointman.chatbot.utill.StringUtils;
 
 import javax.transaction.Transactional;
@@ -89,12 +91,14 @@ class ProductServiceTest {
     @Transactional
     void addProduct() throws JsonProcessingException {
         //give
-        String imageUrl="https://pointman-file-repository.s3.ap-northeast-2.amazonaws.com/image/%EC%98%A8%EB%8F%842.png";
-        String body="{\"intent\":{\"id\":\"652e659087e33b27c8ba3a4a\",\"name\":\"상품등록\"},\"userRequest\":{\"params\":{},\"block\":{\"id\":\"652e659087e33b27c8ba3a4a\",\"name\":\"상품등록\"},\"utterance\":\"등록\",\"lang\":\"ko\",\"user\":{\"id\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"type\":\"botUserKey\",\"properties\":{\"botUserKey\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"isFriend\":false,\"plusfriendUserKey\":\"QFJSyeIZbO77\",\"bot_user_key\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"plusfriend_user_key\":\"QFJSyeIZbO77\"}}},\"bot\":{\"id\":\"65262a2d31101d1cb1106082!\",\"name\":\"중계나라\"},\"action\":{\"name\":\"상품_등록\",\"clientExtra\":{},\"params\":{\"productName\":\"상품이름\",\"productDescription\":\"상품설명\",\"productImg\":\"{\\\"privacyAgreement\\\":\\\"Y\\\",\\\"imageQuantity\\\":\\\"1\\\",\\\"secureUrls\\\":\\\"List("+imageUrl+")\\\",\\\"expire\\\":\\\"2023-12-15T11:56:40+0000\\\"}\",\"productPrice\":\"100000\",\"kakaoOpenChatUrl\":\"https://open.kakao.com/o/slfrEtXf\",\"tradingLocation\":\"부천시\"},\"id\":\"652e66c1b3ba010afdf6b9f2\",\"detailParams\":{}},\"contexts\":[{\"name\":\"product\",\"lifespan\":1,\"ttl\":600,\"params\":{\"productPrice\":{\"value\":\"100000\",\"resolvedValue\":\"100000\"},\"productImg\":{\"value\":\"List("+imageUrl+")\",\"resolvedValue\":\"{\\\"privacyAgreement\\\":\\\"Y\\\",\\\"imageQuantity\\\":\\\"1\\\",\\\"secureUrls\\\":\\\"List("+imageUrl+")\\\",\\\"expire\\\":\\\"2023-12-15T11:56:40+0000\\\"}\"},\"kakaoOpenChatUrl\":{\"value\":\"https://open.kakao.com/o/slfrEtXf\",\"resolvedValue\":\"https://open.kakao.com/o/slfrEtXf\"},\"tradingLocation\":{\"value\":\"부천시\",\"resolvedValue\":\"부천시\"},\"productDescription\":{\"value\":\"상품설명\",\"resolvedValue\":\"상품설명\"},\"productName\":{\"value\":\"상품이름\",\"resolvedValue\":\"상품이름\"}}}]}";
-        chatBotRequest = mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false)
-                .readValue(body, ChatBotRequest.class);
+        Long productId = NumberUtils.createProductId();
+        String userKey = chatBotRequest.getUserKey();
+        List<String> imageUrls = chatBotRequest.getProductImages();
+        Category productCategory = Category.getCategory(chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue());
+        ProductDto productDto = chatBotRequest.createProductDto();
+
         //when
-        ChatBotResponse chatBotResponse = productService.addProduct(chatBotRequest);
+        ChatBotResponse chatBotResponse = productService.addProduct(productDto,productId,userKey,imageUrls,productCategory);
         String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
         //then
