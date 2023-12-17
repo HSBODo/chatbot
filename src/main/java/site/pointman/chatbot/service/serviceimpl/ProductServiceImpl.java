@@ -129,16 +129,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse getProductInfoPreview(ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category) {
         try {
-            List<String> imageUrls = chatBotRequest.getProductImages();
-            String productName = chatBotRequest.getProductName();
-            String productDescription = chatBotRequest.getProductDescription();
-            String productPrice = StringUtils.formatPrice(Integer.parseInt(chatBotRequest.getProductPrice()));
-            String tradingLocation = chatBotRequest.getTradingLocation();
-            String kakaoOpenChatUrl = chatBotRequest.getKakaoOpenChatUrl();
-            String category = chatBotRequest.getChoiceParam();
-
             return getProductInfoPreviewSuccessResponse(imageUrls, category, productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl);
         }catch (Exception e){
             return chatBotExceptionResponse.createException();

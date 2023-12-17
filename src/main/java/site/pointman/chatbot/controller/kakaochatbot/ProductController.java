@@ -11,6 +11,9 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.CustomerService;
+import site.pointman.chatbot.utill.StringUtils;
+
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -52,15 +55,23 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "get/all/byCategory" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse getProductsByCategory(@RequestBody ChatBotRequest chatBotRequest) {
-        return productService.getProductsByCategory(chatBotRequest);
+    @PostMapping(value = "preview" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse preview(@RequestBody ChatBotRequest chatBotRequest) {
+        List<String> imageUrls = chatBotRequest.getProductImages();
+        String productName = chatBotRequest.getProductName();
+        String productDescription = chatBotRequest.getProductDescription();
+        String productPrice = StringUtils.formatPrice(Integer.parseInt(chatBotRequest.getProductPrice()));
+        String tradingLocation = chatBotRequest.getTradingLocation();
+        String kakaoOpenChatUrl = chatBotRequest.getKakaoOpenChatUrl();
+        String category = chatBotRequest.getChoiceParam();
+
+        return productService.getProductInfoPreview(imageUrls,productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl,category);
     }
 
     @ResponseBody
-    @PostMapping(value = "preview" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse preview(@RequestBody ChatBotRequest chatBotRequest) {
-        return productService.getProductInfoPreview(chatBotRequest);
+    @PostMapping(value = "get/all/byCategory" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse getProductsByCategory(@RequestBody ChatBotRequest chatBotRequest) {
+        return productService.getProductsByCategory(chatBotRequest);
     }
 
     @ResponseBody
