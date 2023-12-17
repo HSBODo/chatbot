@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.constant.Category;
+import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
@@ -36,11 +37,11 @@ public class ProductController {
 
     /**
      *  카카오 챗봇 특성상 HTTP Request의 HTTP Method가 POST로 고정되어 변경이 불가능하다.
-     *  REST API를 구현하기 위해서 URL의 구성을 자원(Resource)/행위(HTTP Method) 로 구성하였다.
+     *  REST API를 구현하기 위해서 URL의 구성을 "자원(Resource)/행위(HTTP Method)"로 구성하였다.
      */
 
     @ResponseBody
-    @PostMapping(value = "post/verificationCustomer" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "POST/verificationCustomer" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse verificationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         final String userKey = chatBotRequest.getUserKey();
 
@@ -50,7 +51,7 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "get/category" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "GET/category" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getCategory(@RequestBody ChatBotRequest chatBotRequest) {
         final String requestBlockId = chatBotRequest.getRequestBlockId();
 
@@ -58,7 +59,7 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "get/preview" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "GET/preview" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse preview(@RequestBody ChatBotRequest chatBotRequest) {
         List<String> imageUrls = chatBotRequest.getProductImages();
         String productName = chatBotRequest.getProductName();
@@ -72,7 +73,7 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "get/byCategory" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "GET/byCategory" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getProductsByCategory(@RequestBody ChatBotRequest chatBotRequest) {
         Category category = Category.getCategory(chatBotRequest.getChoiceParam());
 
@@ -80,7 +81,7 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "post" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "POST" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse add(@RequestBody ChatBotRequest chatBotRequest){
         final Long productId = NumberUtils.createProductId();
         final String userKey = chatBotRequest.getUserKey();
@@ -100,7 +101,7 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "get/byUserKey" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "GET/byUserKey" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getProductsByUserKey(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
@@ -110,7 +111,7 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "get/profile" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "GET/profile" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
         final String productId = chatBotRequest.getProductId();
         final String userKey = chatBotRequest.getUserKey();
@@ -121,15 +122,27 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "update/status" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "PATCH/status" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse updateProductStatus(@RequestBody ChatBotRequest chatBotRequest) {
-        return productService.updateProductStatus(chatBotRequest);
+        String userKey = chatBotRequest.getUserKey();
+        String productId = chatBotRequest.getProductId();
+        String utterance = chatBotRequest.getUtterance();
+
+        if(!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+
+        return productService.updateProductStatus(productId,utterance);
     }
 
     @ResponseBody
-    @PostMapping(value = "delete" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "DELETE" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse delete(@RequestBody ChatBotRequest chatBotRequest) {
-        return productService.deleteProduct(chatBotRequest);
+        String userKey = chatBotRequest.getUserKey();
+        String productId = chatBotRequest.getProductId();
+        String utterance = chatBotRequest.getUtterance();
+
+        if(!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+
+        return productService.deleteProduct(productId,utterance);
     }
 
 }
