@@ -23,26 +23,31 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
+    /**
+     *  카카오 챗봇 특성상 HTTP Request의 HTTP Method가 POST로 고정되어 변경이 불가능하다.
+     *  REST API를 구현하기 위해서 URL의 구성을 "자원(Resource)/행위(HTTP Method)"로 구성하였다.
+     */
+
     @ResponseBody
-    @PostMapping(value = "join" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "POST/join" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse join(@RequestBody ChatBotRequest chatBotRequest) {
         return customerService.join(chatBotRequest);
     }
 
     @ResponseBody
-    @PostMapping(value = "get/profile" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "GET/profile" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse profile(@RequestBody ChatBotRequest chatBotRequest) {
         return customerService.getCustomerProfile(chatBotRequest);
     }
 
     @ResponseBody
-    @PostMapping(value = "update/PhoneNumber" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "PATCH/PhoneNumber" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse updatePhoneNumber(@RequestBody ChatBotRequest chatBotRequest) {
         return customerService.updateCustomerPhoneNumber(chatBotRequest);
     }
 
     @ResponseBody
-    @PostMapping(value = "delete" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "DELETE" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse delete(@RequestBody ChatBotRequest chatBotRequest) {
         return customerService.deleteCustomer(chatBotRequest);
     }
