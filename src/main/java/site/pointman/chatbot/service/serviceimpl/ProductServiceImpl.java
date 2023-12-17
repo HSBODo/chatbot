@@ -240,7 +240,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse validationCustomer(ChatBotRequest chatBotRequest) {
+    public ChatBotResponse verificationCustomer(ChatBotRequest chatBotRequest) {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
 
         if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();

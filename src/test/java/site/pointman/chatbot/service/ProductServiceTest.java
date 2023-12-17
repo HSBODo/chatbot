@@ -47,7 +47,7 @@ class ProductServiceTest {
         chatBotRequest = mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false)
                 .readValue(body, ChatBotRequest.class);
 
-        ChatBotResponse chatBotResponse = productService.validationCustomer(chatBotRequest);
+        ChatBotResponse chatBotResponse = productService.verificationCustomer(chatBotRequest);
         String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
         Assertions.assertThat(text).isEqualTo("상품을 등록하시겠습니까?");
     }
