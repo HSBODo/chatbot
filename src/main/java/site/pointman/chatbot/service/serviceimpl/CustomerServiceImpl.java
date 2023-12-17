@@ -7,7 +7,7 @@ import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.ExceptionResponse;
+import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.dto.customer.CustomerDto;
 import site.pointman.chatbot.repository.CustomerRepository;
 import site.pointman.chatbot.service.CustomerService;
@@ -19,20 +19,21 @@ import java.util.Optional;
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-
     CustomerRepository customerRepository;
+    ChatBotExceptionResponse chatBotExceptionResponse;
 
     public CustomerServiceImpl(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
+        this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
     @Override
     public ChatBotResponse join(ChatBotRequest chatBotRequest) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
+
         String userKey = chatBotRequest.getUserKey();
 
-        if (isCustomer(chatBotRequest)) return exceptionResponse.createException("이미 존재하는 회원입니다.");
+        if (isCustomer(chatBotRequest)) return chatBotExceptionResponse.createException("이미 존재하는 회원입니다.");
 
         String joinName = chatBotRequest.getCustomerName();
         String joinPhone = chatBotRequest.getCustomerPhone();
@@ -67,12 +68,25 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public boolean isCustomer(String userKey) {
+        try {
+            Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
+
+            if (mayBeCustomer.isEmpty()) return false;
+
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
+    @Override
     public ChatBotResponse getCustomerProfile(ChatBotRequest chatBotRequest) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
+
         String userKey = chatBotRequest.getUserKey();
 
-        if (!isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
+        if (!isCustomer(chatBotRequest)) return chatBotExceptionResponse.notCustomerException();
 
         Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
         Customer customer = mayBeCustomer.get();

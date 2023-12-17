@@ -10,5 +10,5 @@ public interface CustomerService {
     ChatBotResponse updateCustomerPhoneNumber(ChatBotRequest chatBotRequest);
     ChatBotResponse deleteCustomer(ChatBotRequest chatBotRequest);
     boolean isCustomer(ChatBotRequest chatBotRequest);
-
+    boolean isCustomer(String userKey);
 }
