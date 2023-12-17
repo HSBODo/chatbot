@@ -129,13 +129,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse getProductsByUserKey(ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getProductsByUserKey(String userKey) {
         try {
-            String userKey = chatBotRequest.getUserKey();
-
-            if(!customerService.isCustomer(chatBotRequest)) return chatBotExceptionResponse.notCustomerException();
-
             List<Product> products = productRepository.findByUserKey(userKey);
+
             if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다");
 
             return getCustomerProductsSuccessResponse(products);
