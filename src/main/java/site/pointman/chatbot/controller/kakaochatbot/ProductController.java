@@ -62,15 +62,15 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "product/get/all" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse getProducts(@RequestBody ChatBotRequest chatBotRequest) {
-        return productService.getCustomerProducts(chatBotRequest);
+    @PostMapping(value = "product/get/all/byUserKey" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse getProductsByUserKey(@RequestBody ChatBotRequest chatBotRequest) {
+        return productService.getProductsByUserKey(chatBotRequest);
     }
 
     @ResponseBody
-    @PostMapping(value = "product/get/detail" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse getProductDetail(@RequestBody ChatBotRequest chatBotRequest) {
-        return productService.getCustomerProductDetail(chatBotRequest);
+    @PostMapping(value = "product/get" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse getProduct(@RequestBody ChatBotRequest chatBotRequest) {
+        return productService.getProductProfile(chatBotRequest);
     }
 
     @ResponseBody
