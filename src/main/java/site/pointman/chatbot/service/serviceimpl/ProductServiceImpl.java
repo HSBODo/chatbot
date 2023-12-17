@@ -10,7 +10,7 @@ import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.ExceptionResponse;
+import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.property.Context;
 import site.pointman.chatbot.domain.response.property.common.Extra;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
@@ -40,17 +40,18 @@ public class ProductServiceImpl implements ProductService {
     ProductRepository productRepository;
     CustomerRepository customerRepository;
 
+    ChatBotExceptionResponse chatBotExceptionResponse;
+
     public ProductServiceImpl(CustomerService customerService, S3FileService s3FileService, ProductRepository productRepository, CustomerRepository customerRepository) {
         this.customerService = customerService;
         this.s3FileService = s3FileService;
         this.productRepository = productRepository;
         this.customerRepository = customerRepository;
+        this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
     @Override
     public ChatBotResponse addProduct(ChatBotRequest chatBotRequest) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
-
         try {
             final Long PRODUCT_ID = NumberUtils.createProductId();
             final String USER_KEY = chatBotRequest.getUserKey();
@@ -58,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
             final Category productCategory = Category.getCategory(chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue());
 
 
-            if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
+            if(!customerService.isCustomer(chatBotRequest)) return chatBotExceptionResponse.notCustomerException();
             Customer customer = customerRepository.findByCustomer(USER_KEY).get();
 
             ProductDto productDto = chatBotRequest.createProductDto();
@@ -75,7 +76,7 @@ public class ProductServiceImpl implements ProductService {
 
             return addProductSuccessResponse();
         }catch (Exception e){
-            return  exceptionResponse.createException();
+            return  chatBotExceptionResponse.createException();
         }
     }
 
@@ -90,13 +91,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ChatBotResponse getProductsByCategory(ChatBotRequest chatBotRequest) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         try {
             Category category = Category.getCategory(chatBotRequest.getChoiceParam());
             List<Product> products = productRepository.findByCategory(category,ProductStatus.판매중);
 
-            if(products.isEmpty()) return exceptionResponse.createException("등록된 상품이 없습니다.");
+            if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
 
             Carousel<BasicCard> carousel = new Carousel<>();
 
@@ -125,14 +125,12 @@ public class ProductServiceImpl implements ProductService {
 
             return chatBotResponse;
         }catch (Exception e) {
-            return exceptionResponse.createException();
+            return chatBotExceptionResponse.createException();
         }
     }
 
     @Override
     public ChatBotResponse getProductInfoPreview(ChatBotRequest chatBotRequest) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
-
         try {
             List<String> imageUrls = chatBotRequest.getProductImages();
             String productName = chatBotRequest.getProductName();
@@ -144,40 +142,36 @@ public class ProductServiceImpl implements ProductService {
 
             return getProductInfoPreviewSuccessResponse(imageUrls, category, productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl);
         }catch (Exception e){
-            return exceptionResponse.createException();
+            return chatBotExceptionResponse.createException();
         }
     }
 
     @Override
     public ChatBotResponse getProductsByUserKey(ChatBotRequest chatBotRequest) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
-
         try {
             String userKey = chatBotRequest.getUserKey();
 
-            if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
+            if(!customerService.isCustomer(chatBotRequest)) return chatBotExceptionResponse.notCustomerException();
 
             List<Product> products = productRepository.findByUserKey(userKey);
-            if(products.isEmpty()) return exceptionResponse.createException("등록된 상품이 없습니다");
+            if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다");
 
             return getCustomerProductsSuccessResponse(products);
         }catch (Exception e){
-            return exceptionResponse.createException();
+            return chatBotExceptionResponse.createException();
         }
     }
 
     @Override
     public ChatBotResponse getProductProfile(ChatBotRequest chatBotRequest) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
-
         try {
             final Long PRODUCT_ID = Long.parseLong(chatBotRequest.getProductId());
             final String USER_KEY = chatBotRequest.getUserKey();
 
-            if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
+            if(!customerService.isCustomer(chatBotRequest)) return chatBotExceptionResponse.notCustomerException();
 
             Optional<Product> mayBeProduct = productRepository.findByProductId(PRODUCT_ID);
-            if(mayBeProduct.isEmpty()) return exceptionResponse.createException("상품이 존재하지 않습니다.");
+            if(mayBeProduct.isEmpty()) return chatBotExceptionResponse.createException("상품이 존재하지 않습니다.");
             Product product = mayBeProduct.get();
 
             String productUserKey = product.getCustomer().getUserKey();
@@ -188,63 +182,55 @@ public class ProductServiceImpl implements ProductService {
 
             return getProductProfileSuccessResponse(USER_KEY, productUserKey, imageUrls,productName,productDescription,String.valueOf(PRODUCT_ID),status);
         }catch (Exception e){
-            return exceptionResponse.createException();
+            return chatBotExceptionResponse.createException();
         }
 
     }
 
     @Override
     public ChatBotResponse updateProductStatus(ChatBotRequest chatBotRequest) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
-
         try {
             final Long PRODUCT_ID = Long.parseLong(chatBotRequest.getProductId());
             final String UTTERANCE = chatBotRequest.getUtterance();
             final ProductStatus PRODUCT_STATUS = ProductStatus.getProductStatus(UTTERANCE);
 
-            if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
+            if(!customerService.isCustomer(chatBotRequest)) return chatBotExceptionResponse.notCustomerException();
 
             Optional<Product> mayBeProduct = productRepository.findByProductId(PRODUCT_ID);
-            if(mayBeProduct.isEmpty()) return exceptionResponse.createException("상품이 존재하지 않습니다.");
+            if(mayBeProduct.isEmpty()) return chatBotExceptionResponse.createException("상품이 존재하지 않습니다.");
 
             productRepository.updateStatus(PRODUCT_ID,PRODUCT_STATUS);
 
             return updateStatusSuccessResponse(PRODUCT_STATUS);
         }catch (Exception e){
-            return exceptionResponse.createException("상태변경을 실패하였습니다.");
+            return chatBotExceptionResponse.createException("상태변경을 실패하였습니다.");
         }
     }
 
     @Override
     public ChatBotResponse deleteProduct(ChatBotRequest chatBotRequest) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
-
         try {
             final Long PRODUCT_ID = Long.parseLong(chatBotRequest.getProductId());
             final String UTTERANCE = chatBotRequest.getUtterance();
 
-            if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
+            if(!customerService.isCustomer(chatBotRequest)) return chatBotExceptionResponse.notCustomerException();
 
             Optional<Product> mayBeProduct = productRepository.findByProductId(PRODUCT_ID);
-            if(mayBeProduct.isEmpty()) return exceptionResponse.createException("상품이 존재하지 않습니다.");
+            if(mayBeProduct.isEmpty()) return chatBotExceptionResponse.createException("상품이 존재하지 않습니다.");
 
             if(ProductStatus.삭제.name().equals(UTTERANCE)){
                 productRepository.deleteProduct(PRODUCT_ID);
                 return deleteProductSuccessResponse();
             }
 
-            return exceptionResponse.createException("상품 삭제를 실패하였습니다.");
+            return chatBotExceptionResponse.createException("상품 삭제를 실패하였습니다.");
         }catch (Exception e){
-            return exceptionResponse.createException();
+            return chatBotExceptionResponse.createException();
         }
     }
 
     @Override
-    public ChatBotResponse verificationCustomer(ChatBotRequest chatBotRequest) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
-
-        if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
-
+    public ChatBotResponse verificationCustomerSuccessResponse() {
         return verificationCustomerSuccessChatBotResponse();
     }
 

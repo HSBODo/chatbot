@@ -8,20 +8,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.service.LogService;
+import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.service.ProductService;
+import site.pointman.chatbot.service.CustomerService;
 
 @Slf4j
 @Controller
 @RequestMapping(value = "/kakaochatbot/product")
 public class ProductController {
 
-    ProductService productService;
-    LogService logService;
 
-    public ProductController(ProductService productService, LogService logService) {
+    ProductService productService;
+    CustomerService customerService;
+    ChatBotExceptionResponse chatBotExceptionResponse;
+
+    public ProductController(ProductService productService, CustomerService customerService) {
         this.productService = productService;
-        this.logService = logService;
+        this.customerService = customerService;
+        this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
     /**
@@ -32,8 +36,11 @@ public class ProductController {
     @ResponseBody
     @PostMapping(value = "post/verificationCustomer" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse verificationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
-        ChatBotResponse response = productService.verificationCustomer(chatBotRequest);
-        return response;
+        String userKey = chatBotRequest.getUserKey();
+
+        if (!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+
+        return productService.verificationCustomerSuccessResponse();
     }
 
     @ResponseBody
