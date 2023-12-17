@@ -137,14 +137,10 @@ class ProductServiceTest {
     @Test
     void updateProductStatus() throws JsonProcessingException {
         //give
-        String utterance =  ProductStatus.판매중.name();
-
-        String body="{\"intent\":{\"id\":\"657aba23eca3c21b078678c3\",\"name\":\"회원 등록상품 상태변경\"},\"userRequest\":{\"params\":{},\"block\":{\"id\":\"657aba23eca3c21b078678c3\",\"name\":\"회원 등록상품 상태변경\"},\"utterance\":\""+utterance+"\",\"lang\":\"ko\",\"user\":{\"id\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"type\":\"botUserKey\",\"properties\":{\"botUserKey\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"isFriend\":false,\"plusfriendUserKey\":\"QFJSyeIZbO77\",\"bot_user_key\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"plusfriend_user_key\":\"QFJSyeIZbO77\"}}},\"bot\":{\"id\":\"65262a2d31101d1cb1106082!\",\"name\":\"중계나라\"},\"action\":{\"name\":\"회원_등록상품_상태변경\",\"clientExtra\":{\"productId\":\""+productId+"\"},\"params\":{},\"id\":\"657aba4fa678316d2c4af513\",\"detailParams\":{}},\"contexts\":[]}";
-        chatBotRequest = mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false)
-                .readValue(body, ChatBotRequest.class);
+        String utterance =  ProductStatus.판매중.name();;
 
         //when
-        ChatBotResponse chatBotResponse = productService.updateProductStatus(chatBotRequest);
+        ChatBotResponse chatBotResponse = productService.updateProductStatus(productId,utterance);
         String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
         //then
@@ -157,12 +153,8 @@ class ProductServiceTest {
         //give
         String utterance = ProductStatus.삭제.name();
 
-        String body="{\"intent\":{\"id\":\"657aba23eca3c21b078678c3\",\"name\":\"회원 등록상품 상태변경\"},\"userRequest\":{\"params\":{},\"block\":{\"id\":\"657aba23eca3c21b078678c3\",\"name\":\"회원 등록상품 상태변경\"},\"utterance\":\""+utterance+"\",\"lang\":\"ko\",\"user\":{\"id\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"type\":\"botUserKey\",\"properties\":{\"botUserKey\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"isFriend\":false,\"plusfriendUserKey\":\"QFJSyeIZbO77\",\"bot_user_key\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"plusfriend_user_key\":\"QFJSyeIZbO77\"}}},\"bot\":{\"id\":\"65262a2d31101d1cb1106082!\",\"name\":\"중계나라\"},\"action\":{\"name\":\"회원_등록상품_상태변경\",\"clientExtra\":{\"productId\":\""+productId+"\"},\"params\":{},\"id\":\"657aba4fa678316d2c4af513\",\"detailParams\":{}},\"contexts\":[]}";
-        chatBotRequest = mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false)
-                .readValue(body, ChatBotRequest.class);
-
         //when
-        ChatBotResponse chatBotResponse = productService.deleteProduct(chatBotRequest);
+        ChatBotResponse chatBotResponse = productService.deleteProduct(productId,utterance);
         String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
         //then
