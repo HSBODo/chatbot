@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.Response;
 
 @SpringBootTest
 class CustomerServiceTest {
@@ -20,15 +21,11 @@ class CustomerServiceTest {
 
     private ObjectMapper mapper = new ObjectMapper();
     private ChatBotRequest chatBotRequest;
+    private String userKey;
 
     @BeforeEach
     public void setUp() throws JsonProcessingException {
-        String userKey = "QFJSyeIZbO77";
-        String customerPhone = "01000001111";
-        String body="{\"intent\":{\"id\":\"6576dfef287a164bd6cd8f62\",\"name\":\"회원 연락처 변경\"},\"userRequest\":{\"params\":{},\"block\":{\"id\":\"6576dfef287a164bd6cd8f62\",\"name\":\"회원 연락처 변경\"},\"utterance\":\"연락처변경\",\"lang\":\"ko\",\"user\":{\"id\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"type\":\"botUserKey\",\"properties\":{\"botUserKey\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"isFriend\":false,\"plusfriendUserKey\":\""+userKey+"\",\"bot_user_key\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"plusfriend_user_key\":\"QFJSyeIZbO77\"}}},\"bot\":{\"id\":\"65262a2d31101d1cb1106082!\",\"name\":\"중계나라\"},\"action\":{\"name\":\"회원_연락처_변경\",\"clientExtra\":{},\"params\":{\"customerPhone\":\""+customerPhone+"\"},\"id\":\"6576ec1ba7e99f5af9c44319\",\"detailParams\":{}},\"contexts\":[]}";
-        chatBotRequest = mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .readValue(body, ChatBotRequest.class);
-
+        userKey = "QFJSyeIZbO77";
     }
 
     @Test
@@ -40,8 +37,9 @@ class CustomerServiceTest {
         String phoneNumber = "01000001111";
 
         //when
-        ChatBotResponse response = customerService.join(userKey,name,phoneNumber);
-        String responseMessage = response.getTemplate().getOutputs().get(0).getSimpleText().getText();
+        Response response = customerService.join(userKey,name,phoneNumber,true);
+        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
+        String responseMessage = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
         //then
         Assertions.assertThat(responseMessage).isEqualTo("회원가입이 완료 되었습니다.");
     }
@@ -50,11 +48,11 @@ class CustomerServiceTest {
     @Transactional
     void getCustomerInfo() {
         //give
-        String userKey = "QFJSyeIZbO77";
 
         //when
-        ChatBotResponse response = customerService.getCustomerProfile(userKey);
-        String responseTitle = response.getTemplate().getOutputs().get(0).getTextCard().getTitle();
+        Response response = customerService.getCustomerProfile(userKey, true);
+        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
+        String responseTitle = chatBotResponse.getTemplate().getOutputs().get(0).getTextCard().getTitle();
 
         //then
         Assertions.assertThat(responseTitle).isEqualTo("회원정보");
@@ -64,11 +62,11 @@ class CustomerServiceTest {
     @Transactional
     void updateCustomerPhoneNumber() {
         //give
-        String userKey = "QFJSyeIZbO77";
         String updatePhoneNumber ="01011112222";
 
         //when
-        ChatBotResponse chatBotResponse = customerService.updateCustomerPhoneNumber(userKey,updatePhoneNumber);
+        Response response = customerService.updateCustomerPhoneNumber(userKey,updatePhoneNumber,true);
+        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String responseMessage = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
         //then
@@ -79,10 +77,10 @@ class CustomerServiceTest {
     @Transactional
     void deleteCustomer() {
         //give
-        String userKey = "QFJSyeIZbO77";
 
         //when
-        ChatBotResponse chatBotResponse = customerService.deleteCustomer(userKey);
+        Response response = customerService.deleteCustomer(userKey, true);
+        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String responseMessage = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
         //then
@@ -95,7 +93,7 @@ class CustomerServiceTest {
         //give
 
         //when
-        boolean isCustomer = customerService.isCustomer(chatBotRequest);
+        boolean isCustomer = customerService.isCustomer(userKey);
         //then
         Assertions.assertThat(isCustomer).isTrue();
     }

@@ -2,14 +2,12 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.BlockId;
-import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.domain.customer.Customer;
-import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
+import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.customer.CustomerDto;
 import site.pointman.chatbot.repository.CustomerRepository;
+import site.pointman.chatbot.service.CustomerChatBotResponseService;
 import site.pointman.chatbot.service.CustomerService;
 import site.pointman.chatbot.utill.StringUtils;
 
@@ -21,17 +19,17 @@ public class CustomerServiceImpl implements CustomerService {
 
     CustomerRepository customerRepository;
     ChatBotExceptionResponse chatBotExceptionResponse;
+    CustomerChatBotResponseService customerChatBotResponseService;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, CustomerChatBotResponseService customerChatBotResponseService) {
         this.customerRepository = customerRepository;
         this.chatBotExceptionResponse = new ChatBotExceptionResponse();
+        this.customerChatBotResponseService = customerChatBotResponseService;
     }
 
     @Override
-    public ChatBotResponse join(String userKey, String name, String phoneNumber) {
+    public Response join(String userKey, String name, String phoneNumber, boolean isChatBotRequest) {
         try {
-            ChatBotResponse chatBotResponse = new ChatBotResponse();;
-
             CustomerDto customerDto = CustomerDto.builder()
                     .userKey(userKey)
                     .name(name)
@@ -42,25 +40,12 @@ public class CustomerServiceImpl implements CustomerService {
 
             customerRepository.save(customer);
 
-            chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.");
-            chatBotResponse.addQuickButton(ButtonName.메인으로,BlockId.MAIN.getBlockId());
-            return chatBotResponse;
+            if(isChatBotRequest) return customerChatBotResponseService.joinSuccessChatBotResponse();
+
+            return null;
         }catch (Exception e) {
-            return chatBotExceptionResponse.createException();
-        }
-    }
-
-    @Override
-    public boolean isCustomer(ChatBotRequest chatBotRequest) {
-        try {
-            String userKey = chatBotRequest.getUserKey();
-            Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
-
-            if (mayBeCustomer.isEmpty()) return false;
-
-            return true;
-        }catch (Exception e){
-            return false;
+            if (isChatBotRequest) return chatBotExceptionResponse.createException();
+            throw e;
         }
     }
 
@@ -78,47 +63,47 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ChatBotResponse getCustomerProfile(String userKey) {
-        ChatBotResponse chatBotResponse = new ChatBotResponse();
+    public Response getCustomerProfile(String userKey, boolean isChatBotRequest) {
+        try {
+            Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
 
-        Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
+            Customer customer = mayBeCustomer.get();
 
-        Customer customer = mayBeCustomer.get();
+            String customerName = customer.getName();
+            String customerPhoneNumber = customer.getPhone();
+            String customerJoinDate = StringUtils.dateFormat(customer.getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
 
-        String joinDate = StringUtils.dateFormat(customer.getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
-        chatBotResponse.addTextCard("회원정보",
-            "닉네임: "+customer.getName()+"\n"+
-                "연락처: "+customer.getPhone()+"\n"+
-                "가입일자: "+joinDate);
-
-        chatBotResponse.addQuickButton(ButtonName.회원탈퇴,BlockId.CUSTOMER_ASK_DELETE.getBlockId());
-        chatBotResponse.addQuickButton(ButtonName.연락처변경,BlockId.CUSTOMER_UPDATE_PHONE_NUMBER.getBlockId());
-        chatBotResponse.addQuickButton(ButtonName.판매내역,BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
-        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
-
-        return chatBotResponse;
+            if(isChatBotRequest) return customerChatBotResponseService.getCustomerProfileSuccessChatBotResponse(customerName,customerPhoneNumber,customerJoinDate);
+            return null;
+        }catch (Exception e) {
+            if (isChatBotRequest) return chatBotExceptionResponse.createException();
+            throw e;
+        }
     }
 
     @Override
-    public ChatBotResponse updateCustomerPhoneNumber(String userKey, String updatePhoneNumber) {
-        ChatBotResponse chatBotResponse = new ChatBotResponse();
+    public Response updateCustomerPhoneNumber(String userKey, String updatePhoneNumber, boolean isChatBotRequest) {
+        try {
+            customerRepository.updateCustomerPhoneNumber(userKey, updatePhoneNumber);
 
-        customerRepository.updateCustomerPhoneNumber(userKey, updatePhoneNumber);
-
-        chatBotResponse.addSimpleText("연락처 변경이 완료 되었습니다.");
-        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
-
-        return chatBotResponse;
+            if(isChatBotRequest) return customerChatBotResponseService.updateCustomerPhoneNumberSuccessChatBotResponse();
+            return null;
+        }catch (Exception e) {
+            if (isChatBotRequest) return chatBotExceptionResponse.createException();
+            throw e;
+        }
     }
 
     @Override
-    public ChatBotResponse deleteCustomer(String userKey) {
-        ChatBotResponse chatBotResponse = new ChatBotResponse();
+    public Response deleteCustomer(String userKey, boolean isChatBotRequest) {
+        try {
+            customerRepository.delete(userKey);
 
-        customerRepository.delete(userKey);
-
-        chatBotResponse.addSimpleText("회원탈퇴가 완료 되었습니다.");
-        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
-        return chatBotResponse;
+            if(isChatBotRequest) return customerChatBotResponseService.deleteCustomerSuccessChatBotResponse();
+            return null;
+        }catch (Exception e) {
+            if (isChatBotRequest) return chatBotExceptionResponse.createException();
+            throw e;
+        }
     }
 }

@@ -1,14 +1,11 @@
 package site.pointman.chatbot.service;
 
-import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.ValidationResponse;
+import site.pointman.chatbot.domain.response.Response;
 
 public interface CustomerService {
-    ChatBotResponse join(String userKey, String name, String phoneNumber);
-    ChatBotResponse getCustomerProfile(String userKey);
-    ChatBotResponse updateCustomerPhoneNumber(String userKey, String updatePhoneNumber);
-    ChatBotResponse deleteCustomer(String userKey);
-    boolean isCustomer(ChatBotRequest chatBotRequest);
+    Response join(String userKey, String name, String phoneNumber, boolean isChatBotRequest);
+    Response getCustomerProfile(String userKey, boolean isChatBotRequest);
+    Response updateCustomerPhoneNumber(String userKey, String updatePhoneNumber,boolean isChatBotRequest);
+    Response deleteCustomer(String userKey, boolean isChatBotRequest);
     boolean isCustomer(String userKey);
 }

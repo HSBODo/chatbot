@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.service.CustomerService;
 
 
@@ -33,41 +34,41 @@ public class CustomerController {
 
     @ResponseBody
     @PostMapping(value = "POST/join" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse join(@RequestBody ChatBotRequest chatBotRequest) {
+    public Response join(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String name = chatBotRequest.getCustomerName();
         String phoneNumber = chatBotRequest.getCustomerPhone();
 
         if (customerService.isCustomer(userKey)) return chatBotExceptionResponse.createException("이미 존재하는 회원입니다.");
 
-        return customerService.join(userKey, name, phoneNumber);
+        return customerService.join(userKey, name, phoneNumber,true);
     }
 
     @ResponseBody
     @PostMapping(value = "GET/profile" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse profile(@RequestBody ChatBotRequest chatBotRequest) {
+    public Response profile(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
         if (!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return customerService.getCustomerProfile(userKey);
+        return customerService.getCustomerProfile(userKey, true);
     }
 
     @ResponseBody
     @PostMapping(value = "PATCH/PhoneNumber" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse updatePhoneNumber(@RequestBody ChatBotRequest chatBotRequest) {
+    public Response updatePhoneNumber(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String updatePhoneNumber = chatBotRequest.getCustomerPhone();
 
-        return customerService.updateCustomerPhoneNumber(userKey, updatePhoneNumber);
+        return customerService.updateCustomerPhoneNumber(userKey, updatePhoneNumber,true);
     }
 
     @ResponseBody
     @PostMapping(value = "DELETE" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse delete(@RequestBody ChatBotRequest chatBotRequest) {
+    public Response delete(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        return customerService.deleteCustomer(userKey);
+        return customerService.deleteCustomer(userKey, true);
     }
 
 }

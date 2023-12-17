@@ -13,7 +13,7 @@ import site.pointman.chatbot.domain.response.property.components.*;
 
 
 @Getter
-public class ChatBotResponse {
+public class ChatBotResponse extends Response {
     private String version;
     private Template template;
 
