@@ -245,7 +245,7 @@ public class ProductServiceImpl implements ProductService {
 
         if(!customerService.isCustomer(chatBotRequest)) return exceptionResponse.notCustomerException();
 
-        return validationCustomerSuccessResponse();
+        return verificationCustomerSuccessChatBotResponse();
     }
 
     private Carousel<BasicCard> createCarouselImage(List<String> imageUrls){
@@ -304,7 +304,7 @@ public class ProductServiceImpl implements ProductService {
         return chatBotResponse;
     }
 
-    private ChatBotResponse validationCustomerSuccessResponse(){
+    private ChatBotResponse verificationCustomerSuccessChatBotResponse(){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("상품을 등록하시겠습니까?");
