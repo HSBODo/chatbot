@@ -28,29 +28,26 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ChatBotResponse join(ChatBotRequest chatBotRequest) {
-        ChatBotResponse chatBotResponse = new ChatBotResponse();
+    public ChatBotResponse join(String userKey, String name, String phoneNumber) {
+        try {
+            ChatBotResponse chatBotResponse = new ChatBotResponse();;
 
-        String userKey = chatBotRequest.getUserKey();
+            CustomerDto customerDto = CustomerDto.builder()
+                    .userKey(userKey)
+                    .name(name)
+                    .phone(phoneNumber)
+                    .build();
 
-        if (isCustomer(chatBotRequest)) return chatBotExceptionResponse.createException("이미 존재하는 회원입니다.");
+            Customer customer = customerDto.toEntity();
 
-        String joinName = chatBotRequest.getCustomerName();
-        String joinPhone = chatBotRequest.getCustomerPhone();
+            customerRepository.save(customer);
 
-        CustomerDto customerDto = CustomerDto.builder()
-                .userKey(userKey)
-                .name(joinName)
-                .phone(joinPhone)
-                .build();
-
-        Customer customer = customerDto.toEntity();
-
-        customerRepository.save(customer);
-
-        chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.");
-        chatBotResponse.addQuickButton(ButtonName.메인으로,BlockId.MAIN.getBlockId());
-        return chatBotResponse;
+            chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.");
+            chatBotResponse.addQuickButton(ButtonName.메인으로,BlockId.MAIN.getBlockId());
+            return chatBotResponse;
+        }catch (Exception e) {
+            return chatBotExceptionResponse.createException();
+        }
     }
 
     @Override
@@ -62,7 +59,7 @@ public class CustomerServiceImpl implements CustomerService {
             if (mayBeCustomer.isEmpty()) return false;
 
             return true;
-        } catch (Exception e){
+        }catch (Exception e){
             return false;
         }
     }
@@ -81,15 +78,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ChatBotResponse getCustomerProfile(ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getCustomerProfile(String userKey) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
-        String userKey = chatBotRequest.getUserKey();
-
-        if (!isCustomer(chatBotRequest)) return chatBotExceptionResponse.notCustomerException();
-
         Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
+
         Customer customer = mayBeCustomer.get();
+
         String joinDate = StringUtils.dateFormat(customer.getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
         chatBotResponse.addTextCard("회원정보",
             "닉네임: "+customer.getName()+"\n"+
@@ -105,10 +100,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ChatBotResponse updateCustomerPhoneNumber(ChatBotRequest chatBotRequest) {
+    public ChatBotResponse updateCustomerPhoneNumber(String userKey, String updatePhoneNumber) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
-        String userKey = chatBotRequest.getUserKey();
-        String updatePhoneNumber = chatBotRequest.getCustomerPhone();
 
         customerRepository.updateCustomerPhoneNumber(userKey, updatePhoneNumber);
 
@@ -119,9 +112,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ChatBotResponse deleteCustomer(ChatBotRequest chatBotRequest) {
+    public ChatBotResponse deleteCustomer(String userKey) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
-        String userKey = chatBotRequest.getUserKey();
 
         customerRepository.delete(userKey);
 

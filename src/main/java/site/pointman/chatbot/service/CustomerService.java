@@ -5,10 +5,10 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.ValidationResponse;
 
 public interface CustomerService {
-    ChatBotResponse join(ChatBotRequest chatBotRequest);
-    ChatBotResponse getCustomerProfile(ChatBotRequest chatBotRequest);
-    ChatBotResponse updateCustomerPhoneNumber(ChatBotRequest chatBotRequest);
-    ChatBotResponse deleteCustomer(ChatBotRequest chatBotRequest);
+    ChatBotResponse join(String userKey, String name, String phoneNumber);
+    ChatBotResponse getCustomerProfile(String userKey);
+    ChatBotResponse updateCustomerPhoneNumber(String userKey, String updatePhoneNumber);
+    ChatBotResponse deleteCustomer(String userKey);
     boolean isCustomer(ChatBotRequest chatBotRequest);
     boolean isCustomer(String userKey);
 }
