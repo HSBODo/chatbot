@@ -81,8 +81,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse getProductCategory(ChatBotRequest chatBotRequest) {
-        String requestBlockId = chatBotRequest.getRequestBlockId();
+    public ChatBotResponse getProductCategory(String requestBlockId) {
 
         if(requestBlockId.equals(BlockId.PRODUCT_ADD_INFO.getBlockId()))  return getCategoryChatBotResponse(BlockId.PRODUCT_PROFILE_PREVIEW);
 

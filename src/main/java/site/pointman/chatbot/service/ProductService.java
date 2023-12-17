@@ -6,7 +6,7 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 public interface ProductService {
 
     ChatBotResponse verificationCustomerSuccessResponse();
-    ChatBotResponse getProductCategory(ChatBotRequest chatBotRequest);
+    ChatBotResponse getProductCategory(String requestBlockId);
     ChatBotResponse getProductInfoPreview(ChatBotRequest chatBotRequest);
     ChatBotResponse getProductsByUserKey(ChatBotRequest chatBotRequest);
     ChatBotResponse getProductProfile(ChatBotRequest chatBotRequest);

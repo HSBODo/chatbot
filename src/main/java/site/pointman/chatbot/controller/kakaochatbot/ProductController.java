@@ -46,7 +46,9 @@ public class ProductController {
     @ResponseBody
     @PostMapping(value = "get/category" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getCategory(@RequestBody ChatBotRequest chatBotRequest) {
-        return productService.getProductCategory(chatBotRequest);
+        String requestBlockId = chatBotRequest.getRequestBlockId();
+
+        return productService.getProductCategory(requestBlockId);
     }
 
     @ResponseBody
