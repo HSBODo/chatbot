@@ -24,10 +24,15 @@ public class ProductController {
         this.logService = logService;
     }
 
+    /**
+     *  카카오 챗봇 특성상 HTTP Request의 HTTP Method가 POST로 고정되어 변경이 불가능하다.
+     *  REST API를 구현하기 위해서 URL의 구성을 자원(Resource)/행위(HTTP Method) 로 구성하였다.
+     */
+
     @ResponseBody
-    @PostMapping(value = "post/verification/customer" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "post/verificationCustomer" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse verificationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
-        ChatBotResponse response = productService.validationCustomer(chatBotRequest);
+        ChatBotResponse response = productService.verificationCustomer(chatBotRequest);
         return response;
     }
 
