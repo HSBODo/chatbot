@@ -55,7 +55,7 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "preview" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "get/preview" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse preview(@RequestBody ChatBotRequest chatBotRequest) {
         List<String> imageUrls = chatBotRequest.getProductImages();
         String productName = chatBotRequest.getProductName();
