@@ -81,10 +81,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse getProductsByCategory(ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getProductsByCategory(Category category) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         try {
-            Category category = Category.getCategory(chatBotRequest.getChoiceParam());
             List<Product> products = productRepository.findByCategory(category,ProductStatus.판매중);
 
             if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");

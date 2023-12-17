@@ -14,7 +14,7 @@ public interface ProductService {
     ChatBotResponse getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category);
     ChatBotResponse getProductsByUserKey(ChatBotRequest chatBotRequest);
     ChatBotResponse getProductProfile(ChatBotRequest chatBotRequest);
-    ChatBotResponse getProductsByCategory(ChatBotRequest chatBotRequest);
+    ChatBotResponse getProductsByCategory(Category category);
     ChatBotResponse addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, Category productCategory);
     ChatBotResponse updateProductStatus(ChatBotRequest chatBotRequest);
     ChatBotResponse deleteProduct(ChatBotRequest chatBotRequest);

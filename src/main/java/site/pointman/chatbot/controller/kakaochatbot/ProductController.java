@@ -72,9 +72,11 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "get/all/byCategory" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "get/byCategory" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getProductsByCategory(@RequestBody ChatBotRequest chatBotRequest) {
-        return productService.getProductsByCategory(chatBotRequest);
+        Category category = Category.getCategory(chatBotRequest.getChoiceParam());
+
+        return productService.getProductsByCategory(category);
     }
 
     @ResponseBody
