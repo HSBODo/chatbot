@@ -18,7 +18,6 @@ import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.dto.product.ProductImageDto;
 import site.pointman.chatbot.repository.CustomerRepository;
 import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.service.CustomerService;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.S3FileService;
 import site.pointman.chatbot.utill.StringUtils;
