@@ -1,7 +1,7 @@
 package site.pointman.chatbot.dto.customer;
 
 import lombok.Builder;
-import site.pointman.chatbot.domain.customer.Customer;
+import site.pointman.chatbot.domain.customer.Member;
 
 public class CustomerDto {
     private String userKey;
@@ -16,8 +16,8 @@ public class CustomerDto {
         this.phone = phone;
     }
 
-    public Customer toEntity(){
-        return Customer.builder()
+    public Member toEntity(){
+        return Member.builder()
                 .userKey(userKey)
                 .name(name)
                 .phone(phone)

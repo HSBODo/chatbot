@@ -11,11 +11,11 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "tb_customer")
+@Table(name = "tb_member")
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
-public class Customer extends BaseEntity {
+public class Member extends BaseEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq ;
@@ -28,7 +28,7 @@ public class Customer extends BaseEntity {
     private String phone;
 
     @Builder
-    public Customer(String userKey, String name, String phone) {
+    public Member(String userKey, String name, String phone) {
         this.userKey = userKey;
         this.name = name;
         this.phone = phone;

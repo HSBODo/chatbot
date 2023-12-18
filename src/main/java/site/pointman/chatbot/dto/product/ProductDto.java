@@ -5,14 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.constant.ProductStatus;
-import site.pointman.chatbot.domain.customer.Customer;
+import site.pointman.chatbot.domain.customer.Member;
 import site.pointman.chatbot.domain.product.Product;
 
 @Getter
 @Setter
 public class ProductDto {
     private Long id ;
-    private Customer customer;
+    private Member member;
     private String name;
     private Long price;
     private String description;
@@ -22,9 +22,9 @@ public class ProductDto {
     private ProductStatus status;
 
     @Builder
-    public ProductDto(Long id, Customer customer, String name, Long price, String description, String tradingLocation, String kakaoOpenChatUrl, Category category, ProductStatus status) {
+    public ProductDto(Long id, Member member, String name, Long price, String description, String tradingLocation, String kakaoOpenChatUrl, Category category, ProductStatus status) {
         this.id = id;
-        this.customer = customer;
+        this.member = member;
         this.name = name;
         this.price = price;
         this.description = description;
@@ -37,7 +37,7 @@ public class ProductDto {
     public Product toEntity(){
         return Product.builder()
                 .id(id)
-                .customer(customer)
+                .member(member)
                 .name(name)
                 .price(price)
                 .description(description)

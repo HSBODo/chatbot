@@ -1,6 +1,6 @@
 package site.pointman.chatbot.repository.impl;
 
-import site.pointman.chatbot.domain.customer.Customer;
+import site.pointman.chatbot.domain.customer.Member;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
 import site.pointman.chatbot.repository.CustomerRepository;
@@ -19,29 +19,29 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public void save(Customer customer) {
-        em.persist(customer);
+    public void save(Member member) {
+        em.persist(member);
     }
 
     @Override
-    public Optional<Customer> findByCustomer(String userKey) {
-        List<Customer> customers = em.createQuery("select c from Customer c where c.userKey=:userKey", Customer.class)
+    public Optional<Member> findByCustomer(String userKey) {
+        List<Member> members = em.createQuery("select c from Customer c where c.userKey=:userKey", Member.class)
                 .setParameter("userKey", userKey)
                 .getResultList();
-        return customers.stream().findAny();
+        return members.stream().findAny();
     }
 
     @Override
     public void updateCustomerPhoneNumber(String userKey, String phoneNumber) {
-        Customer findCustomer = em.createQuery("select c from Customer c where c.userKey=:userKey", Customer.class)
+        Member findMember = em.createQuery("select c from Customer c where c.userKey=:userKey", Member.class)
                 .setParameter("userKey", userKey)
                 .getSingleResult();
-        findCustomer.changePhone(phoneNumber);
+        findMember.changePhone(phoneNumber);
     }
 
     @Override
     public void delete(String userKey) {
-        Customer findCustomer = em.createQuery("select c from Customer c where c.userKey=:userKey", Customer.class)
+        Member findMember = em.createQuery("select c from Customer c where c.userKey=:userKey", Member.class)
                 .setParameter("userKey", userKey)
                 .getSingleResult();
 
@@ -58,6 +58,6 @@ public class CustomerRepositoryImpl implements CustomerRepository {
             em.remove(findProductImage);
         });
 
-        em.remove(findCustomer);
+        em.remove(findMember);
     }
 }

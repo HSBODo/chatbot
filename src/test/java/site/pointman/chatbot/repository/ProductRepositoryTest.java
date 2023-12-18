@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.constant.ProductStatus;
-import site.pointman.chatbot.domain.customer.Customer;
+import site.pointman.chatbot.domain.customer.Member;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
 import site.pointman.chatbot.dto.product.ProductDto;
@@ -112,12 +112,12 @@ class ProductRepositoryTest {
         // given
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add("213213213");
-        Customer customer = Customer.builder()
+        Member member = Member.builder()
                 .userKey("QFJSyeIZbO77")
                 .build();
         ProductDto productDto = ProductDto.builder()
                 .id(123123L)
-                .customer(customer)
+                .member(member)
                 .name("상품")
                 .build();
         ProductImageDto productImageDto = new ProductImageDto();
@@ -136,12 +136,12 @@ class ProductRepositoryTest {
         // given
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add("https://");
-        Customer customer = Customer.builder()
+        Member member = Member.builder()
                 .userKey("QFJSyeIZbO77")
                 .build();
         ProductDto productDto = ProductDto.builder()
                 .id(100000L)
-                .customer(customer)
+                .member(member)
                 .name("상품")
                 .build();
         ProductImageDto productImageDto = new ProductImageDto();
@@ -152,7 +152,7 @@ class ProductRepositoryTest {
         Product product = productRepository.findByProductId(100000L).get();
 
         // then
-        Assertions.assertThat(product.getCustomer().getUserKey()).isEqualTo(customer.getUserKey());
+        Assertions.assertThat(product.getMember().getUserKey()).isEqualTo(member.getUserKey());
         Assertions.assertThat(product.getName()).isEqualTo(productDto.getName());
     }
 

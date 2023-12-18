@@ -6,7 +6,7 @@ import site.pointman.chatbot.constant.BlockId;
 import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.constant.ProductStatus;
-import site.pointman.chatbot.domain.customer.Customer;
+import site.pointman.chatbot.domain.customer.Member;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
@@ -50,12 +50,12 @@ public class ProductServiceImpl implements ProductService {
     public Response addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory) {
         try {
             Category category = Category.getCategory(productCategory);
-            Customer customer = customerRepository.findByCustomer(userKey).get();
+            Member member = customerRepository.findByCustomer(userKey).get();
             String productName = productDto.getName();
 
             productDto.setStatus(ProductStatus.판매중);
             productDto.setCategory(category);
-            productDto.setCustomer(customer);
+            productDto.setMember(member);
             productDto.setId(productId);
 
             ProductImageDto productImageDto = s3FileService.uploadProductImage(imageUrls, userKey,productName);
@@ -122,7 +122,7 @@ public class ProductServiceImpl implements ProductService {
 
             Product product = mayBeProduct.get();
 
-            String productUserKey = product.getCustomer().getUserKey();
+            String productUserKey = product.getMember().getUserKey();
             String productName = product.getName();
             String productDescription = product.getProductDetailDescription();
             ProductStatus status = product.getStatus();

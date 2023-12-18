@@ -3,7 +3,7 @@ package site.pointman.chatbot.service.serviceimpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.ApiResultCode;
-import site.pointman.chatbot.domain.customer.Customer;
+import site.pointman.chatbot.domain.customer.Member;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.response.property.HttpResponse;
@@ -38,9 +38,9 @@ public class CustomerServiceImpl implements CustomerService {
                     .phone(phoneNumber)
                     .build();
 
-            Customer customer = customerDto.toEntity();
+            Member member = customerDto.toEntity();
 
-            customerRepository.save(customer);
+            customerRepository.save(member);
 
             if(isChatBotRequest) return customerChatBotResponseService.joinSuccessChatBotResponse();
 
@@ -54,17 +54,17 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Response getCustomerProfile(String userKey, boolean isChatBotRequest) {
         try {
-            Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
+            Optional<Member> mayBeCustomer = customerRepository.findByCustomer(userKey);
 
-            Customer customer = mayBeCustomer.get();
+            Member member = mayBeCustomer.get();
 
-            String customerName = customer.getName();
-            String customerPhoneNumber = customer.getPhone();
-            String customerJoinDate = StringUtils.dateFormat(customer.getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
+            String customerName = member.getName();
+            String customerPhoneNumber = member.getPhone();
+            String customerJoinDate = StringUtils.dateFormat(member.getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
 
             if(isChatBotRequest) return customerChatBotResponseService.getCustomerProfileSuccessChatBotResponse(customerName,customerPhoneNumber,customerJoinDate);
 
-            return customer;
+            return member;
         }catch (Exception e) {
             if (isChatBotRequest) return chatBotExceptionResponse.createException();
             return new HttpResponse(ApiResultCode.FAIL,"회원 프로필 조회를 실패하였습니다. e= "+e.getMessage());
@@ -103,7 +103,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public boolean isCustomer(String userKey) {
         try {
-            Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
+            Optional<Member> mayBeCustomer = customerRepository.findByCustomer(userKey);
 
             if (mayBeCustomer.isEmpty()) return false;
 
