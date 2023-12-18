@@ -45,7 +45,7 @@ public class ProductController {
 
         if (!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return productService.verificationCustomerSuccessResponse(true);
+        return productService.verificationCustomerSuccessResponse();
     }
 
     @ResponseBody
@@ -53,7 +53,7 @@ public class ProductController {
     public Response getCategory(@RequestBody ChatBotRequest chatBotRequest) {
         String requestBlockId = chatBotRequest.getRequestBlockId();
 
-        return productService.getProductCategory(requestBlockId, true);
+        return productService.getProductCategory(requestBlockId);
     }
 
     @ResponseBody

@@ -10,6 +10,7 @@ import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.response.property.Context;
 import site.pointman.chatbot.domain.response.property.common.Extra;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
@@ -46,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory) {
+    public Response addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory) {
         try {
             Category category = Category.getCategory(productCategory);
             Customer customer = customerRepository.findByCustomer(userKey).get();
@@ -59,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
 
             ProductImageDto productImageDto = s3FileService.uploadProductImage(imageUrls, userKey,productName);
 
-            productRepository.addProduct(productDto,productImageDto);
+            productRepository.insertProduct(productDto,productImageDto);
 
             return addProductSuccessChatBotResponse();
         }catch (Exception e){
@@ -68,15 +69,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse getProductCategory(String requestBlockId) {
-
+    public Response getProductCategory(String requestBlockId) {
         if(requestBlockId.equals(BlockId.PRODUCT_ADD_INFO.getBlockId()))  return getCategoryChatBotResponse(BlockId.PRODUCT_PROFILE_PREVIEW);
 
         return getCategoryChatBotResponse(BlockId.FIND_PRODUCTS_BY_CATEGORY);
     }
 
     @Override
-    public ChatBotResponse getProductsByCategory(Category category) {
+    public Response getProductsByCategory(Category category) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         try {
             List<Product> products = productRepository.findByCategory(category,ProductStatus.판매중);
@@ -115,7 +115,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category) {
+    public Response getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category) {
         try {
             String formatPrice = StringUtils.formatPrice(Integer.parseInt(productPrice));
 
@@ -126,7 +126,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse getProductsByUserKey(String userKey) {
+    public Response getProductsByUserKey(String userKey) {
         try {
             List<Product> products = productRepository.findByUserKey(userKey);
 
@@ -139,7 +139,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse getProductProfile(String productId, String userKey) {
+    public Response getProductProfile(String productId, String userKey) {
         try {
             Optional<Product> mayBeProduct = productRepository.findByProductId(Long.parseLong(productId));
 
@@ -161,7 +161,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse updateProductStatus(String productId, String utterance) {
+    public Response updateProductStatus(String productId, String utterance) {
         try {
             long parseProductId = Long.parseLong(productId);
             ProductStatus productStatus = ProductStatus.getProductStatus(utterance);
@@ -178,7 +178,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse deleteProduct(String productId, String utterance) {
+    public Response deleteProduct(String productId, String utterance) {
         try {
             long parseProductId = Long.parseLong(productId);
 
@@ -197,8 +197,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse verificationCustomerSuccessResponse() {
-        return verificationCustomerSuccessChatBotResponse();
+    public Response verificationCustomerSuccessResponse() {
+       return verificationCustomerSuccessChatBotResponse();
     }
 
     private Carousel<BasicCard> createCarouselImage(List<String> imageUrls){

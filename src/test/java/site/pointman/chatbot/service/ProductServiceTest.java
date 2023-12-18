@@ -50,7 +50,7 @@ class ProductServiceTest {
     @Transactional
     void validationCustomer() throws Exception{
 
-        Response response = productService.verificationCustomerSuccessResponse(true);
+        Response response = productService.verificationCustomerSuccessResponse();
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 

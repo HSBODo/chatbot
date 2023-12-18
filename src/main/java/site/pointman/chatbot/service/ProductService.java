@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface ProductService {
 
-    Response verificationCustomerSuccessResponse(boolean isChatBotRequest);
-    Response getProductCategory(String requestBlockId, boolean isChatBotRequest);
+    Response verificationCustomerSuccessResponse();
+    Response getProductCategory(String requestBlockId);
     Response getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category);
     Response getProductsByUserKey(String userKey);
     Response getProductProfile(String productId, String userKey);
