@@ -13,7 +13,6 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Getter
-@NoArgsConstructor
 public class Button {
     private String label;
     private String action;
@@ -22,10 +21,6 @@ public class Button {
     private String phoneNumber;
     private String messageText;
     private Map<ButtonParamKey,String> extra;
-
-    /**
-
-     */
 
     /**
      * label : 버튼에 적히는 문구입니다. 버튼 14자(가로배열 2개 8자), 썸네일이 1:1이면 버튼이 가로배열 됩니다.
@@ -41,6 +36,10 @@ public class Button {
      * itemCard는 케로셀의 share action을 지원하지 않습니다.
      * operator : 상담직원 연결 기능을 제공합니다. 링크: 상담직원 연결 플러그인
      */
+
+    public Button(String buttonName) {
+        this.label = buttonName;
+    }
 
     public Button(String buttonName, ButtonAction buttonAction, String actionValue) {
         if (buttonAction.name().equals(ButtonAction.블럭이동.name())){
