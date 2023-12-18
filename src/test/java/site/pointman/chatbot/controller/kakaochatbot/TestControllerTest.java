@@ -1,5 +1,6 @@
 package site.pointman.chatbot.controller.kakaochatbot;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -125,8 +126,7 @@ class TestControllerTest {
     @Test
     @DisplayName("Response ListCard")
     void ListCard() throws Exception{
-        ChatBotRequest chatBotRequest = new ChatBotRequest();
-        String content = new ObjectMapper().writeValueAsString(chatBotRequest);
+        String content ="";
 
         mockMvc
                 .perform(
