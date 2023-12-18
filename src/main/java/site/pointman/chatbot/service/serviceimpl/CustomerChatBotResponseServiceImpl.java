@@ -19,13 +19,14 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
     }
 
     @Override
-    public ChatBotResponse getCustomerProfileSuccessChatBotResponse(String customerName, String customerPhoneNumber, String customerJoinDate) {
+    public ChatBotResponse getCustomerProfileSuccessChatBotResponse(String customerRank,String customerName, String customerPhoneNumber, String customerJoinDate) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addTextCard("회원정보",
-                "닉네임: "+customerName+"\n"+
-                        "연락처: "+customerPhoneNumber+"\n"+
-                        "가입일자: "+customerJoinDate);
+                "등급: "+customerRank+"\n\n"+
+                    "닉네임: "+customerName+"\n\n"+
+                    "연락처: "+customerPhoneNumber+"\n\n"+
+                    "가입일자: "+customerJoinDate);
         chatBotResponse.addQuickButton(ButtonName.회원탈퇴,BlockId.CUSTOMER_ASK_DELETE.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.연락처변경,BlockId.CUSTOMER_UPDATE_PHONE_NUMBER.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.판매내역,BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
