@@ -9,14 +9,15 @@ public enum BlockId {
     CUSTOMER_DELETE("회원탈퇴","6576f5f56286e53ab448ee46"),
     CUSTOMER_GET_PRODUCTS("회원 등록상품 조회","65262bf631101d1cb11060b8"),
     CUSTOMER_GET_PRODUCT_DETAIL("회원 등록상품 상세보기","657aa39383cd6b068ef93501"),
-
     PRODUCT_ADD_INFO("상품정보입력","652a0a9a27e3c4125a33f6eb"),
     PRODUCT_ADD("상품등록","652e659087e33b27c8ba3a4a"),
     PRODUCT_PROFILE_PREVIEW("상품 프로필 미리보기","657d68558a8123272a649cae"),
     PRODUCT_UPDATE_STATUS("회원 등록상품 상태변경","657aba23eca3c21b078678c3"),
     PRODUCT_DELETE("회원 등록상품 삭제","657ad7bfbe9b5a099b5335b6"),
     PRODUCT_GET_CATEGORIES("추천상품 카테고리 선택","657d588e8a8123272a649b03"),
-    FIND_PRODUCTS_BY_CATEGORY("카테고리로 상품 조회","657da1bac75579280e900af9")
+    FIND_PRODUCTS_BY_CATEGORY("카테고리로 상품 조회","657da1bac75579280e900af9"),
+    FIND_NOTICES("공지사항 목록","65262c152dd06e457d91c7c2"),
+    FIND_NOTICE("게시글 조회","658088bd73cb0d4d1977c880")
     ;
     private final String name;
     private final String blockId;
