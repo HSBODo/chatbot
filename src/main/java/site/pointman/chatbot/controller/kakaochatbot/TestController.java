@@ -8,11 +8,10 @@ import site.pointman.chatbot.annotation.SkipLogging;
 import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.property.common.Buttons;
-import site.pointman.chatbot.domain.response.property.common.Extra;
-import site.pointman.chatbot.domain.response.property.common.ListItems;
+import site.pointman.chatbot.domain.response.property.common.*;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.Carousel;
+import site.pointman.chatbot.domain.response.property.components.ListCard;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,7 +30,7 @@ public class TestController {
 
     @ResponseBody
     @PostMapping(value = "simpleText" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse createSimpleText(@RequestBody ChatBotRequest request, HttpServletRequest httpRequest) throws Exception {
+    public ChatBotResponse createSimpleText() {
         try {
             ChatBotResponse chatBotResponse = new ChatBotResponse();
             chatBotResponse.addSimpleText("심플텍스트 테스트");
@@ -46,7 +45,7 @@ public class TestController {
 
     @ResponseBody
     @PostMapping(value = "simpleImg" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse createSimpleImg(@RequestBody ChatBotRequest request)throws Exception {
+    public ChatBotResponse createSimpleImg() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         chatBotResponse.addSimpleImage("https://www.youtube.com/","유튜브 이미지");
         return chatBotResponse;
@@ -54,7 +53,7 @@ public class TestController {
 
     @ResponseBody
     @PostMapping(value = "textCard" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse createTextCard(@RequestBody ChatBotRequest request)throws Exception {
+    public ChatBotResponse createTextCard() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Buttons buttons = new Buttons();
         buttons.addWebLinkButton("웹링크버튼","https://www.youtube.com/");
@@ -64,7 +63,7 @@ public class TestController {
 
     @ResponseBody
     @PostMapping(value = "basicCard" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse createBasicCard(@RequestBody ChatBotRequest request)throws Exception {
+    public ChatBotResponse createBasicCard() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Buttons buttons = new Buttons();
         Extra extra = new Extra();
@@ -78,7 +77,7 @@ public class TestController {
 
     @ResponseBody
     @PostMapping(value = "commerceCard" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse createCommerceCard(@RequestBody ChatBotRequest request)throws Exception {
+    public ChatBotResponse createCommerceCard() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Buttons buttons = new Buttons();
         buttons.addPhoneButton("전화버튼","01000000000");
@@ -88,21 +87,26 @@ public class TestController {
 
     @ResponseBody
     @PostMapping(value = "listCard" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse createListCard(@RequestBody ChatBotRequest request)throws Exception {
+    public ChatBotResponse createListCard() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
-        Buttons buttons = new Buttons();
-        buttons.addPhoneButton("전화버튼","01000000000");
-        ListItems listItems = new ListItems();
-        listItems.addBlockItem("소제목","설명","이미지URL","블록아이디", null);
-        listItems.addLinkItem("소제목","설명","이미지URL","클릭시 이동링크");
-        listItems.addMessageItem("소제목","설명","이미지URL","발화내용", null);
-        chatBotResponse.addListCard("리스트카드 대제목",listItems,buttons);
+
+        ListItem listItem = new ListItem("제목");
+
+        Button button = new Button();
+        button.createBlockButton("asdasd","asdasd");
+
+        ListCard listCard = new ListCard();
+        listCard.setHeader("리스트카드 헤더 제목");
+        listCard.setItem(listItem);
+        listCard.setButtons(button);
+
+        chatBotResponse.addListCard(listCard);
         return chatBotResponse;
     }
 
     @ResponseBody
     @PostMapping(value = "carousel" , headers = {"Accept=application/json; UTF-8"})
-    public ChatBotResponse createCarousel(@RequestBody ChatBotRequest request)throws Exception {
+    public ChatBotResponse createCarousel() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<BasicCard> carousel = new Carousel<>();
         BasicCard basicCard1 = new BasicCard();
