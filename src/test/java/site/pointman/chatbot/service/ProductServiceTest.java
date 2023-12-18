@@ -14,6 +14,7 @@ import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.utill.NumberUtils;
@@ -48,12 +49,11 @@ class ProductServiceTest {
     @Test
     @Transactional
     void validationCustomer() throws Exception{
-        String body="{\"bot\":{\"id\":\"65262a2d31101d1cb1106082!\",\"name\":\"중계나라\"},\"intent\":{\"id\":\"657bc60c11c58311fd9c9fa4\",\"name\":\"테스트\",\"extra\":{\"reason\":{\"code\":1,\"message\":\"OK\"}}},\"action\":{\"id\":\"657bc62306b53a111f7c354e\",\"name\":\"테스트_Json\",\"params\":{},\"detailParams\":{},\"clientExtra\":{}},\"userRequest\":{\"block\":{\"id\":\"657bc60c11c58311fd9c9fa4\",\"name\":\"테스트\"},\"user\":{\"id\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"type\":\"botUserKey\",\"properties\":{\"botUserKey\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"isFriend\":true,\"plusfriendUserKey\":\""+userKey+"\",\"bot_user_key\":\"bf1409542da67b26c2262a0a2f72ac6b5df6ad45e49e90543bd4586af560622863\",\"plusfriend_user_key\":\"QFJSyeIZbO77\"}},\"utterance\":\"테스트\",\"params\":{\"surface\":\"Kakaotalk.plusfriend\"},\"lang\":\"ko\",\"timezone\":\"Asia/Seoul\"},\"contexts\":[]}\n";
-        chatBotRequest = mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false)
-                .readValue(body, ChatBotRequest.class);
 
-        ChatBotResponse chatBotResponse = productService.verificationCustomerSuccessResponse();
+        Response response = productService.verificationCustomerSuccessResponse(true);
+        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
+
         Assertions.assertThat(text).isEqualTo("상품을 등록하시겠습니까?");
     }
 
@@ -72,7 +72,7 @@ class ProductServiceTest {
         String category = Category.스포츠_레저.getValue();
 
         //when
-        ChatBotResponse chatBotResponse = productService.getProductInfoPreview(
+        Response response = productService.getProductInfoPreview(
                 imageUrls,
                 productName,
                 productDescription,
@@ -81,6 +81,7 @@ class ProductServiceTest {
                 kakaoOpenChatUrl,
                 category
                 );
+        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String text = chatBotResponse.getTemplate().getOutputs().get(1).getTextCard().getTitle();
 
         //then
@@ -98,7 +99,8 @@ class ProductServiceTest {
         ProductDto productDto = chatBotRequest.createProductDto();
 
         //when
-        ChatBotResponse chatBotResponse = productService.addProduct(productDto,productId,userKey,imageUrls,productCategory);
+        Response response = productService.addProduct(productDto,productId,userKey,imageUrls,productCategory);
+        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
         //then
@@ -113,8 +115,10 @@ class ProductServiceTest {
         List<Product> products = productRepository.findByUserKey(userKey);
 
         //when
-        ChatBotResponse customerProducts = productService.getProductsByUserKey(userKey);
-        int customerProductsSize = customerProducts.getTemplate().getOutputs().get(0).getCarousel().getItems().size();
+        Response response = productService.getProductsByUserKey(userKey);
+        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
+
+        int customerProductsSize = chatBotResponse.getTemplate().getOutputs().get(0).getCarousel().getItems().size();
 
         //then
         Assertions.assertThat(customerProductsSize).isEqualTo(products.size());
@@ -127,8 +131,9 @@ class ProductServiceTest {
         Product product = productRepository.findByProductId(Long.parseLong(productId)).get();
 
         //when
-        ChatBotResponse customerProductDetail = productService.getProductProfile(productId,userKey);
-        String title = customerProductDetail.getTemplate().getOutputs().get(1).getTextCard().getTitle();
+        Response response = productService.getProductProfile(productId,userKey);
+        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
+        String title = chatBotResponse.getTemplate().getOutputs().get(1).getTextCard().getTitle();
 
         //then
         Assertions.assertThat(title).isEqualTo(product.getName());
@@ -140,7 +145,8 @@ class ProductServiceTest {
         String utterance =  ProductStatus.판매중.name();;
 
         //when
-        ChatBotResponse chatBotResponse = productService.updateProductStatus(productId,utterance);
+        Response response = productService.updateProductStatus(productId,utterance);
+        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
         //then
@@ -154,11 +160,11 @@ class ProductServiceTest {
         String utterance = ProductStatus.삭제.name();
 
         //when
-        ChatBotResponse chatBotResponse = productService.deleteProduct(productId,utterance);
+        Response response = productService.deleteProduct(productId,utterance);
+        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
         //then
         Assertions.assertThat(text).isEqualTo("상품을 정상적으로 삭제하였습니다.");
-
     }
 }

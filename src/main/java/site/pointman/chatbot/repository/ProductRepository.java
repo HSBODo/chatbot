@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface ProductRepository {
     void saveProduct(Product product);
     void saveProductImage(ProductImage productImage);
-    void addProduct(ProductDto productDto, ProductImageDto productImageDto);
+    void insertProduct(ProductDto productDto, ProductImageDto productImageDto);
     void updateStatus(Long productId, ProductStatus productStatus);
     void deleteProduct(Long productId);
     List<Product> findByUserKey(String userKey);
