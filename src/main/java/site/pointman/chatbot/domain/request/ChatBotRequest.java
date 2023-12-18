@@ -30,6 +30,7 @@ public class ChatBotRequest {
                 .kakaoOpenChatUrl(getKakaoOpenChatUrl())
                 .build();
     }
+
     public String getUserKey(){
         return userRequest.getUser().getProperties().getPlusfriendUserKey();
     }
@@ -37,6 +38,7 @@ public class ChatBotRequest {
     public String getCustomerName(){
         return action.getParams().getCustomerName();
     }
+
     public String getCustomerPhone(){
         return action.getParams().getCustomerPhone();
     }
@@ -49,15 +51,19 @@ public class ChatBotRequest {
         Extra extraObj = new Extra(action.getClientExtra().getExtra());
         return extraObj.getProductId();
     }
+
     public String getProductName(){
         return action.getParams().getProductName();
     }
+
     public String getProductDescription(){
         return action.getParams().getProductDescription();
     }
+
     public String getProductPrice(){
         return action.getParams().getProductPrice();
     }
+
     public List<String> getProductImages(){
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -68,9 +74,11 @@ public class ChatBotRequest {
             return null;
         }
     }
+
     public String getTradingLocation(){
         return action.getParams().getTradingLocation();
     }
+
     public String getKakaoOpenChatUrl(){
         return action.getParams().getKakaoOpenChatUrl();
     }

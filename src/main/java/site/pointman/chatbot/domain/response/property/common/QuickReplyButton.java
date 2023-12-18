@@ -19,7 +19,7 @@ public class QuickReplyButton {
         this.action = "block";
         this.label = quickButtonName;
         this.blockId = blockId;
-        this.extra=extra.getExtra();
+        this.extra = extra.getExtra();
 
     }
     public void createBlockQuickButton(String quickButtonName,String blockId){
