@@ -214,22 +214,11 @@ public class ChatBotResponse extends Response {
         this.template.getOutputs().add(component);
     }
 
-    public void addListCard(String title, ListItems items, Buttons buttons ){
-        if(items.getListItems().size()>5){
-            throw new IllegalArgumentException("아이템의 최대 개수는 5개 입니다.");
-        }
-        if(items.getListItems().size()==0){
+    public void addListCard(ListCard listCard ){
+        if(listCard.getItems().size()==0){
             throw new IllegalArgumentException("아이템의 최소 개수는 1개 입니다.");
         }
-        if(buttons.getButtons().size()>2){
-            throw new IllegalArgumentException("버튼은 최대 2개까지만 추가할 수 있습니다.");
-        }
-        ListCard listCard = new ListCard();
-        ListItem header = new ListItem();
-        header.setTitle(title);
-        listCard.setHeader(header);
-        listCard.setItems(items.getListItems());
-        listCard.setButtons(buttons.getButtons());
+
         Component component = new Component(listCard);
         this.template.getOutputs().add(component);
     }
