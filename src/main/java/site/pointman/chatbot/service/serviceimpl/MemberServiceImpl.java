@@ -3,6 +3,7 @@ package site.pointman.chatbot.service.serviceimpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.ApiResultCode;
+import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.Response;
@@ -36,6 +37,7 @@ public class MemberServiceImpl implements MemberService {
                     .userKey(userKey)
                     .name(name)
                     .phoneNumber(phoneNumber)
+                    .memberRole(MemberRole.CUSTOMER_BRONZE)
                     .build();
 
             Member member = memberDto.toEntity();

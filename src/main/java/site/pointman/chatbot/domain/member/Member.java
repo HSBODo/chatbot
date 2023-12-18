@@ -27,7 +27,7 @@ public class Member extends BaseEntity {
     private String name;
     private String phoneNumber;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = MemberRoleEnumConverter.class)
     private MemberRole role;
 
     @Builder
