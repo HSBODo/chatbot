@@ -1,15 +1,15 @@
 package site.pointman.chatbot.service;
 
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.ValidationResponse;
+import site.pointman.chatbot.domain.response.ChatBotValidationResponse;
 
 public interface ValidationService {
-    ValidationResponse validationCustomerPhoneNumber(ChatBotRequest chatBotRequest);
-    ValidationResponse validationCustomerName(ChatBotRequest chatBotRequest);
-    ValidationResponse validationProductName(ChatBotRequest chatBotRequest);
-    ValidationResponse validationProductPrice(ChatBotRequest chatBotRequest);
-    ValidationResponse validationProductDescription(ChatBotRequest chatBotRequest);
-    ValidationResponse validationProductKakaoOpenChatUrl(ChatBotRequest chatBotRequest);
-    ValidationResponse validationTradingLocation(ChatBotRequest chatBotRequest);
+    ChatBotValidationResponse validationCustomerPhoneNumber(ChatBotRequest chatBotRequest);
+    ChatBotValidationResponse validationCustomerName(ChatBotRequest chatBotRequest);
+    ChatBotValidationResponse validationProductName(ChatBotRequest chatBotRequest);
+    ChatBotValidationResponse validationProductPrice(ChatBotRequest chatBotRequest);
+    ChatBotValidationResponse validationProductDescription(ChatBotRequest chatBotRequest);
+    ChatBotValidationResponse validationProductKakaoOpenChatUrl(ChatBotRequest chatBotRequest);
+    ChatBotValidationResponse validationTradingLocation(ChatBotRequest chatBotRequest);
 
 }

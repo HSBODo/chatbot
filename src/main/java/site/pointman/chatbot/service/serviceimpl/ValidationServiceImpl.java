@@ -2,7 +2,7 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.ValidationResponse;
+import site.pointman.chatbot.domain.response.ChatBotValidationResponse;
 import site.pointman.chatbot.service.ValidationService;
 import site.pointman.chatbot.utill.NumberUtils;
 
@@ -12,93 +12,93 @@ public class ValidationServiceImpl implements ValidationService {
     private final String KAKAO_OPEN_CHAT_URL_REQUIRED = "https://open.kakao.com/o";
 
     @Override
-    public ValidationResponse validationCustomerPhoneNumber(ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
+    public ChatBotValidationResponse validationCustomerPhoneNumber(ChatBotRequest chatBotRequest) {
+        ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String inputPhone = chatBotRequest.getValidationData();
         inputPhone = inputPhone.replaceAll("-", "");
 
         if(!NumberUtils.isNumber(inputPhone)){
-            validationResponse.validationFail();
-            return validationResponse;
+            chatBotValidationResponse.validationFail();
+            return chatBotValidationResponse;
         }
 
         if (inputPhone.length() != 11) {
-            validationResponse.validationFail();
-            return validationResponse;
+            chatBotValidationResponse.validationFail();
+            return chatBotValidationResponse;
         }
 
-        validationResponse.validationSuccess(inputPhone);
-        return validationResponse;
+        chatBotValidationResponse.validationSuccess(inputPhone);
+        return chatBotValidationResponse;
     }
 
     @Override
-    public ValidationResponse validationCustomerName(ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
+    public ChatBotValidationResponse validationCustomerName(ChatBotRequest chatBotRequest) {
+        ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String inputName = chatBotRequest.getValidationData();
-        validationResponse.validationSuccess(inputName);
-        return validationResponse;
+        chatBotValidationResponse.validationSuccess(inputName);
+        return chatBotValidationResponse;
     }
 
     @Override
-    public ValidationResponse validationProductName(ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
+    public ChatBotValidationResponse validationProductName(ChatBotRequest chatBotRequest) {
+        ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String productName = chatBotRequest.getValidationData();
         if(productName.length()>30){
-            validationResponse.validationFail();
-            return validationResponse;
+            chatBotValidationResponse.validationFail();
+            return chatBotValidationResponse;
         }
-        validationResponse.validationSuccess(productName);
-        return validationResponse;
+        chatBotValidationResponse.validationSuccess(productName);
+        return chatBotValidationResponse;
     }
 
     @Override
-    public ValidationResponse validationProductPrice(ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
+    public ChatBotValidationResponse validationProductPrice(ChatBotRequest chatBotRequest) {
+        ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String productPrice= chatBotRequest.getValidationData();
 
         if(!NumberUtils.isNumber(productPrice)){
-            validationResponse.validationFail();
-            return validationResponse;
+            chatBotValidationResponse.validationFail();
+            return chatBotValidationResponse;
         }
 
-        validationResponse.validationSuccess(productPrice);
-        return validationResponse;
+        chatBotValidationResponse.validationSuccess(productPrice);
+        return chatBotValidationResponse;
     }
 
     @Override
-    public ValidationResponse validationProductDescription(ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
+    public ChatBotValidationResponse validationProductDescription(ChatBotRequest chatBotRequest) {
+        ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String productDescription= chatBotRequest.getValidationData();
 
         if(productDescription.length()>400){
-            validationResponse.validationFail();
-            return validationResponse;
+            chatBotValidationResponse.validationFail();
+            return chatBotValidationResponse;
         }
 
-        validationResponse.validationSuccess(productDescription);
-        return validationResponse;
+        chatBotValidationResponse.validationSuccess(productDescription);
+        return chatBotValidationResponse;
     }
 
     @Override
-    public ValidationResponse validationProductKakaoOpenChatUrl(ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
+    public ChatBotValidationResponse validationProductKakaoOpenChatUrl(ChatBotRequest chatBotRequest) {
+        ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String kakaoOpenChayUrl= chatBotRequest.getValidationData();
 
         if(kakaoOpenChayUrl.contains(KAKAO_OPEN_CHAT_URL_REQUIRED)){
-            validationResponse.validationSuccess(kakaoOpenChayUrl);
-            return validationResponse;
+            chatBotValidationResponse.validationSuccess(kakaoOpenChayUrl);
+            return chatBotValidationResponse;
         }
 
-        validationResponse.validationFail();
-        return validationResponse;
+        chatBotValidationResponse.validationFail();
+        return chatBotValidationResponse;
     }
 
     @Override
-    public ValidationResponse validationTradingLocation(ChatBotRequest chatBotRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
+    public ChatBotValidationResponse validationTradingLocation(ChatBotRequest chatBotRequest) {
+        ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String tradingLocation= chatBotRequest.getValidationData();
-        validationResponse.validationSuccess(tradingLocation);
-        return validationResponse;
+        chatBotValidationResponse.validationSuccess(tradingLocation);
+        return chatBotValidationResponse;
     }
 
 }
