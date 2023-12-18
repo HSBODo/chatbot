@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.BaseEntity;
 
 import javax.persistence.*;
@@ -23,15 +24,18 @@ public class Member extends BaseEntity {
     @Id
     @Column(name = "user_key")
     private String userKey;
-
     private String name;
     private String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
+    private MemberRole role;
+
     @Builder
-    public Member(String userKey, String name, String phoneNumber) {
+    public Member(String userKey, String name, String phoneNumber ,MemberRole memberRole) {
         this.userKey = userKey;
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.role = memberRole;
     }
 
     public void changePhone(String updatePhoneNumber){
