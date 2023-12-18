@@ -56,22 +56,28 @@ public class ChatBotResponse extends Response {
 
     public void addSimpleText(String text){
         SimpleText simpleText = new SimpleText(text);
+        Component component = new Component(simpleText);
 
-        this.template.getOutputs().add(simpleText);
+        this.template.getOutputs().add(component);
     }
 
     public void addSimpleText(SimpleText simpleText){
-        this.template.getOutputs().add(simpleText);
+        Component component = new Component(simpleText);
+
+        this.template.getOutputs().add(component);
     }
 
     public void addSimpleImage(String imgUrl, String altText){
         SimpleImage simpleImage =new SimpleImage(imgUrl, altText);
+        Component component = new Component(simpleImage);
 
-        this.template.getOutputs().add(simpleImage);
+        this.template.getOutputs().add(component);
     }
 
     public void addTextCard(TextCard textCard){
-        this.template.getOutputs().add(textCard);
+        Component component = new Component(textCard);
+
+        this.template.getOutputs().add(component);
     }
 
     public void addTextCard(String title, String description){
@@ -79,13 +85,17 @@ public class ChatBotResponse extends Response {
         textCard.setTitle(title);
         textCard.setDescription(description);
 
-        this.template.getOutputs().add(textCard);
+        Component component = new Component(textCard);
+
+        this.template.getOutputs().add(component);
     }
 
     public void addBasicCard(BasicCard basicCard){
         if(basicCard.getThumbnail().getImageUrl().isBlank()) throw new IllegalArgumentException("썸네일 이미지 URL은 필수입니다.");
 
-        this.template.getOutputs().add(basicCard);
+        Component component = new Component(basicCard);
+
+        this.template.getOutputs().add(component);
     }
 
     public void addCommerceCard(CommerceCard commerceCard){
@@ -93,17 +103,23 @@ public class ChatBotResponse extends Response {
 
         if(commerceCard.getButtons().size() == 0) throw new IllegalArgumentException("버튼은 최소 1개 이상이 필수입니다.");
 
-        this.template.getOutputs().add(commerceCard);
+        Component component = new Component(commerceCard);
+
+        this.template.getOutputs().add(component);
     }
 
     public void addListCard(ListCard listCard){
         if(listCard.getItems().size()==0) throw new IllegalArgumentException("아이템의 최소 개수는 1개 입니다.");
 
-        this.template.getOutputs().add(listCard);
+        Component component = new Component(listCard);
+
+        this.template.getOutputs().add(component);
     }
 
-    public void addCarousel(Carousel carousel ){
-        this.template.getOutputs().add(carousel);
+    public void addCarousel(Carousel carousel){
+        Component component = new Component(carousel);
+
+        this.template.getOutputs().add(component);
     }
 
     public void addContext(Context context ){

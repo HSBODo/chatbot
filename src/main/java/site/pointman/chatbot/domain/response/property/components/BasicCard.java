@@ -1,7 +1,6 @@
 package site.pointman.chatbot.domain.response.property.components;
 
 import lombok.Getter;
-import site.pointman.chatbot.domain.response.property.Component;
 import site.pointman.chatbot.domain.response.property.common.Button;
 import site.pointman.chatbot.domain.response.property.common.Link;
 import site.pointman.chatbot.domain.response.property.common.Profile;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class BasicCard extends Component {
+public class BasicCard {
     private String title;
     private String description;
     private Thumbnail thumbnail;

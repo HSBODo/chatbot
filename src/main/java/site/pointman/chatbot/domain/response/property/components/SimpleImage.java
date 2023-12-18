@@ -1,11 +1,9 @@
 package site.pointman.chatbot.domain.response.property.components;
 
 import lombok.Getter;
-import lombok.Setter;
-import site.pointman.chatbot.domain.response.property.Component;
 
 @Getter
-public class SimpleImage extends Component {
+public class SimpleImage {
     private String imageUrl;
     private String altText;
 
