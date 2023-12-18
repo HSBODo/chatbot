@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import site.pointman.chatbot.constant.NoticeType;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.service.NoticeService;
@@ -15,10 +14,10 @@ import site.pointman.chatbot.service.NoticeService;
 @Slf4j
 @Controller
 @RequestMapping(value = "admin/notice", consumes = MediaType.APPLICATION_JSON_VALUE)
-public class NoticeController {
+public class NoticeAdminController {
     NoticeService noticeService;
 
-    public NoticeController(NoticeService noticeService) {
+    public NoticeAdminController(NoticeService noticeService) {
         this.noticeService = noticeService;
     }
 
