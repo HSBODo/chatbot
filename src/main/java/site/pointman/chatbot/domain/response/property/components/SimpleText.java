@@ -3,10 +3,11 @@ package site.pointman.chatbot.domain.response.property.components;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
+import site.pointman.chatbot.domain.response.property.Component;
 
 @Setter
 @Getter
-public class SimpleText {
+public class SimpleText extends Component {
     private String text;
 
     public SimpleText(String text) {

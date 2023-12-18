@@ -2,12 +2,13 @@ package site.pointman.chatbot.domain.response.property.components;
 
 import lombok.Getter;
 import lombok.Setter;
+import site.pointman.chatbot.domain.response.property.Component;
 import site.pointman.chatbot.domain.response.property.common.Button;
 
 import java.util.ArrayList;
 import java.util.List;
 @Getter
-public class TextCard {
+public class TextCard extends Component {
     private String title;
     private String description;
     private List<Button> buttons = new ArrayList<>();

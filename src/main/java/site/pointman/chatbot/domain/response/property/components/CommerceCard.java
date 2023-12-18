@@ -4,6 +4,7 @@ package site.pointman.chatbot.domain.response.property.components;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
+import site.pointman.chatbot.domain.response.property.Component;
 import site.pointman.chatbot.domain.response.property.common.Button;
 import site.pointman.chatbot.domain.response.property.common.Link;
 import site.pointman.chatbot.domain.response.property.common.Profile;
@@ -15,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class CommerceCard {
+public class CommerceCard extends Component {
     private String title;
     private String description;
     private int price;

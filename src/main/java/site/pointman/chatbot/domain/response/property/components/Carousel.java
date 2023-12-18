@@ -2,6 +2,7 @@ package site.pointman.chatbot.domain.response.property.components;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import site.pointman.chatbot.domain.response.property.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.regex.Pattern;
 
 @JsonInclude()
 @Getter
-public class Carousel<T> {
+public class Carousel<T> extends Component {
     private String type;
     private List<T> items = new ArrayList<>();
 
