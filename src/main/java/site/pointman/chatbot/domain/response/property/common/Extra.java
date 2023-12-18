@@ -5,22 +5,14 @@ import lombok.Getter;
 import java.util.HashMap;
 import java.util.Map;
 
-@Getter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Extra {
-    private Map<String,String> extra;
-
-    public Extra() {
-        extra = new HashMap<>();
-    }
-
-    public Extra(Map<String, String> extra) {
-        this.extra = extra;
-    }
+    private Map<String,String> extra = new HashMap<>();
 
     public void addChoiceParam(String value){
         this.extra.put("choice",value);
     }
+
     public void addProductId(String value){
         this.extra.put("productId",value);
     }

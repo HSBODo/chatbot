@@ -14,6 +14,12 @@ public class ListCard {
     private List<ListItem> items = new ArrayList<>();
     private List<Button> buttons = new ArrayList<>();
 
+    /**
+     * header : 카드의 상단 항목
+     * items : 최대 5개 , 케로셀형 : 최대 4개
+     * buttons : 최대 2개
+     */
+
     public void setHeader(String title) {
         ListItem listItem = new ListItem(title);
         this.header = (listItem);

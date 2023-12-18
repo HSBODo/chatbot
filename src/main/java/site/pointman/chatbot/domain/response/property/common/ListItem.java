@@ -46,10 +46,6 @@ public class ListItem {
         this.messageText = messageText;
     }
 
-    public void setBlockId(String blockId) {
-        this.blockId = blockId;
-    }
-
     public void setExtra(String key, String value) {
         this.extra.put(key,value);
     }

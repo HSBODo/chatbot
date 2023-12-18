@@ -68,156 +68,55 @@ public class ChatBotResponse extends Response {
     }
 
     public void addSimpleText(String text){
-        SimpleText simpleText = new SimpleText();
-        simpleText.setText(text);
+        SimpleText simpleText = new SimpleText(text);
+
         Component component = new Component(simpleText);
 
         this.template.getOutputs().add(component);
     }
 
     public void addSimpleImage(String imgUrl, String altText){
-        SimpleImage simpleImage =new SimpleImage();
-        simpleImage.setImageUrl(imgUrl);
-        simpleImage.setAltText(altText);
+        SimpleImage simpleImage =new SimpleImage(imgUrl, altText);
+
         Component component = new Component(simpleImage);
 
         this.template.getOutputs().add(component);
     }
-    public void addTextCard(String title, String text, Buttons buttons){
-        if(buttons.getButtons().size()>3){
-            throw new IllegalArgumentException("버튼은 최대 3개까지만 추가할 수 있습니다.");
-        }
+
+    public void addTextCard(TextCard textCard){
+        Component component = new Component(textCard);
+
+        this.template.getOutputs().add(component);
+    }
+
+    public void addTextCard(String title, String description){
         TextCard textCard = new TextCard();
         textCard.setTitle(title);
-        textCard.setText(text);
-        textCard.setButtons(buttons.getButtons());
+        textCard.setDescription(description);
+
         Component component = new Component(textCard);
 
         this.template.getOutputs().add(component);
     }
 
-    public void addTextCard(String title,String text){
-        TextCard textCard = new TextCard();
-        textCard.setTitle(title);
-        textCard.setText(text);
-        Component component = new Component(textCard);
-
-        this.template.getOutputs().add(component);
-    }
-
-    public void addTextCard(String text){
-        TextCard textCard = new TextCard();
-        textCard.setText(text);
-        Component component = new Component(textCard);
-
-        this.template.getOutputs().add(component);
-    }
-
-    public void addBasicCard(String title, String description, String thumbnailImgUrl,String profileImgUrl,String profileNickname, Buttons buttons){
-        if(thumbnailImgUrl.isBlank()){
-            throw new IllegalArgumentException("썸네일 이미지 URL은 필수입니다.");
-        }
-
-
-        if(buttons.getButtons().size()>3){
-            throw new IllegalArgumentException("버튼은 최대 3개까지만 추가할 수 있습니다.");
-        }
-
-        BasicCard basicCard = new BasicCard();
-        if(!profileImgUrl.isBlank() && !profileNickname.isBlank() ){
-            basicCard.setProfile(profileNickname, profileImgUrl);
-        }
-
-        basicCard.setTitle(title);
-        basicCard.setDescription(description);
-        basicCard.setThumbnail(thumbnailImgUrl);
-        basicCard.setButtons(buttons.getButtons());
+    public void addBasicCard(BasicCard basicCard){
+        if(basicCard.getThumbnail().getImageUrl().isBlank()) throw new IllegalArgumentException("썸네일 이미지 URL은 필수입니다.");
 
         Component component = new Component(basicCard);
         this.template.getOutputs().add(component);
     }
 
-    public void addCommerceCard(String title, String description, int price, int discount, int discountRate , int dicountedPrice , String thumbnailImgUrl, String profileImgUrl,String profileNickname, Buttons buttons ){
-        /*
-        Information. price, discount, discountedPrice 의 동작 방식
-        discountedPrice 가 존재하면 price, discount, discountRate 과 관계 없이 무조건 해당 값이 사용자에게 노출됩니다.
-        예) price: 10000, discount: 7000, discountedPrice: 2000 인 경우, 3000 (10000 - 7000)이 아닌 2000이 사용자에게 노출
-        위의 예에서 discountedPrice가 없는 경우, 3000이 사용자에게 노출
-        예) price: 10000, discountRate: 70, discountedPrice: 2000 인 경우, 3000 (10000 * 0.3)이 아닌 2000이 사용자에게 노출
-        discountRate은 discountedPrice를 필요로 합니다. discountedPrice가 주어지지 않으면 사용자에게 >discountRate을 노출하지 않습니다.
-        discountRate과 discount가 동시에 있는 경우, discountRate을 우선적으로 노출합니다.
-        */
-        if(thumbnailImgUrl.isBlank()){
-            throw new IllegalArgumentException("썸네일 이미지 URL은 필수입니다.");
-        }
-        if(buttons.getButtons().size()>3){
-            throw new IllegalArgumentException("버튼은 최대 3개까지만 추가할 수 있습니다.");
-        }
+    public void addCommerceCard(CommerceCard commerceCard){
+        if(commerceCard.getThumbnails().size() != 1) throw new IllegalArgumentException("썸네일 이미지 URL은 최소 1개가 필수입니다. 현재 1개만 지원");
 
-
-        CommerceCard commerceCard = new CommerceCard();
-
-        if(!profileImgUrl.isBlank() && !profileNickname.isBlank() ){
-            Profile profile = new Profile(profileNickname,profileImgUrl);
-            commerceCard.setProfile(profile);
-        }
-        Thumbnail thumbnail = new Thumbnail(thumbnailImgUrl);
-
-        commerceCard.setTitle(title);
-        commerceCard.setDescription(description);
-        commerceCard.setPrice(price);
-        commerceCard.setDiscount(discount);
-        commerceCard.setDiscountRate(discountRate);
-        commerceCard.setDiscountedPrice(dicountedPrice);
-        commerceCard.setThumbnails(thumbnail);
-        commerceCard.setButtons(buttons);
+        if(commerceCard.getButtons().size() == 0) throw new IllegalArgumentException("버튼은 최소 1개 이상이 필수입니다.");
 
         Component component = new Component(commerceCard);
         this.template.getOutputs().add(component);
     }
 
-    public void addCommerceCard(String title, String description, int price, int discount, String thumbnailImgUrl, String profileImgUrl,String profileNickname, Buttons buttons ){
-        /*
-        Information. price, discount, discountedPrice 의 동작 방식
-        discountedPrice 가 존재하면 price, discount, discountRate 과 관계 없이 무조건 해당 값이 사용자에게 노출됩니다.
-        예) price: 10000, discount: 7000, discountedPrice: 2000 인 경우, 3000 (10000 - 7000)이 아닌 2000이 사용자에게 노출
-        위의 예에서 discountedPrice가 없는 경우, 3000이 사용자에게 노출
-        예) price: 10000, discountRate: 70, discountedPrice: 2000 인 경우, 3000 (10000 * 0.3)이 아닌 2000이 사용자에게 노출
-        discountRate은 discountedPrice를 필요로 합니다. discountedPrice가 주어지지 않으면 사용자에게 >discountRate을 노출하지 않습니다.
-        discountRate과 discount가 동시에 있는 경우, discountRate을 우선적으로 노출합니다.
-        */
-        if(thumbnailImgUrl.isBlank()){
-            throw new IllegalArgumentException("썸네일 이미지 URL은 필수입니다.");
-        }
-        if(buttons.getButtons().size()>3){
-            throw new IllegalArgumentException("버튼은 최대 3개까지만 추가할 수 있습니다.");
-        }
-
-
-        CommerceCard commerceCard = new CommerceCard();
-
-        if(!profileImgUrl.isBlank() && !profileNickname.isBlank() ){
-            Profile profile = new Profile(profileNickname,profileImgUrl);
-            commerceCard.setProfile(profile);
-        }
-
-        Thumbnail thumbnail = new Thumbnail(thumbnailImgUrl);
-;
-        commerceCard.setTitle(title);
-        commerceCard.setDescription(description);
-        commerceCard.setPrice(price);
-        commerceCard.setDiscount(discount);
-        commerceCard.setThumbnails(thumbnail);
-        commerceCard.setButtons(buttons);
-
-        Component component = new Component(commerceCard);
-        this.template.getOutputs().add(component);
-    }
-
-    public void addListCard(ListCard listCard ){
-        if(listCard.getItems().size()==0){
-            throw new IllegalArgumentException("아이템의 최소 개수는 1개 입니다.");
-        }
+    public void addListCard(ListCard listCard){
+        if(listCard.getItems().size()==0) throw new IllegalArgumentException("아이템의 최소 개수는 1개 입니다.");
 
         Component component = new Component(listCard);
         this.template.getOutputs().add(component);

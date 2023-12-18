@@ -11,8 +11,8 @@ public class ChatBotExceptionResponse {
     public ChatBotResponse notCustomerException(){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
-        SimpleText simpleText = new SimpleText();
-        simpleText.setText("회원이 아닙니다.");
+        SimpleText simpleText = new SimpleText("회원이 아닙니다.");
+
         Component component = new Component(simpleText);
 
         chatBotResponse.getTemplate().getOutputs().add(component);
@@ -25,8 +25,8 @@ public class ChatBotExceptionResponse {
     public ChatBotResponse createException(String text){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
-        SimpleText simpleText = new SimpleText();
-        simpleText.setText(text);
+        SimpleText simpleText = new SimpleText(text);
+
         Component component = new Component(simpleText);
 
         chatBotResponse.getTemplate().getOutputs().add(component);
@@ -38,8 +38,8 @@ public class ChatBotExceptionResponse {
     public ChatBotResponse createException(){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
-        SimpleText simpleText = new SimpleText();
-        simpleText.setText("시스템에 오류가 발생하였습니다.\n다시 시작해주세요.");
+        SimpleText simpleText = new SimpleText("시스템에 오류가 발생하였습니다.\n처음부터 다시 시작해주세요.");
+
         Component component = new Component(simpleText);
 
         chatBotResponse.getTemplate().getOutputs().add(component);

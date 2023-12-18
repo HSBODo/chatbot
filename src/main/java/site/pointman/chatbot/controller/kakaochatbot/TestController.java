@@ -9,9 +9,7 @@ import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.common.*;
-import site.pointman.chatbot.domain.response.property.components.BasicCard;
-import site.pointman.chatbot.domain.response.property.components.Carousel;
-import site.pointman.chatbot.domain.response.property.components.ListCard;
+import site.pointman.chatbot.domain.response.property.components.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -55,9 +53,12 @@ public class TestController {
     @PostMapping(value = "textCard" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse createTextCard() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
-        Buttons buttons = new Buttons();
-        buttons.addWebLinkButton("웹링크버튼","https://www.youtube.com/");
-        chatBotResponse.addTextCard("제목","텍스트카드 테스트",buttons);
+
+        TextCard textCard = new TextCard();
+        textCard.setTitle("제목");
+        textCard.setDescription("설명");
+
+        chatBotResponse.addTextCard(textCard);
         return chatBotResponse;
     }
 
@@ -65,13 +66,17 @@ public class TestController {
     @PostMapping(value = "basicCard" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse createBasicCard() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
-        Buttons buttons = new Buttons();
+
         Extra extra = new Extra();
         extra.addChoiceParam("선택 파라미터");
 
-        buttons.addBlockButton("블록버튼","danklnclsv123115vdf");
-        chatBotResponse.addBasicCard("제목","설명","섬네일 URL https://www.youtube.com/","","",buttons);
+        BasicCard basicCard = new BasicCard();
+        basicCard.setThumbnail("URL");
+        basicCard.setBlockButton("블록버튼","blockId",extra);
+
+        chatBotResponse.addBasicCard(basicCard);
         chatBotResponse.addQuickButton(ButtonName.이전으로,"블록아이디",extra);
+
         return chatBotResponse;
     }
 
@@ -79,9 +84,11 @@ public class TestController {
     @PostMapping(value = "commerceCard" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse createCommerceCard() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
-        Buttons buttons = new Buttons();
-        buttons.addPhoneButton("전화버튼","01000000000");
-        chatBotResponse.addCommerceCard("제목","설명",10000,50,"123123","","",buttons);
+
+        CommerceCard commerceCard = new CommerceCard();
+        commerceCard.setThumbnails("https://",true);
+
+        chatBotResponse.addCommerceCard(commerceCard);
         return chatBotResponse;
     }
 

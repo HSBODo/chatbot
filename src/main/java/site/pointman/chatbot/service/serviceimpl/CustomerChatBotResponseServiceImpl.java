@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.BlockId;
 import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.service.CustomerChatBotResponseService;
 
 @Service
@@ -21,12 +22,17 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
     @Override
     public ChatBotResponse getCustomerProfileSuccessChatBotResponse(String customerRank,String customerName, String customerPhoneNumber, String customerJoinDate) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
-
-        chatBotResponse.addTextCard("회원정보",
+        String description =
                 "등급: "+customerRank+"\n\n"+
-                    "닉네임: "+customerName+"\n\n"+
-                    "연락처: "+customerPhoneNumber+"\n\n"+
-                    "가입일자: "+customerJoinDate);
+                "닉네임: "+customerName+"\n\n"+
+                "연락처: "+customerPhoneNumber+"\n\n"+
+                "가입일자: "+customerJoinDate;
+
+        TextCard textCard = new TextCard();
+        textCard.setTitle("회원정보");
+        textCard.setDescription(description);
+
+        chatBotResponse.addTextCard(textCard);
         chatBotResponse.addQuickButton(ButtonName.회원탈퇴,BlockId.CUSTOMER_ASK_DELETE.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.연락처변경,BlockId.CUSTOMER_UPDATE_PHONE_NUMBER.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.판매내역,BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
