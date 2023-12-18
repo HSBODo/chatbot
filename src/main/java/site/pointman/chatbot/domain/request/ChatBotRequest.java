@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import site.pointman.chatbot.domain.request.propery.*;
-import site.pointman.chatbot.domain.response.property.common.Extra;
 import site.pointman.chatbot.dto.product.ProductDto;
 
 import java.util.List;
@@ -44,12 +43,7 @@ public class ChatBotRequest {
     }
 
     public String getProductId(){
-        action.getClientExtra().getProductId();
-        if(!action.getClientExtra().getProductId().isEmpty()){
-            return action.getClientExtra().getProductId();
-        }
-        Extra extraObj = new Extra(action.getClientExtra().getExtra());
-        return extraObj.getProductId();
+        return action.getClientExtra().getProductId();
     }
 
     public String getProductName(){

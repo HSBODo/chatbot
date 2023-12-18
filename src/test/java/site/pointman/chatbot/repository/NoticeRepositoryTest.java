@@ -5,6 +5,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import site.pointman.chatbot.constant.ButtonAction;
+import site.pointman.chatbot.constant.ButtonParamKey;
 import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.constant.NoticeType;
 import site.pointman.chatbot.domain.member.Member;
@@ -30,8 +32,7 @@ class NoticeRepositoryTest {
                 .build();
 
         List<Button> buttons = new ArrayList<>();
-        Button button = new Button();
-        button.createBlockButton("asd","asd");
+        Button button = new Button("btnName", ButtonAction.블럭이동, "asdasd", ButtonParamKey.productId, "asdasdasd");
         buttons.add(button);
 
         Notice notice = Notice.builder()

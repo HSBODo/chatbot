@@ -1,8 +1,10 @@
 package site.pointman.chatbot.domain.response.property.components;
 
 import lombok.Getter;
-import lombok.Setter;
-import site.pointman.chatbot.domain.response.property.common.*;
+import site.pointman.chatbot.domain.response.property.common.Button;
+import site.pointman.chatbot.domain.response.property.common.Link;
+import site.pointman.chatbot.domain.response.property.common.Profile;
+import site.pointman.chatbot.domain.response.property.common.Thumbnail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,49 +55,16 @@ public class BasicCard {
         this.profile = profile;
     }
 
-    public void setBlockButton(String buttonName, String blockId, Extra extra) {
-        if(buttons.size()>3) throw new IllegalArgumentException("BasicCard의 버튼은 최대 3개까지만 추가할 수 있습니다.");
-
-        Button button = new Button();
-        button.createBlockButton(buttonName,blockId,extra);
-        this.buttons.add(button);
-    }
-
-    public void setBlockButton(String buttonName, String blockId) {
-        if(buttons.size()>3) throw new IllegalArgumentException("BasicCard의 버튼은 최대 3개까지만 추가할 수 있습니다.");
-
-        Button button = new Button();
-        button.createBlockButton(buttonName,blockId);
-        this.buttons.add(button);
-    }
-    public void setWebLinkButton(String buttonName, String webLink) {
-        if(buttons.size()>3) throw new IllegalArgumentException("BasicCard의 버튼은 최대 3개까지만 추가할 수 있습니다.");
-
-        Button button = new Button();
-        button.createWebLinkButton(buttonName,webLink);
-        this.buttons.add(button);
-    }
-
-    public void setPhoneButton(String buttonName, String phoneNumber) {
-        if(buttons.size()>3) throw new IllegalArgumentException("BasicCard의 버튼은 최대 3개까지만 추가할 수 있습니다.");
-
-        Button button = new Button();
-        button.createPhoneButton(buttonName,phoneNumber);
-        this.buttons.add(button);
-    }
-
-    public void setMessageButton(String buttonName, String message) {
-        if(buttons.size()>3) throw new IllegalArgumentException("BasicCard의 버튼은 최대 3개까지만 추가할 수 있습니다.");
-
-        Button button = new Button();
-        button.createMessageButton(buttonName,message);
-        this.buttons.add(button);
-    }
-
     public void setButtons(List<Button> buttons) {
         if(buttons.size()>3) throw new IllegalArgumentException("BasicCard의 버튼은 최대 3개까지만 추가할 수 있습니다.");
 
         this.buttons = buttons;
+    }
+
+    public void setButton(Button button) {
+        if(buttons.size()>3) throw new IllegalArgumentException("BasicCard의 버튼은 최대 3개까지만 추가할 수 있습니다.");
+
+        this.buttons.add(button);
     }
 
     public void setTitle(String title) {

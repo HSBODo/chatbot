@@ -2,16 +2,14 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.BlockId;
-import site.pointman.chatbot.constant.ButtonName;
-import site.pointman.chatbot.constant.Category;
-import site.pointman.chatbot.constant.ProductStatus;
+import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.response.property.Context;
+import site.pointman.chatbot.domain.response.property.common.Button;
 import site.pointman.chatbot.domain.response.property.common.Extra;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.Carousel;
@@ -273,7 +271,6 @@ public class ProductServiceImpl implements ProductService {
 
         products.forEach(product -> {
             BasicCard basicCard = new BasicCard();
-            Extra extra = new Extra();
 
             ProductStatus productStatus = product.getStatus();
             String productName = product.getName();
@@ -282,12 +279,12 @@ public class ProductServiceImpl implements ProductService {
             String thumbnailImageUrl = product.getProductImages().getImageUrl().get(0);
             String productId = String.valueOf(product.getId());
 
+            Button button = new Button("상세보기", ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCT_DETAIL.getBlockId(), ButtonParamKey.productId, productId);
 
             basicCard.setThumbnail(thumbnailImageUrl);
             basicCard.setTitle(productName);
             basicCard.setDescription(productDescription);
-            extra.addProductId(productId);
-            basicCard.setBlockButton("상세보기",BlockId.CUSTOMER_GET_PRODUCT_DETAIL.getBlockId(),extra);
+            basicCard.setButton(button);
             carousel.addComponent(basicCard);
         });
 

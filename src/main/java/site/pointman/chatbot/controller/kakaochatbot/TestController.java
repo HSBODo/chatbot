@@ -3,15 +3,19 @@ package site.pointman.chatbot.controller.kakaochatbot;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.annotation.SkipLogging;
+import site.pointman.chatbot.constant.ButtonAction;
 import site.pointman.chatbot.constant.ButtonName;
-import site.pointman.chatbot.domain.request.ChatBotRequest;
+import site.pointman.chatbot.constant.ButtonParamKey;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.property.common.*;
+import site.pointman.chatbot.domain.response.property.common.Button;
+import site.pointman.chatbot.domain.response.property.common.Extra;
+import site.pointman.chatbot.domain.response.property.common.ListItem;
 import site.pointman.chatbot.domain.response.property.components.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @Controller
@@ -70,9 +74,11 @@ public class TestController {
         Extra extra = new Extra();
         extra.addChoiceParam("선택 파라미터");
 
+        Button button = new Button("btnName", ButtonAction.블럭이동, "asdasd", ButtonParamKey.productId, "asdasdasd");
+
         BasicCard basicCard = new BasicCard();
         basicCard.setThumbnail("URL");
-        basicCard.setBlockButton("블록버튼","blockId",extra);
+        basicCard.setButton(button);
 
         chatBotResponse.addBasicCard(basicCard);
         chatBotResponse.addQuickButton(ButtonName.이전으로,"블록아이디",extra);
@@ -99,13 +105,14 @@ public class TestController {
 
         ListItem listItem = new ListItem("제목");
 
-        Button button = new Button();
-        button.createBlockButton("asdasd","asdasd");
+        Button button1 = new Button("btnName", ButtonAction.블럭이동, "asdasd", ButtonParamKey.productId, "asdasdasd");
+        Button button2 = new Button("22222", ButtonAction.메시지, "22222222222");
 
         ListCard listCard = new ListCard();
         listCard.setHeader("리스트카드 헤더 제목");
         listCard.setItem(listItem);
-        listCard.setButtons(button);
+        listCard.setButtons(button1);
+        listCard.setButtons(button2);
 
         chatBotResponse.addListCard(listCard);
         return chatBotResponse;
