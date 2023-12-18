@@ -51,7 +51,7 @@ class ProductRepositoryTest {
     }
 
     @Test
-    void addProduct() {
+    void insertProduct() {
         // given
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add("213213213");
@@ -64,7 +64,7 @@ class ProductRepositoryTest {
 
 
         // when
-        productRepository.addProduct(productDto,productImageDto);
+        productRepository.insertProduct(productDto,productImageDto);
 
         // then
     }
@@ -80,7 +80,7 @@ class ProductRepositoryTest {
                 .build();
         ProductImageDto productImageDto = new ProductImageDto();
         productImageDto.setImageUrl(imageUrls);
-        productRepository.addProduct(productDto,productImageDto);
+        productRepository.insertProduct(productDto,productImageDto);
 
         // when
         productRepository.updateStatus(123123L, ProductStatus.숨김);
@@ -99,7 +99,7 @@ class ProductRepositoryTest {
                 .build();
         ProductImageDto productImageDto = new ProductImageDto();
         productImageDto.setImageUrl(imageUrls);
-        productRepository.addProduct(productDto,productImageDto);
+        productRepository.insertProduct(productDto,productImageDto);
 
         // when
         productRepository.deleteProduct(123123L);
@@ -122,7 +122,7 @@ class ProductRepositoryTest {
                 .build();
         ProductImageDto productImageDto = new ProductImageDto();
         productImageDto.setImageUrl(imageUrls);
-        productRepository.addProduct(productDto,productImageDto);
+        productRepository.insertProduct(productDto,productImageDto);
 
         // when
         List<Product> Products = productRepository.findByUserKey("QFJSyeIZbO77");
@@ -146,7 +146,7 @@ class ProductRepositoryTest {
                 .build();
         ProductImageDto productImageDto = new ProductImageDto();
         productImageDto.setImageUrl(imageUrls);
-        productRepository.addProduct(productDto,productImageDto);
+        productRepository.insertProduct(productDto,productImageDto);
 
         // when
         Product product = productRepository.findByProductId(100000L).get();
