@@ -45,7 +45,7 @@ public class CustomerController {
 
     @ResponseBody
     @PostMapping(value = "GET/profile" , headers = {"Accept=application/json; UTF-8"})
-    public Response profile(@RequestBody ChatBotRequest chatBotRequest) {
+    public Response getProfile(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
         if (!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
@@ -69,5 +69,4 @@ public class CustomerController {
 
         return customerService.withdrawalCustomer(userKey, true);
     }
-
 }
