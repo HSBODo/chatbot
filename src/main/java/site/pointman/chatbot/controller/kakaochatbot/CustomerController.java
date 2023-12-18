@@ -54,7 +54,7 @@ public class CustomerController {
     }
 
     @ResponseBody
-    @PostMapping(value = "PATCH/PhoneNumber" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "PATCH/phoneNumber" , headers = {"Accept=application/json; UTF-8"})
     public Response updatePhoneNumber(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String updatePhoneNumber = chatBotRequest.getCustomerPhone();
