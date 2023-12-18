@@ -27,4 +27,12 @@ public class NoticeController {
     public Object getNotices(@RequestBody ChatBotRequest chatBotRequest){
        return noticeService.getNotices(true);
     }
+
+    @ResponseBody
+    @PostMapping(value = "GET/byNoticeId" , headers = {"Accept=application/json; UTF-8"})
+    public Object getNotice(@RequestBody ChatBotRequest chatBotRequest){
+        String noticeId = chatBotRequest.getNoticeId();
+
+        return noticeService.getNotice(noticeId,true);
+    }
 }
