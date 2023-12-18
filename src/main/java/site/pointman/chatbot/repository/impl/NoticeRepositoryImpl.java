@@ -6,6 +6,7 @@ import site.pointman.chatbot.repository.NoticeRepository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.util.List;
 
 public class NoticeRepositoryImpl implements NoticeRepository {
     private final EntityManager em;
@@ -21,5 +22,13 @@ public class NoticeRepositoryImpl implements NoticeRepository {
         notice.changeStatus(NoticeStatus.작성);
         em.persist(notice);
         return notice.getId();
+    }
+
+    @Override
+    public List<Notice> findAll(NoticeStatus noticeStatus) {
+        return em.createQuery("select n from Notice n where n.status =:status OR n.status =:main ORDER BY FIELD(n.status,:main,:status)  ",Notice.class)
+                .setParameter("status",noticeStatus)
+                .setParameter("main",NoticeStatus.메인)
+                .getResultList();
     }
 }
