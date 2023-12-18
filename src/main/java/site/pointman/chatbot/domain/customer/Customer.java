@@ -15,7 +15,6 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
-@IdClass(CustomerId.class)
 public class Customer extends BaseEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
