@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 import site.pointman.chatbot.constant.BlockId;
+import site.pointman.chatbot.constant.ButtonParamKey;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class ListItem {
     private String action;
     private String blockId;
     private String messageText;
-    private Map<String,String> extra = new HashMap<>();
+    private Map<ButtonParamKey,String> extra = new HashMap<>();
 
     public ListItem(String title) {
         this.title = title;
@@ -46,7 +47,7 @@ public class ListItem {
         this.messageText = messageText;
     }
 
-    public void setExtra(String key, String value) {
-        this.extra.put(key,value);
+    public void setExtra(ButtonParamKey buttonParamKey, String buttonParamValue) {
+        this.extra.put(buttonParamKey,buttonParamValue);
     }
 }

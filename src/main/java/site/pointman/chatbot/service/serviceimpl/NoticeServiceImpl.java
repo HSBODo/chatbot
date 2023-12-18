@@ -3,6 +3,7 @@ package site.pointman.chatbot.service.serviceimpl;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.ApiResultCode;
 import site.pointman.chatbot.constant.BlockId;
+import site.pointman.chatbot.constant.ButtonParamKey;
 import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
@@ -59,7 +60,7 @@ public class NoticeServiceImpl implements NoticeService {
             listItem.setDescription(notice.getDescription());
             listItem.setImageUrl(notice.getImageUrl());
             listItem.setActionBlock(BlockId.MAIN);
-            listItem.setExtra("choice",String.valueOf(notice.getId()));
+            listItem.setExtra(ButtonParamKey.noticeId,String.valueOf(notice.getId()));
 
             listCard.setItem(listItem);
         });
