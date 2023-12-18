@@ -11,7 +11,7 @@ import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.product.ProductDto;
-import site.pointman.chatbot.service.CustomerService;
+import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.utill.NumberUtils;
 
@@ -24,12 +24,12 @@ public class ProductController {
 
 
     ProductService productService;
-    CustomerService customerService;
+    MemberService memberService;
     ChatBotExceptionResponse chatBotExceptionResponse;
 
-    public ProductController(ProductService productService, CustomerService customerService) {
+    public ProductController(ProductService productService, MemberService memberService) {
         this.productService = productService;
-        this.customerService = customerService;
+        this.memberService = memberService;
         this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
@@ -43,7 +43,7 @@ public class ProductController {
     public Response verificationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        if (!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
         return productService.verificationCustomerSuccessResponse();
     }
@@ -87,7 +87,7 @@ public class ProductController {
         String productCategory = chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue();
         ProductDto productDto = chatBotRequest.createProductDto();
 
-        if(!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+        if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
         return productService.addProduct(
                 productDto,
@@ -103,7 +103,7 @@ public class ProductController {
     public Response getProductsByUserKey(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        if(!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+        if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
         return productService.getProductsByUserKey(userKey);
     }
@@ -114,7 +114,7 @@ public class ProductController {
         String productId = chatBotRequest.getProductId();
         String userKey = chatBotRequest.getUserKey();
 
-        if(!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+        if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
         return productService.getProductProfile(productId, userKey);
     }
@@ -126,7 +126,7 @@ public class ProductController {
         String productId = chatBotRequest.getProductId();
         String utterance = chatBotRequest.getUtterance();
 
-        if(!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+        if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
         return productService.updateProductStatus(productId,utterance);
     }
@@ -138,7 +138,7 @@ public class ProductController {
         String productId = chatBotRequest.getProductId();
         String utterance = chatBotRequest.getUtterance();
 
-        if(!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+        if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
         return productService.deleteProduct(productId,utterance);
     }

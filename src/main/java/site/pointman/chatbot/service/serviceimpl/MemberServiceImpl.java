@@ -10,20 +10,20 @@ import site.pointman.chatbot.domain.response.property.HttpResponse;
 import site.pointman.chatbot.dto.customer.CustomerDto;
 import site.pointman.chatbot.repository.CustomerRepository;
 import site.pointman.chatbot.service.CustomerChatBotResponseService;
-import site.pointman.chatbot.service.CustomerService;
+import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.utill.StringUtils;
 
 import java.util.Optional;
 
 @Slf4j
 @Service
-public class CustomerServiceImpl implements CustomerService {
+public class MemberServiceImpl implements MemberService {
 
     CustomerRepository customerRepository;
     ChatBotExceptionResponse chatBotExceptionResponse;
     CustomerChatBotResponseService customerChatBotResponseService;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository, CustomerChatBotResponseService customerChatBotResponseService) {
+    public MemberServiceImpl(CustomerRepository customerRepository, CustomerChatBotResponseService customerChatBotResponseService) {
         this.customerRepository = customerRepository;
         this.chatBotExceptionResponse = new ChatBotExceptionResponse();
         this.customerChatBotResponseService = customerChatBotResponseService;

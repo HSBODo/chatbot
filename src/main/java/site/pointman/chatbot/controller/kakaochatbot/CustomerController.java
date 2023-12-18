@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.service.CustomerService;
+import site.pointman.chatbot.service.MemberService;
 
 
 @Slf4j
@@ -18,11 +18,11 @@ import site.pointman.chatbot.service.CustomerService;
 @RequestMapping(value = "/kakaochatbot/customer")
 public class CustomerController {
 
-    CustomerService customerService;
+    MemberService memberService;
     ChatBotExceptionResponse chatBotExceptionResponse;
 
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
+    public CustomerController(MemberService memberService) {
+        this.memberService = memberService;
         this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
@@ -38,9 +38,9 @@ public class CustomerController {
         String name = chatBotRequest.getCustomerName();
         String phoneNumber = chatBotRequest.getCustomerPhone();
 
-        if (customerService.isCustomer(userKey)) return chatBotExceptionResponse.createException("이미 존재하는 회원입니다.");
+        if (memberService.isCustomer(userKey)) return chatBotExceptionResponse.createException("이미 존재하는 회원입니다.");
 
-        return customerService.join(userKey, name, phoneNumber,true);
+        return memberService.join(userKey, name, phoneNumber,true);
     }
 
     @ResponseBody
@@ -48,9 +48,9 @@ public class CustomerController {
     public Response getProfile(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        if (!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return customerService.getCustomerProfile(userKey, true);
+        return memberService.getCustomerProfile(userKey, true);
     }
 
     @ResponseBody
@@ -59,9 +59,9 @@ public class CustomerController {
         String userKey = chatBotRequest.getUserKey();
         String updatePhoneNumber = chatBotRequest.getCustomerPhone();
 
-        if (!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return customerService.updateCustomerPhoneNumber(userKey, updatePhoneNumber,true);
+        return memberService.updateCustomerPhoneNumber(userKey, updatePhoneNumber,true);
     }
 
     @ResponseBody
@@ -69,8 +69,8 @@ public class CustomerController {
     public Response withdrawalCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        if (!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return customerService.withdrawalCustomer(userKey, true);
+        return memberService.withdrawalCustomer(userKey, true);
     }
 }

@@ -1,10 +1,8 @@
 package site.pointman.chatbot.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,7 @@ import site.pointman.chatbot.domain.response.Response;
 @SpringBootTest
 class CustomerServiceTest {
     @Autowired
-    CustomerService customerService;
+    MemberService memberService;
 
     private ObjectMapper mapper = new ObjectMapper();
     private ChatBotRequest chatBotRequest;
@@ -37,7 +35,7 @@ class CustomerServiceTest {
         String phoneNumber = "01000001111";
 
         //when
-        Response response = customerService.join(userKey,name,phoneNumber,true);
+        Response response = memberService.join(userKey,name,phoneNumber,true);
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String responseMessage = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
         //then
@@ -50,7 +48,7 @@ class CustomerServiceTest {
         //give
 
         //when
-        Response response = customerService.getCustomerProfile(userKey, true);
+        Response response = memberService.getCustomerProfile(userKey, true);
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String responseTitle = chatBotResponse.getTemplate().getOutputs().get(0).getTextCard().getTitle();
 
@@ -65,7 +63,7 @@ class CustomerServiceTest {
         String updatePhoneNumber ="01011112222";
 
         //when
-        Response response = customerService.updateCustomerPhoneNumber(userKey,updatePhoneNumber,true);
+        Response response = memberService.updateCustomerPhoneNumber(userKey,updatePhoneNumber,true);
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String responseMessage = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
@@ -79,7 +77,7 @@ class CustomerServiceTest {
         //give
 
         //when
-        Response response = customerService.withdrawalCustomer(userKey, true);
+        Response response = memberService.withdrawalCustomer(userKey, true);
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String responseMessage = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
@@ -93,7 +91,7 @@ class CustomerServiceTest {
         //give
 
         //when
-        boolean isCustomer = customerService.isCustomer(userKey);
+        boolean isCustomer = memberService.isCustomer(userKey);
         //then
         Assertions.assertThat(isCustomer).isTrue();
     }
