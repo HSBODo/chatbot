@@ -85,6 +85,10 @@ public class ChatBotRequest {
         return action.getClientExtra().getChoice();
     }
 
+    public String getNoticeId(){
+        return action.getClientExtra().getNoticeId();
+    }
+
     public String getValidationData(){
         return value.getOrigin();
     }
