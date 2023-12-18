@@ -11,12 +11,12 @@ import java.util.Optional;
 
 
 @SpringBootTest
-
 class CustomerRepositoryTest {
     @Autowired
     CustomerRepository customerRepository;
 
     @Test
+    @Transactional
     void save() {
         //give
         Member member = Member.builder()
