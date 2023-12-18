@@ -3,7 +3,7 @@ package site.pointman.chatbot.domain.response;
 import lombok.Getter;
 
 @Getter
-public class ValidationResponse {
+public class ChatBotValidationResponse {
     private String status;
     private String value;
     private String message;
