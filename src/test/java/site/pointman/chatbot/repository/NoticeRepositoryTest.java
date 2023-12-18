@@ -5,7 +5,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.constant.NoticeType;
 import site.pointman.chatbot.domain.member.Member;
@@ -14,8 +13,6 @@ import site.pointman.chatbot.domain.response.property.common.Button;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
@@ -26,7 +23,7 @@ class NoticeRepositoryTest {
     NoticeRepository noticeRepository;
 
     @Test
-    void insert() {
+    void save() {
         //give
         Member member = Member.builder()
                 .userKey("QFJSyeIZbO77")
@@ -51,5 +48,24 @@ class NoticeRepositoryTest {
 
         //then
         Assertions.assertThat(id).isNotEqualTo(0);
+    }
+
+
+    @Test
+    void findAll() {
+        //give
+        NoticeStatus status = NoticeStatus.작성;
+        //when
+        List<Notice> notices = noticeRepository.findAll(status);
+
+
+
+        //then
+        Assertions.assertThat(notices.size()).isNotZero();
+
+        notices.forEach(notice -> {
+            log.info("title={}",notice.getTitle());
+            Assertions.assertThat(notice.getStatus()).isIn(status,NoticeStatus.메인);
+        });
     }
 }
