@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import site.pointman.chatbot.domain.response.Response;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -15,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 
 @MappedSuperclass
 @Getter
-public class BaseEntity {
+public class BaseEntity extends Response {
     @CreatedDate
     @Column(name = "create_date_time")
     private String createDate;
