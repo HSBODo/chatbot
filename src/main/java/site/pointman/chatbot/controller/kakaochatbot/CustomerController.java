@@ -64,10 +64,10 @@ public class CustomerController {
 
     @ResponseBody
     @PostMapping(value = "DELETE" , headers = {"Accept=application/json; UTF-8"})
-    public Response delete(@RequestBody ChatBotRequest chatBotRequest) {
+    public Response withdrawalCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        return customerService.deleteCustomer(userKey, true);
+        return customerService.withdrawalCustomer(userKey, true);
     }
 
 }

@@ -79,7 +79,7 @@ class CustomerServiceTest {
         //give
 
         //when
-        Response response = customerService.deleteCustomer(userKey, true);
+        Response response = customerService.withdrawalCustomer(userKey, true);
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String responseMessage = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 

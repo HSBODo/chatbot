@@ -2,9 +2,11 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import site.pointman.chatbot.constant.ApiResultCode;
 import site.pointman.chatbot.domain.customer.Customer;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.domain.response.property.HttpResponse;
 import site.pointman.chatbot.dto.customer.CustomerDto;
 import site.pointman.chatbot.repository.CustomerRepository;
 import site.pointman.chatbot.service.CustomerChatBotResponseService;
@@ -42,23 +44,10 @@ public class CustomerServiceImpl implements CustomerService {
 
             if(isChatBotRequest) return customerChatBotResponseService.joinSuccessChatBotResponse();
 
-            return null;
+            return new HttpResponse(ApiResultCode.OK,"회원가입을 성공적으로 완료하였습니다.");
         }catch (Exception e) {
             if (isChatBotRequest) return chatBotExceptionResponse.createException();
-            throw e;
-        }
-    }
-
-    @Override
-    public boolean isCustomer(String userKey) {
-        try {
-            Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
-
-            if (mayBeCustomer.isEmpty()) return false;
-
-            return true;
-        } catch (Exception e){
-            return false;
+            return new HttpResponse(ApiResultCode.FAIL,"회원가입을 실패하였습니다. e= "+e.getMessage());
         }
     }
 
@@ -74,10 +63,11 @@ public class CustomerServiceImpl implements CustomerService {
             String customerJoinDate = StringUtils.dateFormat(customer.getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
 
             if(isChatBotRequest) return customerChatBotResponseService.getCustomerProfileSuccessChatBotResponse(customerName,customerPhoneNumber,customerJoinDate);
-            return null;
+
+            return customer;
         }catch (Exception e) {
             if (isChatBotRequest) return chatBotExceptionResponse.createException();
-            throw e;
+            return new HttpResponse(ApiResultCode.FAIL,"회원 프로필 조회를 실패하였습니다. e= "+e.getMessage());
         }
     }
 
@@ -87,23 +77,39 @@ public class CustomerServiceImpl implements CustomerService {
             customerRepository.updateCustomerPhoneNumber(userKey, updatePhoneNumber);
 
             if(isChatBotRequest) return customerChatBotResponseService.updateCustomerPhoneNumberSuccessChatBotResponse();
-            return null;
+
+            return new HttpResponse(ApiResultCode.OK,"연락처를 수정하였습니다.");
         }catch (Exception e) {
             if (isChatBotRequest) return chatBotExceptionResponse.createException();
-            throw e;
+            return new HttpResponse(ApiResultCode.FAIL,"연락처 수정을 실패하였습니다. e= "+e.getMessage());
         }
     }
 
     @Override
-    public Response deleteCustomer(String userKey, boolean isChatBotRequest) {
+    public Response withdrawalCustomer(String userKey, boolean isChatBotRequest) {
         try {
             customerRepository.delete(userKey);
 
             if(isChatBotRequest) return customerChatBotResponseService.deleteCustomerSuccessChatBotResponse();
-            return null;
+
+            return new HttpResponse(ApiResultCode.OK,"회원탈퇴를 성공적으로 완료하였습니다.");
         }catch (Exception e) {
             if (isChatBotRequest) return chatBotExceptionResponse.createException();
-            throw e;
+            return new HttpResponse(ApiResultCode.FAIL,"회원탈퇴를 실패하였습니다. e= "+e.getMessage());
+        }
+    }
+
+
+    @Override
+    public boolean isCustomer(String userKey) {
+        try {
+            Optional<Customer> mayBeCustomer = customerRepository.findByCustomer(userKey);
+
+            if (mayBeCustomer.isEmpty()) return false;
+
+            return true;
+        } catch (Exception e){
+            return false;
         }
     }
 }
