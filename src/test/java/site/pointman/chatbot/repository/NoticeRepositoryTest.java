@@ -53,13 +53,12 @@ class NoticeRepositoryTest {
 
 
     @Test
-    void findAll() {
+    void findByStatus() {
         //give
         NoticeStatus status = NoticeStatus.작성;
+
         //when
-        List<Notice> notices = noticeRepository.findAll(status);
-
-
+        List<Notice> notices = noticeRepository.findByStatus(status);
 
         //then
         Assertions.assertThat(notices.size()).isNotZero();
@@ -68,5 +67,17 @@ class NoticeRepositoryTest {
             log.info("title={}",notice.getTitle());
             Assertions.assertThat(notice.getStatus()).isIn(status,NoticeStatus.메인);
         });
+    }
+
+    @Test
+    void findByNoticeId() {
+        //give
+        Long id = 10L;
+
+        //when
+        Notice notice = noticeRepository.findByNoticeId(id).get();
+
+        //then
+        Assertions.assertThat(notice.getId()).isEqualTo(id);
     }
 }
