@@ -33,7 +33,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public void addProduct(ProductDto productDto, ProductImageDto productImageDto) {
+    public void insertProduct(ProductDto productDto, ProductImageDto productImageDto) {
         Product product = productDto.toEntity();
         ProductImage productImage = productImageDto.toEntity();
 
