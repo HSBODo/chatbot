@@ -7,5 +7,6 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ClientExtra {
     private String productId;
+    private String noticeId;
     private String choice;
 }
