@@ -59,6 +59,8 @@ public class CustomerController {
         String userKey = chatBotRequest.getUserKey();
         String updatePhoneNumber = chatBotRequest.getCustomerPhone();
 
+        if (!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+
         return customerService.updateCustomerPhoneNumber(userKey, updatePhoneNumber,true);
     }
 
@@ -66,6 +68,8 @@ public class CustomerController {
     @PostMapping(value = "DELETE" , headers = {"Accept=application/json; UTF-8"})
     public Response withdrawalCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
+
+        if (!customerService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
         return customerService.withdrawalCustomer(userKey, true);
     }
