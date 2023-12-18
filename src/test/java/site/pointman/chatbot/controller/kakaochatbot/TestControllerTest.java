@@ -1,4 +1,4 @@
-package site.pointman.chatbot.controller;
+package site.pointman.chatbot.controller.kakaochatbot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
