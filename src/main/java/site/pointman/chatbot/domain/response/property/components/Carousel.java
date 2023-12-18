@@ -12,6 +12,11 @@ public class Carousel<T> {
     private String type;
     private List<T> items = new ArrayList<>();
 
+    /**
+     * type : basicCard, textCard, commerceCard, listCard, itemCard
+     * items : 최대 10개, ListCard는 최대 5개
+     */
+
     public void addComponent(T component){
         this.type = convertClassNameToCamelcase(component.getClass().getSimpleName());
         this.items.add(component);
