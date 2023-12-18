@@ -33,11 +33,21 @@ public class ChatBotRequest {
     public String getUserKey(){
         return userRequest.getUser().getProperties().getPlusfriendUserKey();
     }
+
     public String getCustomerName(){
         return action.getParams().getCustomerName();
     }
     public String getCustomerPhone(){
         return action.getParams().getCustomerPhone();
+    }
+
+    public String getProductId(){
+        action.getClientExtra().getProductId();
+        if(!action.getClientExtra().getProductId().isEmpty()){
+            return action.getClientExtra().getProductId();
+        }
+        Extra extraObj = new Extra(action.getClientExtra().getExtra());
+        return extraObj.getProductId();
     }
     public String getProductName(){
         return action.getParams().getProductName();
@@ -64,20 +74,19 @@ public class ChatBotRequest {
     public String getKakaoOpenChatUrl(){
         return action.getParams().getKakaoOpenChatUrl();
     }
-    public String getProductId(){
-        action.getClientExtra().getProductId();
-        if(!action.getClientExtra().getProductId().isEmpty()){
-            return action.getClientExtra().getProductId();
-        }
-        Extra extraObj = new Extra(action.getClientExtra().getExtra());
-        return extraObj.getProductId();
+
+    public String getSearchWord(){
+        return action.getParams().getSearchWord();
     }
+
     public String getChoiceParam(){
         return action.getClientExtra().getChoice();
     }
+
     public String getValidationData(){
         return value.getOrigin();
     }
+
     public String getAccessToken() {
         try {
             return getContexts().get(0).getParams().get("accessToken").getValue();
@@ -85,9 +94,11 @@ public class ChatBotRequest {
             return null;
         }
     }
+
     public String getUtterance(){
         return userRequest.getUtterance();
     }
+
     public String getRequestBlockId(){
         return userRequest.getBlock().getId();
     }
