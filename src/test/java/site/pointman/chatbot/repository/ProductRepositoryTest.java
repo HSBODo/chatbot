@@ -171,4 +171,18 @@ class ProductRepositoryTest {
             Assertions.assertThat(product.getStatus()).isEqualTo(status);
         });
     }
+
+    @Test
+    void findBySearchWord() {
+        //give
+        String searchWord = "상품";
+        ProductStatus status = ProductStatus.판매중;
+        //when
+        List<Product> products = productRepository.findBySearchWord(searchWord,status);
+        int size = products.size();
+        //then
+        products.forEach(product -> {
+            Assertions.assertThat(size).isEqualTo(2);
+        });
+    }
 }
