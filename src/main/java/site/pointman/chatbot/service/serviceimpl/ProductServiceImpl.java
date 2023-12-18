@@ -83,32 +83,7 @@ public class ProductServiceImpl implements ProductService {
 
             if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
 
-            Carousel<BasicCard> carousel = new Carousel<>();
-
-            products.forEach(product -> {
-                BasicCard basicCard = new BasicCard();
-                Extra extra = new Extra();
-
-                ProductStatus productStatus = product.getStatus();
-                String productName = product.getName();
-                String productPrice = StringUtils.formatPrice(product.getPrice());
-                String productDescription = StringUtils.formatProductInfo(productPrice,productStatus);
-                String thumbnailImageUrl = product.getProductImages().getImageUrl().get(0);
-                String productId = String.valueOf(product.getId());
-
-
-                basicCard.setThumbnail(thumbnailImageUrl);
-                basicCard.setTitle(productName);
-                basicCard.setDescription(productDescription);
-                extra.addProductId(productId);
-                basicCard.setBlockButton("상세보기",BlockId.CUSTOMER_GET_PRODUCT_DETAIL.getBlockId(),extra);
-                carousel.addComponent(basicCard);
-            });
-
-            chatBotResponse.addCarousel(carousel);
-            chatBotResponse.addQuickButton(ButtonName.이전으로,BlockId.PRODUCT_GET_CATEGORIES.getBlockId());
-
-            return chatBotResponse;
+            return createProductListChatBotResponse(products,ButtonName.이전으로,BlockId.PRODUCT_GET_CATEGORIES);
         }catch (Exception e) {
             return chatBotExceptionResponse.createException();
         }
@@ -132,7 +107,7 @@ public class ProductServiceImpl implements ProductService {
 
             if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다");
 
-            return getCustomerProductsSuccessChatBotResponse(products);
+            return createProductListChatBotResponse(products,ButtonName.처음으로,BlockId.MAIN);
         }catch (Exception e){
             return chatBotExceptionResponse.createException();
         }
@@ -218,7 +193,7 @@ public class ProductServiceImpl implements ProductService {
 
             if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없어 상품을 찾을수 없습니다.");
 
-            return getCustomerProductsSuccessChatBotResponse(products);
+            return createProductListChatBotResponse(products,ButtonName.처음으로,BlockId.MAIN);
         }catch (Exception e) {
             return chatBotExceptionResponse.createException();
         }
@@ -292,7 +267,7 @@ public class ProductServiceImpl implements ProductService {
         return chatBotResponse;
     }
 
-    private ChatBotResponse getCustomerProductsSuccessChatBotResponse(List<Product> products){
+    private ChatBotResponse createProductListChatBotResponse(List<Product> products, ButtonName quickButtonName, BlockId nextBlockId){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<BasicCard> carousel = new Carousel<>();
 
@@ -317,7 +292,7 @@ public class ProductServiceImpl implements ProductService {
         });
 
         chatBotResponse.addCarousel(carousel);
-        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(quickButtonName.name(),nextBlockId.getBlockId());
         return chatBotResponse;
     }
 
