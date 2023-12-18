@@ -45,15 +45,14 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public List<Product> findByUserKey(String userKey) {
-        List<Product> customers = em.createQuery("select p from Product p where p.customer.userKey=:user_Key", Product.class)
+        return em.createQuery("select p from Product p where p.customer.userKey=:user_Key", Product.class)
                 .setParameter("user_Key", userKey)
                 .getResultList();
-        return customers;
     }
 
     @Override
     public Optional<Product> findByProductId(Long productId) {
-        return  em.createQuery("select p from Product p where p.id=:id", Product.class)
+        return em.createQuery("select p from Product p where p.id=:id", Product.class)
                 .setParameter("id", productId)
                 .getResultList()
                 .stream().findAny();
@@ -61,12 +60,11 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public List<Product> findByCategory(Category category,ProductStatus status) {
-        List<Product> customers = em.createQuery("select p from Product p where p.category=:category AND p.status =:status", Product.class)
+        return em.createQuery("select p from Product p where p.category=:category AND p.status =:status", Product.class)
                 .setParameter("category", category)
                 .setParameter("status", status)
                 .setMaxResults(10)
                 .getResultList();
-        return customers;
     }
 
     @Override
@@ -91,5 +89,14 @@ public class ProductRepositoryImpl implements ProductRepository {
 
         em.remove(findProduct);
         em.remove(findProductImage);
+    }
+
+    @Override
+    public List<Product> findBySearchWord(String searchWord, ProductStatus status) {
+        return em.createQuery("select p from Product p where p.name like concat('%', :searchWord, '%') OR p.description like concat('%', :searchWord, '%') AND p.status =:status", Product.class)
+                .setParameter("searchWord", searchWord)
+                .setParameter("status",status)
+                .setMaxResults(10)
+                .getResultList();
     }
 }

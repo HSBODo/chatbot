@@ -19,5 +19,5 @@ public interface ProductRepository {
     List<Product> findByUserKey(String userKey);
     List<Product> findByCategory(Category category, ProductStatus status);
     Optional<Product> findByProductId(Long productId);
-
+    List<Product> findBySearchWord(String searchWord, ProductStatus status);
 }
