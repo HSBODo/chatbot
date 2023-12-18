@@ -211,6 +211,19 @@ public class ProductServiceImpl implements ProductService {
         return basicCardCarousel;
     }
 
+    @Override
+    public Response getProductsBySearchWord(String searchWord) {
+        try {
+            List<Product> products = productRepository.findBySearchWord(searchWord, ProductStatus.판매중);
+
+            if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없어 상품을 찾을수 없습니다.");
+
+            return getCustomerProductsSuccessChatBotResponse(products);
+        }catch (Exception e) {
+            return chatBotExceptionResponse.createException();
+        }
+    }
+
     private ChatBotResponse createStatusQuickButtons(String userKey, String productUserKey, ChatBotResponse chatBotResponse, ProductStatus status, Extra extra){
 
         if(productUserKey.equals(userKey)) switch (status){

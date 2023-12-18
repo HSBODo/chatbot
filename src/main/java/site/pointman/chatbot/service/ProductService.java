@@ -20,4 +20,5 @@ public interface ProductService {
     Response addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory);
     Response updateProductStatus(String productId, String utterance);
     Response deleteProduct(String productId, String utterance);
+    Response getProductsBySearchWord(String searchWord);
 }

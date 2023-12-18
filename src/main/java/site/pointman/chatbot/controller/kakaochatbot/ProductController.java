@@ -143,4 +143,12 @@ public class ProductController {
         return productService.deleteProduct(productId,utterance);
     }
 
+    @ResponseBody
+    @PostMapping(value = "GET/search" , headers = {"Accept=application/json; UTF-8"})
+    public Response search(@RequestBody ChatBotRequest chatBotRequest) {
+        String searchWord = chatBotRequest.getSearchWord();
+
+        return productService.getProductsBySearchWord(searchWord);
+    }
+
 }
