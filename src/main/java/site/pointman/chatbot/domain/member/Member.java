@@ -1,4 +1,4 @@
-package site.pointman.chatbot.domain.customer;
+package site.pointman.chatbot.domain.member;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -25,16 +25,16 @@ public class Member extends BaseEntity {
     private String userKey;
 
     private String name;
-    private String phone;
+    private String phoneNumber;
 
     @Builder
-    public Member(String userKey, String name, String phone) {
+    public Member(String userKey, String name, String phoneNumber) {
         this.userKey = userKey;
         this.name = name;
-        this.phone = phone;
+        this.phoneNumber = phoneNumber;
     }
 
-    public void changePhone(String updatePhone){
-        phone = updatePhone;
+    public void changePhone(String updatePhoneNumber){
+        phoneNumber = updatePhoneNumber;
     }
 }

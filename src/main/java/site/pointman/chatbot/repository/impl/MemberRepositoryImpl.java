@@ -1,9 +1,9 @@
 package site.pointman.chatbot.repository.impl;
 
-import site.pointman.chatbot.domain.customer.Member;
+import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
-import site.pointman.chatbot.repository.CustomerRepository;
+import site.pointman.chatbot.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Transactional
-public class CustomerRepositoryImpl implements CustomerRepository {
+public class MemberRepositoryImpl implements MemberRepository {
     private final EntityManager em;
 
-    public CustomerRepositoryImpl(EntityManager em) {
+    public MemberRepositoryImpl(EntityManager em) {
         this.em = em;
     }
 
@@ -25,7 +25,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public Optional<Member> findByCustomer(String userKey) {
-        List<Member> members = em.createQuery("select c from Customer c where c.userKey=:userKey", Member.class)
+        List<Member> members = em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
                 .setParameter("userKey", userKey)
                 .getResultList();
         return members.stream().findAny();
@@ -33,7 +33,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public void updateCustomerPhoneNumber(String userKey, String phoneNumber) {
-        Member findMember = em.createQuery("select c from Customer c where c.userKey=:userKey", Member.class)
+        Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
                 .setParameter("userKey", userKey)
                 .getSingleResult();
         findMember.changePhone(phoneNumber);
@@ -41,11 +41,11 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public void delete(String userKey) {
-        Member findMember = em.createQuery("select c from Customer c where c.userKey=:userKey", Member.class)
+        Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
                 .setParameter("userKey", userKey)
                 .getSingleResult();
 
-        List<Product> findProducts = em.createQuery("select p from Product p where p.customer.userKey=:userKey", Product.class)
+        List<Product> findProducts = em.createQuery("select p from Product p where p.member.userKey=:userKey", Product.class)
                 .setParameter("userKey", userKey)
                 .getResultList();
 

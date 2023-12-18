@@ -23,8 +23,8 @@ public class BeanConfig {
 //    }
 
     @Bean
-    public CustomerRepository customerRepository(){
-        return new CustomerRepositoryImpl(em) ;
+    public MemberRepository memberRepository(){
+        return new MemberRepositoryImpl(em) ;
     }
     @Bean
     public ProductRepository productRepository(){

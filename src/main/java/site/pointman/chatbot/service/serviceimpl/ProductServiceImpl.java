@@ -6,7 +6,7 @@ import site.pointman.chatbot.constant.BlockId;
 import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.constant.ProductStatus;
-import site.pointman.chatbot.domain.customer.Member;
+import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
@@ -17,7 +17,7 @@ import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.Carousel;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.dto.product.ProductImageDto;
-import site.pointman.chatbot.repository.CustomerRepository;
+import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.S3FileService;
@@ -35,14 +35,14 @@ public class ProductServiceImpl implements ProductService {
     S3FileService s3FileService;
 
     ProductRepository productRepository;
-    CustomerRepository customerRepository;
+    MemberRepository memberRepository;
 
     ChatBotExceptionResponse chatBotExceptionResponse;
 
-    public ProductServiceImpl(S3FileService s3FileService, ProductRepository productRepository, CustomerRepository customerRepository) {
+    public ProductServiceImpl(S3FileService s3FileService, ProductRepository productRepository, MemberRepository memberRepository) {
         this.s3FileService = s3FileService;
         this.productRepository = productRepository;
-        this.customerRepository = customerRepository;
+        this.memberRepository = memberRepository;
         this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
@@ -50,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
     public Response addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory) {
         try {
             Category category = Category.getCategory(productCategory);
-            Member member = customerRepository.findByCustomer(userKey).get();
+            Member member = memberRepository.findByCustomer(userKey).get();
             String productName = productDto.getName();
 
             productDto.setStatus(ProductStatus.판매중);

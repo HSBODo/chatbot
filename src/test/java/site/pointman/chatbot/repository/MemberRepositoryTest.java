@@ -5,15 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import site.pointman.chatbot.domain.customer.Member;
+import site.pointman.chatbot.domain.member.Member;
 
 import java.util.Optional;
 
 
 @SpringBootTest
-class CustomerRepositoryTest {
+class MemberRepositoryTest {
     @Autowired
-    CustomerRepository customerRepository;
+    MemberRepository memberRepository;
 
     @Test
     @Transactional
@@ -22,10 +22,10 @@ class CustomerRepositoryTest {
         Member member = Member.builder()
                 .userKey("테스트12")
                 .name("테스트")
-                .phone("01000000000")
+                .phoneNumber("01000000000")
                 .build();
         //when
-        customerRepository.save(member);
+        memberRepository.save(member);
 
         //then
     }
@@ -37,7 +37,7 @@ class CustomerRepositoryTest {
         String userKey = "QFJSyeIZbO77";
 
         //when
-        Optional<Member> byCustomer = customerRepository.findByCustomer(userKey);
+        Optional<Member> byCustomer = memberRepository.findByCustomer(userKey);
         Member member = byCustomer.get();
 
         //then
@@ -51,7 +51,7 @@ class CustomerRepositoryTest {
         String userKey = "QFJSyeIZbO77";
         String phoneNumber = "01011112222";
         //when
-        customerRepository.updateCustomerPhoneNumber(userKey,phoneNumber);
+        memberRepository.updateCustomerPhoneNumber(userKey,phoneNumber);
 
         //then
     }
@@ -63,7 +63,7 @@ class CustomerRepositoryTest {
         String userKey = "QFJSyeIZbO77";
 
         //when
-        customerRepository.delete("QFJSyeIZbO77");
+        memberRepository.delete("QFJSyeIZbO77");
 
         //then
     }

@@ -1,26 +1,26 @@
-package site.pointman.chatbot.dto.customer;
+package site.pointman.chatbot.dto.member;
 
 import lombok.Builder;
-import site.pointman.chatbot.domain.customer.Member;
+import site.pointman.chatbot.domain.member.Member;
 
-public class CustomerDto {
+public class MemberDto {
     private String userKey;
     private String name;
-    private String phone;
+    private String phoneNumber;
 
 
     @Builder
-    public CustomerDto(String userKey, String name, String phone) {
+    public MemberDto(String userKey, String name, String phoneNumber) {
         this.userKey = userKey;
         this.name = name;
-        this.phone = phone;
+        this.phoneNumber = phoneNumber;
     }
 
     public Member toEntity(){
         return Member.builder()
                 .userKey(userKey)
                 .name(name)
-                .phone(phone)
+                .phoneNumber(phoneNumber)
                 .build();
     }
 }
