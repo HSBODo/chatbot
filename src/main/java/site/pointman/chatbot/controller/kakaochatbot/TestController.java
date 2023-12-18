@@ -4,6 +4,7 @@ package site.pointman.chatbot.controller.kakaochatbot;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import site.pointman.chatbot.annotation.SkipLogging;
 import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 public class TestController {
 
     @ResponseBody
+    @SkipLogging
     @PostMapping(value = "json" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse test(@RequestBody String request) throws Exception {
         log.info("http request = {}", request);
