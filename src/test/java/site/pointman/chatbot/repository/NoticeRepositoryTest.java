@@ -1,10 +1,12 @@
 package site.pointman.chatbot.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import site.pointman.chatbot.constant.MemberRole;
+import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.constant.NoticeType;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.notice.Notice;
@@ -25,11 +27,9 @@ class NoticeRepositoryTest {
 
     @Test
     void insert() {
+        //give
         Member member = Member.builder()
                 .userKey("QFJSyeIZbO77")
-                .name("관리자입니다")
-                .phoneNumber("01000005555")
-                .memberRole(MemberRole.ADMIN)
                 .build();
 
         List<Button> buttons = new ArrayList<>();
@@ -46,7 +46,10 @@ class NoticeRepositoryTest {
                 .buttons(buttons)
                 .build();
 
+        //when
         Long id = noticeRepository.save(notice);
-        log.info("id={}",id);
+
+        //then
+        Assertions.assertThat(id).isNotEqualTo(0);
     }
 }

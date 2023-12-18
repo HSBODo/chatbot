@@ -1,5 +1,6 @@
 package site.pointman.chatbot.repository.impl;
 
+import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.repository.NoticeRepository;
 
@@ -17,6 +18,7 @@ public class NoticeRepositoryImpl implements NoticeRepository {
     @Override
     @Transactional
     public Long save(Notice notice) {
+        notice.changeStatus(NoticeStatus.작성);
         em.persist(notice);
         return notice.getId();
     }

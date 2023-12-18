@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.constant.NoticeType;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
@@ -46,8 +47,11 @@ public class Notice extends BaseEntity {
     @Convert(converter = StringListConverter.class)
     private List<Button> buttons;
 
+    @Enumerated(EnumType.STRING)
+    private NoticeStatus status;
+
     @Builder
-    public Notice(Long id, NoticeType type, String title, String description, Member member, String imageUrl, List<Button> buttons) {
+    public Notice(Long id, NoticeType type, String title, String description, Member member, String imageUrl, List<Button> buttons, NoticeStatus status) {
         this.id = id;
         this.type = type;
         this.title = title;
@@ -55,5 +59,10 @@ public class Notice extends BaseEntity {
         this.member = member;
         this.imageUrl = imageUrl;
         this.buttons = buttons;
+        this.status = status;
+    }
+
+    public void changeStatus(NoticeStatus status) {
+        this.status = status;
     }
 }
