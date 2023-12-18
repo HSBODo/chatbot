@@ -1,6 +1,7 @@
 package site.pointman.chatbot.domain.response;
 
 import site.pointman.chatbot.constant.BlockId;
+import site.pointman.chatbot.constant.ButtonAction;
 import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.domain.response.property.Component;
 import site.pointman.chatbot.domain.response.property.components.SimpleText;
@@ -16,8 +17,8 @@ public class ChatBotExceptionResponse {
         Component component = new Component(simpleText);
 
         chatBotResponse.getTemplate().getOutputs().add(component);
-        chatBotResponse.addQuickButton(ButtonName.처음으로, BlockId.MAIN.getBlockId());
-        chatBotResponse.addQuickButton(ButtonName.회원가입, BlockId.CUSTOMER_JOIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.회원가입.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_JOIN.getBlockId());
 
         return chatBotResponse;
     }
@@ -30,7 +31,7 @@ public class ChatBotExceptionResponse {
         Component component = new Component(simpleText);
 
         chatBotResponse.getTemplate().getOutputs().add(component);
-        chatBotResponse. addQuickButton(ButtonName.처음으로, BlockId.MAIN.getBlockId());
+        chatBotResponse. addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
 
         return chatBotResponse;
     }
@@ -43,7 +44,7 @@ public class ChatBotExceptionResponse {
         Component component = new Component(simpleText);
 
         chatBotResponse.getTemplate().getOutputs().add(component);
-        chatBotResponse.addQuickButton(ButtonName.처음으로, BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
 
         return chatBotResponse;
     }

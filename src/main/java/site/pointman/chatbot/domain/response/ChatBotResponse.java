@@ -2,13 +2,15 @@ package site.pointman.chatbot.domain.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import site.pointman.chatbot.constant.ButtonAction;
 import site.pointman.chatbot.constant.ButtonName;
-import site.pointman.chatbot.constant.Category;
+import site.pointman.chatbot.constant.ButtonParamKey;
 import site.pointman.chatbot.domain.response.property.Component;
 import site.pointman.chatbot.domain.response.property.Context;
 import site.pointman.chatbot.domain.response.property.Data;
 import site.pointman.chatbot.domain.response.property.Template;
-import site.pointman.chatbot.domain.response.property.common.*;
+import site.pointman.chatbot.domain.response.property.common.Button;
+import site.pointman.chatbot.domain.response.property.common.Values;
 import site.pointman.chatbot.domain.response.property.components.*;
 
 
@@ -29,42 +31,27 @@ public class ChatBotResponse extends Response {
         this.context = new Values();
     }
 
-    public void addQuickButton(String buttonName, String blockId, Extra extra){
-        QuickReplyButton quickReplyButton = new QuickReplyButton();
-        quickReplyButton.createBlockQuickButton(buttonName,blockId,extra);
-        this.template.getQuickReplies().add(quickReplyButton);
+    public void addQuickButton(String buttonName, ButtonAction buttonAction, String actionValue, ButtonParamKey buttonParamKey, String buttonParamValue){
+        Button button = new Button(buttonName, buttonAction, actionValue, buttonParamKey, buttonParamValue);
+        this.template.getQuickReplies().add(button);
     }
 
-    public void addQuickButton(String buttonName, String blockId){
-        QuickReplyButton quickReplyButton = new QuickReplyButton();
-        quickReplyButton.createBlockQuickButton(buttonName,blockId);
-        this.template.getQuickReplies().add(quickReplyButton);
+    public void addQuickButton(String buttonName, ButtonAction buttonAction, String actionValue){
+        Button button = new Button(buttonName, buttonAction, actionValue);
+        this.template.getQuickReplies().add(button);
     }
 
     public void addQuickButton(String buttonName){
-        QuickReplyButton quickReplyButton = new QuickReplyButton();
-        quickReplyButton.createBlockQuickButton(buttonName);
-        this.template.getQuickReplies().add(quickReplyButton);
-    }
-
-    public void addQuickButton(Category buttonName, String blockId, Extra extra){
-        String name = buttonName.getValue();
-        addQuickButton(name,blockId,extra);
-    }
-
-    public void addQuickButton(ButtonName buttonName, String blockId, Extra extra){
-        String name = buttonName.name();
-        addQuickButton(name,blockId,extra);
-    }
-
-    public void addQuickButton(ButtonName buttonName, String blockId){
-        String name = buttonName.name();
-        addQuickButton(name,blockId);
+        Button button = new Button(buttonName);
+        this.template.getQuickReplies().add(button);
     }
 
     public void addQuickButton(ButtonName buttonName){
         String name = buttonName.name();
         addQuickButton(name);
+    }
+    public void addQuickButton(Button button){
+        this.template.getQuickReplies().add(button);
     }
 
     public void addSimpleText(String text){

@@ -2,6 +2,7 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.BlockId;
+import site.pointman.chatbot.constant.ButtonAction;
 import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
@@ -15,7 +16,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.");
-        chatBotResponse.addQuickButton(ButtonName.메인으로, BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.메인으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
 
@@ -33,10 +34,10 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
         textCard.setDescription(description);
 
         chatBotResponse.addTextCard(textCard);
-        chatBotResponse.addQuickButton(ButtonName.회원탈퇴,BlockId.CUSTOMER_ASK_DELETE.getBlockId());
-        chatBotResponse.addQuickButton(ButtonName.연락처변경,BlockId.CUSTOMER_UPDATE_PHONE_NUMBER.getBlockId());
-        chatBotResponse.addQuickButton(ButtonName.판매내역,BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
-        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.회원탈퇴.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_ASK_DELETE.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.연락처변경.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_UPDATE_PHONE_NUMBER.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.판매내역.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
 
@@ -45,7 +46,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("연락처 변경이 완료 되었습니다.");
-        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
 
@@ -54,7 +55,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("회원탈퇴가 완료 되었습니다.");
-        chatBotResponse.addQuickButton(ButtonName.처음으로,BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
 }

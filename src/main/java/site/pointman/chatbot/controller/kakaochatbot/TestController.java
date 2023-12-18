@@ -13,7 +13,6 @@ import site.pointman.chatbot.constant.ButtonName;
 import site.pointman.chatbot.constant.ButtonParamKey;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.common.Button;
-import site.pointman.chatbot.domain.response.property.common.Extra;
 import site.pointman.chatbot.domain.response.property.common.ListItem;
 import site.pointman.chatbot.domain.response.property.components.*;
 
@@ -71,9 +70,6 @@ public class TestController {
     public ChatBotResponse createBasicCard() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
-        Extra extra = new Extra();
-        extra.addChoiceParam("선택 파라미터");
-
         Button button = new Button("btnName", ButtonAction.블럭이동, "asdasd", ButtonParamKey.productId, "asdasdasd");
 
         BasicCard basicCard = new BasicCard();
@@ -81,7 +77,7 @@ public class TestController {
         basicCard.setButton(button);
 
         chatBotResponse.addBasicCard(basicCard);
-        chatBotResponse.addQuickButton(ButtonName.이전으로,"블록아이디",extra);
+        chatBotResponse.addQuickButton(ButtonName.이전으로.name(),ButtonAction.블럭이동,"블록아이디", ButtonParamKey.choice, "파라미터Value");
 
         return chatBotResponse;
     }
