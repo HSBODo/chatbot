@@ -13,9 +13,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-@MappedSuperclass
 @Getter
+@MappedSuperclass
 public class BaseEntity extends Response {
     @CreatedDate
     @Column(name = "create_date_time")

@@ -1,8 +1,7 @@
-package site.pointman.chatbot.domain.response.property;
+package site.pointman.chatbot.domain.response;
 
 import lombok.Getter;
 import site.pointman.chatbot.constant.ApiResultCode;
-import site.pointman.chatbot.domain.response.Response;
 
 
 @Getter
