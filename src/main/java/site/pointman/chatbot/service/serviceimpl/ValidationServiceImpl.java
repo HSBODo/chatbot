@@ -118,4 +118,18 @@ public class ValidationServiceImpl implements ValidationService {
         return chatBotValidationResponse;
     }
 
+    @Override
+    public ChatBotValidationResponse validationReservationCustomer(ChatBotRequest chatBotRequest) {
+        ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
+        String reservationCustomerName= chatBotRequest.getValidationData();
+
+        Optional<Member> mayBeMember = memberRepository.findByName(reservationCustomerName);
+        if(mayBeMember.isEmpty()){
+            chatBotValidationResponse.validationFail();
+            return chatBotValidationResponse;
+        }
+
+        chatBotValidationResponse.validationSuccess(reservationCustomerName);
+        return chatBotValidationResponse;
+    }
 }

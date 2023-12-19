@@ -20,5 +20,4 @@ public class ChatBotValidationResponse {
     public void validationError(){
         status = "ERROR";
     }
-
 }

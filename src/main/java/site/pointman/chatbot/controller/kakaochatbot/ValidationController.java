@@ -72,4 +72,11 @@ public class ValidationController {
     public ChatBotValidationResponse validationProductTradingLocation(@RequestBody ChatBotRequest chatBotRequest) {
         return validationService.validationTradingLocation(chatBotRequest);
     }
+
+    @SkipLogging
+    @ResponseBody
+    @PostMapping(value = "product/reservationCustomer" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotValidationResponse validationReservationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
+        return validationService.validationReservationCustomer(chatBotRequest);
+    }
 }

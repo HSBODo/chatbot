@@ -11,5 +11,5 @@ public interface ValidationService {
     ChatBotValidationResponse validationProductDescription(ChatBotRequest chatBotRequest);
     ChatBotValidationResponse validationProductKakaoOpenChatUrl(ChatBotRequest chatBotRequest);
     ChatBotValidationResponse validationTradingLocation(ChatBotRequest chatBotRequest);
-
+    ChatBotValidationResponse validationReservationCustomer(ChatBotRequest chatBotRequest);
 }
