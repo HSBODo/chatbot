@@ -17,6 +17,7 @@ public interface ProductRepository {
     void updateStatus(Long productId, ProductStatus productStatus);
     void deleteProduct(Long productId);
     List<Product> findByUserKey(String userKey);
+    List<Product> findByUserKey(String userKey, ProductStatus status);
     List<Product> findByCategory(Category category, ProductStatus status);
     Optional<Product> findByProductId(Long productId);
     List<Product> findBySearchWord(String searchWord, ProductStatus status);

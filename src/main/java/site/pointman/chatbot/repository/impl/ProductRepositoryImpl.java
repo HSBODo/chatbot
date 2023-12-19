@@ -51,6 +51,14 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
+    public List<Product> findByUserKey(String userKey, ProductStatus status) {
+        return em.createQuery("select p from Product p where p.member.userKey=:user_Key AND p.status =:status", Product.class)
+                .setParameter("user_Key", userKey)
+                .setParameter("status", status)
+                .getResultList();
+    }
+
+    @Override
     public Optional<Product> findByProductId(Long productId) {
         return em.createQuery("select p from Product p where p.id=:id", Product.class)
                 .setParameter("id", productId)
