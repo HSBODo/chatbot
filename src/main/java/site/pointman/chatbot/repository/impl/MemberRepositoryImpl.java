@@ -25,10 +25,16 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public Optional<Member> findByUserKey(String userKey) {
-        List<Member> members = em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
+        return em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
                 .setParameter("userKey", userKey)
-                .getResultList();
-        return members.stream().findAny();
+                .getResultList().stream().findAny();
+    }
+
+    @Override
+    public Optional<Member> findByName(String name) {
+        return em.createQuery("select m from Member m where m.name=:name", Member.class)
+                .setParameter("name", name)
+                .getResultList().stream().findAny();
     }
 
     @Override

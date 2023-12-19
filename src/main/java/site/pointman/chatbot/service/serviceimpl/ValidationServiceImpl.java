@@ -1,15 +1,24 @@
 package site.pointman.chatbot.service.serviceimpl;
 
 import org.springframework.stereotype.Service;
+import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotValidationResponse;
+import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.service.ValidationService;
 import site.pointman.chatbot.utill.NumberUtils;
 
+import java.util.Optional;
+
 @Service
 public class ValidationServiceImpl implements ValidationService {
-
     private final String KAKAO_OPEN_CHAT_URL_REQUIRED = "https://open.kakao.com/o";
+
+    MemberRepository memberRepository;
+
+    public ValidationServiceImpl(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
 
     @Override
     public ChatBotValidationResponse validationCustomerPhoneNumber(ChatBotRequest chatBotRequest) {
@@ -35,6 +44,14 @@ public class ValidationServiceImpl implements ValidationService {
     public ChatBotValidationResponse validationCustomerName(ChatBotRequest chatBotRequest) {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String inputName = chatBotRequest.getValidationData();
+
+        Optional<Member> mayBeMember = memberRepository.findByName(inputName);
+
+        if(!mayBeMember.isEmpty()){
+            chatBotValidationResponse.validationFail();
+            return chatBotValidationResponse;
+        }
+
         chatBotValidationResponse.validationSuccess(inputName);
         return chatBotValidationResponse;
     }
