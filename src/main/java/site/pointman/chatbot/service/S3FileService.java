@@ -37,7 +37,7 @@ public class S3FileService {
             File file = new File(DIR+"/"+fileName+EXT);
             String uploadReturnUrl = upload(file, DIR);
 
-            productImageDto.getImageUrl().add(uploadReturnUrl);
+            productImageDto.getImageUrls().add(uploadReturnUrl);
         });
         return productImageDto;
     }
