@@ -81,7 +81,7 @@ public class Product extends BaseEntity {
         return productProfile
                 .append("상품상태: " + status)
                 .append("\n")
-                .append("카테고리: " + category)
+                .append("카테고리: " + category.getValue())
                 .append("\n\n")
                 .append("판매가격: " + price+"원")
                 .append("\n\n")
