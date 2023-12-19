@@ -98,9 +98,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response getProductsByUserKey(String userKey) {
+    public Response getProductsByUserKey(String userKey, String productStatus) {
         try {
-            List<Product> products = productRepository.findByUserKey(userKey);
+            ProductStatus status = ProductStatus.getProductStatus(productStatus);
+
+            List<Product> products = productRepository.findByUserKey(userKey,status);
 
             if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다");
 

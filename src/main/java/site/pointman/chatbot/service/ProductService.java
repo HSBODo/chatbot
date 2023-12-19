@@ -14,7 +14,7 @@ public interface ProductService {
     Response verificationCustomerSuccessResponse();
     Response getProductCategory(String requestBlockId);
     Response getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category);
-    Response getProductsByUserKey(String userKey);
+    Response getProductsByUserKey(String userKey, String productStatus);
     Response getProductProfile(String productId, String userKey);
     Response getProductsByCategory(Category category);
     Response addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory);

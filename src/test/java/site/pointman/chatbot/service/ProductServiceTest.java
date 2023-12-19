@@ -115,7 +115,7 @@ class ProductServiceTest {
         List<Product> products = productRepository.findByUserKey(userKey);
 
         //when
-        Response response = productService.getProductsByUserKey(userKey);
+        Response response = productService.getProductsByUserKey(userKey,"판매중");
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
 
         int customerProductsSize = chatBotResponse.getTemplate().getOutputs().get(0).getCarousel().getItems().size();
