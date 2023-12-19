@@ -55,8 +55,12 @@ public class NoticeServiceImpl implements NoticeService {
         listCard.setHeader("공지사항");
 
         notices.forEach(notice -> {
-            ListItem listItem = new ListItem(notice.getTitle());
-            listItem.setDescription(notice.getDescription());
+            String title = notice.getTitle();
+            String writer = "작성자: " + notice.getMember().getName();
+
+            ListItem listItem = new ListItem(title);
+
+            listItem.setDescription(writer);
             listItem.setImageUrl(notice.getImageUrl());
             listItem.setActionBlock(BlockId.FIND_NOTICE);
             listItem.setExtra(ButtonParamKey.noticeId,String.valueOf(notice.getId()));
@@ -81,17 +85,23 @@ public class NoticeServiceImpl implements NoticeService {
 
             ChatBotResponse chatBotResponse = new ChatBotResponse();
 
+            String title = notice.getTitle();
+            String description = notice.getDescriptionTypeOfChatBot();
+
             if(notice.getType().equals(NoticeType.TEXT_CARD)){
-                chatBotResponse.addTextCard(notice.getTitle(),notice.getDescription());
+                chatBotResponse.addTextCard(title,description);
                 chatBotResponse.addQuickButton(ButtonName.이전으로.name(),ButtonAction.블럭이동,BlockId.FIND_NOTICES.getBlockId());
                 return chatBotResponse;
             }
 
             if(notice.getType().equals(NoticeType.BASIC_CARD)){
                 BasicCard basicCard = new BasicCard();
-                basicCard.setThumbnail(notice.getImageUrl());
-                basicCard.setTitle(notice.getTitle());
-                basicCard.setDescription(notice.getDescription());
+
+                String imageUrl = notice.getImageUrl();
+
+                basicCard.setThumbnail(imageUrl);
+                basicCard.setTitle(title);
+                basicCard.setDescription(description);
                 notice.getButtons().forEach(button -> {
                     basicCard.setButton(button);
                 });
