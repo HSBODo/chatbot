@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.service.CustomerChatBotResponseService;
 import site.pointman.chatbot.service.MemberService;
 
 
@@ -20,10 +22,12 @@ public class CustomerController {
 
     MemberService memberService;
     ChatBotExceptionResponse chatBotExceptionResponse;
+    CustomerChatBotResponseService customerChatBotResponseService;
 
-    public CustomerController(MemberService memberService) {
+    public CustomerController(MemberService memberService, ChatBotExceptionResponse chatBotExceptionResponse, CustomerChatBotResponseService customerChatBotResponseService) {
         this.memberService = memberService;
-        this.chatBotExceptionResponse = new ChatBotExceptionResponse();
+        this.chatBotExceptionResponse = chatBotExceptionResponse;
+        this.customerChatBotResponseService = customerChatBotResponseService;
     }
 
     /**
@@ -41,6 +45,16 @@ public class CustomerController {
         if (memberService.isCustomer(userKey)) return chatBotExceptionResponse.createException("이미 존재하는 회원입니다.");
 
         return memberService.join(userKey, name, phoneNumber,true);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "GET/myPage" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse getMyPage(@RequestBody ChatBotRequest chatBotRequest) {
+        String userKey = chatBotRequest.getUserKey();
+
+        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+
+        return customerChatBotResponseService.getMyPageSuccessChatBotResponse();
     }
 
     @ResponseBody

@@ -7,4 +7,5 @@ public interface CustomerChatBotResponseService {
     ChatBotResponse getCustomerProfileSuccessChatBotResponse(String customerRank, String customerName, String customerPhoneNumber, String customerJoinDate);
     ChatBotResponse updateCustomerPhoneNumberSuccessChatBotResponse();
     ChatBotResponse deleteCustomerSuccessChatBotResponse();
+    ChatBotResponse getMyPageSuccessChatBotResponse();
 }

@@ -36,7 +36,28 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
         chatBotResponse.addTextCard(textCard);
         chatBotResponse.addQuickButton(ButtonName.회원탈퇴.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_ASK_DELETE.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.연락처변경.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_UPDATE_PHONE_NUMBER.getBlockId());
-        chatBotResponse.addQuickButton(ButtonName.판매내역.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.이전으로.name(), ButtonAction.블럭이동, BlockId.MY_PAGE.getBlockId());
+        return chatBotResponse;
+    }
+
+    @Override
+    public ChatBotResponse getMyPageSuccessChatBotResponse() {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+        StringBuilder description = new StringBuilder();
+        description
+                .append("회원님 반갑습니다.")
+                .append("\n")
+                .append("마이페이지입니다.")
+        ;
+
+        TextCard textCard = new TextCard();
+        textCard.setTitle("마이페이지");
+        textCard.setDescription(description.toString());
+
+        chatBotResponse.addTextCard(textCard);
+        chatBotResponse.addQuickButton(ButtonName.프로필.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PROFILE.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.판매내역.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PROFILE.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.구매내역.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PROFILE.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
