@@ -17,4 +17,6 @@ public class Params {
     private String tradingLocation;
 
     private String searchWord;
+
+    private String reservationCustomerName;
 }

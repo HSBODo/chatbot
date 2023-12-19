@@ -73,6 +73,10 @@ public class ChatBotRequest {
         return action.getParams().getKakaoOpenChatUrl();
     }
 
+    public String getReservationCustomerName(){
+        return action.getParams().getReservationCustomerName();
+    }
+
     public String getSearchWord(){
         return action.getParams().getSearchWord();
     }
