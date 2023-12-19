@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
     private ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public String kakaoPaymentReady(Product product, Member member) {
+    public String getkakaoPaymentReadyUrl(Product product, Member member) {
         try {
             Map<String,Object> headers = new HashMap<>();
             Map<String, Object> body = new HashMap<>();
