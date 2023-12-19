@@ -44,7 +44,7 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public void insert(Log log, ChatBotResponse chatBotResponse) {
+    public void insert(Log log, Object chatBotResponse) {
         String responseJson = gson.toJson(chatBotResponse);
         log.setResponseJson(responseJson);
 

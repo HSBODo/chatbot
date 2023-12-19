@@ -6,5 +6,5 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 
 public interface LogService {
     Log insert(ChatBotRequest chatBotRequest) throws Exception;
-    void insert(Log log, ChatBotResponse chatBotResponse);
+    void insert(Log log, Object chatBotResponse);
 }
