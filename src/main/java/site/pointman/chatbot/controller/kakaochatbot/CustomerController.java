@@ -21,12 +21,13 @@ import site.pointman.chatbot.service.MemberService;
 public class CustomerController {
 
     MemberService memberService;
-    ChatBotExceptionResponse chatBotExceptionResponse;
     CustomerChatBotResponseService customerChatBotResponseService;
 
-    public CustomerController(MemberService memberService, ChatBotExceptionResponse chatBotExceptionResponse, CustomerChatBotResponseService customerChatBotResponseService) {
+    ChatBotExceptionResponse chatBotExceptionResponse;
+
+    public CustomerController(MemberService memberService, CustomerChatBotResponseService customerChatBotResponseService) {
         this.memberService = memberService;
-        this.chatBotExceptionResponse = chatBotExceptionResponse;
+        this.chatBotExceptionResponse = new ChatBotExceptionResponse();
         this.customerChatBotResponseService = customerChatBotResponseService;
     }
 
