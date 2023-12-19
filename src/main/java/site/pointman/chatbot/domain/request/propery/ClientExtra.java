@@ -9,4 +9,5 @@ public class ClientExtra {
     private String productId;
     private String noticeId;
     private String choice;
+    private String productStatus;
 }
