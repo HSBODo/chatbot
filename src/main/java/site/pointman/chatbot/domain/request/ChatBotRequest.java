@@ -42,10 +42,6 @@ public class ChatBotRequest {
         return action.getParams().getCustomerPhone();
     }
 
-    public String getProductId(){
-        return action.getClientExtra().getProductId();
-    }
-
     public String getProductName(){
         return action.getParams().getProductName();
     }
@@ -87,6 +83,14 @@ public class ChatBotRequest {
 
     public String getNoticeId(){
         return action.getClientExtra().getNoticeId();
+    }
+
+    public String getProductId(){
+        return action.getClientExtra().getProductId();
+    }
+
+    public String getProductStatus(){
+        return action.getClientExtra().getProductStatus();
     }
 
     public String getValidationData(){
