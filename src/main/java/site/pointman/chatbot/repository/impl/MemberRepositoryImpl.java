@@ -24,7 +24,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public Optional<Member> findByCustomer(String userKey) {
+    public Optional<Member> findByUserKey(String userKey) {
         List<Member> members = em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
                 .setParameter("userKey", userKey)
                 .getResultList();

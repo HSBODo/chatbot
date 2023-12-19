@@ -37,7 +37,7 @@ class MemberRepositoryTest {
         String userKey = "QFJSyeIZbO77";
 
         //when
-        Optional<Member> byCustomer = memberRepository.findByCustomer(userKey);
+        Optional<Member> byCustomer = memberRepository.findByUserKey(userKey);
         Member member = byCustomer.get();
 
         //then

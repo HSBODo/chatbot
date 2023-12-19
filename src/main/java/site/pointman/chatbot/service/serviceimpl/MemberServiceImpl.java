@@ -56,7 +56,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Response getCustomerProfile(String userKey, boolean isChatBotRequest) {
         try {
-            Optional<Member> mayBeCustomer = memberRepository.findByCustomer(userKey);
+            Optional<Member> mayBeCustomer = memberRepository.findByUserKey(userKey);
 
             Member member = mayBeCustomer.get();
 
@@ -106,7 +106,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean isCustomer(String userKey) {
         try {
-            Optional<Member> mayBeCustomer = memberRepository.findByCustomer(userKey);
+            Optional<Member> mayBeCustomer = memberRepository.findByUserKey(userKey);
 
             if (mayBeCustomer.isEmpty()) return false;
 

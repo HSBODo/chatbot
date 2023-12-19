@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
     public Response addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory) {
         try {
             Category category = Category.getCategory(productCategory);
-            Member member = memberRepository.findByCustomer(userKey).get();
+            Member member = memberRepository.findByUserKey(userKey).get();
             String productName = productDto.getName();
 
             productDto.setStatus(ProductStatus.판매중);
