@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
     private ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public String getkakaoPaymentReadyUrl(Product product, Member member) {
+    public String getKakaoPaymentReadyUrl(Product product, Member member) {
         try {
             Map<String,Object> headers = new HashMap<>();
             Map<String, Object> body = new HashMap<>();
@@ -75,9 +75,9 @@ public class OrderServiceImpl implements OrderService {
             urlBuilder.append("&" + URLEncoder.encode("quantity","UTF-8") + "="+ paymentReadyRequestDto.getQuantity());
             urlBuilder.append("&" + URLEncoder.encode("total_amount","UTF-8") + "="+ paymentReadyRequestDto.getTotalAmount());
             urlBuilder.append("&" + URLEncoder.encode("tax_free_amount","UTF-8") + "="+ paymentReadyRequestDto.getTaxFreeAmount());
-            urlBuilder.append("&" + URLEncoder.encode("approval_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochat/v1/"+productId+"/kakaopay-approve");
-            urlBuilder.append("&" + URLEncoder.encode("fail_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochat/v1/"+productId+"/kakaopay-fail");
-            urlBuilder.append("&" + URLEncoder.encode("cancel_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochat/v1/"+productId+"/kakaopay-cancel");
+            urlBuilder.append("&" + URLEncoder.encode("approval_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochatbot/order/kakaopay-approve/"+productId);
+            urlBuilder.append("&" + URLEncoder.encode("fail_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochatbot/order/kakaopay-fail/"+productId);
+            urlBuilder.append("&" + URLEncoder.encode("cancel_url","UTF-8") + "="+ "https://www.pointman.shop/kakaochatbot/order/kakaopay-cancel/"+productId);
 
             String response = HttpUtils.post(urlBuilder.toString(), headers,body,mediaType);
 

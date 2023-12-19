@@ -271,7 +271,7 @@ public class ProductServiceImpl implements ProductService {
         textCard.setDescription(product.getProductProfileTypeOfChatBot());
         if(!myBeMember.isEmpty()){
             Member member = myBeMember.get();
-            String kakaoPaymentReadyUrl = orderService.getkakaoPaymentReadyUrl(product, member);
+            String kakaoPaymentReadyUrl = orderService.getKakaoPaymentReadyUrl(product, member);
             Button button = new Button("카카오페이 결제(테스트)",ButtonAction.웹링크연결,kakaoPaymentReadyUrl);
             textCard.setButtons(button);
         }
