@@ -9,6 +9,8 @@ public enum BlockId {
     CUSTOMER_DELETE("회원탈퇴","6576f5f56286e53ab448ee46"),
     CUSTOMER_GET_PRODUCTS("회원 등록상품 조회","65262bf631101d1cb11060b8"),
     CUSTOMER_GET_PRODUCT_DETAIL("회원 등록상품 상세보기","657aa39383cd6b068ef93501"),
+    CUSTOMER_GET_PROFILE("회원 프로필 조회","6576ddd3a7e99f5af9c441ab"),
+    MY_PAGE("마이페이지","658137d28738f66395472720"),
     PRODUCT_ADD_INFO("상품정보입력","652a0a9a27e3c4125a33f6eb"),
     PRODUCT_ADD("상품등록","652e659087e33b27c8ba3a4a"),
     PRODUCT_PROFILE_PREVIEW("상품 프로필 미리보기","657d68558a8123272a649cae"),
