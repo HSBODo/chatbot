@@ -11,11 +11,11 @@ import java.util.List;
 @Getter
 @Setter
 public class ProductImageDto {
-    private List<String> imageUrl = new ArrayList<>();
+    private List<String> imageUrls = new ArrayList<>();
 
     public ProductImage toEntity(){
         return ProductImage.builder()
-                .imageUrl(imageUrl)
+                .imageUrls(imageUrls)
                 .build();
     }
 }
