@@ -12,6 +12,7 @@ import site.pointman.chatbot.domain.response.property.Context;
 import site.pointman.chatbot.domain.response.property.common.Button;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.Carousel;
+import site.pointman.chatbot.domain.response.property.components.CommerceCard;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.dto.product.ProductImageDto;
 import site.pointman.chatbot.repository.MemberRepository;
@@ -74,7 +75,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Response getProductsByCategory(Category category) {
-        ChatBotResponse chatBotResponse = new ChatBotResponse();
         try {
             List<Product> products = productRepository.findByCategory(category,ProductStatus.판매중);
 
@@ -264,25 +264,28 @@ public class ProductServiceImpl implements ProductService {
 
     private ChatBotResponse createProductListChatBotResponse(List<Product> products, ButtonName quickButtonName, BlockId nextBlockId){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
-        Carousel<BasicCard> carousel = new Carousel<>();
+        Carousel<CommerceCard> carousel = new Carousel<>();
 
         products.forEach(product -> {
-            BasicCard basicCard = new BasicCard();
+            CommerceCard commerceCard = new CommerceCard();
 
             ProductStatus productStatus = product.getStatus();
             String productName = product.getName();
-            String productPrice = StringUtils.formatPrice(product.getPrice());
-            String productDescription = StringUtils.formatProductInfo(productPrice,productStatus);
+            int productPrice = product.getPrice().intValue();
+
+            String productDescription = "상품 상태: " + product.getStatus();
             String thumbnailImageUrl = product.getProductImages().getImageUrl().get(0);
             String productId = String.valueOf(product.getId());
 
             Button button = new Button("상세보기", ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCT_DETAIL.getBlockId(), ButtonParamKey.productId, productId);
 
-            basicCard.setThumbnail(thumbnailImageUrl);
-            basicCard.setTitle(productName);
-            basicCard.setDescription(productDescription);
-            basicCard.setButton(button);
-            carousel.addComponent(basicCard);
+            commerceCard.setThumbnails(thumbnailImageUrl,true);
+            commerceCard.setTitle(productName);
+            commerceCard.setDescription(productDescription);
+            commerceCard.setPrice(productPrice);
+            commerceCard.setButton(button);
+
+            carousel.addComponent(commerceCard);
         });
 
         chatBotResponse.addCarousel(carousel);

@@ -11,8 +11,6 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.utill.StringUtils;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 
 @Getter
@@ -27,7 +25,6 @@ public class Product extends BaseEntity {
     private Long id;
 
     @ManyToOne
-    @NotNull
     @JoinColumn(name = "user_key")
     private Member member;
 
@@ -35,22 +32,23 @@ public class Product extends BaseEntity {
     private String buyerUserKey;
 
     private String reservation;
-    @NotBlank
+
     private String name;
-    @NotBlank
+
     private Long price;
-    @NotBlank
+
     private String description;
-    @NotBlank
+
     private String tradingLocation;
-    @NotBlank
+
     private String kakaoOpenChatUrl;
-    @NotNull
+
     @Convert(converter = CategoryEnumConverter.class)
     private Category category;
-    @NotNull
+
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
+
     @OneToOne
     @JoinColumn(name = "product_images_id")
     private ProductImage productImages;
