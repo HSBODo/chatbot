@@ -11,6 +11,8 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.utill.StringUtils;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 @Getter
@@ -25,6 +27,7 @@ public class Product extends BaseEntity {
     private Long id;
 
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "user_key")
     private Member member;
 
@@ -32,18 +35,22 @@ public class Product extends BaseEntity {
     private String buyerUserKey;
 
     private String reservation;
+    @NotBlank
     private String name;
+    @NotBlank
     private Long price;
+    @NotBlank
     private String description;
+    @NotBlank
     private String tradingLocation;
+    @NotBlank
     private String kakaoOpenChatUrl;
-
+    @NotNull
     @Convert(converter = CategoryEnumConverter.class)
     private Category category;
-
+    @NotNull
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
-
     @OneToOne
     @JoinColumn(name = "product_images_id")
     private ProductImage productImages;
@@ -69,16 +76,23 @@ public class Product extends BaseEntity {
     public void changeStatus(ProductStatus productStatus){
         this.status = productStatus;
     }
-    public String getProductDetailDescription(){
-        return StringUtils.formatProductDetail(
-                status,
-                category.getValue(),
-                StringUtils.formatPrice(price),
-                description,
-                tradingLocation,
-                kakaoOpenChatUrl,
-                getFormatCreateDate()
-        );
+    public String getProductProfileTypeOfChatBot(){
+        StringBuilder productProfile = new StringBuilder();
+        return productProfile
+                .append("상품상태: " + status)
+                .append("\n")
+                .append("카테고리: " + category)
+                .append("\n\n")
+                .append("판매가격: " + price+"원")
+                .append("\n\n")
+                .append("상품 설명: " + description)
+                .append("\n\n")
+                .append("거래 희망 장소: " + tradingLocation)
+                .append("\n")
+                .append("카카오 오픈 채팅방: " + kakaoOpenChatUrl)
+                .append("\n\n")
+                .append("등록일자: " + getFormatCreateDate())
+                .toString();
     }
 
     public String getFormatCreateDate() {

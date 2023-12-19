@@ -8,6 +8,8 @@ import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.BaseEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 @Getter
@@ -22,12 +24,18 @@ public class Member extends BaseEntity {
     private Long seq ;
 
     @Id
+    @NotBlank
     @Column(name = "user_key")
     private String userKey;
+
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String phoneNumber;
 
     @Convert(converter = MemberRoleEnumConverter.class)
+    @NotNull
     private MemberRole role;
 
     @Builder
