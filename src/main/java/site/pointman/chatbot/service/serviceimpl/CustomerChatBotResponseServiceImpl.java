@@ -30,7 +30,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
                 "가입일자: "+customerJoinDate;
 
         TextCard textCard = new TextCard();
-        textCard.setTitle("회원정보");
+        textCard.setTitle("프로필");
         textCard.setDescription(description);
 
         chatBotResponse.addTextCard(textCard);
