@@ -104,7 +104,7 @@ public class ProductServiceImpl implements ProductService {
 
             if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다");
 
-            return createProductListChatBotResponse(products,ButtonName.처음으로,BlockId.MAIN);
+            return createMyProductListChatBotResponse(products,ButtonName.처음으로,BlockId.MAIN);
         }catch (Exception e){
             return chatBotExceptionResponse.createException();
         }
@@ -269,11 +269,10 @@ public class ProductServiceImpl implements ProductService {
         products.forEach(product -> {
             CommerceCard commerceCard = new CommerceCard();
 
-            ProductStatus productStatus = product.getStatus();
             String productName = product.getName();
             int productPrice = product.getPrice().intValue();
 
-            String productDescription = "상품 상태: " + product.getStatus();
+            String productDescription = "판매자: " + product.getMember().getName();
             String thumbnailImageUrl = product.getProductImages().getImageUrl().get(0);
             String productId = String.valueOf(product.getId());
 
@@ -293,6 +292,40 @@ public class ProductServiceImpl implements ProductService {
         return chatBotResponse;
     }
 
+    private ChatBotResponse createMyProductListChatBotResponse(List<Product> products, ButtonName quickButtonName, BlockId nextBlockId){
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+        Carousel<BasicCard> carousel = new Carousel<>();
+
+        products.forEach(product -> {
+            BasicCard basicCard = new BasicCard();
+            StringBuilder productDescription = new StringBuilder();
+
+            ProductStatus productStatus = product.getStatus();
+            String productId = String.valueOf(product.getId());
+            String productName = product.getName() + "("+productStatus+")";
+            String productPrice = StringUtils.formatPrice(product.getPrice());
+            String thumbnailImageUrl = product.getProductImages().getImageUrl().get(0);
+            String createDate = product.getFormatCreateDate();
+
+            productDescription
+                    .append("판매가격: "+ productPrice+"원")
+                    .append("\n")
+                    .append("등록일자: "+ createDate)
+            ;
+
+            Button button = new Button("상세보기", ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCT_DETAIL.getBlockId(), ButtonParamKey.productId, productId);
+
+            basicCard.setThumbnail(thumbnailImageUrl);
+            basicCard.setTitle(productName);
+            basicCard.setDescription(productDescription.toString());
+            basicCard.setButton(button);
+            carousel.addComponent(basicCard);
+        });
+
+        chatBotResponse.addCarousel(carousel);
+        chatBotResponse.addQuickButton(quickButtonName.name(), ButtonAction.블럭이동, nextBlockId.getBlockId());
+        return chatBotResponse;
+    }
 
     private ChatBotResponse getProductInfoPreviewSuccessChatBotResponse(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl){
         ChatBotResponse chatBotResponse = new ChatBotResponse();

@@ -39,13 +39,6 @@ public class StringUtils {
         return formatDate;
     }
 
-    public static String formatProductInfo(String price, ProductStatus productStatus){
-        String productDetail =
-                "상품 상태: "+ productStatus + "\n"+
-                "판매가격: "+ price+"원" + "\n";
-        return productDetail;
-    }
-
     public static String createImgFileName(String userKey, String productName){
         String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String currentTimeStamp = String.valueOf(System.currentTimeMillis());
