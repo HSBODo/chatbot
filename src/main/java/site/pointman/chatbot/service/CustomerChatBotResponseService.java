@@ -8,4 +8,5 @@ public interface CustomerChatBotResponseService {
     ChatBotResponse updateCustomerPhoneNumberSuccessChatBotResponse();
     ChatBotResponse deleteCustomerSuccessChatBotResponse();
     ChatBotResponse getMyPageSuccessChatBotResponse();
+    ChatBotResponse getSalesHistorySuccessChatBotResponse();
 }

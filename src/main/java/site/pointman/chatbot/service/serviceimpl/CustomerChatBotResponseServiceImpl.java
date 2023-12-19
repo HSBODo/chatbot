@@ -1,9 +1,7 @@
 package site.pointman.chatbot.service.serviceimpl;
 
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.BlockId;
-import site.pointman.chatbot.constant.ButtonAction;
-import site.pointman.chatbot.constant.ButtonName;
+import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.service.CustomerChatBotResponseService;
@@ -43,6 +41,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
     @Override
     public ChatBotResponse getMyPageSuccessChatBotResponse() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
+
         StringBuilder description = new StringBuilder();
         description
                 .append("회원님 반갑습니다.")
@@ -58,6 +57,30 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
         chatBotResponse.addQuickButton(ButtonName.프로필.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PROFILE.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.판매내역.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PROFILE.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.구매내역.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PROFILE.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
+        return chatBotResponse;
+    }
+
+    @Override
+    public ChatBotResponse getSalesHistorySuccessChatBotResponse() {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+
+        StringBuilder description = new StringBuilder();
+        description
+                .append("판매 내역입니다.")
+                .append("\n")
+                .append("원하시는 버튼을 클릭하여 상품을 조회하세요.")
+        ;
+
+        TextCard textCard = new TextCard();
+        textCard.setTitle("판매 내역");
+        textCard.setDescription(description.toString());
+
+        chatBotResponse.addTextCard(textCard);
+        chatBotResponse.addQuickButton(ButtonName.판매중.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCTS.getBlockId(), ButtonParamKey.productStatus, ProductStatus.판매중.name());
+        chatBotResponse.addQuickButton(ButtonName.숨김.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCTS.getBlockId(), ButtonParamKey.productStatus, ProductStatus.숨김.name());
+        chatBotResponse.addQuickButton(ButtonName.대기.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCTS.getBlockId(), ButtonParamKey.productStatus, ProductStatus.대기.name());
+        chatBotResponse.addQuickButton(ButtonName.판매완료.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCTS.getBlockId(), ButtonParamKey.productStatus, ProductStatus.판매완료.name());
         chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }

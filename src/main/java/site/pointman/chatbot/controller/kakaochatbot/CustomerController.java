@@ -69,6 +69,16 @@ public class CustomerController {
     }
 
     @ResponseBody
+    @PostMapping(value = "GET/salesHistory" , headers = {"Accept=application/json; UTF-8"})
+    public Response getSalesHistory(@RequestBody ChatBotRequest chatBotRequest) {
+        String userKey = chatBotRequest.getUserKey();
+
+        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+
+        return customerChatBotResponseService.getSalesHistorySuccessChatBotResponse();
+    }
+
+    @ResponseBody
     @PostMapping(value = "PATCH/phoneNumber" , headers = {"Accept=application/json; UTF-8"})
     public Response updatePhoneNumber(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
