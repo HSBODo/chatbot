@@ -76,12 +76,13 @@ public class Product extends BaseEntity {
     }
     public String getProductProfileTypeOfChatBot(){
         StringBuilder productProfile = new StringBuilder();
+        String formatPrice = StringUtils.formatPrice(price);
         return productProfile
                 .append("상품상태: " + status)
                 .append("\n")
                 .append("카테고리: " + category.getValue())
                 .append("\n\n")
-                .append("판매가격: " + price+"원")
+                .append("판매가격: " + formatPrice+"원")
                 .append("\n\n")
                 .append("상품 설명: " + description)
                 .append("\n\n")

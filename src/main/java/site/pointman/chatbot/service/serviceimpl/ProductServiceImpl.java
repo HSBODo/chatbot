@@ -315,7 +315,7 @@ public class ProductServiceImpl implements ProductService {
 
             Button button = new Button("상세보기", ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCT_DETAIL.getBlockId(), ButtonParamKey.productId, productId);
 
-            basicCard.setThumbnail(thumbnailImageUrl);
+            basicCard.setThumbnail(thumbnailImageUrl,true);
             basicCard.setTitle(productName);
             basicCard.setDescription(productDescription.toString());
             basicCard.setButton(button);
