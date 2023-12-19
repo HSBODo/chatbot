@@ -55,7 +55,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
 
         chatBotResponse.addTextCard(textCard);
         chatBotResponse.addQuickButton(ButtonName.프로필.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PROFILE.getBlockId());
-        chatBotResponse.addQuickButton(ButtonName.판매내역.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PROFILE.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.판매내역.name(), ButtonAction.블럭이동, BlockId.SALES_HISTORY_PAGE.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.구매내역.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PROFILE.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
         return chatBotResponse;
@@ -69,7 +69,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
         description
                 .append("판매 내역입니다.")
                 .append("\n")
-                .append("원하시는 버튼을 클릭하여 상품을 조회하세요.")
+                .append("조회하고 싶은 상품버튼을 클릭하세요.")
         ;
 
         TextCard textCard = new TextCard();
@@ -81,7 +81,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
         chatBotResponse.addQuickButton(ButtonName.숨김.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCTS.getBlockId(), ButtonParamKey.productStatus, ProductStatus.숨김.name());
         chatBotResponse.addQuickButton(ButtonName.대기.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCTS.getBlockId(), ButtonParamKey.productStatus, ProductStatus.대기.name());
         chatBotResponse.addQuickButton(ButtonName.판매완료.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCTS.getBlockId(), ButtonParamKey.productStatus, ProductStatus.판매완료.name());
-        chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.이전으로.name(), ButtonAction.블럭이동, BlockId.MY_PAGE.getBlockId());
         return chatBotResponse;
     }
 
