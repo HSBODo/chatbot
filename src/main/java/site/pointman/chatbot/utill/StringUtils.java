@@ -39,26 +39,6 @@ public class StringUtils {
         return formatDate;
     }
 
-    public static String formatProductDetail(String category,String price, String description, String tradingLocation, String kakaoOpenChatUrl){
-        String productDetail =
-                "카테고리: " + category + "\n\n"+
-                "판매가격: " + price +"원" + "\n\n"+
-                "상품 설명: " + description + "\n\n"+
-                "거래 희망 장소: " + tradingLocation + "\n"+
-                "카카오 오픈 채팅방: " + kakaoOpenChatUrl + "\n";
-        return productDetail;
-    }
-    public static String formatProductDetail(ProductStatus productStatus, String category, String price, String description, String tradingLocation, String kakaoOpenChatUrl, String createDate){
-        String productDetail =
-                "상품상태: " + productStatus + "\n\n"+
-                "카테고리: " + category + "\n\n"+
-                "판매가격: " + price+"원" + "\n\n"+
-                "상품 설명: " + description + "\n\n"+
-                "거래 희망 장소: " + tradingLocation + "\n"+
-                "카카오 오픈 채팅방: " + kakaoOpenChatUrl + "\n\n"+
-                "등록일자: " + createDate ;
-        return productDetail;
-    }
     public static String formatProductInfo(String price, ProductStatus productStatus){
         String productDetail =
                 "상품 상태: "+ productStatus + "\n"+

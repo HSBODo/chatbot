@@ -121,7 +121,7 @@ public class ProductServiceImpl implements ProductService {
 
             String productUserKey = product.getMember().getUserKey();
             String productName = product.getName();
-            String productDescription = product.getProductDetailDescription();
+            String productDescription = product.getProductProfileTypeOfChatBot();
             ProductStatus status = product.getStatus();
             List<String> imageUrls = product.getProductImages().getImageUrl();
 
@@ -293,15 +293,24 @@ public class ProductServiceImpl implements ProductService {
 
     private ChatBotResponse getProductInfoPreviewSuccessChatBotResponse(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
+        StringBuilder productPreviewProfile = new StringBuilder();
         Context productContext = new Context("product",1,600);
         productContext.addParam("productCategory",category);
-        //productContext.addParam("accessToken","테스트");
 
-        productDescription = StringUtils.formatProductDetail(category,productPrice,productDescription,tradingLocation,kakaoOpenChatUrl);
+        productPreviewProfile
+                .append("카테고리: " + category)
+                .append("\n\n")
+                .append("판매가격: " + productPrice +"원")
+                .append("\n\n")
+                .append("상품 설명: " + productDescription)
+                .append("\n\n")
+                .append("거래 희망 장소: " + tradingLocation)
+                .append("\n\n")
+                .append("카카오 오픈 채팅방: " + kakaoOpenChatUrl);
 
         Carousel<BasicCard> carouselImage = createCarouselImage(imageUrls);
         chatBotResponse.addCarousel(carouselImage);
-        chatBotResponse.addTextCard(productName,productDescription);
+        chatBotResponse.addTextCard(productName,productPreviewProfile.toString());
         chatBotResponse.addQuickButton(ButtonName.취소.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.등록.name(), ButtonAction.블럭이동, BlockId.PRODUCT_ADD.getBlockId());
         chatBotResponse.addContext(productContext);
