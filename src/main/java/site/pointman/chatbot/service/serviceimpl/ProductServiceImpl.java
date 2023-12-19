@@ -13,10 +13,12 @@ import site.pointman.chatbot.domain.response.property.common.Button;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.Carousel;
 import site.pointman.chatbot.domain.response.property.components.CommerceCard;
+import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.dto.product.ProductImageDto;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.ProductRepository;
+import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.S3FileService;
 import site.pointman.chatbot.utill.StringUtils;
@@ -31,16 +33,19 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     S3FileService s3FileService;
+    OrderService orderService;
 
     ProductRepository productRepository;
     MemberRepository memberRepository;
 
+
     ChatBotExceptionResponse chatBotExceptionResponse;
 
-    public ProductServiceImpl(S3FileService s3FileService, ProductRepository productRepository, MemberRepository memberRepository) {
+    public ProductServiceImpl(S3FileService s3FileService, ProductRepository productRepository, MemberRepository memberRepository, OrderService orderService) {
         this.s3FileService = s3FileService;
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
+        this.orderService = orderService;
         this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
@@ -121,13 +126,7 @@ public class ProductServiceImpl implements ProductService {
 
             Product product = mayBeProduct.get();
 
-            String productUserKey = product.getMember().getUserKey();
-            String productName = product.getName();
-            String productDescription = product.getProductProfileTypeOfChatBot();
-            ProductStatus status = product.getStatus();
-            List<String> imageUrls = product.getProductImages().getImageUrl();
-
-            return getProductProfileSuccessChatBotResponse(userKey, productUserKey, imageUrls,productName,productDescription,productId,status);
+            return getProductProfileSuccessChatBotResponse(userKey, product);
         }catch (Exception e){
             return chatBotExceptionResponse.createException();
         }
@@ -258,14 +257,28 @@ public class ProductServiceImpl implements ProductService {
         return chatBotResponse;
     }
 
-    private ChatBotResponse getProductProfileSuccessChatBotResponse(String userKey, String productUserKey, List<String> imageUrls, String productName, String productDescription, String productId, ProductStatus status){
+    private ChatBotResponse getProductProfileSuccessChatBotResponse(String userKey, Product product){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
+        TextCard textCard = new TextCard();
 
-        Carousel<BasicCard> carouselImage = createCarouselImage(imageUrls);
+        Optional<Member> myBeMember = memberRepository.findByUserKey(userKey);
+
+        Carousel<BasicCard> carouselImage = createCarouselImage(product.getProductImages().getImageUrls());
 
         chatBotResponse.addCarousel(carouselImage);
-        chatBotResponse.addTextCard(productName,productDescription);
-        chatBotResponse = createStatusQuickButtons(userKey, productUserKey, chatBotResponse, status, productId);
+
+        textCard.setTitle(product.getName());
+        textCard.setDescription(product.getProductProfileTypeOfChatBot());
+        if(!myBeMember.isEmpty()){
+            Member member = myBeMember.get();
+            String kakaoPaymentReadyUrl = orderService.getkakaoPaymentReadyUrl(product, member);
+            Button button = new Button("카카오페이 결제(테스트)",ButtonAction.웹링크연결,kakaoPaymentReadyUrl);
+            textCard.setButtons(button);
+        }
+
+        chatBotResponse.addTextCard(textCard);
+
+        chatBotResponse = createStatusQuickButtons(userKey, product.getMember().getUserKey(), chatBotResponse, product.getStatus(), String.valueOf(product.getId()));
         return chatBotResponse;
     }
 
@@ -280,7 +293,7 @@ public class ProductServiceImpl implements ProductService {
             int productPrice = product.getPrice().intValue();
 
             String productDescription = "판매자: " + product.getMember().getName();
-            String thumbnailImageUrl = product.getProductImages().getImageUrl().get(0);
+            String thumbnailImageUrl = product.getProductImages().getImageUrls().get(0);
             String productId = String.valueOf(product.getId());
 
             Button button = new Button("상세보기", ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCT_DETAIL.getBlockId(), ButtonParamKey.productId, productId);
@@ -311,7 +324,7 @@ public class ProductServiceImpl implements ProductService {
             String productId = String.valueOf(product.getId());
             String productName = product.getName() + "("+productStatus+")";
             String productPrice = StringUtils.formatPrice(product.getPrice());
-            String thumbnailImageUrl = product.getProductImages().getImageUrl().get(0);
+            String thumbnailImageUrl = product.getProductImages().getImageUrls().get(0);
             String createDate = product.getFormatCreateDate();
 
             productDescription

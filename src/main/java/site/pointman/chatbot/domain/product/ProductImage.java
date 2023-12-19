@@ -22,10 +22,10 @@ public class ProductImage extends BaseEntity {
     private Long id;
 
     @Convert(converter = StringListConverter.class)
-    private List<String> imageUrl;
+    private List<String> imageUrls;
 
     @Builder
-    public ProductImage(List<String> imageUrl) {
-        this.imageUrl = imageUrl;
+    public ProductImage(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
     }
 }
