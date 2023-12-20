@@ -5,6 +5,7 @@ import site.pointman.chatbot.repository.OrderRepository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -27,5 +28,12 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .setParameter("orderId",orderId)
                 .getResultList()
                 .stream().findAny();
+    }
+
+    @Override
+    public List<Order> findByUserKey(String userKey) {
+        return em.createQuery("SELECT o FROM Order o WHERE o.buyerMember.userKey =:userKey",Order.class)
+                .setParameter("userKey",userKey)
+                .getResultList();
     }
 }
