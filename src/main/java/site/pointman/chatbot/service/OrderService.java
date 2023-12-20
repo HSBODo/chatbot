@@ -6,4 +6,5 @@ import site.pointman.chatbot.domain.product.Product;
 
 public interface OrderService {
     Long addOrder(PaymentInfo paymentInfo);
+    Long cancelOrder(Long orderId);
 }
