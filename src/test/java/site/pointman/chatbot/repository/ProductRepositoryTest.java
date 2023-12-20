@@ -60,7 +60,7 @@ class ProductRepositoryTest {
                 .name("상품")
                 .build();
         ProductImageDto productImageDto = new ProductImageDto();
-        productImageDto.setImageUrl(imageUrls);
+        productImageDto.setImageUrls(imageUrls);
 
 
         // when
@@ -79,7 +79,7 @@ class ProductRepositoryTest {
                 .name("상품")
                 .build();
         ProductImageDto productImageDto = new ProductImageDto();
-        productImageDto.setImageUrl(imageUrls);
+        productImageDto.setImageUrls(imageUrls);
         productRepository.insertProduct(productDto,productImageDto);
 
         // when
@@ -98,7 +98,7 @@ class ProductRepositoryTest {
                 .name("상품")
                 .build();
         ProductImageDto productImageDto = new ProductImageDto();
-        productImageDto.setImageUrl(imageUrls);
+        productImageDto.setImageUrls(imageUrls);
         productRepository.insertProduct(productDto,productImageDto);
 
         // when
@@ -121,7 +121,7 @@ class ProductRepositoryTest {
                 .name("상품")
                 .build();
         ProductImageDto productImageDto = new ProductImageDto();
-        productImageDto.setImageUrl(imageUrls);
+        productImageDto.setImageUrls(imageUrls);
         productRepository.insertProduct(productDto,productImageDto);
 
         // when
@@ -145,7 +145,7 @@ class ProductRepositoryTest {
                 .name("상품")
                 .build();
         ProductImageDto productImageDto = new ProductImageDto();
-        productImageDto.setImageUrl(imageUrls);
+        productImageDto.setImageUrls(imageUrls);
         productRepository.insertProduct(productDto,productImageDto);
 
         // when
