@@ -56,7 +56,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
         chatBotResponse.addTextCard(textCard);
         chatBotResponse.addQuickButton(ButtonName.프로필.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PROFILE.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.판매내역.name(), ButtonAction.블럭이동, BlockId.SALES_HISTORY_PAGE.getBlockId());
-        chatBotResponse.addQuickButton(ButtonName.구매내역.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PROFILE.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.구매내역.name(), ButtonAction.블럭이동, BlockId.PRODUCT_GET_PURCHASE.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
