@@ -8,8 +8,6 @@ import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.constant.PaymentStatus;
 import site.pointman.chatbot.domain.order.PayMethod;
-import site.pointman.chatbot.domain.payment.kakaopay.Amount;
-import site.pointman.chatbot.domain.payment.kakaopay.CardInfo;
 import site.pointman.chatbot.domain.product.Product;
 
 import javax.persistence.*;
