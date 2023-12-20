@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentCancelResponse;
+import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentReadyResponse;
 
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
@@ -32,10 +34,10 @@ class PaymentServiceTest {
     void kakaoPaymentReady() throws UnsupportedEncodingException {
 
         //when
-        String kakaoPaymentReadyUrl = paymentService.getKakaoPaymentReadyUrl(productId, userKey);
+        KakaoPaymentReadyResponse kakaoPaymentReadyResponse = paymentService.getKakaoPaymentReadyUrl(productId, userKey);
 
         //then
-        Assertions.assertThat(kakaoPaymentReadyUrl).doesNotContain("결제실패");
+        Assertions.assertThat(kakaoPaymentReadyResponse.getTid()).isNotNull();
     }
 
     @Test
@@ -54,13 +56,12 @@ class PaymentServiceTest {
     @Test
     void kakaoPaymentCancel() throws Exception {
         //given
-        Long approveOrderId = 548577L;
+        Long approveOrderId = 604891L;
 
         //when
-        String kakaoPaymentReadyUrl = paymentService.kakaoPaymentCancel(approveOrderId);
+        KakaoPaymentCancelResponse kakaoPaymentCancelResponse = paymentService.kakaoPaymentCancel(approveOrderId);
 
         //then
-        String 결제취소_성공 = URLEncoder.encode("결제취소 성공");
-        Assertions.assertThat(kakaoPaymentReadyUrl).contains(결제취소_성공);
+        Assertions.assertThat(kakaoPaymentCancelResponse.getTid()).isNotNull();
     }
 }

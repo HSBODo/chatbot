@@ -55,6 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
     MemberRepository memberRepository;
     ProductRepository productRepository;
     PaymentRepository paymentRepository;
+
     OrderService orderService;
 
     public PaymentServiceImpl(MemberRepository memberRepository, ProductRepository productRepository, PaymentRepository paymentRepository, OrderService orderService) {
@@ -65,172 +66,158 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public String getKakaoPaymentReadyUrl(Long productId, String userKey) throws UnsupportedEncodingException {
-        try {
-            final int quantity = 1;
-            final int taxFreeAmount = 0;
-            final int vatAmount = 0;
+    public KakaoPaymentReadyResponse getKakaoPaymentReadyUrl(Long productId, String userKey) throws UnsupportedEncodingException {
+        final int quantity = 1;
+        final int taxFreeAmount = 0;
+        final int vatAmount = 0;
 
-            Optional<Member> mayBeMember = memberRepository.findByUserKey(userKey);
-            if (mayBeMember.isEmpty()) throw new IllegalArgumentException("회원이 존재하지 않습니다.");
+        Optional<Member> mayBeMember = memberRepository.findByUserKey(userKey);
+        if (mayBeMember.isEmpty()) throw new IllegalArgumentException("회원이 존재하지 않습니다.");
 
-            Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
-            if (mayBeProduct.isEmpty()) throw new IllegalArgumentException("상품이 존재하지 않습니다");
+        Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
+        if (mayBeProduct.isEmpty()) throw new IllegalArgumentException("상품이 존재하지 않습니다");
 
-            Long orderId = NumberUtils.createNumberId();
-            Member buyerMember = mayBeMember.get();
-            Product product = mayBeProduct.get();
+        Long orderId = NumberUtils.createNumberId();
+        Member buyerMember = mayBeMember.get();
+        Product product = mayBeProduct.get();
 
 
-            PaymentReadyRequest paymentReadyRequest = PaymentReadyRequest.builder()
-                    .cid(CID)
-                    .partnerOrderId(String.valueOf(orderId))
-                    .partnerUserId(buyerMember.getUserKey())
-                    .itemName(product.getName())
-                    .quantity(quantity)
-                    .totalAmount(product.getPrice().intValue())
-                    .vatAmount(vatAmount)
-                    .taxFreeAmount(taxFreeAmount)
-                    .approvalUrl(KAKAO_APPROVAL_HOST_URL+"/"+orderId)
-                    .cancelUrl(KAKAO_CANCEL_HOST_URL+"/"+orderId)
-                    .failUrl(KAKAO_FAIL_HOST_URL+"/"+orderId)
-                    .build();
+        KakaoPaymentReadyRequest kakaoPaymentReadyRequest = KakaoPaymentReadyRequest.builder()
+                .cid(CID)
+                .partnerOrderId(String.valueOf(orderId))
+                .partnerUserId(buyerMember.getUserKey())
+                .itemName(product.getName())
+                .quantity(quantity)
+                .totalAmount(product.getPrice().intValue())
+                .vatAmount(vatAmount)
+                .taxFreeAmount(taxFreeAmount)
+                .approvalUrl(KAKAO_APPROVAL_HOST_URL+"/"+orderId)
+                .cancelUrl(KAKAO_CANCEL_HOST_URL+"/"+orderId)
+                .failUrl(KAKAO_FAIL_HOST_URL+"/"+orderId)
+                .build();
 
-            //헤더
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization","KakaoAK "+SERVICE_APP_ADMIN_KEY);
-            headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        //헤더
+        HttpHeaders kakaoPayRequestHeaders = getKakaoPayRequestHeaders();
 
-            MultiValueMap<String, String> convertRequestEntity = paymentReadyRequest.getConvertRequestEntity();
+        //파라미터
+        MultiValueMap<String, String> convertRequestEntity = kakaoPaymentReadyRequest.getConvertRequestEntity();
 
-            // 파라미터, 헤더
-            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(convertRequestEntity,headers);
+        // 파라미터, 헤더
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(convertRequestEntity,kakaoPayRequestHeaders);
 
-            // 외부에 보낼 url
-            PaymentReadyResponse paymentReadyResponse = restTemplate.postForObject(
-                    KAKAO_PAY_READY_API_URL,
-                    requestEntity,
-                    PaymentReadyResponse.class);
+        // 외부에 보낼 url
+        KakaoPaymentReadyResponse kakaoPaymentReadyResponse = restTemplate.postForObject(
+                KAKAO_PAY_READY_API_URL,
+                requestEntity,
+                KakaoPaymentReadyResponse.class);
 
-            PaymentInfo paymentReady = PaymentInfo.builder()
-                    .orderId(orderId)
-                    .cid(CID)
-                    .tid(paymentReadyResponse.getTid())
-                    .buyerMember(buyerMember)
-                    .product(product)
-                    .taxFreeAmount(taxFreeAmount)
-                    .vatAmount(vatAmount)
-                    .quantity(quantity)
-                    .status(PaymentStatus.결제준비)
-                    .build();
+        PaymentInfo paymentReady = PaymentInfo.builder()
+                .orderId(orderId)
+                .cid(CID)
+                .tid(kakaoPaymentReadyResponse.getTid())
+                .buyerMember(buyerMember)
+                .product(product)
+                .taxFreeAmount(taxFreeAmount)
+                .vatAmount(vatAmount)
+                .quantity(quantity)
+                .status(PaymentStatus.결제준비)
+                .build();
 
-            paymentRepository.savePayReady(paymentReady);
+        paymentRepository.save(paymentReady);
 
-            return paymentReadyResponse.getNext_redirect_app_url();
-        }catch (Exception e) {
-            return KAKAO_CHANNEL_URL+"/"+URLEncoder.encode("결제실패", "UTF-8");
-        }
+        return kakaoPaymentReadyResponse;
     }
 
     @Override
     @Transactional
-    public String kakaoPaymentApprove(Long orderId, String pgToken) throws UnsupportedEncodingException {
-        try {
-            String resultRedirect;
-            Optional<PaymentInfo> maybePaymentInfo = paymentRepository.findByPaymentReady(orderId);
-            if(maybePaymentInfo.isEmpty()) throw new IllegalArgumentException("결제 준비 주문이 존재하지 않습니다.");
+    public KakaoPaymentApproveResponse kakaoPaymentApprove(Long orderId, String pgToken) throws Exception {
+        Optional<PaymentInfo> maybePaymentInfo = paymentRepository.findByPaymentReadyStatus(orderId);
+        if(maybePaymentInfo.isEmpty()) throw new IllegalArgumentException("결제 준비 주문이 존재하지 않습니다.");
 
-            PaymentInfo paymentReady = maybePaymentInfo.get();
+        PaymentInfo paymentReady = maybePaymentInfo.get();
 
-            Product product = paymentReady.getProduct();
-            Member buyerMember = paymentReady.getBuyerMember();
+        Product product = paymentReady.getProduct();
+        Member buyerMember = paymentReady.getBuyerMember();
 
-            //헤더
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization","KakaoAK "+SERVICE_APP_ADMIN_KEY);
-            headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        KakaoPaymentApproveRequest kakaoPaymentApproveRequest = KakaoPaymentApproveRequest.builder()
+                .cid(paymentReady.getCid())
+                .tid(paymentReady.getTid())
+                .partnerOrderId(String.valueOf(paymentReady.getOrderId()))
+                .partnerUserId(buyerMember.getUserKey())
+                .pgToken(pgToken)
+                .totalAmount(product.getPrice().intValue())
+                .build();
 
-            PaymentApproveRequest paymentApproveRequest = PaymentApproveRequest.builder()
-                    .cid(paymentReady.getCid())
-                    .tid(paymentReady.getTid())
-                    .partnerOrderId(String.valueOf(paymentReady.getOrderId()))
-                    .partnerUserId(buyerMember.getUserKey())
-                    .pgToken(pgToken)
-                    .totalAmount(product.getPrice().intValue())
-                    .build();
+        //헤더
+        HttpHeaders kakaoPayRequestHeaders = getKakaoPayRequestHeaders();
 
-            MultiValueMap<String, String> convertRequestEntity = paymentApproveRequest.getConvertRequestEntity();
+        // 파라미터
+        MultiValueMap<String, String> convertRequestEntity = kakaoPaymentApproveRequest.getConvertRequestEntity();
 
-            // 파라미터, 헤더
-            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(convertRequestEntity,headers);
+        // 파라미터, 헤더
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(convertRequestEntity,kakaoPayRequestHeaders);
 
-            // 외부에 보낼 url
-            PaymentApproveResponse paymentApproveResponse = restTemplate.postForObject(
-                    KAKAO_PAY_APPROVE_API_URL,
-                    requestEntity,
-                    PaymentApproveResponse.class);
+        // 외부에 보낼 url
+        KakaoPaymentApproveResponse kakaoPaymentApproveResponse = restTemplate.postForObject(
+                KAKAO_PAY_APPROVE_API_URL,
+                requestEntity,
+                KakaoPaymentApproveResponse.class);
 
-            PayMethod payMethod = PayMethod.getPayMethod(paymentApproveResponse.getPaymentMethodType());
+        PayMethod payMethod = PayMethod.getPayMethod(kakaoPaymentApproveResponse.getPaymentMethodType());
 
-            paymentReady.changeStatus(PaymentStatus.결제승인);
-            paymentReady.changeAid(paymentApproveResponse.getAid());
-            paymentReady.changeApprovedAt(paymentApproveResponse.getApprovedAt());
-            paymentReady.changePayMethod(payMethod);
-            paymentReady.changeCardInfo(paymentApproveResponse.getCardInfo());
-            paymentReady.changeAmountInfo(paymentApproveResponse.getAmount());
+        paymentReady.changeStatus(PaymentStatus.결제승인);
+        paymentReady.changeAid(kakaoPaymentApproveResponse.getAid());
+        paymentReady.changeApprovedAt(kakaoPaymentApproveResponse.getApprovedAt());
+        paymentReady.changePayMethod(payMethod);
+        paymentReady.changeCardInfo(kakaoPaymentApproveResponse.getCardInfo());
+        paymentReady.changeAmountInfo(kakaoPaymentApproveResponse.getAmount());
 
-            orderService.addOrder(paymentReady);
+        orderService.addOrder(paymentReady);
 
-            resultRedirect = URLEncoder.encode("결제성공", "UTF-8");
-            return KAKAO_CHANNEL_URL+"/"+resultRedirect;
-        }catch (Exception e) {
-            log.info("e={}",e);
-            String resultRedirect = URLEncoder.encode("결제실패", "UTF-8");
-            return KAKAO_CHANNEL_URL+"/"+resultRedirect;
-        }
+        return kakaoPaymentApproveResponse;
     }
 
     @Override
     @Transactional
-    public String kakaoPaymentCancel(Long orderId) throws UnsupportedEncodingException {
-        try {
+    public KakaoPaymentCancelResponse kakaoPaymentCancel(Long orderId) throws Exception {
+        Optional<PaymentInfo> maybeOrder = paymentRepository.findByPaymentApproveStatus(orderId);
 
-            Optional<PaymentInfo> maybeOrder = paymentRepository.findByApproveOrder(orderId);
+        if(maybeOrder.isEmpty()) throw new IllegalArgumentException("결제승인 주문이 존재하지 않습니다.");
+        PaymentInfo approveOrder = maybeOrder.get();
 
-            if(maybeOrder.isEmpty()) throw new IllegalArgumentException("결제승인 주문이 존재하지 않습니다.");
-            PaymentInfo approveOrder = maybeOrder.get();
+        KakaoPaymentCancelRequest kakaoPaymentCancelRequest = new KakaoPaymentCancelRequest(
+                approveOrder.getCid(),
+                approveOrder.getTid(),
+                approveOrder.getProduct().getPrice().intValue(),
+                approveOrder.getTaxFreeAmount(),
+                approveOrder.getVatAmount(),
+                approveOrder.getProduct().getPrice().intValue()
+        );
 
-            PaymentCancelRequest paymentCancelRequest = new PaymentCancelRequest(
-                    approveOrder.getCid(),
-                    approveOrder.getTid(),
-                    approveOrder.getProduct().getPrice().intValue(),
-                    approveOrder.getTaxFreeAmount(),
-                    approveOrder.getVatAmount(),
-                    approveOrder.getProduct().getPrice().intValue()
-            );
+        //헤더
+        HttpHeaders kakaoPayRequestHeaders = getKakaoPayRequestHeaders();
 
-            //헤더
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization","KakaoAK "+SERVICE_APP_ADMIN_KEY);
-            headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        //파라미터
+        MultiValueMap<String, String> convertRequestEntity = kakaoPaymentCancelRequest.getConvertRequestEntity();
 
-            // 파라미터, 헤더
-            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(paymentCancelRequest.getConvertRequestEntity(),headers);
+        // 파라미터, 헤더
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(convertRequestEntity,kakaoPayRequestHeaders);
 
-            // 외부에 보낼 url
-            PaymentCancelResponse paymentCancelResponse = restTemplate.postForObject(
-                    KAKAO_PAY_CANCEL_API_URL,
-                    requestEntity,
-                    PaymentCancelResponse.class);
+        // 외부에 보낼 url
+        KakaoPaymentCancelResponse kakaoPaymentCancelResponse = restTemplate.postForObject(
+                KAKAO_PAY_CANCEL_API_URL,
+                requestEntity,
+                KakaoPaymentCancelResponse.class);
 
-            approveOrder.changeStatus(PaymentStatus.결제취소);
+        approveOrder.changeStatus(PaymentStatus.결제취소);
 
-            String success = URLEncoder.encode("결제취소 성공", "UTF-8");
-            return KAKAO_CHANNEL_URL+"/"+success;
-        }catch (Exception e) {
-            log.info("e={}",e);
-            String fail = URLEncoder.encode("결제실패", "UTF-8");
-            return KAKAO_CHANNEL_URL+"/"+fail;
-        }
+        return kakaoPaymentCancelResponse;
+    }
+
+    private HttpHeaders getKakaoPayRequestHeaders(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization","KakaoAK "+SERVICE_APP_ADMIN_KEY);
+        headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        return headers;
     }
 }
