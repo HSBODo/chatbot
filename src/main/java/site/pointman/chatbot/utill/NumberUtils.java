@@ -11,7 +11,7 @@ public class NumberUtils {
         return matcher.find();
     }
 
-    public static Long createProductId(){
+    public static Long createNumberId(){
         Random random = new Random();
         random.setSeed(System.currentTimeMillis());
         int num = random.nextInt(1000000);
