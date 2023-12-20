@@ -40,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
 
         Long orderId = orderRepository.save(order);
 
-        productRepository.updateStatus(product.getId(), ProductStatus.결제완료_대기);
+        productRepository.updateStatus(product.getId(), ProductStatus.판매대기);
 
         return orderId;
     }
