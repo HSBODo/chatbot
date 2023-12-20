@@ -92,7 +92,7 @@ class ProductServiceTest {
     @Transactional
     void addProduct() throws JsonProcessingException {
         //give
-        Long productId = NumberUtils.createProductId();
+        Long productId = NumberUtils.createNumberId();
         String userKey = chatBotRequest.getUserKey();
         List<String> imageUrls = chatBotRequest.getProductImages();
         String productCategory = chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue();
