@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.constant.PaymentStatus;
 import site.pointman.chatbot.domain.order.PayMethod;
@@ -77,9 +78,12 @@ public class PaymentServiceImpl implements PaymentService {
         Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
         if (mayBeProduct.isEmpty()) throw new IllegalArgumentException("상품이 존재하지 않습니다");
 
+        Product product = mayBeProduct.get();
+        if (!product.getStatus().equals(ProductStatus.판매중))throw new IllegalArgumentException("판매중인 상품이 아닙니다.");
+
         Long orderId = NumberUtils.createNumberId();
         Member buyerMember = mayBeMember.get();
-        Product product = mayBeProduct.get();
+
 
 
         KakaoPaymentReadyRequest kakaoPaymentReadyRequest = KakaoPaymentReadyRequest.builder()
@@ -132,7 +136,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public KakaoPaymentApproveResponse kakaoPaymentApprove(Long orderId, String pgToken) throws Exception {
         Optional<PaymentInfo> maybePaymentInfo = paymentRepository.findByPaymentReadyStatus(orderId);
-        if(maybePaymentInfo.isEmpty()) throw new IllegalArgumentException("결제 준비 주문이 존재하지 않습니다.");
+
+        if(maybePaymentInfo.isEmpty()) throw new IllegalArgumentException("결제준비중인 주문이 존재하지 않습니다.");
 
         PaymentInfo paymentReady = maybePaymentInfo.get();
 
@@ -211,6 +216,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         successPaymentInfo.changeStatus(PaymentStatus.결제취소);
         Long successPaymentInfoOrderId = successPaymentInfo.getOrderId();
+
         orderService.cancelOrder(successPaymentInfoOrderId);
 
         return kakaoPaymentCancelResponse;
