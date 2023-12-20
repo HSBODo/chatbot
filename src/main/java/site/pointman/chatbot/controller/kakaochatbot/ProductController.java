@@ -81,13 +81,14 @@ public class ProductController {
     @ResponseBody
     @PostMapping(value = "POST" , headers = {"Accept=application/json; UTF-8"})
     public Response add(@RequestBody ChatBotRequest chatBotRequest){
-        Long productId = NumberUtils.createProductId();
         String userKey = chatBotRequest.getUserKey();
         List<String> imageUrls = chatBotRequest.getProductImages();
         String productCategory = chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue();
         ProductDto productDto = chatBotRequest.createProductDto();
 
         if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+
+        Long productId = NumberUtils.createNumberId();
 
         return productService.addProduct(
                 productDto,
