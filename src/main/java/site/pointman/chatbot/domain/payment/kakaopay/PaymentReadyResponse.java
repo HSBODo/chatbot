@@ -1,10 +1,10 @@
-package site.pointman.chatbot.dto.kakaopay;
+package site.pointman.chatbot.domain.payment.kakaopay;
 
 
 import lombok.Getter;
 
 @Getter
-public class PaymentReadyResponseDto {
+public class PaymentReadyResponse {
     private String tid;
     private String tms_result;
     private String next_redirect_app_url;
