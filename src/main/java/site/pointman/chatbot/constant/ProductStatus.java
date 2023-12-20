@@ -5,22 +5,24 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum ProductStatus {
-    판매중("판매중"),
-    숨김("숨김"),
-    예약("예약"),
-    예약취소("예약취소"),
-    결제완료("결제완료"),
-    판매대기("판매대기"),
-    판매완료("판매완료"),
-    삭제("삭제");
+    판매중("판매중",""),
+    숨김("숨김",""),
+    예약("예약",""),
+    예약취소("예약취소",""),
+    결제완료("결제완료",""),
+    판매대기("판매대기","구매중"),
+    판매완료("판매완료","구매완료"),
+    삭제("삭제","");
 
 
 
 
     private final String value;
+    private final String oppositeValue;
 
-    ProductStatus(String value) {
+    ProductStatus(String value, String oppositeValue) {
         this.value = value;
+        this.oppositeValue = oppositeValue;
     }
 
     public static ProductStatus getProductStatus(String value){
@@ -32,5 +34,9 @@ public enum ProductStatus {
 
     public String getValue() {
         return value;
+    }
+
+    public String getOppositeValue() {
+        return oppositeValue;
     }
 }
