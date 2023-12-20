@@ -2,14 +2,8 @@ package site.pointman.chatbot.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import site.pointman.chatbot.repository.LogRepository;
-import site.pointman.chatbot.repository.MemberRepository;
-import site.pointman.chatbot.repository.NoticeRepository;
-import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.repository.impl.LogRepositoryImpl;
-import site.pointman.chatbot.repository.impl.MemberRepositoryImpl;
-import site.pointman.chatbot.repository.impl.NoticeRepositoryImpl;
-import site.pointman.chatbot.repository.impl.ProductRepositoryImpl;
+import site.pointman.chatbot.repository.*;
+import site.pointman.chatbot.repository.impl.*;
 
 import javax.persistence.EntityManager;
 
@@ -21,11 +15,6 @@ public class JpaEntityManagerBeanConfig {
     public JpaEntityManagerBeanConfig(EntityManager em) {
         this.em = em;
     }
-
-//    @Bean
-//    public OrderRepository orderRepository(){
-//        return new OrderRepositoryImpl(em);
-//    }
 
     @Bean
     public MemberRepository memberRepository(){
@@ -42,5 +31,13 @@ public class JpaEntityManagerBeanConfig {
     @Bean
     public NoticeRepository noticeRepository(){
         return new NoticeRepositoryImpl(em);
+    }
+    @Bean
+    public OrderRepository orderRepository(){
+        return new OrderRepositoryImpl(em);
+    }
+    @Bean
+    public PaymentRepository paymentRepository(){
+        return new PaymentRepositoryImpl(em);
     }
 }
