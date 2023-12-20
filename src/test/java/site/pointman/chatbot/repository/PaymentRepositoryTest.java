@@ -75,12 +75,12 @@ class PaymentRepositoryTest {
 
     @Test
     @Transactional
-    void findByPaymentApproveStatus() {
+    void findByPaymentSuccessStatus() {
 
         //when
-        PaymentInfo paymentInfo = paymentRepository.findByPaymentApproveStatus(approveOrderId).get();
+        PaymentInfo paymentInfo = paymentRepository.findByPaymentSuccessStatus(approveOrderId).get();
 
         //then
-        Assertions.assertThat(paymentInfo.getStatus()).isEqualTo(PaymentStatus.결제승인);
+        Assertions.assertThat(paymentInfo.getStatus()).isEqualTo(PaymentStatus.결제완료);
     }
 }

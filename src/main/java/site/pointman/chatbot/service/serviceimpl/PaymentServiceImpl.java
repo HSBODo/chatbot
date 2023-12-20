@@ -180,7 +180,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public KakaoPaymentCancelResponse kakaoPaymentCancel(Long orderId) throws Exception {
-        Optional<PaymentInfo> maybeOrder = paymentRepository.findByPaymentApproveStatus(orderId);
+        Optional<PaymentInfo> maybeOrder = paymentRepository.findByPaymentSuccessStatus(orderId);
 
         if(maybeOrder.isEmpty()) throw new IllegalArgumentException("결제승인 주문이 존재하지 않습니다.");
         PaymentInfo approveOrder = maybeOrder.get();
