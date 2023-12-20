@@ -6,7 +6,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 @Getter
-public class PaymentCancelRequest {
+public class KakaoPaymentCancelRequest {
     private String cid;
     private String tid;
     private int cancelAmount;
@@ -14,7 +14,7 @@ public class PaymentCancelRequest {
     private int cancelVatAmount;
     private int cancelAvailableAmount;
 
-    public PaymentCancelRequest(String cid, String tid, int cancelAmount, int cancelTaxFreeAmount, int cancelVatAmount, int cancelAvailableAmount) {
+    public KakaoPaymentCancelRequest(String cid, String tid, int cancelAmount, int cancelTaxFreeAmount, int cancelVatAmount, int cancelAvailableAmount) {
         this.cid = cid;
         this.tid = tid;
         this.cancelAmount = cancelAmount;

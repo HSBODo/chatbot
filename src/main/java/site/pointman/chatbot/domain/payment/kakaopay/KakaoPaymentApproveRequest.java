@@ -6,7 +6,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 @Getter
-public class PaymentApproveRequest {
+public class KakaoPaymentApproveRequest {
     private String cid;
     private String tid;
     private String partnerOrderId;
@@ -15,7 +15,7 @@ public class PaymentApproveRequest {
     private int totalAmount;
 
     @Builder
-    public PaymentApproveRequest(String cid, String tid, String partnerOrderId, String partnerUserId, String pgToken, int totalAmount) {
+    public KakaoPaymentApproveRequest(String cid, String tid, String partnerOrderId, String partnerUserId, String pgToken, int totalAmount) {
         this.cid = cid;
         this.tid = tid;
         this.partnerOrderId = partnerOrderId;

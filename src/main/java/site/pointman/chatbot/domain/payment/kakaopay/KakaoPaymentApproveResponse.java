@@ -3,12 +3,14 @@ package site.pointman.chatbot.domain.payment.kakaopay;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import site.pointman.chatbot.domain.payment.Amount;
+import site.pointman.chatbot.domain.payment.CardInfo;
 
 import java.util.Objects;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class PaymentApproveResponse {
+public class KakaoPaymentApproveResponse {
     private String aid;
     private String cid;
     private String tid;

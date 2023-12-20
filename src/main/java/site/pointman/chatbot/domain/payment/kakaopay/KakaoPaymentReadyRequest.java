@@ -6,7 +6,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 @Getter
-public class PaymentReadyRequest {
+public class KakaoPaymentReadyRequest {
     private String cid;
     private String partnerOrderId;
     private String partnerUserId;
@@ -20,7 +20,7 @@ public class PaymentReadyRequest {
     private String cancelUrl;
 
     @Builder
-    public PaymentReadyRequest(String cid, String partnerOrderId, String partnerUserId, String itemName, int quantity, int totalAmount, int taxFreeAmount, int vatAmount, String approvalUrl, String failUrl, String cancelUrl) {
+    public KakaoPaymentReadyRequest(String cid, String partnerOrderId, String partnerUserId, String itemName, int quantity, int totalAmount, int taxFreeAmount, int vatAmount, String approvalUrl, String failUrl, String cancelUrl) {
         this.cid = cid;
         this.partnerOrderId = partnerOrderId;
         this.partnerUserId = partnerUserId;
