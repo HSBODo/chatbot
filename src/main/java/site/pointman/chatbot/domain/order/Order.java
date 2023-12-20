@@ -39,11 +39,12 @@ public class Order extends BaseEntity {
     private PaymentInfo paymentInfo;
 
     @Builder
-    public Order(Long orderId, Member buyerMember, Product product, int quantity, OrderStatus status) {
+    public Order(Long orderId, Member buyerMember, Product product, int quantity, PaymentInfo paymentInfo, OrderStatus status) {
         this.orderId = orderId;
         this.buyerMember = buyerMember;
         this.product = product;
         this.quantity = quantity;
+        this.paymentInfo = paymentInfo;
         this.status = status;
     }
 

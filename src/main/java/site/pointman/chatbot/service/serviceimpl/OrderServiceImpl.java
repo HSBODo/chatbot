@@ -36,6 +36,7 @@ public class OrderServiceImpl implements OrderService {
                 .product(product)
                 .quantity(paymentInfo.getQuantity())
                 .status(OrderStatus.결제완료)
+                .paymentInfo(paymentInfo)
                 .build();
 
         Long orderId = orderRepository.save(order);
