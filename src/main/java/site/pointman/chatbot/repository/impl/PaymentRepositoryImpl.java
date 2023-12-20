@@ -17,13 +17,13 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
     @Override
-    public PaymentInfo savePayReady(PaymentInfo paymentInfo) {
+    public PaymentInfo save(PaymentInfo paymentInfo) {
         em.persist(paymentInfo);
         return paymentInfo;
     }
 
     @Override
-    public Optional<PaymentInfo> findByPaymentReady(Long orderId) {
+    public Optional<PaymentInfo> findByPaymentReadyStatus(Long orderId) {
         return Optional.ofNullable(em.createQuery("select p from PaymentInfo p where p.status=:status AND p.orderId=:orderId", PaymentInfo.class)
                 .setParameter("status", PaymentStatus.결제준비)
                 .setParameter("orderId",orderId)
@@ -32,7 +32,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
     @Override
-    public Optional<PaymentInfo> findByApproveOrder(Long orderId) {
+    public Optional<PaymentInfo> findByPaymentApproveStatus(Long orderId) {
         return em.createQuery("select p from PaymentInfo p where p.status=:status AND p.orderId=:orderId", PaymentInfo.class)
                 .setParameter("status", PaymentStatus.결제승인)
                 .setParameter("orderId",orderId)
