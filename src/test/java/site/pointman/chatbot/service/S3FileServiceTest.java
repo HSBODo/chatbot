@@ -31,7 +31,7 @@ class S3FileServiceTest {
 
         //when
         ProductImageDto productImageDto = s3FileService.uploadProductImage(imageUrls, userKey, productName);
-        List<String> returnImageUrl = productImageDto.getImageUrl();
+        List<String> returnImageUrl = productImageDto.getImageUrls();
 
         //then
         Assertions.assertThat(returnImageUrl.get(0)).contains(S3_REPOSITORY);
