@@ -1,6 +1,7 @@
 package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.member.Member;
@@ -18,7 +19,7 @@ import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.dto.product.ProductImageDto;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.service.OrderService;
+import site.pointman.chatbot.service.PaymentService;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.S3FileService;
 import site.pointman.chatbot.utill.StringUtils;
@@ -33,19 +34,19 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     S3FileService s3FileService;
-    OrderService orderService;
 
     ProductRepository productRepository;
     MemberRepository memberRepository;
 
-
     ChatBotExceptionResponse chatBotExceptionResponse;
 
-    public ProductServiceImpl(S3FileService s3FileService, ProductRepository productRepository, MemberRepository memberRepository, OrderService orderService) {
+    @Value("${host.url}")
+    private String HOST_URL;
+
+    public ProductServiceImpl(S3FileService s3FileService, ProductRepository productRepository, MemberRepository memberRepository) {
         this.s3FileService = s3FileService;
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
-        this.orderService = orderService;
         this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
@@ -261,7 +262,7 @@ public class ProductServiceImpl implements ProductService {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         TextCard textCard = new TextCard();
 
-        Optional<Member> myBeMember = memberRepository.findByUserKey(userKey);
+        Optional<Member> mayBeMember = memberRepository.findByUserKey(userKey);
 
         Carousel<BasicCard> carouselImage = createCarouselImage(product.getProductImages().getImageUrls());
 
@@ -269,10 +270,16 @@ public class ProductServiceImpl implements ProductService {
 
         textCard.setTitle(product.getName());
         textCard.setDescription(product.getProductProfileTypeOfChatBot());
-        if(!myBeMember.isEmpty()){
-            Member member = myBeMember.get();
-            String kakaoPaymentReadyUrl = orderService.getKakaoPaymentReadyUrl(product, member);
-            Button button = new Button("카카오페이 결제(테스트)",ButtonAction.웹링크연결,kakaoPaymentReadyUrl);
+
+        if(!mayBeMember.isEmpty()){
+            StringBuilder paymentUrl = new StringBuilder(HOST_URL);
+            paymentUrl.append("/order")
+                    .append("/kakaopay-ready")
+                    .append("/"+product.getId())
+                    .append("?")
+                    .append("userKey="+userKey);
+
+            Button button = new Button("카카오페이 결제(테스트)",ButtonAction.웹링크연결,paymentUrl.toString());
             textCard.setButtons(button);
         }
 
