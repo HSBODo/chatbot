@@ -35,7 +35,7 @@ public class OrderController {
 
             return "redirect:"+next_redirect_app_url;
         }catch (Exception e) {
-            return "redirect:"+KAKAO_CHANNEL_URL+"/"+URLEncoder.encode("결제실패 "+e.getMessage(), "UTF-8");
+            return "redirect:"+KAKAO_CHANNEL_URL+"/"+URLEncoder.encode("결제실패", "UTF-8");
         }
     }
 
@@ -46,7 +46,7 @@ public class OrderController {
 
             return "redirect:"+KAKAO_CHANNEL_URL+"/"+ URLEncoder.encode("결제성공", "UTF-8");
         }catch (Exception e) {
-            return "redirect:"+KAKAO_CHANNEL_URL+"/"+URLEncoder.encode("결제실패 "+e.getMessage(), "UTF-8");
+            return "redirect:"+KAKAO_CHANNEL_URL+"/"+URLEncoder.encode("결제실패", "UTF-8");
         }
     }
 
@@ -55,9 +55,9 @@ public class OrderController {
         try {
             paymentService.kakaoPaymentCancel(orderId);
 
-            return "redirect:"+KAKAO_CHANNEL_URL+"/"+ URLEncoder.encode("결제취소 성공", "UTF-8");
+            return "redirect:"+KAKAO_CHANNEL_URL+"/"+ URLEncoder.encode("결제취소성공", "UTF-8");
         }catch (Exception e) {
-            return "redirect:"+KAKAO_CHANNEL_URL+"/"+URLEncoder.encode("결제취소 실패 "+e.getMessage(), "UTF-8");
+            return "redirect:"+KAKAO_CHANNEL_URL+"/"+URLEncoder.encode("결제취소실패", "UTF-8");
         }
     }
 
