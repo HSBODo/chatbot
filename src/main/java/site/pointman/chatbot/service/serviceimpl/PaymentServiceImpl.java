@@ -165,7 +165,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         PayMethod payMethod = PayMethod.getPayMethod(kakaoPaymentApproveResponse.getPaymentMethodType());
 
-        paymentReady.changeStatus(PaymentStatus.결제승인);
+        paymentReady.changeStatus(PaymentStatus.결제완료);
         paymentReady.changeAid(kakaoPaymentApproveResponse.getAid());
         paymentReady.changeApprovedAt(kakaoPaymentApproveResponse.getApprovedAt());
         paymentReady.changePayMethod(payMethod);

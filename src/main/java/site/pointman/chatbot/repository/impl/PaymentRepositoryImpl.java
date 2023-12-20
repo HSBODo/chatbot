@@ -34,7 +34,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     @Override
     public Optional<PaymentInfo> findByPaymentApproveStatus(Long orderId) {
         return em.createQuery("select p from PaymentInfo p where p.status=:status AND p.orderId=:orderId", PaymentInfo.class)
-                .setParameter("status", PaymentStatus.결제승인)
+                .setParameter("status", PaymentStatus.결제완료)
                 .setParameter("orderId",orderId)
                 .getResultList().stream().findAny();
     }
