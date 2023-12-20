@@ -12,6 +12,7 @@ import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.service.MemberService;
+import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.utill.NumberUtils;
 
@@ -25,11 +26,13 @@ public class ProductController {
 
     ProductService productService;
     MemberService memberService;
+    OrderService orderService;
     ChatBotExceptionResponse chatBotExceptionResponse;
 
-    public ProductController(ProductService productService, MemberService memberService) {
+    public ProductController(ProductService productService, MemberService memberService, OrderService orderService) {
         this.productService = productService;
         this.memberService = memberService;
+        this.orderService = orderService;
         this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
@@ -150,6 +153,14 @@ public class ProductController {
         String searchWord = chatBotRequest.getSearchWord();
 
         return productService.getProductsBySearchWord(searchWord);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "GET/byPurchase" , headers = {"Accept=application/json; UTF-8"})
+    public Object getPurchase(@RequestBody ChatBotRequest chatBotRequest) {
+        String userKey = chatBotRequest.getUserKey();
+
+        return orderService.getPurchaseProducts(userKey);
     }
 
 }
