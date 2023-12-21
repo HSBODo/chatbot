@@ -124,14 +124,13 @@ public class ProductServiceImpl implements ProductService {
             Optional<Product> mayBeProduct = productRepository.findByProductId(Long.parseLong(productId));
 
             if(mayBeProduct.isEmpty()) return chatBotExceptionResponse.createException("상품이 존재하지 않습니다.");
-
+            
             Product product = mayBeProduct.get();
 
             return getProductProfileSuccessChatBotResponse(userKey, product);
         }catch (Exception e){
             return chatBotExceptionResponse.createException();
         }
-
     }
 
     @Override
@@ -198,9 +197,9 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    private ChatBotResponse createStatusQuickButtons(String userKey, String productUserKey, ChatBotResponse chatBotResponse, ProductStatus status,  String productId){
+    private ChatBotResponse createStatusQuickButtons(String buyerUserKey, String productUserKey, ChatBotResponse chatBotResponse, ProductStatus status,  String productId){
 
-        if(productUserKey.equals(userKey)) switch (status){
+        if(productUserKey.equals(buyerUserKey)) switch (status){
             //MyPage 상품 조회시
             case 판매중:
                 chatBotResponse.addQuickButton(ButtonName.숨김.name(), ButtonAction.블럭이동, BlockId.PRODUCT_UPDATE_STATUS.getBlockId(), ButtonParamKey.productId, productId);
@@ -224,7 +223,7 @@ public class ProductServiceImpl implements ProductService {
                 chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
                 return chatBotResponse;
             case 판매완료:
-                chatBotResponse.addQuickButton(ButtonName.삭제.name(), ButtonAction.블럭이동, BlockId.PRODUCT_DELETE.getBlockId(), ButtonParamKey.productId, productId);
+                chatBotResponse.addQuickButton(ButtonName.삭제.name(), ButtonAction.블럭이동, BlockId.PRODUCT_UPDATE_STATUS.getBlockId(), ButtonParamKey.productId, productId);
                 chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
                 return chatBotResponse;
             default:
@@ -261,34 +260,35 @@ public class ProductServiceImpl implements ProductService {
         return chatBotResponse;
     }
 
-    private ChatBotResponse getProductProfileSuccessChatBotResponse(String userKey, Product product){
+    private ChatBotResponse getProductProfileSuccessChatBotResponse(String buyerUserKey, Product product){
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         TextCard textCard = new TextCard();
 
-        Optional<Member> mayBeMember = memberRepository.findByUserKey(userKey);
+        String productUserKey = product.getMember().getUserKey();
 
         Carousel<BasicCard> carouselImage = createCarouselImage(product.getProductImages().getImageUrls());
 
         chatBotResponse.addCarousel(carouselImage);
-
         textCard.setTitle(product.getName());
         textCard.setDescription(product.getProductProfileTypeOfChatBot());
 
-        if(!mayBeMember.isEmpty()){
-            StringBuilder paymentUrl = new StringBuilder(HOST_URL);
-            paymentUrl.append("/order")
-                    .append("/kakaopay-ready")
-                    .append("/"+product.getId())
-                    .append("?")
-                    .append("userKey="+userKey);
+        Optional<Member> buyerMember = memberRepository.findByUserKey(buyerUserKey);
+        if(!buyerMember.isEmpty() && !productUserKey.equals(buyerUserKey) && product.getStatus().equals(ProductStatus.판매중)){
+            /**
+             * 카카오페이 결제버튼 노출조건
+             * 1. 회원이어야 한다.
+             * 2. 나의 상품은 내가 카카오페이 결제 할 수 없다.
+             * 3. 판매중인 상품만 카카오페이 결제가 가능하다.
+             */
+            String kakaoPaymentUrl = product.getKakaoPaymentUrl(buyerUserKey,HOST_URL);
 
-            Button button = new Button("카카오페이 결제(테스트)",ButtonAction.웹링크연결,paymentUrl.toString());
+            Button button = new Button("카카오페이 결제(테스트)",ButtonAction.웹링크연결,kakaoPaymentUrl);
             textCard.setButtons(button);
         }
 
         chatBotResponse.addTextCard(textCard);
 
-        chatBotResponse = createStatusQuickButtons(userKey, product.getMember().getUserKey(), chatBotResponse, product.getStatus(), String.valueOf(product.getId()));
+        chatBotResponse = createStatusQuickButtons(buyerUserKey, product.getMember().getUserKey(), chatBotResponse, product.getStatus(), String.valueOf(product.getId()));
         return chatBotResponse;
     }
 
