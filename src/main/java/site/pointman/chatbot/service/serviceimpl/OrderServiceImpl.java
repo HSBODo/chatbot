@@ -44,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
                 .product(product)
                 .quantity(paymentInfo.getQuantity())
                 .trackingNumber("미입력")
-                .status(OrderStatus.결제완료)
+                .status(OrderStatus.결제체결)
                 .paymentInfo(paymentInfo)
                 .build();
 
@@ -65,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = mayBeOrder.get();
         OrderStatus status = order.getStatus();
 
-        if(!status.equals(OrderStatus.결제완료)) throw new IllegalArgumentException("결제완료된 주문이 아닙니다.");
+        if(!status.equals(OrderStatus.결제체결)) throw new IllegalArgumentException("결제체결된 주문이 아닙니다.");
 
         Long productId = order.getProduct().getId();
 
@@ -142,7 +142,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public Object updateTrackingNumber(String productId, String trackingNumber) {
-        Optional<Order> mayBeOrder = orderRepository.findByProductId(Long.parseLong(productId),OrderStatus.결제완료);
+        Optional<Order> mayBeOrder = orderRepository.findByProductId(Long.parseLong(productId),OrderStatus.결제체결);
         if (mayBeOrder.isEmpty()) return new ChatBotExceptionResponse().createException("주문이 존재하지 않습니다.");
 
         Order order = mayBeOrder.get();
