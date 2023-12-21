@@ -1,11 +1,13 @@
-package site.pointman.chatbot.controller.admin;
+package site.pointman.chatbot.controller.kakaochatbot;
 
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import site.pointman.chatbot.constant.ApiResultCode;
 import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentReadyResponse;
+import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.service.PaymentService;
 
 import java.io.UnsupportedEncodingException;
@@ -48,21 +50,10 @@ public class OrderController {
         }
     }
 
-    @PostMapping(value = "kakaopay-cancel/{orderId}")
-    public String kakaoPayCancel (@PathVariable Long orderId) throws UnsupportedEncodingException {
-        try {
-            paymentService.kakaoPaymentCancel(orderId);
-
-            return "redirect:"+KAKAO_CHANNEL_URL+"/"+ URLEncoder.encode("결제취소성공", "UTF-8");
-        }catch (Exception e) {
-            return "redirect:"+KAKAO_CHANNEL_URL+"/"+URLEncoder.encode("결제취소실패", "UTF-8");
-        }
-    }
-
     @PostMapping(value = "kakaopay-fail/{orderId}")
-    public String kakaoPayFail (@PathVariable Long orderId) {
-        String redirectUrl = "";
-        return "redirect:"+redirectUrl;
+    public String kakaoPayFail (@RequestParam String request) {
+        log.info("request={}",request);
+        return null;
     }
 
 }
