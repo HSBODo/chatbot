@@ -25,7 +25,9 @@ public enum BlockId {
     ORDER_ADD_TRACKING_NUMBER("판매상품 운송장번호 등록","6583d9c93fa0457f23d7ac03"),
     FIND_PRODUCTS_BY_CATEGORY("카테고리로 상품 조회","657da1bac75579280e900af9"),
     FIND_NOTICES("공지사항 목록","65262c152dd06e457d91c7c2"),
-    FIND_NOTICE("게시글 조회","658088bd73cb0d4d1977c880")
+    FIND_NOTICE("게시글 조회","658088bd73cb0d4d1977c880"),
+    PURCHASE_SUCCESS_RECONFIRM("상품 구매확정 재확인","65846277aca99e51cc5be11d"),
+    PURCHASE_SUCCESS_CONFIRM("상품 구매확정","658463e835bee670bd302d52")
     ;
     private final String name;
     private final String blockId;

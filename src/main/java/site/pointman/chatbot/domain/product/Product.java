@@ -74,6 +74,9 @@ public class Product extends BaseEntity {
     public void changeStatus(ProductStatus productStatus){
         this.status = productStatus;
     }
+    public void changeBuyerMemberUserKey(String buyerUserKey){
+        this.buyerUserKey = buyerUserKey;
+    }
     public String getProductProfileTypeOfChatBot(){
         StringBuilder productProfile = new StringBuilder();
         String formatPrice = StringUtils.formatPrice(price);

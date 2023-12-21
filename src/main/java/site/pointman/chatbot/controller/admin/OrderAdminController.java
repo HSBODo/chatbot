@@ -30,8 +30,10 @@ public class OrderAdminController {
         this.orderService = orderService;
     }
 
+    @ResponseBody
     @PostMapping(value = "kakaopay-cancel/{orderId}")
-    public HttpResponse kakaoPayCancel (@PathVariable Long orderId) throws UnsupportedEncodingException {
+
+    public HttpResponse kakaoPayCancel (@PathVariable Long orderId) {
         try {
             paymentService.kakaoPaymentCancel(orderId);
 
@@ -41,8 +43,9 @@ public class OrderAdminController {
         }
     }
 
+    @ResponseBody
     @PatchMapping(value = "/success/{orderId}")
-    public HttpResponse orderSuccess (@PathVariable Long orderId) throws UnsupportedEncodingException {
+    public HttpResponse orderSuccess (@PathVariable Long orderId) {
         return orderService.successOrder(orderId);
     }
 

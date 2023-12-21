@@ -81,6 +81,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public HttpResponse successOrder(Long orderId) {
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId, OrderStatus.주문체결);
         if(mayBeOrder.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"체결된 주문이 존재하지 않습니다.");
@@ -90,8 +91,11 @@ public class OrderServiceImpl implements OrderService {
         String trackingNumber = order.getTrackingNumber();
         if(trackingNumber.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"운송장번호가 입력되어있지 않습니다.");
 
+        product.changeBuyerMemberUserKey(buyerMember.getUserKey());
+        product.changeStatus(ProductStatus.판매완료);
+        order.changeStatus(OrderStatus.거래완료);
 
-        return null;
+        return new HttpResponse(ApiResultCode.OK,"주문이 정상적으로 거래가 완료되었습니다. 주문번호= "+order.getOrderId());
     }
 
     @Override
@@ -153,8 +157,44 @@ public class OrderServiceImpl implements OrderService {
         textCard.setDescription(order.getPurchaseProductProfile());
 
         chatBotResponse.addTextCard(textCard);
-        if(!order.getTrackingNumber().isEmpty()) chatBotResponse.addQuickButton(new Button(ButtonName.구매확정.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId()));
+
+        if(!order.getTrackingNumber().isEmpty() && !order.getStatus().equals(OrderStatus.거래완료)) chatBotResponse.addQuickButton(new Button(ButtonName.구매확정.name(),ButtonAction.블럭이동,BlockId.PURCHASE_SUCCESS_RECONFIRM.getBlockId(),ButtonParamKey.orderId,orderId));
         chatBotResponse.addQuickButton(new Button(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId()));
+        return chatBotResponse;
+    }
+
+    @Override
+    public ChatBotResponse purchaseSuccessReconfirm(String orderId) {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+        StringBuilder text = new StringBuilder();
+        text
+                .append("배송받은 상품을 꼼꼼히 확인하셨나요?")
+                .append("\n")
+                .append("구매확정 이후에는 취소가 어렵습니다.")
+                .append("\n")
+                .append("신중하게 고민하고 구매확정 버튼을 눌러주세요.")
+        ;
+
+        chatBotResponse.addSimpleText(text.toString());
+        chatBotResponse.addQuickButton(ButtonName.구매확정.name(),ButtonAction.블럭이동,BlockId.PURCHASE_SUCCESS_CONFIRM.getBlockId(),ButtonParamKey.orderId,orderId);
+        chatBotResponse.addQuickButton(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
+        return chatBotResponse;
+    }
+
+    @Override
+    @Transactional
+    public ChatBotResponse purchaseSuccessConfirm(String orderId) {
+        Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId), OrderStatus.주문체결);
+        if (mayBeOrder.isEmpty()) return new ChatBotExceptionResponse().createException("체결된 주문이 존재하지 않습니다.");
+        Order order = mayBeOrder.get();
+        Product product = order.getProduct();
+
+        order.orderSuccessConfirm();
+
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+
+        chatBotResponse.addSimpleText("정상적으로 구매확정을 완료하였습니다.");
+        chatBotResponse.addQuickButton(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
 

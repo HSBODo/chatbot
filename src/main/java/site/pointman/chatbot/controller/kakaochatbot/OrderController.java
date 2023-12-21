@@ -72,4 +72,20 @@ public class OrderController {
         return orderService.updateTrackingNumber(orderId,trackingNumber);
     }
 
+    @ResponseBody
+    @PostMapping(value = "kakaochatbot/GET/purchaseSuccessReconfirm")
+    public Object purchaseSuccessReconfirm (@RequestBody ChatBotRequest chatBotRequest) {
+        String orderId = chatBotRequest.getOrderId();
+
+        return orderService.purchaseSuccessReconfirm(orderId);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "kakaochatbot/POST/purchaseSuccessConfirm")
+    public Object purchaseSuccessConfirmation (@RequestBody ChatBotRequest chatBotRequest) {
+        String orderId = chatBotRequest.getOrderId();
+
+        return orderService.purchaseSuccessConfirm(orderId);
+    }
+
 }

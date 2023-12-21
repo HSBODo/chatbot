@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.constant.OrderStatus;
+import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
@@ -60,6 +61,11 @@ public class Order extends BaseEntity {
         this.trackingNumber = trackingNumber;
     }
 
+    public String viewTackingNumber(){
+        if (trackingNumber.isEmpty()) return "미입력";
+        return this.trackingNumber;
+    }
+
     public String getPurchaseProductProfile(){
         StringBuilder productProfile = new StringBuilder();
         String formatPrice = StringUtils.formatPrice(product.getPrice());
@@ -79,7 +85,7 @@ public class Order extends BaseEntity {
                 .append("\n")
                 .append("카카오 오픈 채팅방: " + product.getKakaoOpenChatUrl())
                 .append("\n")
-                .append("운송장번호: " + trackingNumber)
+                .append("운송장번호: " + viewTackingNumber())
                 .append("\n\n")
                 .append("결제일자: " + getFormatApproveDate())
                 .toString();
@@ -87,5 +93,11 @@ public class Order extends BaseEntity {
 
     public String getFormatApproveDate(){
        return StringUtils.dateFormat(paymentInfo.getCreateDate(),"yyyy-MM-dd hh:mm:ss","yyyy-MM-dd");
+    }
+
+    public void orderSuccessConfirm(){
+        this.status = OrderStatus.거래완료;
+        this.product.changeStatus(ProductStatus.판매완료);
+        this.product.changeBuyerMemberUserKey(buyerMember.getUserKey());
     }
 }

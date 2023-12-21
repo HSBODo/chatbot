@@ -255,9 +255,6 @@ public class ProductServiceImpl implements ProductService {
         Carousel<BasicCard> carouselImage = createCarouselImage(product.getProductImages().getImageUrls());
         chatBotResponse.addCarousel(carouselImage);
 
-        String trackingNumber = order.getTrackingNumber();
-        if (trackingNumber.isEmpty())trackingNumber = "미입력";
-
         StringBuilder productDescription = new StringBuilder();
         productDescription
                 .append("상품상태: " + product.getStatus().getValue())
@@ -274,7 +271,7 @@ public class ProductServiceImpl implements ProductService {
                 .append("\n\n")
                 .append("등록일자: " + product.getFormatCreateDate())
                 .append("\n")
-                .append("운송장번호: " + trackingNumber)
+                .append("운송장번호: " + order.viewTackingNumber())
                 .append("\n\n")
                 .append("구매자: " + order.getBuyerMember().getUserKey())
                 .append("\n")
