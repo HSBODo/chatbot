@@ -93,12 +93,13 @@ public class Product extends BaseEntity {
                 .append("등록일자: " + getFormatCreateDate())
                 .toString();
     }
-
     public String getFormatCreateDate() {
         String createDate = getCreateDate();
         return StringUtils.dateFormat(createDate, "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
     }
-
+    public String getFormatPrice(){
+        return StringUtils.formatPrice(price);
+    }
     public String getKakaoPaymentUrl(String buyerUserKey,String hostUrl){
         StringBuilder paymentUrl = new StringBuilder(hostUrl);
         paymentUrl.append("/order")

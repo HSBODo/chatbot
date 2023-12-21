@@ -20,6 +20,8 @@ public enum BlockId {
     PRODUCT_GET_CATEGORIES("추천상품 카테고리 선택","657d588e8a8123272a649b03"),
     PRODUCT_GET_PURCHASE("회원 구매내역","6582f378def18a0edd17a189"),
     PRODUCT_GET_PURCHASE_PROFILE("나의 구매상품 프로필 조회","6583c5c6dcd6f94a82e2a865"),
+    PRODUCT_GET_CONTRACT("나의 판매대기 상품 조회","658438b378a18b06c3169d27"),
+    PRODUCT_GET_CONTRACT_PROFILE("판매대기 상품 프로필 조회","658440c5dcd6f94a82e2b683"),
     ORDER_ADD_TRACKING_NUMBER("판매상품 운송장번호 등록","6583d9c93fa0457f23d7ac03"),
     FIND_PRODUCTS_BY_CATEGORY("카테고리로 상품 조회","657da1bac75579280e900af9"),
     FIND_NOTICES("공지사항 목록","65262c152dd06e457d91c7c2"),

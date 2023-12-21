@@ -173,4 +173,19 @@ public class ProductController {
         return orderService.getPurchaseProductProfile(userKey,orderId);
     }
 
+    @ResponseBody
+    @PostMapping(value = "GET/contractProducts" , headers = {"Accept=application/json; UTF-8"})
+    public Object getContractProducts(@RequestBody ChatBotRequest chatBotRequest) {
+        String userKey = chatBotRequest.getUserKey();
+
+        return productService.getContractProducts(userKey);
+    }
+    @ResponseBody
+    @PostMapping(value = "GET/contractProduct/profile" , headers = {"Accept=application/json; UTF-8"})
+    public Object getContractProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
+        String userKey = chatBotRequest.getUserKey();
+        String orderId = chatBotRequest.getOrderId();
+        return productService.getContractProductProfile(userKey,orderId);
+    }
+
 }

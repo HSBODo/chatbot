@@ -68,8 +68,8 @@ public class OrderController {
     @PostMapping(value = "PATCH/trackingNumber")
     public Object updateTrackingNumber (@RequestBody ChatBotRequest chatBotRequest) {
         String trackingNumber = chatBotRequest.getTrackingNumber();
-        String productId = chatBotRequest.getProductId();
-        return orderService.updateTrackingNumber(productId,trackingNumber);
+        String orderId = chatBotRequest.getOrderId();
+        return orderService.updateTrackingNumber(orderId,trackingNumber);
     }
 
 }

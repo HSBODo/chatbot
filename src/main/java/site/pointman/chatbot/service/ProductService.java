@@ -17,8 +17,12 @@ public interface ProductService {
     Response getProductsByCategory(Category category);
     Response getMyProducts(String userKey, String productStatus);
     Response getProductProfile(String productId, String userKey);
+    Response getProductsBySearchWord(String searchWord);
     Response addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory);
     Response updateProductStatus(String productId, String utterance);
     Response deleteProduct(String productId, String utterance);
-    Response getProductsBySearchWord(String searchWord);
+    Response getContractProducts(String userKey);
+    Response getContractProductProfile(String userKey,String orderId);
+
+
 }

@@ -148,8 +148,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public Object updateTrackingNumber(String productId, String trackingNumber) {
-        Optional<Order> mayBeOrder = orderRepository.findByProductId(Long.parseLong(productId),OrderStatus.주문체결);
+    public Object updateTrackingNumber(String orderId, String trackingNumber) {
+        Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId),OrderStatus.주문체결);
         if (mayBeOrder.isEmpty()) return new ChatBotExceptionResponse().createException("주문이 존재하지 않습니다.");
 
         Order order = mayBeOrder.get();

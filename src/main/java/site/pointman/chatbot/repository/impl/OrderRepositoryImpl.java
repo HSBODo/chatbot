@@ -32,6 +32,15 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public Optional<Order> findByOrderId(Long orderId, OrderStatus status) {
+        return em.createQuery("SELECT o FROM Order o WHERE o.orderId =:orderId AND o.status =:status",Order.class)
+                .setParameter("orderId",orderId)
+                .setParameter("status",status)
+                .getResultList()
+                .stream().findAny();
+    }
+
+    @Override
     public List<Order> findByUserKey(String userKey) {
         return em.createQuery("SELECT o FROM Order o WHERE o.buyerMember.userKey =:userKey",Order.class)
                 .setParameter("userKey",userKey)
