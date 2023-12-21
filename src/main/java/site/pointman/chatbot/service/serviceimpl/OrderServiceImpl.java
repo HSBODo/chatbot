@@ -8,6 +8,7 @@ import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.domain.response.property.common.Button;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.Carousel;
@@ -43,7 +44,6 @@ public class OrderServiceImpl implements OrderService {
                 .buyerMember(buyerMember)
                 .product(product)
                 .quantity(paymentInfo.getQuantity())
-                .trackingNumber("미입력")
                 .status(OrderStatus.주문체결)
                 .paymentInfo(paymentInfo)
                 .build();
@@ -72,14 +72,26 @@ public class OrderServiceImpl implements OrderService {
         /**
          * 결제 취소시
          * 1. 상품(product)은 판매중 상태로 변경
-         * 2. 주문(order)은 주문취소 상태로 변경
-         * 3. 결제정보(paymentInfo)는 결제취소 상태로 변경
+         * 2. 결제정보(paymentInfo)는 결제취소 상태로 변경
          */
         productRepository.updateStatus(productId, ProductStatus.판매중);
-        order.getPaymentInfo().changeStatus(PaymentStatus.결제취소);
         order.changeStatus(OrderStatus.주문취소);
 
         return order.getOrderId();
+    }
+
+    @Override
+    public HttpResponse successOrder(Long orderId) {
+        Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId, OrderStatus.주문체결);
+        if(mayBeOrder.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"체결된 주문이 존재하지 않습니다.");
+        Order order = mayBeOrder.get();
+        Member buyerMember = order.getBuyerMember();
+        Product product = order.getProduct();
+        String trackingNumber = order.getTrackingNumber();
+        if(trackingNumber.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"운송장번호가 입력되어있지 않습니다.");
+
+
+        return null;
     }
 
     @Override
@@ -141,7 +153,7 @@ public class OrderServiceImpl implements OrderService {
         textCard.setDescription(order.getPurchaseProductProfile());
 
         chatBotResponse.addTextCard(textCard);
-        if(!order.getTrackingNumber().equals("미입력")) chatBotResponse.addQuickButton(new Button(ButtonName.구매확정.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId()));
+        if(!order.getTrackingNumber().isEmpty()) chatBotResponse.addQuickButton(new Button(ButtonName.구매확정.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId()));
         chatBotResponse.addQuickButton(new Button(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId()));
         return chatBotResponse;
     }

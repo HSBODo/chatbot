@@ -255,6 +255,9 @@ public class ProductServiceImpl implements ProductService {
         Carousel<BasicCard> carouselImage = createCarouselImage(product.getProductImages().getImageUrls());
         chatBotResponse.addCarousel(carouselImage);
 
+        String trackingNumber = order.getTrackingNumber();
+        if (trackingNumber.isEmpty())trackingNumber = "미입력";
+
         StringBuilder productDescription = new StringBuilder();
         productDescription
                 .append("상품상태: " + product.getStatus().getValue())
@@ -271,7 +274,7 @@ public class ProductServiceImpl implements ProductService {
                 .append("\n\n")
                 .append("등록일자: " + product.getFormatCreateDate())
                 .append("\n")
-                .append("운송장번호: " + order.getTrackingNumber())
+                .append("운송장번호: " + trackingNumber)
                 .append("\n\n")
                 .append("구매자: " + order.getBuyerMember().getUserKey())
                 .append("\n")
@@ -282,7 +285,7 @@ public class ProductServiceImpl implements ProductService {
 
         chatBotResponse.addTextCard(textCard);
 
-        if (order.getTrackingNumber().equals("미입력")) {
+        if (order.getTrackingNumber().isEmpty()) {
             chatBotResponse.addQuickButton(ButtonName.운송장번호등록.name(), ButtonAction.블럭이동, BlockId.ORDER_ADD_TRACKING_NUMBER.getBlockId(), ButtonParamKey.orderId, String.valueOf(order.getOrderId()));
         }else {
             chatBotResponse.addQuickButton(ButtonName.운송장번호변경.name(), ButtonAction.블럭이동, BlockId.ORDER_ADD_TRACKING_NUMBER.getBlockId(), ButtonParamKey.orderId, String.valueOf(order.getOrderId()));

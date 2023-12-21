@@ -33,7 +33,6 @@ public class Order extends BaseEntity {
 
     private int quantity;
 
-    @ColumnDefault(value = "미입력")
     private String trackingNumber;
 
     @Enumerated(EnumType.STRING)

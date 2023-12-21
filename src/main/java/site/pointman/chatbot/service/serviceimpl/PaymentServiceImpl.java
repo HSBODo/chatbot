@@ -214,6 +214,7 @@ public class PaymentServiceImpl implements PaymentService {
                 requestEntity,
                 KakaoPaymentCancelResponse.class);
 
+
         successPaymentInfo.changeStatus(PaymentStatus.결제취소);
         Long successPaymentInfoOrderId = successPaymentInfo.getOrderId();
 

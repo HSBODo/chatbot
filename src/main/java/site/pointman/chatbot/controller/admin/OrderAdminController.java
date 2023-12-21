@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.constant.ApiResultCode;
 import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentReadyResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.PaymentService;
 
 import java.io.UnsupportedEncodingException;
@@ -22,9 +23,11 @@ public class OrderAdminController {
     private String KAKAO_CHANNEL_URL;
 
     PaymentService paymentService;
+    OrderService orderService;
 
-    public OrderAdminController(PaymentService paymentService) {
+    public OrderAdminController(PaymentService paymentService, OrderService orderService) {
         this.paymentService = paymentService;
+        this.orderService = orderService;
     }
 
     @PostMapping(value = "kakaopay-cancel/{orderId}")
@@ -36,6 +39,11 @@ public class OrderAdminController {
         }catch (Exception e) {
             return new HttpResponse(ApiResultCode.FAIL,"주문번호 "+orderId+"의 주문취소를 실패하였습니다.");
         }
+    }
+
+    @PatchMapping(value = "/success/{orderId}")
+    public HttpResponse orderSuccess (@PathVariable Long orderId) throws UnsupportedEncodingException {
+        return orderService.successOrder(orderId);
     }
 
 }
