@@ -103,13 +103,14 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "GET/byUserKey" , headers = {"Accept=application/json; UTF-8"})
-    public Response getProductsByUserKey(@RequestBody ChatBotRequest chatBotRequest) {
+    @PostMapping(value = "GET/myProductsByStatus" , headers = {"Accept=application/json; UTF-8"})
+    public Response getMyProducts(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String productStatus = chatBotRequest.getProductStatus();
+
         if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return productService.getProductsByUserKey(userKey,productStatus);
+        return productService.getMyProducts(userKey,productStatus);
     }
 
     @ResponseBody
