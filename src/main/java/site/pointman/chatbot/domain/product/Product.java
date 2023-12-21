@@ -98,4 +98,14 @@ public class Product extends BaseEntity {
         String createDate = getCreateDate();
         return StringUtils.dateFormat(createDate, "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
     }
+
+    public String getKakaoPaymentUrl(String buyerUserKey,String hostUrl){
+        StringBuilder paymentUrl = new StringBuilder(hostUrl);
+        paymentUrl.append("/order")
+                .append("/kakaopay-ready")
+                .append("/"+id)
+                .append("?")
+                .append("userKey="+buyerUserKey);
+        return paymentUrl.toString();
+    }
 }
