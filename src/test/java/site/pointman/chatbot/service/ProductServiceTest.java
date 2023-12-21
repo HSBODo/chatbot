@@ -110,12 +110,12 @@ class ProductServiceTest {
 
     @Test
     @Transactional
-    void getCustomerProducts() throws JsonProcessingException {
+    void getMyProducts() throws JsonProcessingException {
         //give
         List<Product> products = productRepository.findByUserKey(userKey);
 
         //when
-        Response response = productService.getProductsByUserKey(userKey,"판매중");
+        Response response = productService.getMyProducts(userKey,"판매중");
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
 
         int customerProductsSize = chatBotResponse.getTemplate().getOutputs().get(0).getCarousel().getItems().size();

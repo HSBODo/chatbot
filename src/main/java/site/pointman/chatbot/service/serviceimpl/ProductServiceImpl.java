@@ -104,7 +104,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response getProductsByUserKey(String userKey, String productStatus) {
+    public Response getMyProducts(String userKey, String productStatus) {
         try {
             ProductStatus status = ProductStatus.getProductStatus(productStatus);
 

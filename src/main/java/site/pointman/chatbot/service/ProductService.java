@@ -12,11 +12,11 @@ import java.util.List;
 public interface ProductService {
 
     Response verificationCustomerSuccessResponse();
-    Response getProductCategory(String requestBlockId);
     Response getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category);
-    Response getProductsByUserKey(String userKey, String productStatus);
-    Response getProductProfile(String productId, String userKey);
+    Response getProductCategory(String requestBlockId);
     Response getProductsByCategory(Category category);
+    Response getMyProducts(String userKey, String productStatus);
+    Response getProductProfile(String productId, String userKey);
     Response addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory);
     Response updateProductStatus(String productId, String utterance);
     Response deleteProduct(String productId, String utterance);
