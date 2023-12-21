@@ -51,7 +51,7 @@ class OrderRepositoryTest {
                 .buyerMember(member)
                 .paymentInfo(paymentInfo)
                 .quantity(1)
-                .status(OrderStatus.결제체결)
+                .status(OrderStatus.주문체결)
                 .build();
 
         //when
