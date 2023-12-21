@@ -32,6 +32,8 @@ public class Order extends BaseEntity {
 
     private int quantity;
 
+    private String trackingNumber;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
@@ -50,6 +52,10 @@ public class Order extends BaseEntity {
 
     public void changeStatus(OrderStatus status){
         this.status = status;
+    }
+
+    public void changeTrackingNumber(String trackingNumber){
+        this.trackingNumber = trackingNumber;
     }
 
     public String getPurchaseProductProfile(){
