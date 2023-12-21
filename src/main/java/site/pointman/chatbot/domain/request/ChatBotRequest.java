@@ -107,6 +107,11 @@ public class ChatBotRequest {
         return action.getClientExtra().getProductId();
     }
 
+    public String getOrderId(){
+        if (Objects.isNull(action.getClientExtra().getOrderId())) return null;
+        return action.getClientExtra().getOrderId();
+    }
+
     public String getProductStatus(){
         if (Objects.isNull(action.getClientExtra().getProductStatus())) return null;
         return action.getClientExtra().getProductStatus();
