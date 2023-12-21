@@ -157,11 +157,20 @@ public class ProductController {
     }
 
     @ResponseBody
-    @PostMapping(value = "GET/byPurchase" , headers = {"Accept=application/json; UTF-8"})
-    public Object getPurchase(@RequestBody ChatBotRequest chatBotRequest) {
+    @PostMapping(value = "GET/purchaseProducts" , headers = {"Accept=application/json; UTF-8"})
+    public Object getPurchaseProducts(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
         return orderService.getPurchaseProducts(userKey);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "GET/purchaseProductProfile" , headers = {"Accept=application/json; UTF-8"})
+    public Object getPurchaseProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
+        String userKey = chatBotRequest.getUserKey();
+        String orderId = chatBotRequest.getOrderId();
+
+        return orderService.getPurchaseProductProfile(userKey,orderId);
     }
 
 }

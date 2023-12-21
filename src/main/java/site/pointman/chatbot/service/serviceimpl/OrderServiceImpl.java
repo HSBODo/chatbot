@@ -11,6 +11,7 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.common.Button;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.Carousel;
+import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.service.OrderService;
@@ -75,18 +76,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Object getPurchaseProducts(String userKey) {
-        ChatBotResponse chatBotResponse = new ChatBotResponse();
-        Button button = new Button(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
-        Carousel<BasicCard> basicCardCarousel = new Carousel<>();
 
         List<Order> purchaseOrders = orderRepository.findByUserKey(userKey);
         if (purchaseOrders.isEmpty()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
+
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+        Button button = new Button(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
+        Carousel<BasicCard> basicCardCarousel = new Carousel<>();
 
         purchaseOrders.forEach(order -> {
             BasicCard basicCard = new BasicCard();
 
             Product product = order.getProduct();
-            String productId = String.valueOf(product.getId());
+
+            String orderId = String.valueOf(order.getOrderId());
             String status = product.getStatus().getOppositeValue();
 
             String title = product.getName();
@@ -96,7 +99,7 @@ public class OrderServiceImpl implements OrderService {
                     .append("상품상태: "+status)
                     .toString();
 
-            Button detailButton =new Button("상세보기", ButtonAction.블럭이동, BlockId.PRODUCT_GET_PURCHASE_PROFILE.getBlockId(), ButtonParamKey.productId, productId);
+            Button detailButton =new Button("상세보기", ButtonAction.블럭이동, BlockId.PRODUCT_GET_PURCHASE_PROFILE.getBlockId(), ButtonParamKey.orderId, orderId);
             basicCard.setThumbnail(product.getProductImages().getImageUrls().get(0),true);
             basicCard.setTitle(title);
             basicCard.setDescription(description);
@@ -108,5 +111,39 @@ public class OrderServiceImpl implements OrderService {
         chatBotResponse.addCarousel(basicCardCarousel);
         chatBotResponse.addQuickButton(button);
         return chatBotResponse;
+    }
+
+    @Override
+    public Object getPurchaseProductProfile(String userKey, String orderId) {
+
+        Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId));
+        if (mayBeOrder.isEmpty()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
+
+        Order order = mayBeOrder.get();
+        Product product = order.getProduct();
+
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+        TextCard textCard = new TextCard();
+
+        Carousel<BasicCard> carouselImage = createCarouselImage(product.getProductImages().getImageUrls());
+
+        chatBotResponse.addCarousel(carouselImage);
+
+        textCard.setTitle(product.getName());
+        textCard.setDescription(order.getPurchaseProductProfile());
+
+        chatBotResponse.addTextCard(textCard);
+        chatBotResponse.addQuickButton(new Button(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId()));
+        return chatBotResponse;
+    }
+
+    private Carousel<BasicCard> createCarouselImage(List<String> imageUrls){
+        Carousel<BasicCard> basicCardCarousel = new Carousel<>();
+        imageUrls.forEach(imageUrl -> {
+            BasicCard basicCard = new BasicCard();
+            basicCard.setThumbnail(imageUrl,true);
+            basicCardCarousel.addComponent(basicCard);
+        });
+        return basicCardCarousel;
     }
 }
