@@ -5,9 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import site.pointman.chatbot.annotation.SkipLogging;
 import site.pointman.chatbot.constant.ApiResultCode;
 import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentReadyResponse;
+import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.PaymentService;
 
 import java.io.UnsupportedEncodingException;
@@ -22,11 +25,14 @@ public class OrderController {
     private String KAKAO_CHANNEL_URL;
 
     PaymentService paymentService;
+    OrderService orderService;
 
-    public OrderController(PaymentService paymentService) {
+    public OrderController(PaymentService paymentService, OrderService orderService) {
         this.paymentService = paymentService;
+        this.orderService = orderService;
     }
 
+    @SkipLogging
     @GetMapping(value = "kakaopay-ready/{productId}")
     public String kakaoPayReady (@PathVariable Long productId, @RequestParam String userKey) throws Exception {
         try {
@@ -39,6 +45,7 @@ public class OrderController {
         }
     }
 
+    @SkipLogging
     @GetMapping(value = "kakaopay-approve/{orderId}")
     public String kakaoPayApprove (@PathVariable Long orderId, @RequestParam(value = "pg_token") String pgToken) throws UnsupportedEncodingException {
         try {
@@ -50,10 +57,19 @@ public class OrderController {
         }
     }
 
+    @SkipLogging
     @PostMapping(value = "kakaopay-fail/{orderId}")
     public String kakaoPayFail (@RequestParam String request) {
         log.info("request={}",request);
         return null;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "PATCH/trackingNumber")
+    public Object updateTrackingNumber (@RequestBody ChatBotRequest chatBotRequest) {
+        String trackingNumber = chatBotRequest.getTrackingNumber();
+        String productId = chatBotRequest.getProductId();
+        return orderService.updateTrackingNumber(productId,trackingNumber);
     }
 
 }

@@ -137,6 +137,22 @@ public class OrderServiceImpl implements OrderService {
         return chatBotResponse;
     }
 
+    @Override
+    @Transactional
+    public Object updateTrackingNumber(String productId, String trackingNumber) {
+        Optional<Order> mayBeOrder = orderRepository.findByProductId(Long.parseLong(productId),OrderStatus.결제완료);
+        if (mayBeOrder.isEmpty()) return new ChatBotExceptionResponse().createException("주문이 존재하지 않습니다.");
+
+        Order order = mayBeOrder.get();
+
+        order.changeTrackingNumber(trackingNumber);
+
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+        chatBotResponse.addSimpleText("운송장번호를 정상적으로 등록하였습니다.");
+        chatBotResponse.addQuickButton(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
+        return chatBotResponse;
+    }
+
     private Carousel<BasicCard> createCarouselImage(List<String> imageUrls){
         Carousel<BasicCard> basicCardCarousel = new Carousel<>();
         imageUrls.forEach(imageUrl -> {

@@ -1,5 +1,6 @@
 package site.pointman.chatbot.repository.impl;
 
+import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.repository.OrderRepository;
 
@@ -35,5 +36,14 @@ public class OrderRepositoryImpl implements OrderRepository {
         return em.createQuery("SELECT o FROM Order o WHERE o.buyerMember.userKey =:userKey",Order.class)
                 .setParameter("userKey",userKey)
                 .getResultList();
+    }
+
+    @Override
+    public Optional<Order> findByProductId(Long productId, OrderStatus orderStatus) {
+        return em.createQuery("SELECT o FROM Order o WHERE o.product.id =:productId AND o.status =:orderStatus",Order.class)
+                .setParameter("productId",productId)
+                .setParameter("orderStatus",orderStatus)
+                .getResultList()
+                .stream().findAny();
     }
 }
