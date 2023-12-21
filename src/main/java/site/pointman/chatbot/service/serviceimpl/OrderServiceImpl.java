@@ -96,7 +96,7 @@ public class OrderServiceImpl implements OrderService {
                     .append("상품상태: "+status)
                     .toString();
 
-            Button detailButton =new Button("상세보기", ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCT_DETAIL.getBlockId(), ButtonParamKey.productId, productId);
+            Button detailButton =new Button("상세보기", ButtonAction.블럭이동, BlockId.PRODUCT_GET_PURCHASE_PROFILE.getBlockId(), ButtonParamKey.productId, productId);
             basicCard.setThumbnail(product.getProductImages().getImageUrls().get(0),true);
             basicCard.setTitle(title);
             basicCard.setDescription(description);
