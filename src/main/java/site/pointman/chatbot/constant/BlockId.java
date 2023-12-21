@@ -19,6 +19,7 @@ public enum BlockId {
     PRODUCT_DELETE("회원 등록상품 삭제","657ad7bfbe9b5a099b5335b6"),
     PRODUCT_GET_CATEGORIES("추천상품 카테고리 선택","657d588e8a8123272a649b03"),
     PRODUCT_GET_PURCHASE("회원 구매내역","6582f378def18a0edd17a189"),
+    PRODUCT_GET_PURCHASE_PROFILE("나의 구매상품 프로필 조회","6583c5c6dcd6f94a82e2a865"),
     FIND_PRODUCTS_BY_CATEGORY("카테고리로 상품 조회","657da1bac75579280e900af9"),
     FIND_NOTICES("공지사항 목록","65262c152dd06e457d91c7c2"),
     FIND_NOTICE("게시글 조회","658088bd73cb0d4d1977c880")
