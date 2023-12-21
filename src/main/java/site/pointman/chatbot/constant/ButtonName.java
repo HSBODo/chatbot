@@ -22,4 +22,5 @@ public enum ButtonName {
     처음으로,
     프로필,
     상품,
+    운송장번호등록,
 }
