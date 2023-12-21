@@ -23,4 +23,5 @@ public enum ButtonName {
     프로필,
     상품,
     운송장번호등록,
+    구매확정,
 }

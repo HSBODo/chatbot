@@ -3,6 +3,7 @@ package site.pointman.chatbot.domain.order;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.domain.BaseEntity;
@@ -32,6 +33,7 @@ public class Order extends BaseEntity {
 
     private int quantity;
 
+    @ColumnDefault(value = "미입력")
     private String trackingNumber;
 
     @Enumerated(EnumType.STRING)
@@ -41,12 +43,13 @@ public class Order extends BaseEntity {
     private PaymentInfo paymentInfo;
 
     @Builder
-    public Order(Long orderId, Member buyerMember, Product product, int quantity, PaymentInfo paymentInfo, OrderStatus status) {
+    public Order(Long orderId, Member buyerMember, Product product, int quantity, PaymentInfo paymentInfo, String trackingNumber,OrderStatus status) {
         this.orderId = orderId;
         this.buyerMember = buyerMember;
         this.product = product;
         this.quantity = quantity;
         this.paymentInfo = paymentInfo;
+        this.trackingNumber = trackingNumber;
         this.status = status;
     }
 
@@ -61,6 +64,7 @@ public class Order extends BaseEntity {
     public String getPurchaseProductProfile(){
         StringBuilder productProfile = new StringBuilder();
         String formatPrice = StringUtils.formatPrice(product.getPrice());
+
         return productProfile
                 .append("상품상태: " + product.getStatus().getOppositeValue())
                 .append("\n\n")
@@ -75,6 +79,8 @@ public class Order extends BaseEntity {
                 .append("거래 희망 장소: " + product.getTradingLocation())
                 .append("\n")
                 .append("카카오 오픈 채팅방: " + product.getKakaoOpenChatUrl())
+                .append("\n")
+                .append("운송장번호: " + trackingNumber)
                 .append("\n\n")
                 .append("결제일자: " + getFormatApproveDate())
                 .toString();

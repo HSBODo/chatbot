@@ -43,6 +43,7 @@ public class OrderServiceImpl implements OrderService {
                 .buyerMember(buyerMember)
                 .product(product)
                 .quantity(paymentInfo.getQuantity())
+                .trackingNumber("미입력")
                 .status(OrderStatus.결제완료)
                 .paymentInfo(paymentInfo)
                 .build();
@@ -133,6 +134,7 @@ public class OrderServiceImpl implements OrderService {
         textCard.setDescription(order.getPurchaseProductProfile());
 
         chatBotResponse.addTextCard(textCard);
+        if(!order.getTrackingNumber().equals("미입력")) chatBotResponse.addQuickButton(new Button(ButtonName.구매확정.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId()));
         chatBotResponse.addQuickButton(new Button(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId()));
         return chatBotResponse;
     }
