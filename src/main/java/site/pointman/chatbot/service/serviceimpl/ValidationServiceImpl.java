@@ -132,4 +132,18 @@ public class ValidationServiceImpl implements ValidationService {
         chatBotValidationResponse.validationSuccess(reservationCustomerName);
         return chatBotValidationResponse;
     }
+
+    @Override
+    public ChatBotValidationResponse validationTrackingNumber(ChatBotRequest chatBotRequest) {
+        ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
+        String trackingNumber = chatBotRequest.getValidationData();
+
+        if(NumberUtils.isNumber(trackingNumber)){
+            chatBotValidationResponse.validationSuccess(trackingNumber);
+            return chatBotValidationResponse;
+        }
+
+        chatBotValidationResponse.validationFail();
+        return chatBotValidationResponse;
+    }
 }

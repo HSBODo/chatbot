@@ -79,4 +79,11 @@ public class ValidationController {
     public ChatBotValidationResponse validationReservationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         return validationService.validationReservationCustomer(chatBotRequest);
     }
+
+    @SkipLogging
+    @ResponseBody
+    @PostMapping(value = "order/reservationTrackingNumber" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotValidationResponse validationTrackingNumber(@RequestBody ChatBotRequest chatBotRequest) {
+        return validationService.validationTrackingNumber(chatBotRequest);
+    }
 }
