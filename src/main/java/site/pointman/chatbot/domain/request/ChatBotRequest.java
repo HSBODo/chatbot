@@ -87,6 +87,11 @@ public class ChatBotRequest {
         return action.getParams().getReservationCustomerName();
     }
 
+    public String getTrackingNumber(){
+        if (Objects.isNull(action.getParams().getTrackingNumber())) return null;
+        return action.getParams().getTrackingNumber();
+    }
+
     public String getSearchWord(){
         if (Objects.isNull(action.getParams().getSearchWord())) return null;
         return action.getParams().getSearchWord();

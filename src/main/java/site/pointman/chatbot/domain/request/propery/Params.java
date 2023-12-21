@@ -19,4 +19,6 @@ public class Params {
     private String searchWord;
 
     private String reservationCustomerName;
+
+    private String trackingNumber;
 }
