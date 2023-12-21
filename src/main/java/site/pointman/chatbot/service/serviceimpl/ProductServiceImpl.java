@@ -219,7 +219,7 @@ public class ProductServiceImpl implements ProductService {
                 chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
                 return chatBotResponse;
             case 판매대기:
-                chatBotResponse.addQuickButton(ButtonName.운송장번호등록.name(), ButtonAction.블럭이동, BlockId.PRODUCT_UPDATE_STATUS.getBlockId(), ButtonParamKey.productId, productId);
+                chatBotResponse.addQuickButton(ButtonName.운송장번호등록.name(), ButtonAction.블럭이동, BlockId.ORDER_ADD_TRACKING_NUMBER.getBlockId(), ButtonParamKey.productId, productId);
                 chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
                 return chatBotResponse;
             case 판매완료:
