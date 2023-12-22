@@ -35,7 +35,7 @@ class CustomerServiceTest {
         String phoneNumber = "01000001111";
 
         //when
-        Response response = memberService.join(userKey,name,phoneNumber,true);
+        Object response = memberService.join(userKey,name,phoneNumber,true);
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String responseMessage = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
         //then
@@ -48,7 +48,7 @@ class CustomerServiceTest {
         //give
 
         //when
-        Response response = memberService.getCustomerProfile(userKey, true);
+        Object response = memberService.getCustomerProfile(userKey, true);
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String responseTitle = chatBotResponse.getTemplate().getOutputs().get(0).getTextCard().getTitle();
 
@@ -63,7 +63,7 @@ class CustomerServiceTest {
         String updatePhoneNumber ="01011112222";
 
         //when
-        Response response = memberService.updateCustomerPhoneNumber(userKey,updatePhoneNumber,true);
+        Object response = memberService.updateCustomerPhoneNumber(userKey,updatePhoneNumber,true);
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String responseMessage = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
@@ -77,7 +77,7 @@ class CustomerServiceTest {
         //give
 
         //when
-        Response response = memberService.withdrawalCustomer(userKey, true);
+        Object response = memberService.withdrawalCustomer(userKey, true);
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String responseMessage = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 

@@ -22,7 +22,7 @@ public class MemberController {
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.POST)
-    public Response join(@RequestBody Member member){
+    public Object join(@RequestBody Member member){
         String name = member.getName();
         String userKey = member.getUserKey();
         String phoneNumber = member.getPhoneNumber();

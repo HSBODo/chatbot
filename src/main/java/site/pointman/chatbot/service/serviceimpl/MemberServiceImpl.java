@@ -31,7 +31,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Response join(String userKey, String name, String phoneNumber, boolean isChatBotRequest) {
+    public Object join(String userKey, String name, String phoneNumber, boolean isChatBotRequest) {
         try {
             MemberDto memberDto = MemberDto.builder()
                     .userKey(userKey)
@@ -54,7 +54,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Response getCustomerProfile(String userKey, boolean isChatBotRequest) {
+    public Object getCustomerProfile(String userKey, boolean isChatBotRequest) {
         try {
             Member member = memberRepository.findByUserKey(userKey).get();
 
@@ -73,7 +73,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Response updateCustomerPhoneNumber(String userKey, String updatePhoneNumber, boolean isChatBotRequest) {
+    public Object updateCustomerPhoneNumber(String userKey, String updatePhoneNumber, boolean isChatBotRequest) {
         try {
             memberRepository.updateCustomerPhoneNumber(userKey, updatePhoneNumber);
 
@@ -87,7 +87,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Response withdrawalCustomer(String userKey, boolean isChatBotRequest) {
+    public Object withdrawalCustomer(String userKey, boolean isChatBotRequest) {
         try {
             memberRepository.delete(userKey);
 
