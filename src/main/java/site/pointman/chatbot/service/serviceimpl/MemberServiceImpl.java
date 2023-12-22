@@ -10,7 +10,7 @@ import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.member.MemberDto;
 import site.pointman.chatbot.repository.MemberRepository;
-import site.pointman.chatbot.service.CustomerChatBotResponseService;
+import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
 import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.utill.StringUtils;
 

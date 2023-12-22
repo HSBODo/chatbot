@@ -11,7 +11,7 @@ import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.service.CustomerChatBotResponseService;
+import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
 import site.pointman.chatbot.service.MemberService;
 
 

@@ -1,10 +1,10 @@
-package site.pointman.chatbot.service.serviceimpl;
+package site.pointman.chatbot.service.chatbot.serviceImpl;
 
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
-import site.pointman.chatbot.service.CustomerChatBotResponseService;
+import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
 
 @Service
 public class CustomerChatBotResponseServiceImpl implements CustomerChatBotResponseService {

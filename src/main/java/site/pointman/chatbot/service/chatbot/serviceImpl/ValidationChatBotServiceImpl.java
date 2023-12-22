@@ -1,22 +1,22 @@
-package site.pointman.chatbot.service.serviceimpl;
+package site.pointman.chatbot.service.chatbot.serviceImpl;
 
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotValidationResponse;
 import site.pointman.chatbot.repository.MemberRepository;
-import site.pointman.chatbot.service.ValidationService;
+import site.pointman.chatbot.service.chatbot.ValidationChatBotService;
 import site.pointman.chatbot.utill.NumberUtils;
 
 import java.util.Optional;
 
 @Service
-public class ValidationServiceImpl implements ValidationService {
+public class ValidationChatBotServiceImpl implements ValidationChatBotService {
     private final String KAKAO_OPEN_CHAT_URL_REQUIRED = "https://open.kakao.com/o";
 
     MemberRepository memberRepository;
 
-    public ValidationServiceImpl(MemberRepository memberRepository) {
+    public ValidationChatBotServiceImpl(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 

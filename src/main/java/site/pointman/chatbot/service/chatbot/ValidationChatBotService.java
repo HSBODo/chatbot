@@ -1,9 +1,9 @@
-package site.pointman.chatbot.service;
+package site.pointman.chatbot.service.chatbot;
 
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotValidationResponse;
 
-public interface ValidationService {
+public interface ValidationChatBotService {
     ChatBotValidationResponse validationCustomerPhoneNumber(ChatBotRequest chatBotRequest);
     ChatBotValidationResponse validationCustomerName(ChatBotRequest chatBotRequest);
     ChatBotValidationResponse validationProductName(ChatBotRequest chatBotRequest);

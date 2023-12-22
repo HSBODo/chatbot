@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.annotation.SkipLogging;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotValidationResponse;
-import site.pointman.chatbot.service.ValidationService;
+import site.pointman.chatbot.service.chatbot.ValidationChatBotService;
 
 
 @Slf4j
@@ -18,72 +18,72 @@ import site.pointman.chatbot.service.ValidationService;
 @RequestMapping(value = "/kakaochatbot/validation")
 public class ValidationController {
 
-    ValidationService validationService;
+    ValidationChatBotService validationChatBotService;
 
-    public ValidationController(ValidationService validationService) {
-        this.validationService = validationService;
+    public ValidationController(ValidationChatBotService validationChatBotService) {
+        this.validationChatBotService = validationChatBotService;
     }
 
     @SkipLogging
     @ResponseBody
     @PostMapping(value = "customer/phone" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotValidationResponse validationPhone(@RequestBody ChatBotRequest chatBotRequest) {
-        return validationService.validationCustomerPhoneNumber(chatBotRequest);
+        return validationChatBotService.validationCustomerPhoneNumber(chatBotRequest);
     }
 
     @SkipLogging
     @ResponseBody
     @PostMapping(value = "customer/name" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotValidationResponse validationName(@RequestBody ChatBotRequest chatBotRequest) {
-        return  validationService.validationCustomerName(chatBotRequest);
+        return  validationChatBotService.validationCustomerName(chatBotRequest);
     }
 
     @SkipLogging
     @ResponseBody
     @PostMapping(value = "product/name" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotValidationResponse validationProductName(@RequestBody ChatBotRequest chatBotRequest) {
-        return validationService.validationProductName(chatBotRequest);
+        return validationChatBotService.validationProductName(chatBotRequest);
     }
 
     @SkipLogging
     @ResponseBody
     @PostMapping(value = "product/price" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotValidationResponse validationProductPrice(@RequestBody ChatBotRequest chatBotRequest) {
-        return validationService.validationProductPrice(chatBotRequest);
+        return validationChatBotService.validationProductPrice(chatBotRequest);
     }
 
     @SkipLogging
     @ResponseBody
     @PostMapping(value = "product/description" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotValidationResponse validationProductDescription(@RequestBody ChatBotRequest chatBotRequest) {
-        return validationService.validationProductDescription(chatBotRequest);
+        return validationChatBotService.validationProductDescription(chatBotRequest);
     }
 
     @SkipLogging
     @ResponseBody
     @PostMapping(value = "product/kakaoOpenChatUrl" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotValidationResponse validationProductKakaoOpenChatUrl(@RequestBody ChatBotRequest chatBotRequest) {
-        return validationService.validationProductKakaoOpenChatUrl(chatBotRequest);
+        return validationChatBotService.validationProductKakaoOpenChatUrl(chatBotRequest);
     }
 
     @SkipLogging
     @ResponseBody
     @PostMapping(value = "product/tradingLocation" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotValidationResponse validationProductTradingLocation(@RequestBody ChatBotRequest chatBotRequest) {
-        return validationService.validationTradingLocation(chatBotRequest);
+        return validationChatBotService.validationTradingLocation(chatBotRequest);
     }
 
     @SkipLogging
     @ResponseBody
     @PostMapping(value = "product/reservationCustomer" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotValidationResponse validationReservationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
-        return validationService.validationReservationCustomer(chatBotRequest);
+        return validationChatBotService.validationReservationCustomer(chatBotRequest);
     }
 
     @SkipLogging
     @ResponseBody
     @PostMapping(value = "order/reservationTrackingNumber" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotValidationResponse validationTrackingNumber(@RequestBody ChatBotRequest chatBotRequest) {
-        return validationService.validationTrackingNumber(chatBotRequest);
+        return validationChatBotService.validationTrackingNumber(chatBotRequest);
     }
 }
