@@ -59,10 +59,16 @@ public class NoticeServiceImpl implements NoticeService {
 
         Optional<Notice> mayBeNotice = noticeRepository.findByNoticeId(parseNoticeId);
 
-        if(mayBeNotice.isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");
-        Notice notice = mayBeNotice.get();
+        if (isChatBotRequest){
+            if (mayBeNotice.isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");
+            Notice notice = mayBeNotice.get();
 
-       return noticeChatBotResponseService.getNoticeSuccessChatBotResponse(notice);
+            return noticeChatBotResponseService.getNoticeSuccessChatBotResponse(notice);
+        }
+
+        if (mayBeNotice.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"게시글이 존재하지 않습니다.");
+        Notice notice = mayBeNotice.get();
+        return notice;
     }
 
     @Override

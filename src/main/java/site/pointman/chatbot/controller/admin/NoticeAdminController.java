@@ -32,6 +32,12 @@ public class NoticeAdminController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "{noticeId}",method = RequestMethod.GET)
+    public Object getNotice(@PathVariable String noticeId){
+        return noticeService.getNotice(noticeId,false);
+    }
+
+    @ResponseBody
     @RequestMapping(value = "{noticeId}",method = RequestMethod.DELETE)
     public Object deleteNotice(@PathVariable Long noticeId){
         return noticeService.removeNotice(noticeId);

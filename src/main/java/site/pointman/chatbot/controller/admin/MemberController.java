@@ -7,7 +7,7 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.service.MemberService;
 
 @Controller
-@RequestMapping(value = "admin/member", consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "admin/member")
 public class MemberController {
 
     MemberService memberService;
@@ -17,7 +17,7 @@ public class MemberController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "",method = RequestMethod.POST)
+    @RequestMapping(value = "",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public Object join(@RequestBody Member member){
         String name = member.getName();
         String userKey = member.getUserKey();
