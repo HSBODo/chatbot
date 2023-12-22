@@ -141,6 +141,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             long parseProductId = Long.parseLong(productId);
             ProductStatus productStatus = ProductStatus.getProductStatus(utterance);
+            if (productStatus.equals(ProductStatus.예약취소)) productStatus = ProductStatus.판매중;
 
             Optional<Product> mayBeProduct = productRepository.findByProductId(parseProductId);
             if(mayBeProduct.isEmpty()) return chatBotExceptionResponse.createException("상품이 존재하지 않습니다.");

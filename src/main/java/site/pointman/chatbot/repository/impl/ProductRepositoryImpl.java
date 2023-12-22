@@ -80,6 +80,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         Product product = em.createQuery("select p from Product p where p.id=:id", Product.class)
                 .setParameter("id", productId)
                 .getSingleResult();
+
         product.changeStatus(productStatus);
     }
 
