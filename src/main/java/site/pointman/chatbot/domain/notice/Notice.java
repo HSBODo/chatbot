@@ -16,6 +16,7 @@ import site.pointman.chatbot.utill.StringUtils;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -44,11 +45,11 @@ public class Notice extends BaseEntity {
     @JoinColumn(name = "writer")
     private Member member;
 
-    @ColumnDefault("https://pointman-file-repository.s3.ap-northeast-2.amazonaws.com/resource/image/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD_%EC%9D%BD%EC%96%B4%EC%A3%BC%EC%84%B8%EC%9A%94.jpg")
-    private String imageUrl;
+
+    private String imageUrl = "https://pbs.twimg.com/media/FVbk8XaaMAA2ux_?format=jpg&name=small";
 
     @Convert(converter = StringListConverter.class)
-    private List<Button> buttons;
+    private List<Button> buttons = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private NoticeStatus status;

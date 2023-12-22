@@ -9,5 +9,7 @@ import java.util.Optional;
 public interface NoticeRepository {
     Long save(Notice notice);
     List<Notice> findByStatus(NoticeStatus noticeStatus);
+    List<Notice> findByAll();
     Optional<Notice> findByNoticeId(Long noticeId);
+    void deleteNotice(Long noticeId);
 }

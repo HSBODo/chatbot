@@ -8,7 +8,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-
+@Transactional
 public class NoticeRepositoryImpl implements NoticeRepository {
     private final EntityManager em;
 
@@ -18,7 +18,7 @@ public class NoticeRepositoryImpl implements NoticeRepository {
     }
 
     @Override
-    @Transactional
+
     public Long save(Notice notice) {
         notice.changeStatus(NoticeStatus.작성);
         em.persist(notice);
@@ -34,10 +34,26 @@ public class NoticeRepositoryImpl implements NoticeRepository {
     }
 
     @Override
+    public List<Notice> findByAll() {
+        return em.createQuery("select n from Notice n ORDER BY n.createDate DESC",Notice.class)
+                .getResultList();
+    }
+
+    @Override
     public Optional<Notice> findByNoticeId(Long noticeId) {
         return em.createQuery("select n from Notice n where n.status <>:status AND n.id =:id",Notice.class)
                 .setParameter("id",noticeId)
                 .setParameter("status",NoticeStatus.숨김)
                 .getResultList().stream().findAny();
+    }
+
+    @Override
+    public void deleteNotice(Long noticeId) {
+        Notice notice = em.createQuery("select n from Notice n where n.id =:id", Notice.class)
+                .setParameter("id", noticeId)
+                .getResultList()
+                .stream().findAny()
+                .get();
+        em.remove(notice);
     }
 }

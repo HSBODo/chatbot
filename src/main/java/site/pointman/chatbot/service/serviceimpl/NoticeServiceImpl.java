@@ -1,5 +1,6 @@
 package site.pointman.chatbot.service.serviceimpl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.notice.Notice;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class NoticeServiceImpl implements NoticeService {
 
     NoticeRepository noticeRepository;
@@ -36,6 +38,12 @@ public class NoticeServiceImpl implements NoticeService {
         }catch (Exception e){
             return new HttpResponse(ApiResultCode.FAIL,"게시글 등록에 실패하였습니다.");
         }
+    }
+
+    @Override
+    public List<Notice> getNoticeAll() {
+        List<Notice> notices = noticeRepository.findByAll();
+        return notices;
     }
 
     @Override
@@ -114,5 +122,13 @@ public class NoticeServiceImpl implements NoticeService {
         }catch (Exception e) {
             return chatBotExceptionResponse.createException();
         }
+    }
+
+    @Override
+    public HttpResponse removeNotice(Long noticeId) {
+        noticeRepository.deleteNotice(noticeId);
+
+
+        return new HttpResponse(ApiResultCode.OK,"정상적으로 게시글을 삭제하였습니다.");
     }
 }
