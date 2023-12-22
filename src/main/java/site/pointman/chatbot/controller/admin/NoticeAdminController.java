@@ -5,7 +5,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.domain.notice.Notice;
-import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.service.NoticeService;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class NoticeAdminController {
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Response add(@RequestBody Notice notice){
+    public Object add(@RequestBody Notice notice){
         return noticeService.addNotice(notice);
     }
 

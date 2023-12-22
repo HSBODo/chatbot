@@ -7,13 +7,13 @@ import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
-import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.member.MemberDto;
 import site.pointman.chatbot.repository.MemberRepository;
-import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
 import site.pointman.chatbot.service.MemberService;
+import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
 import site.pointman.chatbot.utill.StringUtils;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -55,21 +55,26 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Object getCustomerProfile(String userKey, boolean isChatBotRequest) {
-        try {
-            Member member = memberRepository.findByUserKey(userKey).get();
+        Member member = memberRepository.findByUserKey(userKey).get();
+        if (isChatBotRequest) {
+            try {
+                String customerName = member.getName();
+                String customerPhoneNumber = member.getPhoneNumber();
+                String customerJoinDate = StringUtils.dateFormat(member.getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
+                String customerRank = member.getRole().getValue();
 
-            String customerName = member.getName();
-            String customerPhoneNumber = member.getPhoneNumber();
-            String customerJoinDate = StringUtils.dateFormat(member.getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
-            String customerRank = member.getRole().getValue();
+                if(isChatBotRequest) return customerChatBotResponseService.getCustomerProfileSuccessChatBotResponse(customerRank, customerName, customerPhoneNumber, customerJoinDate);
 
-            if(isChatBotRequest) return customerChatBotResponseService.getCustomerProfileSuccessChatBotResponse(customerRank, customerName, customerPhoneNumber, customerJoinDate);
-
-            return member;
-        }catch (Exception e) {
-            if (isChatBotRequest) return chatBotExceptionResponse.createException();
-            return new HttpResponse(ApiResultCode.FAIL,"회원 프로필 조회를 실패하였습니다. e= "+e.getMessage());
+                return member;
+            }catch (Exception e) {
+                if (isChatBotRequest) return chatBotExceptionResponse.createException();
+                return new HttpResponse(ApiResultCode.FAIL,"회원 프로필 조회를 실패하였습니다. e= "+e.getMessage());
+            }
         }
+
+        if (Objects.isNull(member)) return new HttpResponse(ApiResultCode.FAIL,"회원이 존재하지 않습니다");
+
+        return member;
     }
 
     @Override

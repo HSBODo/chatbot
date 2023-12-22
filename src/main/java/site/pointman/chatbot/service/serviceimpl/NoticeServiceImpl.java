@@ -2,15 +2,11 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.*;
+import site.pointman.chatbot.constant.ApiResultCode;
+import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
-import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.domain.response.property.common.ListItem;
-import site.pointman.chatbot.domain.response.property.components.BasicCard;
-import site.pointman.chatbot.domain.response.property.components.ListCard;
 import site.pointman.chatbot.repository.NoticeRepository;
 import site.pointman.chatbot.service.NoticeService;
 import site.pointman.chatbot.service.chatbot.NoticeChatBotResponseService;
@@ -33,7 +29,7 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public Response addNotice(Notice notice) {
+    public Object addNotice(Notice notice) {
         try {
             Long noticeId = noticeRepository.save(notice);
 
@@ -50,7 +46,7 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public Response getNotices(boolean isChatBotRequest) {
+    public Object getNotices(boolean isChatBotRequest) {
         List<Notice> notices = noticeRepository.findByStatus(NoticeStatus.작성);
 
 
@@ -58,7 +54,7 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public Response getNotice(String noticeId, boolean isChatBotRequest) {
+    public Object getNotice(String noticeId, boolean isChatBotRequest) {
         long parseNoticeId = Long.parseLong(noticeId);
 
         Optional<Notice> mayBeNotice = noticeRepository.findByNoticeId(parseNoticeId);
@@ -70,7 +66,7 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public HttpResponse removeNotice(Long noticeId) {
+    public Object removeNotice(Long noticeId) {
         noticeRepository.deleteNotice(noticeId);
 
 

@@ -1,7 +1,5 @@
 package site.pointman.chatbot.service;
 
-import site.pointman.chatbot.domain.response.Response;
-
 public interface MemberService {
     Object join(String userKey, String name, String phoneNumber, boolean isChatBotRequest);
     Object getCustomerProfile(String userKey, boolean isChatBotRequest);

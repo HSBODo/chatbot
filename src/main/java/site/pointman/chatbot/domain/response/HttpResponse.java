@@ -5,7 +5,7 @@ import site.pointman.chatbot.constant.ApiResultCode;
 
 
 @Getter
-public class HttpResponse extends Response {
+public class HttpResponse extends Object {
     private int code;
     private Object message;
 

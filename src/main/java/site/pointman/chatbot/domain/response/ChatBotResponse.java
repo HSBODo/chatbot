@@ -15,7 +15,7 @@ import site.pointman.chatbot.domain.response.property.components.*;
 
 
 @Getter
-public class ChatBotResponse extends Response {
+public class ChatBotResponse {
     private String version;
     private Template template;
 

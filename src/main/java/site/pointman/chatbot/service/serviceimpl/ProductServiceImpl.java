@@ -8,7 +8,6 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
-import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.dto.product.ProductImageDto;
 import site.pointman.chatbot.repository.MemberRepository;
@@ -48,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory) {
+    public Object addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory) {
         try {
             Category category = Category.getCategory(productCategory);
             Member member = memberRepository.findByUserKey(userKey).get();
@@ -70,14 +69,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response getProductCategory(String requestBlockId) {
+    public Object getProductCategory(String requestBlockId) {
         if(requestBlockId.equals(BlockId.PRODUCT_ADD_INFO.getBlockId()))  return productChatBotResponseService.getCategoryChatBotResponse(BlockId.PRODUCT_PROFILE_PREVIEW);
 
         return productChatBotResponseService.getCategoryChatBotResponse(BlockId.FIND_PRODUCTS_BY_CATEGORY);
     }
 
     @Override
-    public Response getProductsByCategory(Category category) {
+    public Object getProductsByCategory(Category category) {
         try {
             List<Product> products = productRepository.findByCategory(category,ProductStatus.판매중);
 
@@ -90,7 +89,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category) {
+    public Object getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category) {
         try {
             String formatPrice = StringUtils.formatPrice(Integer.parseInt(productPrice));
 
@@ -101,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response getMyProducts(String userKey, String productStatus) {
+    public Object getMyProducts(String userKey, String productStatus) {
         try {
             ProductStatus status = ProductStatus.getProductStatus(productStatus);
 
@@ -116,7 +115,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response getProductProfile(String productId, String userKey) {
+    public Object getProductProfile(String productId, String userKey) {
         try {
             Optional<Product> mayBeProduct = productRepository.findByProductId(Long.parseLong(productId));
 
@@ -131,7 +130,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response updateProductStatus(String productId, String utterance) {
+    public Object updateProductStatus(String productId, String utterance) {
         try {
             long parseProductId = Long.parseLong(productId);
             ProductStatus productStatus = ProductStatus.getProductStatus(utterance);
@@ -149,7 +148,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response deleteProduct(String productId, String utterance) {
+    public Object deleteProduct(String productId, String utterance) {
         try {
             long parseProductId = Long.parseLong(productId);
 
@@ -168,12 +167,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response verificationCustomerSuccessResponse() {
+    public Object verificationCustomerSuccessResponse() {
        return productChatBotResponseService.verificationCustomerSuccessChatBotResponse();
     }
 
     @Override
-    public Response getProductsBySearchWord(String searchWord) {
+    public Object getProductsBySearchWord(String searchWord) {
         try {
             List<Product> products = productRepository.findBySearchWord(searchWord, ProductStatus.판매중);
 
@@ -186,7 +185,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response getContractProducts(String userKey) {
+    public Object getContractProducts(String userKey) {
         List<Product> contractProducts = productRepository.findByUserKey(userKey, ProductStatus.판매대기);
         if(contractProducts.isEmpty()) return chatBotExceptionResponse.createException("결제가 체결된 상품이 없습니다.");
 
@@ -194,7 +193,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response getContractProductProfile(String userKey, String orderId) {
+    public Object getContractProductProfile(String userKey, String orderId) {
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId),OrderStatus.주문체결);
         if (mayBeOrder.isEmpty()) return chatBotExceptionResponse.createException("체결된 주문이 없습니다.");
 

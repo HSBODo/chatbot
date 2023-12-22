@@ -1,7 +1,6 @@
 package site.pointman.chatbot.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -14,11 +13,9 @@ import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.utill.NumberUtils;
-import site.pointman.chatbot.utill.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -50,7 +47,7 @@ class ProductServiceTest {
     @Transactional
     void validationCustomer() throws Exception{
 
-        Response response = productService.verificationCustomerSuccessResponse();
+        Object response = productService.verificationCustomerSuccessResponse();
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
@@ -72,7 +69,7 @@ class ProductServiceTest {
         String category = Category.스포츠_레저.getValue();
 
         //when
-        Response response = productService.getProductInfoPreview(
+        Object response = productService.getProductInfoPreview(
                 imageUrls,
                 productName,
                 productDescription,
@@ -99,7 +96,7 @@ class ProductServiceTest {
         ProductDto productDto = chatBotRequest.createProductDto();
 
         //when
-        Response response = productService.addProduct(productDto,productId,userKey,imageUrls,productCategory);
+        Object response = productService.addProduct(productDto,productId,userKey,imageUrls,productCategory);
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
@@ -115,7 +112,7 @@ class ProductServiceTest {
         List<Product> products = productRepository.findByUserKey(userKey);
 
         //when
-        Response response = productService.getMyProducts(userKey,"판매중");
+        Object response = productService.getMyProducts(userKey,"판매중");
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
 
         int customerProductsSize = chatBotResponse.getTemplate().getOutputs().get(0).getCarousel().getItems().size();
@@ -131,7 +128,7 @@ class ProductServiceTest {
         Product product = productRepository.findByProductId(Long.parseLong(productId)).get();
 
         //when
-        Response response = productService.getProductProfile(productId,userKey);
+        Object response = productService.getProductProfile(productId,userKey);
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String title = chatBotResponse.getTemplate().getOutputs().get(1).getTextCard().getTitle();
 
@@ -145,7 +142,7 @@ class ProductServiceTest {
         String utterance =  ProductStatus.판매중.name();;
 
         //when
-        Response response = productService.updateProductStatus(productId,utterance);
+        Object response = productService.updateProductStatus(productId,utterance);
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
@@ -160,7 +157,7 @@ class ProductServiceTest {
         String utterance = ProductStatus.삭제.name();
 
         //when
-        Response response = productService.deleteProduct(productId,utterance);
+        Object response = productService.deleteProduct(productId,utterance);
         ChatBotResponse chatBotResponse = (ChatBotResponse) response;
         String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
 
