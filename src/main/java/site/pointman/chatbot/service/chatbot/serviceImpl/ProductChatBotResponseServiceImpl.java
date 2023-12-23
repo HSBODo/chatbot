@@ -133,32 +133,32 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     @Override
     public ChatBotResponse createMyProductListChatBotResponse(List<Product> products, ButtonName quickButtonName, BlockId nextBlockId) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
-        Carousel<BasicCard> carousel = new Carousel<>();
+        Carousel<CommerceCard> carousel = new Carousel<>();
 
         products.forEach(product -> {
-            BasicCard basicCard = new BasicCard();
+            CommerceCard commerceCard = new CommerceCard();
             StringBuilder productDescription = new StringBuilder();
 
             ProductStatus productStatus = product.getStatus();
             String productId = String.valueOf(product.getId());
             String productName = product.getName() + "("+productStatus+")";
-            String productPrice = CustomStringUtils.formatPrice(product.getPrice());
+            int productPrice = product.getPrice().intValue();
             String thumbnailImageUrl = product.getProductImages().getImageUrls().get(0);
             String createDate = product.getFormatCreateDate();
 
             productDescription
-                    .append("판매가격: "+ productPrice+"원")
-                    .append("\n")
                     .append("등록일자: "+ createDate)
             ;
 
             Button button = new Button("상세보기", ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCT_DETAIL.getBlockId(), ButtonParamKey.productId, productId);
 
-            basicCard.setThumbnail(thumbnailImageUrl,true);
-            basicCard.setTitle(productName);
-            basicCard.setDescription(productDescription.toString());
-            basicCard.setButton(button);
-            carousel.addComponent(basicCard);
+            commerceCard.setThumbnails(thumbnailImageUrl,true);
+            commerceCard.setProfile(product.getMember().getProfile());
+            commerceCard.setPrice(productPrice);
+            commerceCard.setTitle(productName);
+            commerceCard.setDescription(productDescription.toString());
+            commerceCard.setButton(button);
+            carousel.addComponent(commerceCard);
         });
 
         chatBotResponse.addCarousel(carousel);

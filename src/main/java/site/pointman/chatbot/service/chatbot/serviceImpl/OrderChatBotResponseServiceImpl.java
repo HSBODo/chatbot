@@ -9,6 +9,7 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.common.Button;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.Carousel;
+import site.pointman.chatbot.domain.response.property.components.CommerceCard;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.service.chatbot.OrderChatBotResponseService;
 import site.pointman.chatbot.utill.CustomStringUtils;
@@ -21,10 +22,10 @@ public class OrderChatBotResponseServiceImpl implements OrderChatBotResponseServ
     @Override
     public ChatBotResponse getPurchaseProducts(List<Order> purchaseOrders) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
-        Carousel<BasicCard> basicCardCarousel = new Carousel<>();
+        Carousel<CommerceCard> basicCardCarousel = new Carousel<>();
 
         purchaseOrders.forEach(order -> {
-            BasicCard basicCard = new BasicCard();
+            CommerceCard commerceCard = new CommerceCard();
 
             Product product = order.getProduct();
 
@@ -33,17 +34,17 @@ public class OrderChatBotResponseServiceImpl implements OrderChatBotResponseServ
 
             String title = product.getName();
             String description = new StringBuilder()
-                    .append("판매가격: "+ CustomStringUtils.formatPrice(product.getPrice())+"원")
-                    .append("\n")
                     .append("상품상태: "+status)
                     .toString();
 
-            basicCard.setThumbnail(product.getProductImages().getImageUrls().get(0),true);
-            basicCard.setTitle(title);
-            basicCard.setDescription(description);
-            basicCard.setButton(new Button("상세보기", ButtonAction.블럭이동, BlockId.PRODUCT_GET_PURCHASE_PROFILE.getBlockId(), ButtonParamKey.orderId, orderId));
+            commerceCard.setThumbnails(product.getProductImages().getImageUrls().get(0),true);
+            commerceCard.setProfile(order.getProduct().getMember().getProfile());
+            commerceCard.setPrice(order.getProduct().getPrice().intValue());
+            commerceCard.setTitle(title);
+            commerceCard.setDescription(description);
+            commerceCard.setButton(new Button("상세보기", ButtonAction.블럭이동, BlockId.PRODUCT_GET_PURCHASE_PROFILE.getBlockId(), ButtonParamKey.orderId, orderId));
 
-            basicCardCarousel.addComponent(basicCard);
+            basicCardCarousel.addComponent(commerceCard);
         });
 
         chatBotResponse.addCarousel(basicCardCarousel);
