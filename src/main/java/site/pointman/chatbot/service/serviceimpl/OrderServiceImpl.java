@@ -2,13 +2,13 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.*;
+import site.pointman.chatbot.constant.ApiResultCode;
+import site.pointman.chatbot.constant.OrderMemberConfirmStatus;
+import site.pointman.chatbot.constant.OrderStatus;
+import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
-import site.pointman.chatbot.domain.order.PayMethod;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
-import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentApproveResponse;
-import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentCancelResponse;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
