@@ -11,7 +11,7 @@ import site.pointman.chatbot.dto.member.MemberDto;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
-import site.pointman.chatbot.utill.StringUtils;
+import site.pointman.chatbot.utill.CustomStringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -69,7 +69,7 @@ public class MemberServiceImpl implements MemberService {
             try {
                 String customerName = member.getName();
                 String customerPhoneNumber = member.getPhoneNumber();
-                String customerJoinDate = StringUtils.dateFormat(member.getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
+                String customerJoinDate = CustomStringUtils.dateFormat(member.getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
                 String customerRank = member.getRole().getValue();
 
                 if(isChatBotRequest) return customerChatBotResponseService.getCustomerProfileSuccessChatBotResponse(customerRank, customerName, customerPhoneNumber, customerJoinDate);

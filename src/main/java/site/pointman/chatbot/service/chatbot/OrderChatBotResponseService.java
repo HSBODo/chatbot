@@ -10,5 +10,7 @@ public interface OrderChatBotResponseService {
     ChatBotResponse getPurchaseProductProfile(Order order);
     ChatBotResponse purchaseSuccessReconfirm(String orderId);
     ChatBotResponse purchaseSuccessConfirm(Order order);
+    ChatBotResponse saleSuccessReconfirm(String orderId);
+    ChatBotResponse saleSuccessConfirm(Order order);
     ChatBotResponse updateTrackingNumber();
 }

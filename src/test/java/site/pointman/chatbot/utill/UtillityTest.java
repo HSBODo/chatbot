@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Slf4j
 class UtillityTest {
-    StringUtils utillity;
+    CustomStringUtils utillity;
     @Test
     void replaceAll() {
     }

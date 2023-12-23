@@ -10,6 +10,9 @@ public interface OrderService {
     HttpResponse successOrder(Long orderId);
     ChatBotResponse purchaseSuccessReconfirm(String orderId);
     ChatBotResponse purchaseSuccessConfirm(String orderId);
+
+    ChatBotResponse saleSuccessReconfirm(String orderId);
+    ChatBotResponse saleSuccessConfirm(String orderId);
     Object updateTrackingNumber(String orderId, String trackingNumber);
     Object getPurchaseProducts(String userKey);
     Object getPurchaseProductProfile(String userKey,String orderId);

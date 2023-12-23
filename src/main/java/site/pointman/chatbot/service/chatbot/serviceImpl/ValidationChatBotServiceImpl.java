@@ -6,7 +6,7 @@ import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotValidationResponse;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.service.chatbot.ValidationChatBotService;
-import site.pointman.chatbot.utill.NumberUtils;
+import site.pointman.chatbot.utill.CustomNumberUtils;
 
 import java.util.Optional;
 
@@ -26,7 +26,7 @@ public class ValidationChatBotServiceImpl implements ValidationChatBotService {
         String inputPhone = chatBotRequest.getValidationData();
         inputPhone = inputPhone.replaceAll("-", "");
 
-        if(!NumberUtils.isNumber(inputPhone)){
+        if(!CustomNumberUtils.isNumber(inputPhone)){
             chatBotValidationResponse.validationFail();
             return chatBotValidationResponse;
         }
@@ -73,7 +73,7 @@ public class ValidationChatBotServiceImpl implements ValidationChatBotService {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String productPrice= chatBotRequest.getValidationData();
 
-        if(!NumberUtils.isNumber(productPrice)){
+        if(!CustomNumberUtils.isNumber(productPrice)){
             chatBotValidationResponse.validationFail();
             return chatBotValidationResponse;
         }
@@ -138,7 +138,7 @@ public class ValidationChatBotServiceImpl implements ValidationChatBotService {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String trackingNumber = chatBotRequest.getValidationData();
 
-        if(NumberUtils.isNumber(trackingNumber)){
+        if(CustomNumberUtils.isNumber(trackingNumber)){
             chatBotValidationResponse.validationSuccess(trackingNumber);
             return chatBotValidationResponse;
         }

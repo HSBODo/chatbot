@@ -1,16 +1,18 @@
 package site.pointman.chatbot.domain.order;
 
+import com.mysql.cj.util.StringUtils;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import site.pointman.chatbot.constant.OrderMemberConfirmStatus;
 import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.product.Product;
-import site.pointman.chatbot.utill.StringUtils;
+import site.pointman.chatbot.utill.CustomStringUtils;
 
 import javax.persistence.*;
 
@@ -34,6 +36,12 @@ public class Order extends BaseEntity {
     private int quantity;
 
     private String trackingNumber;
+
+    @Enumerated(EnumType.STRING)
+    private OrderMemberConfirmStatus buyerConfirmStatus = OrderMemberConfirmStatus.미확정;
+
+    @Enumerated(EnumType.STRING)
+    private OrderMemberConfirmStatus sellerConfirmStatus = OrderMemberConfirmStatus.미확정;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -60,14 +68,22 @@ public class Order extends BaseEntity {
         this.trackingNumber = trackingNumber;
     }
 
+    public void changeBuyerConfirmStatus(OrderMemberConfirmStatus buyerConfirmStatus) {
+        this.buyerConfirmStatus = buyerConfirmStatus;
+    }
+
+    public void changeSellerConfirmStatus(OrderMemberConfirmStatus sellerConfirmStatus) {
+        this.sellerConfirmStatus = sellerConfirmStatus;
+    }
+
     public String viewTackingNumber(){
-        if (trackingNumber.isEmpty()) return "미입력";
+        if (StringUtils.isNullOrEmpty(trackingNumber)) return "미입력";
         return this.trackingNumber;
     }
 
     public String getPurchaseProductProfile(){
         StringBuilder productProfile = new StringBuilder();
-        String formatPrice = StringUtils.formatPrice(product.getPrice());
+        String formatPrice = CustomStringUtils.formatPrice(product.getPrice());
 
         return productProfile
                 .append("상품상태: " + product.getStatus().getOppositeValue())
@@ -91,7 +107,7 @@ public class Order extends BaseEntity {
     }
 
     public String getFormatApproveDate(){
-       return StringUtils.dateFormat(paymentInfo.getCreateDate(),"yyyy-MM-dd hh:mm:ss","yyyy-MM-dd");
+       return CustomStringUtils.dateFormat(paymentInfo.getCreateDate(),"yyyy-MM-dd hh:mm:ss","yyyy-MM-dd");
     }
 
     public void orderSuccessConfirm(){

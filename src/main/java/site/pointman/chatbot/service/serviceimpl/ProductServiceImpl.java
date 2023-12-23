@@ -16,7 +16,7 @@ import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.S3FileService;
 import site.pointman.chatbot.service.chatbot.ProductChatBotResponseService;
-import site.pointman.chatbot.utill.StringUtils;
+import site.pointman.chatbot.utill.CustomStringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -91,7 +91,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Object getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category) {
         try {
-            String formatPrice = StringUtils.formatPrice(Integer.parseInt(productPrice));
+            String formatPrice = CustomStringUtils.formatPrice(Integer.parseInt(productPrice));
 
             return productChatBotResponseService.getProductInfoPreviewSuccessChatBotResponse(imageUrls, category, productName,productDescription,formatPrice,tradingLocation,kakaoOpenChatUrl);
         }catch (Exception e){

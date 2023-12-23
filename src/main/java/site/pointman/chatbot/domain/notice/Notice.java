@@ -3,7 +3,6 @@ package site.pointman.chatbot.domain.notice;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.constant.NoticeType;
@@ -11,7 +10,7 @@ import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.product.StringListConverter;
 import site.pointman.chatbot.domain.response.property.common.Button;
-import site.pointman.chatbot.utill.StringUtils;
+import site.pointman.chatbot.utill.CustomStringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -92,7 +91,7 @@ public class Notice extends BaseEntity {
                 .append("\n\n")
                 .append(description)
                 .append("\n\n")
-                .append("등록일자: " + StringUtils.dateFormat(getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd"));
+                .append("등록일자: " + CustomStringUtils.dateFormat(getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd"));
         return formatDescription.toString();
     }
 

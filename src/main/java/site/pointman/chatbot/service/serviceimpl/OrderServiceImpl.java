@@ -1,7 +1,9 @@
 package site.pointman.chatbot.service.serviceimpl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.ApiResultCode;
+import site.pointman.chatbot.constant.OrderMemberConfirmStatus;
 import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
     OrderRepository orderRepository;
@@ -109,13 +112,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Object getPurchaseProductProfile(String userKey, String orderId) {
+        try {
+            Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId));
+            if (mayBeOrder.isEmpty()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
 
-        Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId));
-        if (mayBeOrder.isEmpty()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
+            Order order = mayBeOrder.get();
 
-        Order order = mayBeOrder.get();
-
-        return orderChatBotResponseService.getPurchaseProductProfile(order);
+            return orderChatBotResponseService.getPurchaseProductProfile(order);
+        }catch (Exception e) {
+            return chatBotExceptionResponse.createException();
+        }
     }
 
     @Override
@@ -130,9 +136,25 @@ public class OrderServiceImpl implements OrderService {
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId), OrderStatus.주문체결);
         if (mayBeOrder.isEmpty()) return new ChatBotExceptionResponse().createException("체결된 주문이 존재하지 않습니다.");
         Order order = mayBeOrder.get();
-        order.changeStatus(OrderStatus.구매자확인);
+        order.changeBuyerConfirmStatus(OrderMemberConfirmStatus.구매확정);
 
         return orderChatBotResponseService.purchaseSuccessConfirm(order);
+    }
+
+    @Override
+    public ChatBotResponse saleSuccessReconfirm(String orderId) {
+        return orderChatBotResponseService.saleSuccessReconfirm(orderId);
+    }
+
+    @Override
+    @Transactional
+    public ChatBotResponse saleSuccessConfirm(String orderId) {
+        Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId), OrderStatus.주문체결);
+        if (mayBeOrder.isEmpty()) return new ChatBotExceptionResponse().createException("체결된 주문이 존재하지 않습니다.");
+        Order order = mayBeOrder.get();
+        order.changeSellerConfirmStatus(OrderMemberConfirmStatus.판매확정);
+        order.orderSuccessConfirm();
+        return orderChatBotResponseService.saleSuccessConfirm(order);
     }
 
     @Override

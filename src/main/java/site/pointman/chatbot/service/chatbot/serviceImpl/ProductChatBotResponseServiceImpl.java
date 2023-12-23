@@ -16,7 +16,7 @@ import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.service.chatbot.ProductChatBotResponseService;
-import site.pointman.chatbot.utill.StringUtils;
+import site.pointman.chatbot.utill.CustomStringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -141,7 +141,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             ProductStatus productStatus = product.getStatus();
             String productId = String.valueOf(product.getId());
             String productName = product.getName() + "("+productStatus+")";
-            String productPrice = StringUtils.formatPrice(product.getPrice());
+            String productPrice = CustomStringUtils.formatPrice(product.getPrice());
             String thumbnailImageUrl = product.getProductImages().getImageUrls().get(0);
             String createDate = product.getFormatCreateDate();
 
@@ -230,7 +230,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             ProductStatus productStatus = product.getStatus();
             String orderId = String.valueOf(order.getOrderId());
             String productName = product.getName() + "("+productStatus+")";
-            String productPrice = StringUtils.formatPrice(product.getPrice());
+            String productPrice = CustomStringUtils.formatPrice(product.getPrice());
             String thumbnailImageUrl = product.getProductImages().getImageUrls().get(0);
 
 
@@ -290,15 +290,18 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         textCard.setDescription(productDescription.toString());
 
         chatBotResponse.addTextCard(textCard);
-        if (order.getStatus().equals(OrderStatus.구매자확인)) {
-            chatBotResponse.addQuickButton(ButtonName.판매확정.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
+
+
+
+        if (order.getBuyerConfirmStatus().equals(OrderMemberConfirmStatus.구매확정)) {
+            chatBotResponse.addQuickButton(ButtonName.판매확정.name(),ButtonAction.블럭이동,BlockId.SALE_SUCCESS_RECONFIRM.getBlockId(),ButtonParamKey.orderId,String.valueOf(order.getOrderId()));
         }else {
             String buttonName = "운송장번호 등록";
             if (!order.getTrackingNumber().isEmpty()) buttonName = "운송장번호 변경";
-
             chatBotResponse.addQuickButton(buttonName, ButtonAction.블럭이동, BlockId.ORDER_ADD_TRACKING_NUMBER.getBlockId(), ButtonParamKey.orderId, String.valueOf(order.getOrderId()));
         }
         chatBotResponse.addQuickButton(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
+
         return chatBotResponse;
     }
 

@@ -4,12 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
-class StringUtilsTest {
+class CustomStringUtilsTest {
 
 
 
@@ -44,7 +41,7 @@ class StringUtilsTest {
     @Test
     void dateFormat() throws ParseException {
         String date = "2023-12-15 11:36:29";
-        date = StringUtils.dateFormat(date, "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
+        date = CustomStringUtils.dateFormat(date, "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
 
         log.info("s={}",date);
     }

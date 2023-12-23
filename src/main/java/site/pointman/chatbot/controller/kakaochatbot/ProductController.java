@@ -13,7 +13,7 @@ import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.ProductService;
-import site.pointman.chatbot.utill.NumberUtils;
+import site.pointman.chatbot.utill.CustomNumberUtils;
 
 import java.util.List;
 
@@ -90,7 +90,7 @@ public class ProductController {
 
         if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        Long productId = NumberUtils.createNumberId();
+        Long productId = CustomNumberUtils.createNumberId();
 
         return productService.addProduct(
                 productDto,

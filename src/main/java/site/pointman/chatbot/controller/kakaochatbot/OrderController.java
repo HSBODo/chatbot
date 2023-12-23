@@ -88,4 +88,20 @@ public class OrderController {
         return orderService.purchaseSuccessConfirm(orderId);
     }
 
+    @ResponseBody
+    @PostMapping(value = "kakaochatbot/GET/saleSuccessReconfirm")
+    public Object saleSuccessReconfirm (@RequestBody ChatBotRequest chatBotRequest) {
+        String orderId = chatBotRequest.getOrderId();
+
+        return orderService.saleSuccessReconfirm(orderId);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "kakaochatbot/POST/saleSuccessConfirm")
+    public Object saleSuccessConfirmation (@RequestBody ChatBotRequest chatBotRequest) {
+        String orderId = chatBotRequest.getOrderId();
+
+        return orderService.saleSuccessConfirm(orderId);
+    }
+
 }

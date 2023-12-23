@@ -1,8 +1,6 @@
 package site.pointman.chatbot.utill;
 
 
-import site.pointman.chatbot.constant.ProductStatus;
-
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 
-public class StringUtils {
+public class CustomStringUtils {
 
     public static String replaceAll (String text){
         text=text.replaceAll("<(/)?([a-zA-Z]*)(\\\\s[a-zA-Z]*=[^>]*)?(\\\\s)*(/)?>","");

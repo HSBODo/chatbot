@@ -19,11 +19,10 @@ import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.PaymentService;
-import site.pointman.chatbot.utill.NumberUtils;
+import site.pointman.chatbot.utill.CustomNumberUtils;
 
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Optional;
 
 @Service
@@ -81,7 +80,7 @@ public class PaymentServiceImpl implements PaymentService {
         Product product = mayBeProduct.get();
         if (!product.getStatus().equals(ProductStatus.판매중))throw new IllegalArgumentException("판매중인 상품이 아닙니다.");
 
-        Long orderId = NumberUtils.createNumberId();
+        Long orderId = CustomNumberUtils.createNumberId();
         Member buyerMember = mayBeMember.get();
 
 

@@ -15,7 +15,7 @@ import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.utill.NumberUtils;
+import site.pointman.chatbot.utill.CustomNumberUtils;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ class ProductServiceTest {
     @Transactional
     void addProduct() throws JsonProcessingException {
         //give
-        Long productId = NumberUtils.createNumberId();
+        Long productId = CustomNumberUtils.createNumberId();
         String userKey = chatBotRequest.getUserKey();
         List<String> imageUrls = chatBotRequest.getProductImages();
         String productCategory = chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue();

@@ -8,7 +8,7 @@ import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.utill.StringUtils;
+import site.pointman.chatbot.utill.CustomStringUtils;
 
 import javax.persistence.*;
 
@@ -79,7 +79,7 @@ public class Product extends BaseEntity {
     }
     public String getProductProfileTypeOfChatBot(){
         StringBuilder productProfile = new StringBuilder();
-        String formatPrice = StringUtils.formatPrice(price);
+        String formatPrice = CustomStringUtils.formatPrice(price);
         return productProfile
                 .append("상품상태: " + status)
                 .append("\n")
@@ -98,10 +98,10 @@ public class Product extends BaseEntity {
     }
     public String getFormatCreateDate() {
         String createDate = getCreateDate();
-        return StringUtils.dateFormat(createDate, "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
+        return CustomStringUtils.dateFormat(createDate, "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
     }
     public String getFormatPrice(){
-        return StringUtils.formatPrice(price);
+        return CustomStringUtils.formatPrice(price);
     }
     public String getKakaoPaymentUrl(String buyerUserKey,String hostUrl){
         StringBuilder paymentUrl = new StringBuilder(hostUrl);

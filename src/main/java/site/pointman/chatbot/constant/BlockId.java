@@ -27,7 +27,9 @@ public enum BlockId {
     FIND_NOTICES("공지사항 목록","65262c152dd06e457d91c7c2"),
     FIND_NOTICE("게시글 조회","658088bd73cb0d4d1977c880"),
     PURCHASE_SUCCESS_RECONFIRM("상품 구매확정 재확인","65846277aca99e51cc5be11d"),
-    PURCHASE_SUCCESS_CONFIRM("상품 구매확정","658463e835bee670bd302d52")
+    PURCHASE_SUCCESS_CONFIRM("상품 구매확정","658463e835bee670bd302d52"),
+    SALE_SUCCESS_RECONFIRM("상품 판매확정 재확인","6586749af96d71675b454bd4"),
+    SALE_SUCCESS_CONFIRM("상품 판매확정","658674b53fa0457f23d7fcdf")
     ;
     private final String name;
     private final String blockId;
