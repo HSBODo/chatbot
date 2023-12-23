@@ -8,6 +8,7 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.dto.product.ProductImageDto;
 import site.pointman.chatbot.repository.MemberRepository;
@@ -47,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Object addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory) {
+    public ChatBotResponse addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory) {
         try {
             Category category = Category.getCategory(productCategory);
             Member member = memberRepository.findByUserKey(userKey).get();
@@ -69,14 +70,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Object getProductCategory(String requestBlockId) {
+    public ChatBotResponse getProductCategory(String requestBlockId) {
         if(requestBlockId.equals(BlockId.PRODUCT_ADD_INFO.getBlockId()))  return productChatBotResponseService.getCategoryChatBotResponse(BlockId.PRODUCT_PROFILE_PREVIEW);
 
         return productChatBotResponseService.getCategoryChatBotResponse(BlockId.FIND_PRODUCTS_BY_CATEGORY);
     }
 
     @Override
-    public Object getProductsByCategory(Category category) {
+    public ChatBotResponse getProductsByCategory(Category category) {
         try {
             List<Product> products = productRepository.findByCategory(category,ProductStatus.판매중);
 
@@ -89,7 +90,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Object getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category) {
+    public ChatBotResponse getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category) {
         try {
             String formatPrice = CustomStringUtils.formatPrice(Integer.parseInt(productPrice));
 
