@@ -94,8 +94,6 @@ public class OrderChatBotResponseServiceImpl implements OrderChatBotResponseServ
 
     @Override
     public ChatBotResponse purchaseSuccessConfirm(Order order) {
-        order.orderSuccessConfirm();
-
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("정상적으로 구매확정을 완료하였습니다.");
