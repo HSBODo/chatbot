@@ -51,7 +51,7 @@ class MemberRepositoryTest {
         String userKey = "QFJSyeIZbO77";
         String phoneNumber = "01011112222";
         //when
-        memberRepository.updateCustomerPhoneNumber(userKey,phoneNumber);
+        memberRepository.updateMemberPhoneNumber(userKey,phoneNumber);
 
         //then
     }

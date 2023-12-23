@@ -46,7 +46,16 @@ public class Member extends BaseEntity {
         this.role = memberRole;
     }
 
-    public void changePhone(String updatePhoneNumber){
-        phoneNumber = updatePhoneNumber;
+    public void changePhoneNumber(String updatePhoneNumber){
+        this.phoneNumber = updatePhoneNumber;
+    }
+    public void changeRole(MemberRole role){
+        this.role = role;
+    }
+    public void changeUserKey(String userKey){
+        this.userKey = userKey;
+    }
+    public void changeName(String name){
+        this.name = name;
     }
 }

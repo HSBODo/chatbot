@@ -1,5 +1,6 @@
 package site.pointman.chatbot.repository.impl;
 
+import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
@@ -8,6 +9,7 @@ import site.pointman.chatbot.repository.MemberRepository;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Transactional
@@ -31,6 +33,12 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
+    public List<Member> findByAll() {
+        return em.createQuery("select m from Member m", Member.class)
+                .getResultList();
+    }
+
+    @Override
     public Optional<Member> findByName(String name) {
         return em.createQuery("select m from Member m where m.name=:name", Member.class)
                 .setParameter("name", name)
@@ -38,11 +46,22 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public void updateCustomerPhoneNumber(String userKey, String phoneNumber) {
+    public void updateMember(String userKey, Member member) {
         Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
                 .setParameter("userKey", userKey)
                 .getSingleResult();
-        findMember.changePhone(phoneNumber);
+        if (Objects.nonNull(member.getName())) findMember.changeName(member.getName());
+        if (Objects.nonNull(member.getUserKey())) findMember.changeUserKey(member.getUserKey());
+        if (Objects.nonNull(member.getPhoneNumber())) findMember.changePhoneNumber(member.getPhoneNumber());
+        if (Objects.nonNull(member.getRole())) findMember.changeRole(member.getRole());
+    }
+
+    @Override
+    public void updateMemberPhoneNumber(String userKey, String phoneNumber) {
+        Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
+                .setParameter("userKey", userKey)
+                .getSingleResult();
+        findMember.changePhoneNumber(phoneNumber);
     }
 
     @Override

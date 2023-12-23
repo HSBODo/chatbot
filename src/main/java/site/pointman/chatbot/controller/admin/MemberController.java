@@ -26,15 +26,27 @@ public class MemberController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "",method = RequestMethod.GET)
+    public Object getMembers(){
+        return memberService.getCustomers(false);
+    }
+
+    @ResponseBody
     @RequestMapping(value = "{memberUserKey}",method = RequestMethod.GET)
     public Object getMember(@PathVariable String memberUserKey){
         return memberService.getCustomerProfile(memberUserKey,false);
     }
 
     @ResponseBody
-    @RequestMapping(value = "{memberUserKey}",method = RequestMethod.PATCH)
-    public Object updateMemberPhoneNumber(@PathVariable String memberUserKey, @RequestBody String phoneNumber){
+    @RequestMapping(value = "{memberUserKey}/{phoneNumber}",method = RequestMethod.PATCH)
+    public Object updateMemberPhoneNumber(@PathVariable String memberUserKey, @PathVariable String phoneNumber){
         return memberService.updateCustomerPhoneNumber(memberUserKey,phoneNumber,false);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "{memberUserKey}",method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Object updateMemberPhoneNumber(@PathVariable String memberUserKey, @RequestBody Member member){
+        return memberService.updateMember(memberUserKey,member,false);
     }
 
     @ResponseBody

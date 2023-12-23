@@ -18,7 +18,7 @@ public class MemberRoleEnumConverter implements AttributeConverter<MemberRole, S
         if (dbData == null) return null;
 
         try {
-            return MemberRole.getRankName(dbData);
+            return MemberRole.getRoleByRoleName(dbData);
         }catch (IllegalArgumentException e) {
             throw e;
         }

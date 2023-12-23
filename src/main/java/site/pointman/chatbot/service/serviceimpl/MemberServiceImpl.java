@@ -13,6 +13,7 @@ import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
 import site.pointman.chatbot.utill.StringUtils;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -54,6 +55,14 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public Object getCustomers(boolean isChatBotRequest) {
+        List<Member> members = memberRepository.findByAll();
+        if (members.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"회원이 존재하지 않습니다");
+
+        return members;
+    }
+
+    @Override
     public Object getCustomerProfile(String userKey, boolean isChatBotRequest) {
         Member member = memberRepository.findByUserKey(userKey).get();
         if (isChatBotRequest) {
@@ -78,9 +87,22 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public Object updateMember(String userKey, Member member, boolean isChatBotRequest) {
+        try {
+
+            memberRepository.updateMember(userKey,member);
+
+            return new HttpResponse(ApiResultCode.OK,"회원정보 변경을 완료하였습니다.");
+        }catch (Exception e){
+            log.info("e={}",e.getMessage());
+            return new HttpResponse(ApiResultCode.FAIL,"회원정보 변경을 실패하였습니다.");
+        }
+    }
+
+    @Override
     public Object updateCustomerPhoneNumber(String userKey, String updatePhoneNumber, boolean isChatBotRequest) {
         try {
-            memberRepository.updateCustomerPhoneNumber(userKey, updatePhoneNumber);
+            memberRepository.updateMemberPhoneNumber(userKey, updatePhoneNumber);
 
             if(isChatBotRequest) return customerChatBotResponseService.updateCustomerPhoneNumberSuccessChatBotResponse();
 

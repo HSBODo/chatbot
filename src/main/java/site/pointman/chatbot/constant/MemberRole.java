@@ -10,22 +10,22 @@ public enum MemberRole {
     ADMIN("관리자",Long.MAX_VALUE)
     ;
 
-    private final String rankName;
+    private final String roleName;
     private final Long score;
 
-    MemberRole(String value, Long score) {
-        this.rankName = value;
+    MemberRole(String roleName, Long score) {
+        this.roleName = roleName;
         this.score = score;
     }
 
-    public static MemberRole getRank(Long score){
+    public static MemberRole getRoleByScore(Long score){
         return Arrays.stream(MemberRole.values())
                 .filter(memberRole -> memberRole.getScore() >= score)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("%s점수 이상의 등급이 존재하지 않습니다.", score)));
     }
 
-    public static MemberRole getRankName(String rankName){
+    public static MemberRole getRoleByRoleName(String rankName){
         return Arrays.stream(MemberRole.values())
                 .filter(memberRole -> memberRole.getValue().equals(rankName))
                 .findAny()
@@ -33,7 +33,7 @@ public enum MemberRole {
     }
 
     public String getValue() {
-        return rankName;
+        return roleName;
     }
 
     public Long getScore() {
