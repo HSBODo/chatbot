@@ -34,7 +34,7 @@ class PaymentServiceTest {
     void kakaoPaymentReady() throws UnsupportedEncodingException {
 
         //when
-        KakaoPaymentReadyResponse kakaoPaymentReadyResponse = paymentService.getKakaoPaymentReadyUrl(productId, userKey);
+        KakaoPaymentReadyResponse kakaoPaymentReadyResponse = paymentService.kakaoPaymentReady(productId, userKey);
 
         //then
         Assertions.assertThat(kakaoPaymentReadyResponse.getTid()).isNotNull();

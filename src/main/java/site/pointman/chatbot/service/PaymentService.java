@@ -7,7 +7,7 @@ import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentReadyResponse;
 import java.io.UnsupportedEncodingException;
 
 public interface PaymentService {
-    KakaoPaymentReadyResponse getKakaoPaymentReadyUrl(Long productId, String userKey) throws UnsupportedEncodingException;
+    KakaoPaymentReadyResponse kakaoPaymentReady(Long productId, String userKey) throws UnsupportedEncodingException;
     KakaoPaymentApproveResponse kakaoPaymentApprove(Long orderId, String pgToken) throws Exception;
     KakaoPaymentCancelResponse kakaoPaymentCancel(Long orderId) throws Exception;
 }

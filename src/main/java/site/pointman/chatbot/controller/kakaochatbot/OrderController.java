@@ -36,7 +36,7 @@ public class OrderController {
     @GetMapping(value = "kakaopay-ready/{productId}")
     public String kakaoPayReady (@PathVariable Long productId, @RequestParam String userKey) throws Exception {
         try {
-            KakaoPaymentReadyResponse kakaoPaymentReadyResponse = paymentService.getKakaoPaymentReadyUrl(productId, userKey);
+            KakaoPaymentReadyResponse kakaoPaymentReadyResponse = paymentService.kakaoPaymentReady(productId, userKey);
             String next_redirect_app_url = kakaoPaymentReadyResponse.getNext_redirect_app_url();
 
             return "redirect:"+next_redirect_app_url;

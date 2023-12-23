@@ -66,7 +66,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public KakaoPaymentReadyResponse getKakaoPaymentReadyUrl(Long productId, String userKey) throws UnsupportedEncodingException {
+    public KakaoPaymentReadyResponse kakaoPaymentReady(Long productId, String userKey) throws UnsupportedEncodingException {
         final int quantity = 1;
         final int taxFreeAmount = 0;
         final int vatAmount = 0;
