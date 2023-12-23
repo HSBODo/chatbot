@@ -7,6 +7,7 @@ import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.domain.response.property.common.Profile;
 import site.pointman.chatbot.dto.member.MemberDto;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.service.MemberService;
@@ -34,14 +35,14 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Object join(String userKey, String name, String phoneNumber, boolean isChatBotRequest) {
         try {
-            MemberDto memberDto = MemberDto.builder()
+
+            Member member = Member.builder()
                     .userKey(userKey)
                     .name(name)
                     .phoneNumber(phoneNumber)
+                    .profile(new Profile(name))
                     .memberRole(MemberRole.CUSTOMER_BRONZE)
                     .build();
-
-            Member member = memberDto.toEntity();
 
             memberRepository.save(member);
 

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.BaseEntity;
+import site.pointman.chatbot.domain.response.property.common.Profile;
 import site.pointman.chatbot.utill.CustomStringUtils;
 
 import javax.persistence.*;
@@ -35,15 +36,19 @@ public class Member extends BaseEntity {
     @NotBlank
     private String phoneNumber;
 
+    @Embedded
+    private Profile profile;
+
     @Convert(converter = MemberRoleEnumConverter.class)
     @NotNull
     private MemberRole role;
 
     @Builder
-    public Member(String userKey, String name, String phoneNumber ,MemberRole memberRole) {
+    public Member(String userKey, String name, String phoneNumber , Profile profile, MemberRole memberRole) {
         this.userKey = userKey;
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.profile = profile;
         this.role = memberRole;
     }
 
