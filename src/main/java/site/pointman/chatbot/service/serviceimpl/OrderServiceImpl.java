@@ -130,6 +130,7 @@ public class OrderServiceImpl implements OrderService {
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId), OrderStatus.주문체결);
         if (mayBeOrder.isEmpty()) return new ChatBotExceptionResponse().createException("체결된 주문이 존재하지 않습니다.");
         Order order = mayBeOrder.get();
+        order.changeStatus(OrderStatus.구매자확인);
 
         return orderChatBotResponseService.purchaseSuccessConfirm(order);
     }

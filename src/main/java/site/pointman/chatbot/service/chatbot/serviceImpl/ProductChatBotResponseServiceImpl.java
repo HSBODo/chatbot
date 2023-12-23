@@ -290,11 +290,13 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         textCard.setDescription(productDescription.toString());
 
         chatBotResponse.addTextCard(textCard);
-
-        if (order.getTrackingNumber().isEmpty()) {
-            chatBotResponse.addQuickButton(ButtonName.운송장번호등록.name(), ButtonAction.블럭이동, BlockId.ORDER_ADD_TRACKING_NUMBER.getBlockId(), ButtonParamKey.orderId, String.valueOf(order.getOrderId()));
+        if (order.getStatus().equals(OrderStatus.구매자확인)) {
+            chatBotResponse.addQuickButton(ButtonName.판매확정.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
         }else {
-            chatBotResponse.addQuickButton(ButtonName.운송장번호변경.name(), ButtonAction.블럭이동, BlockId.ORDER_ADD_TRACKING_NUMBER.getBlockId(), ButtonParamKey.orderId, String.valueOf(order.getOrderId()));
+            String buttonName = "운송장번호 등록";
+            if (!order.getTrackingNumber().isEmpty()) buttonName = "운송장번호 변경";
+
+            chatBotResponse.addQuickButton(buttonName, ButtonAction.블럭이동, BlockId.ORDER_ADD_TRACKING_NUMBER.getBlockId(), ButtonParamKey.orderId, String.valueOf(order.getOrderId()));
         }
         chatBotResponse.addQuickButton(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
         return chatBotResponse;
