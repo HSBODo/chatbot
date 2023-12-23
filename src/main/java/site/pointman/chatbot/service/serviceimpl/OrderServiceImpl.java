@@ -135,7 +135,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Object getPurchaseProducts(String userKey) {
 
-        List<Order> purchaseOrders = orderRepository.findByUserKey(userKey);
+        List<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey);
         if (purchaseOrders.isEmpty()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
 
         return orderChatBotResponseService.getPurchaseProducts(purchaseOrders);
