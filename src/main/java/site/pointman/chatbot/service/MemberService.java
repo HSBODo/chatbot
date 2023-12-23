@@ -9,5 +9,6 @@ public interface MemberService {
     Object updateMember(String userKey, Member member, boolean isChatBotRequest);
     Object updateCustomerPhoneNumber(String userKey, String updatePhoneNumber,boolean isChatBotRequest);
     Object withdrawalCustomer(String userKey, boolean isChatBotRequest);
+    Object updateCustomerProfileImage(String userKey, String profileImageUrl, boolean isChatBotRequest);
     boolean isCustomer(String userKey);
 }

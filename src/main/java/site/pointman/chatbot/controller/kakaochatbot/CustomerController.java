@@ -48,6 +48,18 @@ public class CustomerController {
     }
 
     @ResponseBody
+    @PostMapping(value = "PATCH/profileImage" , headers = {"Accept=application/json; UTF-8"})
+    public Object updateProfileImage(@RequestBody ChatBotRequest chatBotRequest) {
+        String userKey = chatBotRequest.getUserKey();
+        String customerProfileImage = chatBotRequest.getCustomerProfileImage().get(0);
+
+
+        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+
+        return memberService.updateCustomerProfileImage(userKey,customerProfileImage,true);
+    }
+
+    @ResponseBody
     @PostMapping(value = "GET/myPage" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getMyPage(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();

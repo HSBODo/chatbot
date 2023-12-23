@@ -4,16 +4,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.ApiResultCode;
 import site.pointman.chatbot.constant.MemberRole;
+import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.order.Order;
+import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.domain.response.property.common.Profile;
-import site.pointman.chatbot.dto.member.MemberDto;
+import site.pointman.chatbot.dto.product.ProductImageDto;
 import site.pointman.chatbot.repository.MemberRepository;
+import site.pointman.chatbot.repository.OrderRepository;
+import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.service.MemberService;
+import site.pointman.chatbot.service.S3FileService;
 import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
-import site.pointman.chatbot.utill.CustomStringUtils;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,13 +30,21 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
 
     MemberRepository memberRepository;
-    ChatBotExceptionResponse chatBotExceptionResponse;
-    CustomerChatBotResponseService customerChatBotResponseService;
+    OrderRepository orderRepository;
+    ProductRepository productRepository;
 
-    public MemberServiceImpl(MemberRepository memberRepository, CustomerChatBotResponseService customerChatBotResponseService) {
+
+    CustomerChatBotResponseService customerChatBotResponseService;
+    S3FileService s3FileService;
+    ChatBotExceptionResponse chatBotExceptionResponse;
+
+    public MemberServiceImpl(MemberRepository memberRepository, OrderRepository orderRepository, ProductRepository productRepository, CustomerChatBotResponseService customerChatBotResponseService, S3FileService s3FileService) {
         this.memberRepository = memberRepository;
-        this.chatBotExceptionResponse = new ChatBotExceptionResponse();
+        this.orderRepository = orderRepository;
+        this.productRepository = productRepository;
         this.customerChatBotResponseService = customerChatBotResponseService;
+        this.s3FileService = s3FileService;
+        this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
     @Override
@@ -91,7 +106,7 @@ public class MemberServiceImpl implements MemberService {
 
             return new HttpResponse(ApiResultCode.OK,"회원정보 변경을 완료하였습니다.");
         }catch (Exception e){
-            log.info("e={}",e.getMessage());
+
             return new HttpResponse(ApiResultCode.FAIL,"회원정보 변경을 실패하였습니다.");
         }
     }
@@ -124,6 +139,23 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    @Override
+    @Transactional
+    public Object updateCustomerProfileImage(String userKey, String profileImageUrl, boolean isChatBotRequest) {
+        try {
+            Member member = memberRepository.findByUserKey(userKey).get();
+            List<String> uploadImages = new ArrayList<>();
+            uploadImages.add(profileImageUrl);
+
+            ProductImageDto productImageDto = s3FileService.uploadImages(uploadImages, userKey,member.getName(),"image/profile");
+
+            member.changeMemberProfileImage(productImageDto.getImageUrls().get(0));
+
+            return customerChatBotResponseService.updateCustomerProfileImageSuccessChatBotResponse();
+        }catch (Exception e) {
+            return chatBotExceptionResponse.createException("프로필사진 등록을 실패하였습니다.");
+        }
+    }
 
     @Override
     public boolean isCustomer(String userKey) {

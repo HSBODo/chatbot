@@ -14,7 +14,8 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
     public ChatBotResponse joinSuccessChatBotResponse() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
-        chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.");
+        chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.\n 프로필 사진을 등록하시려면 버튼을 눌러주세요.");
+        chatBotResponse.addQuickButton(ButtonName.프로필사진등록.name(),ButtonAction.블럭이동,"6586c039dcd6f94a82e30203");
         chatBotResponse.addQuickButton(ButtonName.메인으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
@@ -101,6 +102,15 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("회원탈퇴가 완료 되었습니다.");
+        chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
+        return chatBotResponse;
+    }
+
+    @Override
+    public ChatBotResponse updateCustomerProfileImageSuccessChatBotResponse() {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+
+        chatBotResponse.addSimpleText("정상적으로 프로필사진을 등록하였습니다.");
         chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }

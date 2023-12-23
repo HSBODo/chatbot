@@ -10,4 +10,5 @@ public interface CustomerChatBotResponseService {
     ChatBotResponse deleteCustomerSuccessChatBotResponse();
     ChatBotResponse getMyPageSuccessChatBotResponse();
     ChatBotResponse getSalesCategorySuccessChatBotResponse();
+    ChatBotResponse updateCustomerProfileImageSuccessChatBotResponse();
 }
