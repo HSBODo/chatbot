@@ -43,8 +43,6 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
         if (productStatus.equals(ProductStatus.삭제)) {
             chatBotResponse.addSimpleText("상품을 삭제하였습니다.");
-        }else if (productStatus.equals(ProductStatus.예약취소)) {
-            chatBotResponse.addSimpleText("상품을 예약취소 하였습니다.");
         }else {
             chatBotResponse.addSimpleText("상품을 "+productStatus+" 상태로 변경하였습니다.");
         }
