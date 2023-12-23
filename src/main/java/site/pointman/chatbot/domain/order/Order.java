@@ -3,7 +3,6 @@ package site.pointman.chatbot.domain.order;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.constant.ProductStatus;
