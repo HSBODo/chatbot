@@ -109,13 +109,14 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             String productName = product.getName();
             int productPrice = product.getPrice().intValue();
 
-            String productDescription = "판매자: " + product.getMember().getName();
+            String productDescription = "등록일자: " + product.getFormatCreateDate();
             String thumbnailImageUrl = product.getProductImages().getImageUrls().get(0);
             String productId = String.valueOf(product.getId());
 
             Button button = new Button("상세보기", ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCT_DETAIL.getBlockId(), ButtonParamKey.productId, productId);
 
             commerceCard.setThumbnails(thumbnailImageUrl,true);
+            commerceCard.setProfile(product.getMember().getProfile());
             commerceCard.setTitle(productName);
             commerceCard.setDescription(productDescription);
             commerceCard.setPrice(productPrice);
