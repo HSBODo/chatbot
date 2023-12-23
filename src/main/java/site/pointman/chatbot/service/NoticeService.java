@@ -10,4 +10,5 @@ public interface NoticeService {
     Object removeNotice(Long noticeId);
     Object getNotices(boolean isChatBotRequest);
     Object getNotice(String noticeId, boolean isChatBotRequest);
+    Object updateNotice(Long noticeId, Notice notice);
 }

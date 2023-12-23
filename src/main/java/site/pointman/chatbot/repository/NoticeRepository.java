@@ -12,4 +12,5 @@ public interface NoticeRepository {
     List<Notice> findByAll();
     Optional<Notice> findByNoticeId(Long noticeId);
     void deleteNotice(Long noticeId);
+    void updateNotice(Long noticeId, Notice toNotice);
 }

@@ -69,7 +69,22 @@ public class Notice extends BaseEntity {
     public void changeStatus(NoticeStatus status) {
         this.status = status;
     }
+    public void changeType(NoticeType type){
+        this.type = type;
+    }
+    public void changeTitle(String title){
+        this.title = title;
+    }
 
+    public void changeDescription(String description){
+        this.description = description;
+    }
+    public void changeImageUrl(String imageUrl){
+        this.imageUrl = imageUrl;
+    }
+    public void changeButtons(List<Button> buttons){
+        this.buttons = buttons;
+    }
     public String getDescriptionTypeOfChatBot(){
         StringBuilder formatDescription = new StringBuilder();
         formatDescription
@@ -80,4 +95,5 @@ public class Notice extends BaseEntity {
                 .append("등록일자: " + StringUtils.dateFormat(getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd"));
         return formatDescription.toString();
     }
+
 }

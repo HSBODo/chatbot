@@ -78,4 +78,16 @@ public class NoticeServiceImpl implements NoticeService {
 
         return new HttpResponse(ApiResultCode.OK,"정상적으로 게시글을 삭제하였습니다.");
     }
+
+    @Override
+    public Object updateNotice(Long noticeId, Notice notice) {
+        try {
+            noticeRepository.updateNotice(noticeId, notice);
+
+            return new HttpResponse(ApiResultCode.OK,"정상적으로 게시글을 수정하였습니다.");
+        }catch (Exception e){
+            log.info("e={}",e.getMessage());
+            return new HttpResponse(ApiResultCode.FAIL,"게시글 수정을 실패하였습니다.");
+        }
+    }
 }

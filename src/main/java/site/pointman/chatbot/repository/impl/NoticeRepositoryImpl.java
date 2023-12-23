@@ -7,6 +7,7 @@ import site.pointman.chatbot.repository.NoticeRepository;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 @Transactional
 public class NoticeRepositoryImpl implements NoticeRepository {
@@ -55,5 +56,19 @@ public class NoticeRepositoryImpl implements NoticeRepository {
                 .stream().findAny()
                 .get();
         em.remove(notice);
+    }
+
+    @Override
+    public void updateNotice(Long noticeId, Notice toNotice) {
+        Notice findNotice = em.createQuery("select n from Notice n where n.id =:id", Notice.class)
+                .setParameter("id", noticeId)
+                .getResultList().stream().findAny().get();
+
+        if(Objects.nonNull(toNotice.getType())) findNotice.changeType(toNotice.getType());
+        if(Objects.nonNull(toNotice.getImageUrl())) findNotice.changeImageUrl(toNotice.getImageUrl());
+        if(Objects.nonNull(toNotice.getTitle())) findNotice.changeTitle(toNotice.getTitle());
+        if(Objects.nonNull(toNotice.getDescription())) findNotice.changeDescription(toNotice.getDescription());
+        if(Objects.nonNull(toNotice.getButtons())) findNotice.changeButtons(toNotice.getButtons());
+        if(Objects.nonNull(toNotice.getStatus())) findNotice.changeStatus(toNotice.getStatus());
     }
 }

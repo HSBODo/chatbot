@@ -42,4 +42,10 @@ public class NoticeAdminController {
     public Object deleteNotice(@PathVariable Long noticeId){
         return noticeService.removeNotice(noticeId);
     }
+
+    @ResponseBody
+    @RequestMapping(value = "{noticeId}",method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Object updateNotice(@PathVariable Long noticeId, @RequestBody Notice notice){
+        return noticeService.updateNotice(noticeId,notice);
+    }
 }
