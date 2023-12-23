@@ -41,9 +41,9 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<Order> findByUserKey(String userKey) {
+    public List<Order> findByBuyerUserKey(String buyerUserKey) {
         return em.createQuery("SELECT o FROM Order o WHERE o.buyerMember.userKey =:userKey",Order.class)
-                .setParameter("userKey",userKey)
+                .setParameter("userKey",buyerUserKey)
                 .getResultList();
     }
 

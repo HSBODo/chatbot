@@ -10,6 +10,6 @@ public interface OrderRepository {
     Long save(Order order);
     Optional<Order> findByOrderId(Long orderId);
     Optional<Order> findByOrderId(Long orderId,OrderStatus status);
-    List<Order> findByUserKey(String userKey);
+    List<Order> findByBuyerUserKey(String buyerUserKey);
     Optional<Order> findByProductId(Long productId, OrderStatus orderStatus);
 }
