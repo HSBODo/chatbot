@@ -2,6 +2,7 @@ package site.pointman.chatbot.service.chatbot.serviceImpl;
 
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
+import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
@@ -19,13 +20,13 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
     }
 
     @Override
-    public ChatBotResponse getCustomerProfileSuccessChatBotResponse(String customerRank,String customerName, String customerPhoneNumber, String customerJoinDate) {
+    public ChatBotResponse getCustomerProfileSuccessChatBotResponse(Member member) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         String description =
-                "등급: "+customerRank+"\n\n"+
-                "닉네임: "+customerName+"\n\n"+
-                "연락처: "+customerPhoneNumber+"\n\n"+
-                "가입일자: "+customerJoinDate;
+                "등급: "+member.getRole().getValue()+"\n\n"+
+                "닉네임: "+member.getName()+"\n\n"+
+                "연락처: "+member.getPhoneNumber()+"\n\n"+
+                "가입일자: "+member.getFormatCreateDate();
 
         TextCard textCard = new TextCard();
         textCard.setTitle("프로필");

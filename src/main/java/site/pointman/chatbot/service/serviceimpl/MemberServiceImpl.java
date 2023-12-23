@@ -67,12 +67,8 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByUserKey(userKey).get();
         if (isChatBotRequest) {
             try {
-                String customerName = member.getName();
-                String customerPhoneNumber = member.getPhoneNumber();
-                String customerJoinDate = CustomStringUtils.dateFormat(member.getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
-                String customerRank = member.getRole().getValue();
 
-                if(isChatBotRequest) return customerChatBotResponseService.getCustomerProfileSuccessChatBotResponse(customerRank, customerName, customerPhoneNumber, customerJoinDate);
+                if(isChatBotRequest) return customerChatBotResponseService.getCustomerProfileSuccessChatBotResponse(member);
 
                 return member;
             }catch (Exception e) {

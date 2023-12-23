@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.BaseEntity;
+import site.pointman.chatbot.utill.CustomStringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -44,6 +45,10 @@ public class Member extends BaseEntity {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.role = memberRole;
+    }
+
+    public String getFormatCreateDate(){
+      return CustomStringUtils.dateFormat(getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
     }
 
     public void changePhoneNumber(String updatePhoneNumber){
