@@ -41,7 +41,14 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     public ChatBotResponse updateStatusSuccessChatBotResponse(ProductStatus productStatus) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
-        chatBotResponse.addSimpleText("상품을 "+productStatus+" 상태로 변경하였습니다.");
+        if (productStatus.equals(ProductStatus.삭제)) {
+            chatBotResponse.addSimpleText("상품을 삭제하였습니다.");
+        }else if (productStatus.equals(ProductStatus.예약취소)) {
+            chatBotResponse.addSimpleText("상품을 예약취소 하였습니다.");
+        }else {
+            chatBotResponse.addSimpleText("상품을 "+productStatus+" 상태로 변경하였습니다.");
+        }
+
         chatBotResponse.addQuickButton(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
