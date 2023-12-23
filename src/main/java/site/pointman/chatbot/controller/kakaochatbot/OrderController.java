@@ -49,7 +49,7 @@ public class OrderController {
     @GetMapping(value = "kakaopay-approve/{orderId}")
     public String kakaoPayApprove (@PathVariable Long orderId, @RequestParam(value = "pg_token") String pgToken) throws UnsupportedEncodingException {
         try {
-            paymentService.kakaoPaymentApprove(orderId, pgToken);
+            orderService.addOrder(orderId, pgToken);
 
             return "redirect:"+KAKAO_CHANNEL_URL+"/"+ URLEncoder.encode("결제성공", "UTF-8");
         }catch (Exception e) {

@@ -2,20 +2,22 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.ApiResultCode;
-import site.pointman.chatbot.constant.OrderMemberConfirmStatus;
-import site.pointman.chatbot.constant.OrderStatus;
-import site.pointman.chatbot.constant.ProductStatus;
+import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
+import site.pointman.chatbot.domain.order.PayMethod;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
+import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentApproveResponse;
+import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentCancelResponse;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.repository.OrderRepository;
+import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.service.OrderService;
+import site.pointman.chatbot.service.PaymentService;
 import site.pointman.chatbot.service.chatbot.OrderChatBotResponseService;
 
 import javax.transaction.Transactional;
@@ -28,52 +30,76 @@ public class OrderServiceImpl implements OrderService {
 
     OrderRepository orderRepository;
     ProductRepository productRepository;
+    PaymentRepository paymentRepository;
+
+    PaymentService paymentService;
+
+
     OrderChatBotResponseService orderChatBotResponseService;
     ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
 
-    public OrderServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, OrderChatBotResponseService orderChatBotResponseService) {
+    public OrderServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, PaymentService paymentService, PaymentRepository paymentRepository, OrderChatBotResponseService orderChatBotResponseService) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
+        this.paymentService = paymentService;
+        this.paymentRepository = paymentRepository;
         this.orderChatBotResponseService = orderChatBotResponseService;
     }
 
     @Override
-    public Long addOrder(PaymentInfo paymentInfo) {
-        Member buyerMember = paymentInfo.getBuyerMember();
-        Product product = paymentInfo.getProduct();
+    public Long addOrder(Long orderId, String pgToken) {
+        Optional<PaymentInfo> maybePaymentInfo = paymentRepository.findByPaymentReadyStatus(orderId);
 
-        Order order = Order.builder()
-                .orderId(paymentInfo.getOrderId())
-                .buyerMember(buyerMember)
-                .product(product)
-                .quantity(paymentInfo.getQuantity())
-                .status(OrderStatus.주문체결)
-                .paymentInfo(paymentInfo)
-                .build();
+        if(maybePaymentInfo.isEmpty()) throw new IllegalArgumentException("결제준비중인 주문이 존재하지 않습니다.");
 
-        Long orderId = orderRepository.save(order);
+        PaymentInfo paymentReadyInfo = maybePaymentInfo.get();
 
-        productRepository.updateStatus(product.getId(), ProductStatus.판매대기);
+        KakaoPaymentApproveResponse kakaoPaymentApproveResponse = paymentService.kakaoPaymentApprove(pgToken,paymentReadyInfo);
 
+        try {
+            Member buyerMember = paymentReadyInfo.getBuyerMember();
+            Product product = paymentReadyInfo.getProduct();
+
+            Order order = Order.builder()
+                    .orderId(paymentReadyInfo.getOrderId())
+                    .buyerMember(buyerMember)
+                    .product(product)
+                    .quantity(paymentReadyInfo.getQuantity())
+                    .status(OrderStatus.주문체결)
+                    .paymentInfo(paymentReadyInfo)
+                    .build();
+
+            orderRepository.save(order);
+
+            productRepository.updateStatus(product.getId(), ProductStatus.판매대기);
+        }catch (Exception e) {
+            paymentService.kakaoPaymentCancel(paymentReadyInfo);
+            throw new RuntimeException("결제 실패");
+        }
         return orderId;
     }
 
     @Override
     @Transactional
     public Long cancelOrder(Long orderId) {
+        Optional<PaymentInfo> maybeSuccessPaymentInfo = paymentRepository.findByPaymentSuccessStatus(orderId);
+
+        if(maybeSuccessPaymentInfo.isEmpty()) throw new IllegalArgumentException("결제승인 주문이 존재하지 않습니다.");
+        PaymentInfo successPaymentInfo = maybeSuccessPaymentInfo.get();
+
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId);
-
         if (mayBeOrder.isEmpty()) throw new IllegalArgumentException("주문이 존재하지 않습니다.");
-
         Order order = mayBeOrder.get();
         OrderStatus status = order.getStatus();
-
         if(!status.equals(OrderStatus.주문체결)) throw new IllegalArgumentException("주문체결된 주문이 아닙니다.");
 
-        Long productId = order.getProduct().getId();
+        //카카오페이 결제 취소 및 결제정보 상태변경
+        paymentService.kakaoPaymentCancel(successPaymentInfo);
 
+        //주문 및 상품 상태변경
+        Long productId = order.getProduct().getId();
         /**
-         * 결제 취소시
+         * 주문 취소시
          * 1. 상품(product)은 판매중 상태로 변경
          * 2. 결제정보(paymentInfo)는 결제취소 상태로 변경
          */

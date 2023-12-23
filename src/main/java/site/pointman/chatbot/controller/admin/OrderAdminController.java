@@ -22,20 +22,19 @@ public class OrderAdminController {
     @Value("${kakao.channel.url}")
     private String KAKAO_CHANNEL_URL;
 
-    PaymentService paymentService;
+
     OrderService orderService;
 
-    public OrderAdminController(PaymentService paymentService, OrderService orderService) {
-        this.paymentService = paymentService;
+    public OrderAdminController(OrderService orderService) {
+
         this.orderService = orderService;
     }
 
     @ResponseBody
     @PostMapping(value = "kakaopay-cancel/{orderId}")
-
     public HttpResponse kakaoPayCancel (@PathVariable Long orderId) {
         try {
-            paymentService.kakaoPaymentCancel(orderId);
+            orderService.cancelOrder(orderId);
 
             return new HttpResponse(ApiResultCode.OK,"주문번호 "+orderId+"의 주문을 정상적으로 취소하였습니다.");
         }catch (Exception e) {

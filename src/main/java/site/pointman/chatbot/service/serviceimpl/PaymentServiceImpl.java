@@ -56,13 +56,10 @@ public class PaymentServiceImpl implements PaymentService {
     ProductRepository productRepository;
     PaymentRepository paymentRepository;
 
-    OrderService orderService;
-
-    public PaymentServiceImpl(MemberRepository memberRepository, ProductRepository productRepository, PaymentRepository paymentRepository, OrderService orderService) {
+    public PaymentServiceImpl(MemberRepository memberRepository, ProductRepository productRepository, PaymentRepository paymentRepository) {
         this.memberRepository = memberRepository;
         this.productRepository = productRepository;
         this.paymentRepository = paymentRepository;
-        this.orderService = orderService;
     }
 
     @Override
@@ -133,20 +130,14 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public KakaoPaymentApproveResponse kakaoPaymentApprove(Long orderId, String pgToken) throws Exception {
-        Optional<PaymentInfo> maybePaymentInfo = paymentRepository.findByPaymentReadyStatus(orderId);
-
-        if(maybePaymentInfo.isEmpty()) throw new IllegalArgumentException("결제준비중인 주문이 존재하지 않습니다.");
-
-        PaymentInfo paymentReady = maybePaymentInfo.get();
-
-        Product product = paymentReady.getProduct();
-        Member buyerMember = paymentReady.getBuyerMember();
+    public KakaoPaymentApproveResponse kakaoPaymentApprove(String pgToken, PaymentInfo paymentReadyInfo) {
+        Product product = paymentReadyInfo.getProduct();
+        Member buyerMember = paymentReadyInfo.getBuyerMember();
 
         KakaoPaymentApproveRequest kakaoPaymentApproveRequest = KakaoPaymentApproveRequest.builder()
-                .cid(paymentReady.getCid())
-                .tid(paymentReady.getTid())
-                .partnerOrderId(String.valueOf(paymentReady.getOrderId()))
+                .cid(paymentReadyInfo.getCid())
+                .tid(paymentReadyInfo.getTid())
+                .partnerOrderId(String.valueOf(paymentReadyInfo.getOrderId()))
                 .partnerUserId(buyerMember.getUserKey())
                 .pgToken(pgToken)
                 .totalAmount(product.getPrice().intValue())
@@ -169,25 +160,20 @@ public class PaymentServiceImpl implements PaymentService {
 
         PayMethod payMethod = PayMethod.getPayMethod(kakaoPaymentApproveResponse.getPaymentMethodType());
 
-        paymentReady.changeStatus(PaymentStatus.결제완료);
-        paymentReady.changeAid(kakaoPaymentApproveResponse.getAid());
-        paymentReady.changeApprovedAt(kakaoPaymentApproveResponse.getApprovedAt());
-        paymentReady.changePayMethod(payMethod);
-        paymentReady.changeCardInfo(kakaoPaymentApproveResponse.getCardInfo());
-        paymentReady.changeAmountInfo(kakaoPaymentApproveResponse.getAmount());
-
-        orderService.addOrder(paymentReady);
+        //결제정보 상태변경
+        paymentReadyInfo.changeStatus(PaymentStatus.결제완료);
+        paymentReadyInfo.changeAid(kakaoPaymentApproveResponse.getAid());
+        paymentReadyInfo.changeApprovedAt(kakaoPaymentApproveResponse.getApprovedAt());
+        paymentReadyInfo.changePayMethod(payMethod);
+        paymentReadyInfo.changeCardInfo(kakaoPaymentApproveResponse.getCardInfo());
+        paymentReadyInfo.changeAmountInfo(kakaoPaymentApproveResponse.getAmount());
 
         return kakaoPaymentApproveResponse;
     }
 
     @Override
     @Transactional
-    public KakaoPaymentCancelResponse kakaoPaymentCancel(Long orderId) throws Exception {
-        Optional<PaymentInfo> maybeSuccessPaymentInfo = paymentRepository.findByPaymentSuccessStatus(orderId);
-
-        if(maybeSuccessPaymentInfo.isEmpty()) throw new IllegalArgumentException("결제승인 주문이 존재하지 않습니다.");
-        PaymentInfo successPaymentInfo = maybeSuccessPaymentInfo.get();
+    public KakaoPaymentCancelResponse kakaoPaymentCancel(PaymentInfo successPaymentInfo){
 
         KakaoPaymentCancelRequest kakaoPaymentCancelRequest = new KakaoPaymentCancelRequest(
                 successPaymentInfo.getCid(),
@@ -213,12 +199,8 @@ public class PaymentServiceImpl implements PaymentService {
                 requestEntity,
                 KakaoPaymentCancelResponse.class);
 
-
+        //결제정보 상태변경
         successPaymentInfo.changeStatus(PaymentStatus.결제취소);
-        Long successPaymentInfoOrderId = successPaymentInfo.getOrderId();
-
-        orderService.cancelOrder(successPaymentInfoOrderId);
-
         return kakaoPaymentCancelResponse;
     }
 
