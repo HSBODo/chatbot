@@ -8,17 +8,14 @@ import lombok.Getter;
 public class Params {
     private String customerName;
     private String customerPhone;
-
     private String productName;
     private String productDescription;
     private String productImg;
     private String productPrice;
     private String kakaoOpenChatUrl;
     private String tradingLocation;
-
     private String searchWord;
-
     private String reservationCustomerName;
-
     private String trackingNumber;
+    private String customerProfileImage;
 }

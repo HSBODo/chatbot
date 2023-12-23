@@ -3,13 +3,12 @@ package site.pointman.chatbot.domain.request.propery;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class ProductImg {
+public class KakaoPluginSecureImage {
     private String privacyAgreement;
     private int imageQuantity;
     private String secureUrls;

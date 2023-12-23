@@ -63,10 +63,24 @@ public class ChatBotRequest {
     public List<String> getProductImages(){
         try {
             if (Objects.isNull(action.getParams().getProductImg())) return null;
+
             ObjectMapper mapper = new ObjectMapper();
-            String ProductImgStr = this.action.getParams().getProductImg();
-            ProductImg productImg = mapper.readValue(ProductImgStr, ProductImg.class);
-            return productImg.getImgUrlList();
+            String productImage = this.action.getParams().getProductImg();
+            KakaoPluginSecureImage kakaoPluginSecureImage = mapper.readValue(productImage, KakaoPluginSecureImage.class);
+            return kakaoPluginSecureImage.getImgUrlList();
+        }catch (Exception e){
+            return null;
+        }
+    }
+
+    public List<String> getCustomerProfileImage(){
+        try {
+            if (Objects.isNull(action.getParams().getProductImg())) return null;
+
+            ObjectMapper mapper = new ObjectMapper();
+            String customerProfileImage = this.action.getParams().getCustomerProfileImage();
+            KakaoPluginSecureImage kakaoPluginSecureImage = mapper.readValue(customerProfileImage, KakaoPluginSecureImage.class);
+            return kakaoPluginSecureImage.getImgUrlList();
         }catch (Exception e){
             return null;
         }
