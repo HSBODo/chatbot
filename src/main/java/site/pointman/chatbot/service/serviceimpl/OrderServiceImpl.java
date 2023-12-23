@@ -54,11 +54,12 @@ public class OrderServiceImpl implements OrderService {
 
         PaymentInfo paymentReadyInfo = maybePaymentInfo.get();
 
-        KakaoPaymentApproveResponse kakaoPaymentApproveResponse = paymentService.kakaoPaymentApprove(pgToken,paymentReadyInfo);
+        paymentService.kakaoPaymentApprove(pgToken,paymentReadyInfo);
 
         try {
             Member buyerMember = paymentReadyInfo.getBuyerMember();
             Product product = paymentReadyInfo.getProduct();
+
 
             Order order = Order.builder()
                     .orderId(paymentReadyInfo.getOrderId())
@@ -69,14 +70,18 @@ public class OrderServiceImpl implements OrderService {
                     .paymentInfo(paymentReadyInfo)
                     .build();
 
-            orderRepository.save(order);
-
-            productRepository.updateStatus(product.getId(), ProductStatus.판매대기);
+            addOrderTransactional(order,product);
         }catch (Exception e) {
             paymentService.kakaoPaymentCancel(paymentReadyInfo);
             throw new RuntimeException("결제 실패");
         }
-        return orderId;
+        return paymentReadyInfo.getOrderId();
+    }
+
+    @Transactional
+    private void addOrderTransactional(Order order, Product product){
+        orderRepository.save(order);
+        productRepository.updateStatus(product.getId(), ProductStatus.판매대기);
     }
 
     @Override

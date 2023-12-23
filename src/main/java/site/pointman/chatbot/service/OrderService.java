@@ -1,6 +1,5 @@
 package site.pointman.chatbot.service;
 
-import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
 
