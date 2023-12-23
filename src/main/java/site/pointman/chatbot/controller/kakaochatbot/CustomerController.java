@@ -68,13 +68,13 @@ public class CustomerController {
     }
 
     @ResponseBody
-    @PostMapping(value = "GET/salesHistory" , headers = {"Accept=application/json; UTF-8"})
+    @PostMapping(value = "GET/salesCategory" , headers = {"Accept=application/json; UTF-8"})
     public Object getSalesHistory(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
         if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return customerChatBotResponseService.getSalesHistorySuccessChatBotResponse();
+        return customerChatBotResponseService.getSalesCategorySuccessChatBotResponse();
     }
 
     @ResponseBody

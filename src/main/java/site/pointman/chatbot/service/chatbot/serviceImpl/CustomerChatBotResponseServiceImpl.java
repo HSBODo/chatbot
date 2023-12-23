@@ -63,7 +63,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
     }
 
     @Override
-    public ChatBotResponse getSalesHistorySuccessChatBotResponse() {
+    public ChatBotResponse getSalesCategorySuccessChatBotResponse() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         StringBuilder description = new StringBuilder();
