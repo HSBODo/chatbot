@@ -30,7 +30,7 @@ class S3FileServiceTest {
         imageUrls.add(imageUrl);
 
         //when
-        ProductImageDto productImageDto = s3FileService.uploadProductImage(imageUrls, userKey, productName);
+        ProductImageDto productImageDto = s3FileService.uploadProductImage(imageUrls, userKey, productName,"image");
         List<String> returnImageUrl = productImageDto.getImageUrls();
 
         //then

@@ -59,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
             productDto.setMember(member);
             productDto.setId(productId);
 
-            ProductImageDto productImageDto = s3FileService.uploadProductImage(imageUrls, userKey,productName);
+            ProductImageDto productImageDto = s3FileService.uploadProductImage(imageUrls, userKey,productName,"image");
 
             productRepository.insertProduct(productDto,productImageDto);
 
