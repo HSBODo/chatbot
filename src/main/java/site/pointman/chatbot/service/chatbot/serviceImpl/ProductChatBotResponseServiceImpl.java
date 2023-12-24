@@ -1,5 +1,6 @@
 package site.pointman.chatbot.service.chatbot.serviceImpl;
 
+import com.mysql.cj.util.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
@@ -303,7 +304,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             chatBotResponse.addQuickButton(ButtonName.판매확정.name(),ButtonAction.블럭이동,BlockId.SALE_SUCCESS_RECONFIRM.getBlockId(),ButtonParamKey.orderId,String.valueOf(order.getOrderId()));
         }else {
             String buttonName = "운송장번호 등록";
-            if (!order.getTrackingNumber().isEmpty()) buttonName = "운송장번호 변경";
+            if (!StringUtils.isNullOrEmpty(order.getTrackingNumber())) buttonName = "운송장번호 변경";
             chatBotResponse.addQuickButton(buttonName, ButtonAction.블럭이동, BlockId.ORDER_ADD_TRACKING_NUMBER.getBlockId(), ButtonParamKey.orderId, String.valueOf(order.getOrderId()));
         }
         chatBotResponse.addQuickButton(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
