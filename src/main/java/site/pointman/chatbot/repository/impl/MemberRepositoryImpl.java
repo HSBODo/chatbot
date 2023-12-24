@@ -28,8 +28,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public Optional<Member> findByUserKey(String userKey) {
-        return em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
+        return em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
                 .setParameter("userKey", userKey)
+                .setParameter("isUse", true)
                 .getResultList().stream().findAny();
     }
 
@@ -48,8 +49,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void updateMember(String userKey, Member member) {
-        Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
+        Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
                 .setParameter("userKey", userKey)
+                .setParameter("isUse", true)
                 .getSingleResult();
         if (Objects.nonNull(member.getName())) findMember.changeName(member.getName());
         if (Objects.nonNull(member.getUserKey())) findMember.changeUserKey(member.getUserKey());
@@ -59,27 +61,31 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void updateMemberPhoneNumber(String userKey, String phoneNumber) {
-        Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
+        Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
                 .setParameter("userKey", userKey)
+                .setParameter("isUse", true)
                 .getSingleResult();
         findMember.changePhoneNumber(phoneNumber);
     }
 
     @Override
     public void delete(String userKey) {
-        Member removeMember = em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
+        Member removeMember = em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
                 .setParameter("userKey", userKey)
+                .setParameter("isUse", true)
                 .getSingleResult();
 
-        List<Product> removeProducts = em.createQuery("select p from Product p where p.member.userKey=:userKey", Product.class)
+        List<Product> removeProducts = em.createQuery("select p from Product p where p.member.userKey=:userKey AND p.isUse = :isUse", Product.class)
                 .setParameter("userKey", userKey)
+                .setParameter("isUse", true)
                 .getResultList();
 
         removeProducts.forEach(removeProduct -> {
             Long productImageId = removeProduct.getProductImages().getId();
 
-            ProductImage removeProductImage = em.createQuery("select p from ProductImage p where p.id=:id", ProductImage.class)
+            ProductImage removeProductImage = em.createQuery("select p from ProductImage p where p.id=:id AND p.isUse = :isUse", ProductImage.class)
                     .setParameter("id", productImageId)
+                    .setParameter("isUse", true)
                     .getSingleResult();
 
             removeProductImage.delete();
