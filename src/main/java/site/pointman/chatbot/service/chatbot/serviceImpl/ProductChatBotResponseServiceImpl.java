@@ -322,9 +322,11 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
             StringBuilder description = new StringBuilder();
             description
-                    .append("단위: "+specialProduct.getCurrency())
+                    .append(specialProduct.getCategory())
                     .append("\n")
-                    .append(specialProduct.getCategory());
+                    .append("금액단위: "+specialProduct.getCurrency());
+
+
 
             commerceCard.setThumbnails(specialProduct.getProductThumbnailImageUrl(),true);
             commerceCard.setProfile(new Profile(specialProduct.getBrandNameAndStatus(),specialProduct.getBrandImageUrl()));
