@@ -102,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Object getMyProducts(String userKey, String productStatus) {
+    public ChatBotResponse getMyProducts(String userKey, String productStatus) {
         try {
             ProductStatus status = ProductStatus.getProductStatus(productStatus);
 
@@ -117,7 +117,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Object getProductProfile(String productId, String userKey) {
+    public ChatBotResponse getProductProfile(String productId, String userKey) {
         try {
             Optional<Product> mayBeProduct = productRepository.findByProductId(Long.parseLong(productId));
 
@@ -132,7 +132,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Object updateProductStatus(String productId, String utterance) {
+    public ChatBotResponse updateProductStatus(String productId, String utterance) {
         try {
             long parseProductId = Long.parseLong(productId);
             ProductStatus productStatus = ProductStatus.getProductStatus(utterance);
@@ -150,7 +150,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Object deleteProduct(String productId, String utterance) {
+    public ChatBotResponse deleteProduct(String productId, String utterance) {
         try {
             long parseProductId = Long.parseLong(productId);
 
@@ -174,7 +174,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Object getProductsBySearchWord(String searchWord) {
+    public ChatBotResponse getProductsBySearchWord(String searchWord) {
         try {
             List<Product> products = productRepository.findBySearchWord(searchWord, ProductStatus.판매중);
 
@@ -187,7 +187,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Object getContractProducts(String userKey) {
+    public ChatBotResponse getContractProducts(String userKey) {
         List<Product> contractProducts = productRepository.findByUserKey(userKey, ProductStatus.판매대기);
         if(contractProducts.isEmpty()) return chatBotExceptionResponse.createException("결제가 체결된 상품이 없습니다.");
 
@@ -195,7 +195,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Object getContractProductProfile(String userKey, String orderId) {
+    public ChatBotResponse getContractProductProfile(String userKey, String orderId) {
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId),OrderStatus.주문체결);
         if (mayBeOrder.isEmpty()) return chatBotExceptionResponse.createException("체결된 주문이 없습니다.");
 

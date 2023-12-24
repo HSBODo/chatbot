@@ -157,7 +157,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Object getPurchaseProducts(String userKey) {
+    public ChatBotResponse getPurchaseProducts(String userKey) {
 
         List<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey);
         if (purchaseOrders.isEmpty()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
@@ -166,7 +166,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Object getPurchaseProductProfile(String userKey, String orderId) {
+    public ChatBotResponse getPurchaseProductProfile(String userKey, String orderId) {
         try {
             Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId));
             if (mayBeOrder.isEmpty()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
@@ -214,7 +214,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public Object updateTrackingNumber(String orderId, String trackingNumber) {
+    public ChatBotResponse updateTrackingNumber(String orderId, String trackingNumber) {
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId),OrderStatus.주문체결);
         if (mayBeOrder.isEmpty()) return new ChatBotExceptionResponse().createException("주문이 존재하지 않습니다.");
 
