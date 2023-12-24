@@ -10,10 +10,12 @@ import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.Context;
 import site.pointman.chatbot.domain.response.property.common.Button;
+import site.pointman.chatbot.domain.response.property.common.Profile;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.Carousel;
 import site.pointman.chatbot.domain.response.property.components.CommerceCard;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
+import site.pointman.chatbot.dto.product.SpecialProduct;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.service.chatbot.ProductChatBotResponseService;
@@ -307,6 +309,37 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         }
         chatBotResponse.addQuickButton(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
 
+        return chatBotResponse;
+    }
+
+    @Override
+    public ChatBotResponse getSpecialProductsSuccessChatBotResponse(List<SpecialProduct> specialProducts, int lastPage) {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+        Carousel<CommerceCard> commerceCardCarousel = new Carousel<>();
+
+        specialProducts.forEach(specialProduct -> {
+            CommerceCard commerceCard = new CommerceCard();
+
+            StringBuilder description = new StringBuilder();
+            description
+                    .append("단위: "+specialProduct.getCurrency())
+                    .append("\n")
+                    .append(specialProduct.getCategory());
+
+            commerceCard.setThumbnails(specialProduct.getProductThumbnailImageUrl(),true);
+            commerceCard.setProfile(new Profile(specialProduct.getBrandNameAndStatus(),specialProduct.getBrandImageUrl()));
+            commerceCard.setPrice(specialProduct.getFormatPrice());
+            commerceCard.setTitle(specialProduct.getTitle());
+            commerceCard.setDescription(description.toString());
+            commerceCard.setButton(new Button("상세보기",ButtonAction.웹링크연결,specialProduct.getDetailInfoUrl()));
+            commerceCard.setButton(new Button("구매하러가기",ButtonAction.웹링크연결,specialProduct.getPurchaseUrl()));
+
+            commerceCardCarousel.addComponent(commerceCard);
+        });
+
+        chatBotResponse.addCarousel(commerceCardCarousel);
+        chatBotResponse.addQuickButton(ButtonName.메인으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.더보기.name(),ButtonAction.블럭이동,BlockId.PRODUCT_HOT_DEAL.getBlockId(),ButtonParamKey.pageNumber,String.valueOf(lastPage));
         return chatBotResponse;
     }
 

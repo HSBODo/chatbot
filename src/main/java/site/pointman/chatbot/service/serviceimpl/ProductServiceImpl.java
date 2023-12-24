@@ -1,6 +1,10 @@
 package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
@@ -12,14 +16,17 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.dto.product.ProductImageDto;
+import site.pointman.chatbot.dto.product.SpecialProduct;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.repository.ProductRepository;
+import site.pointman.chatbot.service.CrawlingService;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.S3FileService;
 import site.pointman.chatbot.service.chatbot.ProductChatBotResponseService;
 import site.pointman.chatbot.utill.CustomStringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +34,7 @@ import java.util.Optional;
 @Service
 public class ProductServiceImpl implements ProductService {
 
+    CrawlingService crawlingService;
     S3FileService s3FileService;
 
     ProductRepository productRepository;
@@ -39,7 +47,8 @@ public class ProductServiceImpl implements ProductService {
     @Value("${host.url}")
     private String HOST_URL;
 
-    public ProductServiceImpl(S3FileService s3FileService, ProductRepository productRepository, MemberRepository memberRepository, OrderRepository orderRepository, ProductChatBotResponseService productChatBotResponseService) {
+    public ProductServiceImpl(CrawlingService crawlingService, S3FileService s3FileService, ProductRepository productRepository, MemberRepository memberRepository, OrderRepository orderRepository, ProductChatBotResponseService productChatBotResponseService) {
+        this.crawlingService = crawlingService;
         this.s3FileService = s3FileService;
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
@@ -231,5 +240,74 @@ public class ProductServiceImpl implements ProductService {
     public Object updateProductStatus(Long productId, ProductStatus status) {
         productRepository.updateStatus(productId,status);
         return new HttpResponse(ApiResultCode.OK,"상품 "+productId+"을 "+status+"상태로 변경하였습니다.");
+    }
+
+    @Override
+    public ChatBotResponse getSpecialProducts(int startPage) {
+        try {
+            List<Element> filterElements = new ArrayList<>();
+            List<SpecialProduct> specialProducts = new ArrayList<>();
+            String url = "https://quasarzone.com/bbs/qb_saleinfo";
+            String cssQuery = "#frmSearch > div > div.list-board-wrap > div.market-type-list.market-info-type-list.relative > table > tbody > tr";
+
+            Elements elements = crawlingService.getJsoupElements(url, cssQuery);
+
+            int fistPage = startPage;
+            int lastPage = fistPage+5;
+
+            for (Element element : elements){
+                String status = element.select("p.tit > span").text();
+                String title = element.select("p.tit > a").text();
+                if (status.equals("종료")) continue;
+                if (title.contains("블라인드 처리된 글입니다.")) continue;
+                filterElements.add(element);
+            }
+
+            if (lastPage > filterElements.size()) lastPage = filterElements.size();
+
+            for (int i = fistPage ; i < lastPage ; i++){
+                String imageUrl = "";
+                String brandImageUrl = "";
+                String detailUrl = "";
+
+                String status = filterElements.get(i).select("p.tit > span").text();
+                if(!filterElements.get(i).select("td:nth-child(2) > div > div.thumb-wrap > a > img").isEmpty()) {
+                    imageUrl = filterElements.get(i).select("td:nth-child(2) > div > div.thumb-wrap > a > img").get(0).attr("src");
+                }
+                String title = filterElements.get(i).select("td:nth-child(2) > div > div.market-info-list-cont > p > a > span").text();
+                String price = filterElements.get(i).select("td:nth-child(2) > div > div.market-info-list-cont > div > p > span:nth-child(2) > span").text();
+                String category = filterElements.get(i).select("td:nth-child(2) > div > div.market-info-list-cont > div.market-info-sub > p > span.category").text();
+                if(!filterElements.get(i).select("td:nth-child(2) > div > div.market-info-list-cont > div.market-info-sub > p > span.brand > img").isEmpty()){
+                    brandImageUrl = filterElements.get(i).select("td:nth-child(2) > div > div.market-info-list-cont > div.market-info-sub > p > span.brand > img").get(0).attr("src");
+                }
+                if (!filterElements.get(i).select("td:nth-child(2) > div > div.thumb-wrap > a").isEmpty()) {
+                    detailUrl = "https://quasarzone.com/"+filterElements.get(i).select("td:nth-child(2) > div > div.thumb-wrap > a").get(0).attr("href");
+                }
+
+                Document productInfoDetail = Jsoup.connect(detailUrl).get();
+
+                String purchaseUrl = productInfoDetail.select("table.market-info-view-table > tbody > tr:nth-child(1) > td > a").text();
+                String brandName = productInfoDetail.select("table.market-info-view-table > tbody > tr:nth-child(2) > td").text();
+
+                SpecialProduct specialProduct = SpecialProduct.builder()
+                        .productThumbnailImageUrl(imageUrl)
+                        .brandName(brandName)
+                        .brandImageUrl(brandImageUrl)
+                        .title(title)
+                        .price(price)
+                        .category(category)
+                        .detailInfoUrl(detailUrl)
+                        .purchaseUrl(purchaseUrl)
+                        .status(status)
+                        .build();
+                specialProducts.add(specialProduct);
+            }
+
+            if (lastPage >= filterElements.size()) lastPage = 0;
+            return productChatBotResponseService.getSpecialProductsSuccessChatBotResponse(specialProducts, lastPage);
+        }catch (Exception e) {
+            log.info("e={}",e.getMessage());
+            return chatBotExceptionResponse.createException();
+        }
     }
 }

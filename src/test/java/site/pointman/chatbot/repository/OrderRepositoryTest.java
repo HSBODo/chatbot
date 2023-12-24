@@ -80,7 +80,7 @@ class OrderRepositoryTest {
         String buyerUserKey = userKey;
 
         //when
-        List<Order> buyOrders = orderRepository.findByUserKey(userKey);
+        List<Order> buyOrders = orderRepository.findByBuyerUserKey(userKey);
 
         //then
         buyOrders.forEach(order -> {

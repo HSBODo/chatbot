@@ -19,16 +19,18 @@ repositories {
 }
 
 dependencies { 
-	//implementation 'org.springframework.boot:spring-boot-starter-security'
+
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	//implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
-	//implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
-	//implementation 'javax.servlet:jstl:1.2'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	//implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+	//implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+	//implementation 'javax.servlet:jstl:1.2'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 //	testImplementation 'org.springframework.security:spring-security-test'
@@ -54,6 +56,9 @@ dependencies {
 	implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
 	implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
 	implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.1'
+
+	//크롤링 jsoup HTML parser library @ https://jsoup.org/
+	implementation 'org.jsoup:jsoup:1.17.1'
 }
 
 tasks.named('test') {

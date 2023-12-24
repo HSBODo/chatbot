@@ -27,4 +27,5 @@ public enum ButtonName {
     구매확정,
     판매확정,
     프로필사진등록,
+    더보기,
 }

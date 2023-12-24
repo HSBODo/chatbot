@@ -6,6 +6,7 @@ import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.dto.product.SpecialProduct;
 
 import java.util.List;
 
@@ -22,4 +23,5 @@ public interface ProductChatBotResponseService {
     ChatBotResponse getCategoryChatBotResponse(BlockId nextBlockId);
     ChatBotResponse getContractProductsSuccessChatBotResponse(List<Product> contractProducts);
     ChatBotResponse getContractProductProfileSuccessChatBotResponse(Order order);
+    ChatBotResponse getSpecialProductsSuccessChatBotResponse(List<SpecialProduct> specialProducts, int lastPage);
 }

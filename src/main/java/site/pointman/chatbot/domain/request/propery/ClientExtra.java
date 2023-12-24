@@ -11,4 +11,5 @@ public class ClientExtra {
     private String noticeId;
     private String choice;
     private String productStatus;
+    private String pageNumber;
 }

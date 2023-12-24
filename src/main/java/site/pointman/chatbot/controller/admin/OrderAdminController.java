@@ -36,24 +36,6 @@ public class OrderAdminController {
     }
 
     @ResponseBody
-    @PostMapping(value = "kakaopay-cancel/{orderId}")
-    public HttpResponse kakaoPayCancel (@PathVariable Long orderId) {
-        try {
-            orderService.cancelOrder(orderId);
-
-            return new HttpResponse(ApiResultCode.OK,"주문번호 "+orderId+"의 주문을 정상적으로 취소하였습니다.");
-        }catch (Exception e) {
-            return new HttpResponse(ApiResultCode.FAIL,"주문번호 "+orderId+"의 주문취소를 실패하였습니다.");
-        }
-    }
-
-    @ResponseBody
-    @PostMapping(value = "/success/{orderId}")
-    public HttpResponse orderSuccess (@PathVariable Long orderId) {
-        return orderService.successOrder(orderId);
-    }
-
-    @ResponseBody
     @GetMapping(value = "all")
     public Object getOrders () {
         return orderService.getOrders();
@@ -66,12 +48,36 @@ public class OrderAdminController {
     }
 
     @ResponseBody
+    @GetMapping(value = "{orderId}")
+    public Object getOrderByOrderId (@PathVariable("orderId") Long orderId) {
+        return orderService.getOrder(orderId);
+    }
+
+    @ResponseBody
     @GetMapping(value = "paymentInfo/{orderId}")
     public Object getPaymentInfoByOrderId (@PathVariable("orderId") Long orderId) {
         Optional<PaymentInfo> mayBePaymentInfo = paymentRepository.findByOrderId(orderId);
         if (mayBePaymentInfo.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"결제정보가 없습니다.");
         PaymentInfo paymentInfo = mayBePaymentInfo.get();
+
         return paymentInfo;
     }
 
+    @ResponseBody
+    @PostMapping(value = "/success/{orderId}")
+    public HttpResponse orderSuccess (@PathVariable Long orderId) {
+        return orderService.successOrder(orderId);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "kakaopay-cancel/{orderId}")
+    public HttpResponse kakaoPayCancel (@PathVariable Long orderId) {
+        try {
+            orderService.cancelOrder(orderId);
+
+            return new HttpResponse(ApiResultCode.OK,"주문번호 "+orderId+"의 주문을 정상적으로 취소하였습니다.");
+        }catch (Exception e) {
+            return new HttpResponse(ApiResultCode.FAIL,"주문번호 "+orderId+"의 주문취소를 실패하였습니다.");
+        }
+    }
 }
