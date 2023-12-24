@@ -2,6 +2,7 @@ package site.pointman.chatbot.repository.impl;
 
 import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
 import site.pointman.chatbot.repository.MemberRepository;
@@ -66,23 +67,25 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void delete(String userKey) {
-        Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
+        Member removeMember = em.createQuery("select m from Member m where m.userKey=:userKey", Member.class)
                 .setParameter("userKey", userKey)
                 .getSingleResult();
 
-        List<Product> findProducts = em.createQuery("select p from Product p where p.member.userKey=:userKey", Product.class)
+        List<Product> removeProducts = em.createQuery("select p from Product p where p.member.userKey=:userKey", Product.class)
                 .setParameter("userKey", userKey)
                 .getResultList();
 
-        findProducts.forEach(product -> {
-            Long productImageId = product.getProductImages().getId();
-            ProductImage findProductImage = em.createQuery("select p from ProductImage p where p.id=:id", ProductImage.class)
+        removeProducts.forEach(removeProduct -> {
+            Long productImageId = removeProduct.getProductImages().getId();
+
+            ProductImage removeProductImage = em.createQuery("select p from ProductImage p where p.id=:id", ProductImage.class)
                     .setParameter("id", productImageId)
                     .getSingleResult();
-            em.remove(product);
-            em.remove(findProductImage);
+
+            removeProductImage.delete();
+            removeProduct.delete();
         });
 
-        em.remove(findMember);
+        removeMember.delete();
     }
 }

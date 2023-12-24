@@ -128,11 +128,26 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Object withdrawalCustomer(String userKey, boolean isChatBotRequest) {
         try {
+            List<Order> orders = orderRepository.findByBuyerUserKey(userKey);
+            orders.forEach(order -> {
+                if (order.getStatus().equals(OrderStatus.주문체결)){
+                    throw new IllegalStateException("구매중인 주문이 있어 회원탈퇴가 불가능합니다.");
+                }
+            });
+
+            List<Product> products = productRepository.findByUserKey(userKey);
+            products.forEach(product -> {
+                Optional<Order> salesProduct = orderRepository.findByProductId(product.getId(), OrderStatus.주문체결);
+                if (!salesProduct.isEmpty()) throw new IllegalStateException("거래가 체결된 상품이 있어 회원탈퇴가 불가능합니다.");
+            });
+
             memberRepository.delete(userKey);
 
             if(isChatBotRequest) return customerChatBotResponseService.deleteCustomerSuccessChatBotResponse();
 
             return new HttpResponse(ApiResultCode.OK,"회원탈퇴를 성공적으로 완료하였습니다.");
+        }catch (IllegalStateException i) {
+            return chatBotExceptionResponse.createException(i.getMessage());
         }catch (Exception e) {
             if (isChatBotRequest) return chatBotExceptionResponse.createException();
             return new HttpResponse(ApiResultCode.FAIL,"회원탈퇴를 실패하였습니다. e= "+e.getMessage());
