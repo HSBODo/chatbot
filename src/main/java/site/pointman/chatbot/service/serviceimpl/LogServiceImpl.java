@@ -3,9 +3,8 @@ package site.pointman.chatbot.service.serviceimpl;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.domain.log.Log;
+import site.pointman.chatbot.domain.log.ChatBotLog;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.repository.LogRepository;
 import site.pointman.chatbot.service.LogService;
 
@@ -21,7 +20,7 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public Log insertChatBotRequestLog(ChatBotRequest chatBotRequest) throws Exception {
+    public ChatBotLog insertChatBotRequestLog(ChatBotRequest chatBotRequest) throws Exception {
 
         String userKey = chatBotRequest.getUserKey();
         String blockId = chatBotRequest.getIntent().getId();
@@ -30,7 +29,7 @@ public class LogServiceImpl implements LogService {
         String skillName = chatBotRequest.getAction().getName();
         String requestJson = gson.toJson(chatBotRequest);
 
-        Log log = Log.builder()
+        ChatBotLog log = ChatBotLog.builder()
                 .userKey(userKey)
                 .blockId(blockId)
                 .blockName(blockName)
@@ -44,7 +43,7 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public void insertChatBotResponseLog(Log log, Object chatBotResponse) {
+    public void insertChatBotResponseLog(ChatBotLog log, Object chatBotResponse) {
         String responseJson = gson.toJson(chatBotResponse);
         log.setResponseJson(responseJson);
 

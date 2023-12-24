@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 @Entity
 @Table(name = "tb_log")
 @NoArgsConstructor
-public class Log {
+public class ChatBotLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,7 +53,7 @@ public class Log {
     }
 
     @Builder
-    public Log(String userKey, String blockId, String blockName, String skillId, String skillName, String requestJson, String responseJson, String createDate) {
+    public ChatBotLog(String userKey, String blockId, String blockName, String skillId, String skillName, String requestJson, String responseJson, String createDate) {
 
         this.userKey = userKey;
         this.blockId = blockId;

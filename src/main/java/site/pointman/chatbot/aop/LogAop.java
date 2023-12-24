@@ -7,7 +7,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-import site.pointman.chatbot.domain.log.Log;
+import site.pointman.chatbot.domain.log.ChatBotLog;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.service.LogService;
@@ -60,7 +60,7 @@ public class LogAop {
 
     @Around("chatBotControllerPointcut()")
     public ChatBotResponse log(ProceedingJoinPoint joinPoint) throws Throwable {
-        Log logEntity = new Log();
+        ChatBotLog logEntity = new ChatBotLog();
 
         String controllerName = joinPoint.getSignature().getDeclaringType().getName();
         String methodName = joinPoint.getSignature().getName();

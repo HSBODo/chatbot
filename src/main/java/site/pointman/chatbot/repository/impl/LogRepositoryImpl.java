@@ -1,6 +1,6 @@
 package site.pointman.chatbot.repository.impl;
 
-import site.pointman.chatbot.domain.log.Log;
+import site.pointman.chatbot.domain.log.ChatBotLog;
 import site.pointman.chatbot.repository.LogRepository;
 
 import javax.persistence.EntityManager;
@@ -15,7 +15,7 @@ public class LogRepositoryImpl implements LogRepository {
     }
 
     @Override
-    public void save(Log log) {
+    public void save(ChatBotLog log) {
         em.persist(log);
     }
 }
