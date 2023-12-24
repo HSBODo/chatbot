@@ -45,40 +45,45 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public List<Product> findByUserKey(String userKey) {
-        return em.createQuery("select p from Product p where p.member.userKey=:user_Key", Product.class)
+        return em.createQuery("SELECT p FROM Product p WHERE p.member.userKey=:user_Key AND p.isUse=:isUse", Product.class)
                 .setParameter("user_Key", userKey)
+                .setParameter("isUse", true)
                 .getResultList();
     }
 
     @Override
     public List<Product> findByUserKey(String userKey, ProductStatus status) {
-        return em.createQuery("select p from Product p where p.member.userKey=:user_Key AND p.status =:status", Product.class)
+        return em.createQuery("SELECT p FROM Product p WHERE p.member.userKey=:user_Key AND p.status =:status AND p.isUse=:isUse", Product.class)
                 .setParameter("user_Key", userKey)
                 .setParameter("status", status)
+                .setParameter("isUse", true)
                 .getResultList();
     }
 
     @Override
     public Optional<Product> findByProductId(Long productId) {
-        return em.createQuery("select p from Product p where p.id=:id", Product.class)
+        return em.createQuery("SELECT p FROM Product p WHERE p.id=:id AND p.isUse=:isUse", Product.class)
                 .setParameter("id", productId)
+                .setParameter("isUse", true)
                 .getResultList()
                 .stream().findAny();
     }
 
     @Override
     public List<Product> findByCategory(Category category,ProductStatus status) {
-        return em.createQuery("select p from Product p where p.category=:category AND p.status =:status", Product.class)
+        return em.createQuery("SELECT p FROM Product p WHERE p.category=:category AND p.status =:status AND p.isUse=:isUse", Product.class)
                 .setParameter("category", category)
                 .setParameter("status", status)
+                .setParameter("isUse", true)
                 .setMaxResults(10)
                 .getResultList();
     }
 
     @Override
     public void updateStatus(Long productId, ProductStatus productStatus) {
-        Product product = em.createQuery("select p from Product p where p.id=:id", Product.class)
+        Product product = em.createQuery("SELECT p FROM Product p WHERE p.id=:id AND p.isUse=:isUse", Product.class)
                 .setParameter("id", productId)
+                .setParameter("isUse", true)
                 .getSingleResult();
 
         product.changeStatus(productStatus);
@@ -86,25 +91,27 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public void deleteProduct(Long productId) {
-        Product findProduct = em.createQuery("select p from Product p where p.id=:id", Product.class)
+        Product findProduct = em.createQuery("SELECT p FROM Product p WHERE p.id=:id AND p.isUse=:isUse", Product.class)
                 .setParameter("id", productId)
+                .setParameter("isUse", true)
                 .getSingleResult();
 
         Long productImageId = findProduct.getProductImages().getId();
-        ProductImage findProductImage = em.createQuery("select p from ProductImage p where p.id=:id", ProductImage.class)
+        ProductImage findProductImage = em.createQuery("SELECT p FROM ProductImage p WHERE p.id=:id AND p.isUse=:isUse", ProductImage.class)
                 .setParameter("id", productImageId)
+                .setParameter("isUse", true)
                 .getSingleResult();
 
-
-        em.remove(findProduct);
-        em.remove(findProductImage);
+        findProduct.delete();
+        findProductImage.delete();
     }
 
     @Override
     public List<Product> findBySearchWord(String searchWord, ProductStatus status) {
-        return em.createQuery("select p from Product p where p.name like concat('%', :searchWord, '%') OR p.description like concat('%', :searchWord, '%') AND p.status =:status", Product.class)
+        return em.createQuery("SELECT p FROM Product p WHERE p.name LIKE concat('%', :searchWord, '%') OR p.description LIKE concat('%', :searchWord, '%') AND p.status =:status AND p.isUse=:isUse", Product.class)
                 .setParameter("searchWord", searchWord)
                 .setParameter("status",status)
+                .setParameter("isUse", true)
                 .setMaxResults(10)
                 .getResultList();
     }
