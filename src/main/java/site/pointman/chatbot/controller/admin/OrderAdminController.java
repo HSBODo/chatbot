@@ -7,13 +7,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.constant.ApiResultCode;
 import site.pointman.chatbot.constant.OrderStatus;
+import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentReadyResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.PaymentService;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -25,10 +28,11 @@ public class OrderAdminController {
 
 
     OrderService orderService;
+    PaymentRepository paymentRepository;
 
-    public OrderAdminController(OrderService orderService) {
-
+    public OrderAdminController(OrderService orderService, PaymentRepository paymentRepository) {
         this.orderService = orderService;
+        this.paymentRepository = paymentRepository;
     }
 
     @ResponseBody
@@ -44,7 +48,7 @@ public class OrderAdminController {
     }
 
     @ResponseBody
-    @PatchMapping(value = "/success/{orderId}")
+    @PostMapping(value = "/success/{orderId}")
     public HttpResponse orderSuccess (@PathVariable Long orderId) {
         return orderService.successOrder(orderId);
     }
@@ -62,9 +66,12 @@ public class OrderAdminController {
     }
 
     @ResponseBody
-    @GetMapping(value = "{orderId}")
-    public Object getOrdersByoOrderId (@PathVariable("orderId") Long orderId) {
-        return orderService.getOrder(orderId);
+    @GetMapping(value = "paymentInfo/{orderId}")
+    public Object getPaymentInfoByOrderId (@PathVariable("orderId") Long orderId) {
+        Optional<PaymentInfo> mayBePaymentInfo = paymentRepository.findByOrderId(orderId);
+        if (mayBePaymentInfo.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"결제정보가 없습니다.");
+        PaymentInfo paymentInfo = mayBePaymentInfo.get();
+        return paymentInfo;
     }
 
 }

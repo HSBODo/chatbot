@@ -67,7 +67,7 @@ class PaymentRepositoryTest {
     void findByPaymentReadyStatus() {
 
         //when
-        PaymentInfo paymentInfo = paymentRepository.findByPaymentReadyStatus(readyOrderId).get();
+        PaymentInfo paymentInfo = paymentRepository.findByPaymentStatus(readyOrderId,PaymentStatus.결제준비).get();
 
         //then
         Assertions.assertThat(paymentInfo.getStatus()).isEqualTo(PaymentStatus.결제준비);
@@ -78,7 +78,7 @@ class PaymentRepositoryTest {
     void findByPaymentSuccessStatus() {
 
         //when
-        PaymentInfo paymentInfo = paymentRepository.findByPaymentSuccessStatus(approveOrderId).get();
+        PaymentInfo paymentInfo = paymentRepository.findByPaymentStatus(approveOrderId,PaymentStatus.결제완료).get();
 
         //then
         Assertions.assertThat(paymentInfo.getStatus()).isEqualTo(PaymentStatus.결제완료);

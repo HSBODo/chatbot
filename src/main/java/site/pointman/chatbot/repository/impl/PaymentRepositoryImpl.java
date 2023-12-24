@@ -23,18 +23,16 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
     @Override
-    public Optional<PaymentInfo> findByPaymentReadyStatus(Long orderId) {
-        return Optional.ofNullable(em.createQuery("select p from PaymentInfo p where p.status=:status AND p.orderId=:orderId", PaymentInfo.class)
-                .setParameter("status", PaymentStatus.결제준비)
+    public Optional<PaymentInfo> findByPaymentStatus(Long orderId, PaymentStatus status) {
+        return em.createQuery("select p from PaymentInfo p where p.status=:status AND p.orderId=:orderId", PaymentInfo.class)
+                .setParameter("status", status)
                 .setParameter("orderId",orderId)
-                .getSingleResult()
-        );
+                .getResultList().stream().findAny();
     }
 
     @Override
-    public Optional<PaymentInfo> findByPaymentSuccessStatus(Long orderId) {
-        return em.createQuery("select p from PaymentInfo p where p.status=:status AND p.orderId=:orderId", PaymentInfo.class)
-                .setParameter("status", PaymentStatus.결제완료)
+    public Optional<PaymentInfo> findByOrderId(Long orderId) {
+        return em.createQuery("select p from PaymentInfo p where p.orderId=:orderId", PaymentInfo.class)
                 .setParameter("orderId",orderId)
                 .getResultList().stream().findAny();
     }

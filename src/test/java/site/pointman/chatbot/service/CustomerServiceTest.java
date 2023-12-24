@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.Response;
 
 @SpringBootTest
 class CustomerServiceTest {

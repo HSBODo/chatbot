@@ -3,10 +3,7 @@ package site.pointman.chatbot.service.serviceimpl;
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.ApiResultCode;
-import site.pointman.chatbot.constant.OrderMemberConfirmStatus;
-import site.pointman.chatbot.constant.OrderStatus;
-import site.pointman.chatbot.constant.ProductStatus;
+import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
@@ -49,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Long addOrder(Long orderId, String pgToken) {
-        Optional<PaymentInfo> maybePaymentInfo = paymentRepository.findByPaymentReadyStatus(orderId);
+        Optional<PaymentInfo> maybePaymentInfo = paymentRepository.findByPaymentStatus(orderId, PaymentStatus.결제준비);
 
         if(maybePaymentInfo.isEmpty()) throw new IllegalArgumentException("결제준비중인 주문이 존재하지 않습니다.");
 
@@ -111,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public Long cancelOrder(Long orderId) {
-        Optional<PaymentInfo> maybeSuccessPaymentInfo = paymentRepository.findByPaymentSuccessStatus(orderId);
+        Optional<PaymentInfo> maybeSuccessPaymentInfo = paymentRepository.findByPaymentStatus(orderId, PaymentStatus.결제완료);
 
         if(maybeSuccessPaymentInfo.isEmpty()) throw new IllegalArgumentException("결제승인 주문이 존재하지 않습니다.");
         PaymentInfo successPaymentInfo = maybeSuccessPaymentInfo.get();
