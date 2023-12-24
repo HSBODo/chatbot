@@ -180,4 +180,17 @@ public class MemberServiceImpl implements MemberService {
             return false;
         }
     }
+    @Override
+    public boolean isAdmin(String name,String userKey) {
+        try {
+            Optional<Member> mayBeCustomer = memberRepository.findAdmin(name,userKey);
+
+            if (mayBeCustomer.isEmpty()) return false;
+
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
 }

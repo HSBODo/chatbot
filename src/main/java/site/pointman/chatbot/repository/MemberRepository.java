@@ -10,6 +10,7 @@ public interface MemberRepository {
     void save(Member member);
     List<Member> findByAll();
     Optional<Member> findByUserKey(String userKey);
+    Optional<Member> findAdmin(String name, String userKey);
     Optional<Member> findByName(String name);
     void updateMember(String userKey, Member member);
     void updateMemberPhoneNumber(String userKey, String phoneNumber);

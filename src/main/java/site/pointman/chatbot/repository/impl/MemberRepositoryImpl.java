@@ -94,4 +94,14 @@ public class MemberRepositoryImpl implements MemberRepository {
 
         removeMember.delete();
     }
+
+    @Override
+    public Optional<Member> findAdmin(String name, String userKey) {
+        return em.createQuery("select m from Member m where m.userKey=:userKey AND m.name=:name AND m.role=:role AND m.isUse = :isUse", Member.class)
+                .setParameter("name", name)
+                .setParameter("userKey", userKey)
+                .setParameter("role", MemberRole.ADMIN)
+                .setParameter("isUse", true)
+                .getResultList().stream().findAny();
+    }
 }

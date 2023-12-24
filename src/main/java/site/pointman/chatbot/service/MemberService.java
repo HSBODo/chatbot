@@ -13,4 +13,5 @@ public interface MemberService {
     Object withdrawalCustomer(String userKey, boolean isChatBotRequest);
     ChatBotResponse updateCustomerProfileImage(String userKey, String profileImageUrl);
     boolean isCustomer(String userKey);
+    boolean isAdmin(String name, String userKey);
 }

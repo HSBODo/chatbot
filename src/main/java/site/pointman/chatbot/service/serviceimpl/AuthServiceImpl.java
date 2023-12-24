@@ -1,8 +1,7 @@
 package site.pointman.chatbot.service.serviceimpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.mindrot.jbcrypt.BCrypt;
@@ -14,7 +13,6 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.Context;
 import site.pointman.chatbot.service.AuthService;
 import site.pointman.chatbot.utill.HttpUtils;
-import io.jsonwebtoken.Jwts;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -43,17 +41,7 @@ public class AuthServiceImpl implements AuthService {
     HttpUtils httpUtils;
 
     @Override
-    public String createSignature(Long timestamp) {
-        // 밑줄로 연결하여 password 생성
-        String password = naverApiClientId+"_"+timestamp;
-        // bcrypt 해싱
-        String hashedPw = BCrypt.hashpw(password, naverApiClientSecretSign);
-        // base64 인코딩
-        return Base64.getUrlEncoder().encodeToString(hashedPw.getBytes(StandardCharsets.UTF_8));
-    }
-
-    @Override
-    public OAuthTokenDto createToken() {
+    public OAuthTokenDto createNaverOAuthToken() {
         Long timestamp = System.currentTimeMillis();
         timestamp = timestamp - 360L;
         log.info("timestamp= {} ",timestamp );
@@ -85,7 +73,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String createJwtToken(ChatBotRequest chatBotRequest) {
+    public String createJwtToken(String name, String userKey) {
         Date currentDate = new Date(System.currentTimeMillis());
         Long expiration = 1000* 60L * 60L * 1L; //유효시간
         Date expirationDate = new Date(currentDate.getTime()+ expiration);
@@ -95,11 +83,11 @@ public class AuthServiceImpl implements AuthService {
         headers.put("alg", "HS256");
 
         // Payload
-        String userKey = chatBotRequest.getUserKey();
         Map<String, Object> payloads = new HashMap<>();
+        payloads.put("name", name);
         payloads.put("userKey", userKey);
 
-        return    Jwts.builder()
+        return Jwts.builder()
                 .setSubject("token")
                 .setHeader(headers)
                 .setClaims(payloads)
@@ -109,43 +97,28 @@ public class AuthServiceImpl implements AuthService {
                 .compact();
     }
 
-    @Override
-    public Claims parseClaims(String accessToken) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(SECRET_ENCRYPT)
-                .parseClaimsJws(accessToken)
-                .getBody();
-        return claims;
-    }
 
     @Override
-    public boolean isExpired(String accessToken) {
-        return Jwts.parser().setSigningKey(SECRET_ENCRYPT).parseClaimsJws(accessToken)
-                .getBody().getExpiration().before(new Date());
-    }
-
-    @Override
-    public boolean isAuth(ChatBotRequest chatBotRequest) {
+    public boolean isTokenVerification(String token) {
         try {
-            String accessToken = chatBotRequest.getAccessToken();
-            String userKey = chatBotRequest.getUserKey();
-            Claims claims = parseClaims(accessToken);
-
-            boolean isExpired = isExpired(accessToken);
-            if(isExpired){
-
-                return false;
-            }
-
-            if(userKey.equals(claims.get("userKey",String.class))){
-
-                return true;
-            }
+            Jwts.parser().setSigningKey(SECRET_ENCRYPT).parseClaimsJws(token);
+            return true;
+        } catch (SignatureException e) {
+            log.error("Invalid JWT signature", e);
             return false;
-        } catch (Exception e){
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token", e);
+            return false;
+        } catch (ExpiredJwtException e) {
+            log.error("Expired JWT token", e);
+            return false;
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT token", e);
+            return false;
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty.", e);
             return false;
         }
-
     }
 
     @Override
@@ -155,4 +128,30 @@ public class AuthServiceImpl implements AuthService {
         chatBotResponse.addContext(context);
         return chatBotResponse;
     }
+
+    private Claims parseClaims(String accessToken) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_ENCRYPT)
+                .parseClaimsJws(accessToken)
+                .getBody();
+    }
+    private boolean isExpired(String accessToken) {
+        return Jwts.parser().
+                setSigningKey(SECRET_ENCRYPT)
+                .parseClaimsJws(accessToken)
+                .getBody()
+                .getExpiration()
+                .before(new Date());
+    }
+
+    private String createSignature(Long timestamp) {
+        // 밑줄로 연결하여 password 생성
+        String password = naverApiClientId+"_"+timestamp;
+        // bcrypt 해싱
+        String hashedPw = BCrypt.hashpw(password, naverApiClientSecretSign);
+        // base64 인코딩
+        return Base64.getUrlEncoder().encodeToString(hashedPw.getBytes(StandardCharsets.UTF_8));
+    }
+
+
 }
