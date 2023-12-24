@@ -12,4 +12,6 @@ public interface OrderRepository {
     Optional<Order> findByOrderId(Long orderId,OrderStatus status);
     List<Order> findByBuyerUserKey(String buyerUserKey);
     Optional<Order> findByProductId(Long productId, OrderStatus orderStatus);
+    List<Order> findByOrderStatus(OrderStatus orderStatus);
+    List<Order> findByAll();
 }

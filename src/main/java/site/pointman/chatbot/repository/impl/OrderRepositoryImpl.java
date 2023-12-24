@@ -56,4 +56,17 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .getResultList()
                 .stream().findAny();
     }
+
+    @Override
+    public List<Order> findByOrderStatus(OrderStatus orderStatus) {
+        return em.createQuery("SELECT o FROM Order o WHERE o.status =: status",Order.class)
+                .setParameter("status",orderStatus)
+                .getResultList();
+    }
+
+    @Override
+    public List<Order> findByAll() {
+        return em.createQuery("SELECT o FROM Order o",Order.class)
+                .getResultList();
+    }
 }

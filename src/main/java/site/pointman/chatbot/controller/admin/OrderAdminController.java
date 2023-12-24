@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.constant.ApiResultCode;
+import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentReadyResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.service.OrderService;
@@ -46,6 +47,18 @@ public class OrderAdminController {
     @PatchMapping(value = "/success/{orderId}")
     public HttpResponse orderSuccess (@PathVariable Long orderId) {
         return orderService.successOrder(orderId);
+    }
+
+    @ResponseBody
+    @GetMapping(value = "")
+    public Object getOrders () {
+        return orderService.getOrders();
+    }
+
+    @ResponseBody
+    @GetMapping(value = "status")
+    public Object getOrdersByStatus (@RequestParam("status") OrderStatus orderStatus) {
+        return orderService.getOrders(orderStatus);
     }
 
 }

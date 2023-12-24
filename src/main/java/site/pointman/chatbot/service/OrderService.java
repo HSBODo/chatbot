@@ -1,5 +1,6 @@
 package site.pointman.chatbot.service;
 
+import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
 
@@ -14,4 +15,6 @@ public interface OrderService {
     Object updateTrackingNumber(String orderId, String trackingNumber);
     Object getPurchaseProducts(String userKey);
     Object getPurchaseProductProfile(String userKey,String orderId);
+    Object getOrders();
+    Object getOrders(OrderStatus status);
 }

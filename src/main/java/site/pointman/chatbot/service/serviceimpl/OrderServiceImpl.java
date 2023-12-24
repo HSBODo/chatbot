@@ -85,6 +85,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Object getOrders() {
+        List<Order> orders = orderRepository.findByAll();
+        if (orders.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"주문이 존재하지 않습니다.");
+
+        return orders;
+    }
+
+    @Override
+    public Object getOrders(OrderStatus status) {
+        List<Order> orders = orderRepository.findByOrderStatus(status);
+        if (orders.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"주문이 존재하지 않습니다.");
+        return orders;
+    }
+
+    @Override
     @Transactional
     public Long cancelOrder(Long orderId) {
         Optional<PaymentInfo> maybeSuccessPaymentInfo = paymentRepository.findByPaymentSuccessStatus(orderId);
