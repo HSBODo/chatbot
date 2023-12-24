@@ -1,5 +1,6 @@
 package site.pointman.chatbot.service.serviceimpl;
 
+import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.ApiResultCode;
@@ -100,6 +101,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Object getOrder(Long orderId) {
+        Optional<Order> mayBeOrderId = orderRepository.findByOrderId(orderId);
+        if (mayBeOrderId.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"주문이 존재하지 않습니다.");
+        Order order = mayBeOrderId.get();
+        return order;
+    }
+
+    @Override
     @Transactional
     public Long cancelOrder(Long orderId) {
         Optional<PaymentInfo> maybeSuccessPaymentInfo = paymentRepository.findByPaymentSuccessStatus(orderId);
@@ -137,8 +146,8 @@ public class OrderServiceImpl implements OrderService {
         Order order = mayBeOrder.get();
         Member buyerMember = order.getBuyerMember();
         Product product = order.getProduct();
-        String trackingNumber = order.getTrackingNumber();
-        if(trackingNumber.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"운송장번호가 입력되어있지 않습니다.");
+
+        if(StringUtils.isNullOrEmpty(order.getTrackingNumber())) return new HttpResponse(ApiResultCode.FAIL,"운송장번호가 입력되어있지 않습니다.");
 
         product.changeBuyerMemberUserKey(buyerMember.getUserKey());
         product.changeStatus(ProductStatus.판매완료);

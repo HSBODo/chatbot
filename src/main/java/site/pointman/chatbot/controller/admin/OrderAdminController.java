@@ -50,15 +50,21 @@ public class OrderAdminController {
     }
 
     @ResponseBody
-    @GetMapping(value = "")
+    @GetMapping(value = "all")
     public Object getOrders () {
         return orderService.getOrders();
     }
 
     @ResponseBody
-    @GetMapping(value = "status")
+    @GetMapping(value = "")
     public Object getOrdersByStatus (@RequestParam("status") OrderStatus orderStatus) {
         return orderService.getOrders(orderStatus);
+    }
+
+    @ResponseBody
+    @GetMapping(value = "{orderId}")
+    public Object getOrdersByoOrderId (@PathVariable("orderId") Long orderId) {
+        return orderService.getOrder(orderId);
     }
 
 }

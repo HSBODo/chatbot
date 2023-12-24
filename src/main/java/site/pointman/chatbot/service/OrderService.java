@@ -17,4 +17,5 @@ public interface OrderService {
     Object getPurchaseProductProfile(String userKey,String orderId);
     Object getOrders();
     Object getOrders(OrderStatus status);
+    Object getOrder(Long orderId);
 }
