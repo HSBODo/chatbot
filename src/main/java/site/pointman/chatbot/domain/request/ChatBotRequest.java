@@ -73,9 +73,9 @@ public class ChatBotRequest {
         }
     }
 
-    public List<String> getCustomerProfileImage(){
+    public List<String> getCustomerProfileImages(){
         try {
-            if (Objects.isNull(action.getParams().getProductImg())) return null;
+            if (Objects.isNull(action.getParams().getCustomerProfileImage())) return null;
 
             ObjectMapper mapper = new ObjectMapper();
             String customerProfileImage = this.action.getParams().getCustomerProfileImage();
