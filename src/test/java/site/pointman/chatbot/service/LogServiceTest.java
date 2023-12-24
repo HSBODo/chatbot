@@ -31,6 +31,6 @@ class LogServiceTest {
     @Test
     @Transactional
     void insert() throws Exception {
-        logService.insert(chatBotRequest);
+        logService.insertChatBotRequestLog(chatBotRequest);
     }
 }

@@ -74,13 +74,13 @@ public class LogAop {
         for(Object obj : args) {
             System.out.println("type : "+obj.getClass().getSimpleName());
             ChatBotRequest chatBotRequest = (ChatBotRequest) obj;
-            logEntity = logService.insert(chatBotRequest);
+            logEntity = logService.insertChatBotRequestLog(chatBotRequest);
         }
 
         ChatBotResponse chatBotResponse = (ChatBotResponse) joinPoint.proceed();
 
         log.info("==== AOP ENDPOINT ====");
-        logService.insert(logEntity,chatBotResponse);
+        logService.insertChatBotResponseLog(logEntity,chatBotResponse);
         return chatBotResponse;
     }
 }

@@ -21,7 +21,7 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public Log insert(ChatBotRequest chatBotRequest) throws Exception {
+    public Log insertChatBotRequestLog(ChatBotRequest chatBotRequest) throws Exception {
 
         String userKey = chatBotRequest.getUserKey();
         String blockId = chatBotRequest.getIntent().getId();
@@ -44,7 +44,7 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public void insert(Log log, Object chatBotResponse) {
+    public void insertChatBotResponseLog(Log log, Object chatBotResponse) {
         String responseJson = gson.toJson(chatBotResponse);
         log.setResponseJson(responseJson);
 
