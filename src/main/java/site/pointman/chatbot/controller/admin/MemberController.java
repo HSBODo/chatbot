@@ -38,14 +38,8 @@ public class MemberController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "{memberUserKey}/{phoneNumber}",method = RequestMethod.PATCH)
-    public Object updateMemberPhoneNumber(@PathVariable String memberUserKey, @PathVariable String phoneNumber){
-        return memberService.updateCustomerPhoneNumber(memberUserKey,phoneNumber,false);
-    }
-
-    @ResponseBody
     @RequestMapping(value = "{memberUserKey}",method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Object updateMemberPhoneNumber(@PathVariable String memberUserKey, @RequestBody Member member){
+    public Object updateMember(@PathVariable String memberUserKey, @RequestBody Member member){
         return memberService.updateMember(memberUserKey,member);
     }
 
