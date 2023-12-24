@@ -168,7 +168,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Object verificationCustomerSuccessResponse() {
+    public ChatBotResponse verificationCustomerSuccessResponse() {
        return productChatBotResponseService.verificationCustomerSuccessChatBotResponse();
     }
 

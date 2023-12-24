@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProductService {
 
-    Object verificationCustomerSuccessResponse();
+    ChatBotResponse verificationCustomerSuccessResponse();
     ChatBotResponse getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category);
     ChatBotResponse getProductCategory(String requestBlockId);
     ChatBotResponse getProductsByCategory(Category category);
