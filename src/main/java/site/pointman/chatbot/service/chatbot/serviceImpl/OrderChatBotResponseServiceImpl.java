@@ -35,6 +35,8 @@ public class OrderChatBotResponseServiceImpl implements OrderChatBotResponseServ
             String title = product.getName();
             String description = new StringBuilder()
                     .append("상품상태: "+status)
+                    .append("\n")
+                    .append("운송장번호: "+order.viewTackingNumber())
                     .toString();
 
             commerceCard.setThumbnails(product.getProductImages().getImageUrls().get(0),true);

@@ -227,33 +227,31 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     @Override
     public ChatBotResponse getContractProductsSuccessChatBotResponse(List<Product> contractProducts) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
-        Carousel<BasicCard> carousel = new Carousel<>();
+        Carousel<CommerceCard> carousel = new Carousel<>();
 
         contractProducts.forEach(product -> {
             Order order = orderRepository.findByProductId(product.getId(), OrderStatus.주문체결).get();
-            BasicCard basicCard = new BasicCard();
+            CommerceCard commerceCard = new CommerceCard();
             StringBuilder productDescription = new StringBuilder();
 
             ProductStatus productStatus = product.getStatus();
             String orderId = String.valueOf(order.getOrderId());
             String productName = product.getName() + "("+productStatus+")";
-            String productPrice = CustomStringUtils.formatPrice(product.getPrice());
+            int productPrice = product.getPrice().intValue();
             String thumbnailImageUrl = product.getProductImages().getImageUrls().get(0);
-
-
             productDescription
-                    .append("판매가격: "+ productPrice+"원")
+                    .append("구매자: "+ order.getBuyerMember().getName())
                     .append("\n")
                     .append("결제일자: "+ order.getFormatApproveDate())
             ;
 
-            Button button = new Button("상세보기", ButtonAction.블럭이동, BlockId.PRODUCT_GET_CONTRACT_PROFILE.getBlockId(), ButtonParamKey.orderId, orderId);
-
-            basicCard.setThumbnail(thumbnailImageUrl,true);
-            basicCard.setTitle(productName);
-            basicCard.setDescription(productDescription.toString());
-            basicCard.setButton(button);
-            carousel.addComponent(basicCard);
+            commerceCard.setThumbnails(thumbnailImageUrl,true);
+            commerceCard.setProfile(order.getProduct().getMember().getProfile());
+            commerceCard.setPrice(productPrice);
+            commerceCard.setTitle(productName);
+            commerceCard.setDescription(productDescription.toString());
+            commerceCard.setButton(new Button("상세보기", ButtonAction.블럭이동, BlockId.PRODUCT_GET_CONTRACT_PROFILE.getBlockId(), ButtonParamKey.orderId, orderId));
+            carousel.addComponent(commerceCard);
         });
 
         chatBotResponse.addCarousel(carousel);
@@ -289,7 +287,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
                 .append("\n")
                 .append("운송장번호: " + order.viewTackingNumber())
                 .append("\n\n")
-                .append("구매자: " + order.getBuyerMember().getUserKey())
+                .append("구매자: " + order.getBuyerMember().getName())
                 .append("\n")
                 .append("결제일자: " + order.getFormatApproveDate());
 
