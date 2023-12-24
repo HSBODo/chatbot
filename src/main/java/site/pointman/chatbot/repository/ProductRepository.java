@@ -21,4 +21,5 @@ public interface ProductRepository {
     List<Product> findByCategory(Category category, ProductStatus status);
     Optional<Product> findByProductId(Long productId);
     List<Product> findBySearchWord(String searchWord, ProductStatus status);
+    List<Product> findByAll();
 }

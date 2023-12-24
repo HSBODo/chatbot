@@ -115,4 +115,10 @@ public class ProductRepositoryImpl implements ProductRepository {
                 .setMaxResults(10)
                 .getResultList();
     }
+
+    @Override
+    public List<Product> findByAll() {
+        return em.createQuery("SELECT p FROM Product p", Product.class)
+                .getResultList();
+    }
 }

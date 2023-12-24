@@ -9,6 +9,7 @@ import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.dto.product.ProductImageDto;
 import site.pointman.chatbot.repository.MemberRepository;
@@ -202,5 +203,33 @@ public class ProductServiceImpl implements ProductService {
         if(!userKey.equals(order.getProduct().getMember().getUserKey())) return chatBotExceptionResponse.createException();
 
         return productChatBotResponseService.getContractProductProfileSuccessChatBotResponse(order);
+    }
+
+    @Override
+    public Object getProducts() {
+        List<Product> products = productRepository.findByAll();
+        if (products.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"상품이 존재하지 않습니다.");
+        return products;
+    }
+
+    @Override
+    public Object getProducts(String userKey) {
+        List<Product> products = productRepository.findByUserKey(userKey);
+        if (products.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"상품이 존재하지 않습니다.");
+        return products;
+    }
+
+    @Override
+    public Object getProduct(Long productId) {
+        Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
+        if (mayBeProduct.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"상품이 존재하지 않습니다.");
+        Product product = mayBeProduct.get();
+        return product;
+    }
+
+    @Override
+    public Object updateProductStatus(Long productId, ProductStatus status) {
+        productRepository.updateStatus(productId,status);
+        return new HttpResponse(ApiResultCode.OK,"상품 "+productId+"을 "+status+"상태로 변경하였습니다.");
     }
 }

@@ -1,6 +1,7 @@
 package site.pointman.chatbot.service;
 
 import site.pointman.chatbot.constant.Category;
+import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.dto.product.ProductDto;
 
@@ -20,6 +21,10 @@ public interface ProductService {
     Object deleteProduct(String productId, String utterance);
     Object getContractProducts(String userKey);
     Object getContractProductProfile(String userKey,String orderId);
+    Object getProducts();
+    Object getProducts(String userKey);
+    Object getProduct(Long productId);
+    Object updateProductStatus(Long productId, ProductStatus status);
 
 
 }
