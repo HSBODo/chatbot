@@ -49,14 +49,14 @@ public class CustomerController {
 
     @ResponseBody
     @PostMapping(value = "PATCH/profileImage" , headers = {"Accept=application/json; UTF-8"})
-    public Object updateProfileImage(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse updateProfileImage(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String customerProfileImage = chatBotRequest.getCustomerProfileImages().get(0);
 
 
         if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return memberService.updateCustomerProfileImage(userKey,customerProfileImage,true);
+        return memberService.updateCustomerProfileImage(userKey,customerProfileImage);
     }
 
     @ResponseBody

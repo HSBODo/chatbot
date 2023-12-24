@@ -9,6 +9,7 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.domain.response.property.common.Profile;
 import site.pointman.chatbot.dto.product.ProductImageDto;
@@ -71,7 +72,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Object getCustomers(boolean isChatBotRequest) {
+    public Object getCustomers() {
         List<Member> members = memberRepository.findByAll();
         if (members.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"회원이 존재하지 않습니다");
 
@@ -83,9 +84,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByUserKey(userKey).get();
         if (isChatBotRequest) {
             try {
-
                 if(isChatBotRequest) return customerChatBotResponseService.getCustomerProfileSuccessChatBotResponse(member);
-
                 return member;
             }catch (Exception e) {
                 if (isChatBotRequest) return chatBotExceptionResponse.createException();
@@ -99,11 +98,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Object updateMember(String userKey, Member member, boolean isChatBotRequest) {
+    public HttpResponse updateMember(String userKey, Member member) {
         try {
-
             memberRepository.updateMember(userKey,member);
-
             return new HttpResponse(ApiResultCode.OK,"회원정보 변경을 완료하였습니다.");
         }catch (Exception e){
 
@@ -117,7 +114,6 @@ public class MemberServiceImpl implements MemberService {
             memberRepository.updateMemberPhoneNumber(userKey, updatePhoneNumber);
 
             if(isChatBotRequest) return customerChatBotResponseService.updateCustomerPhoneNumberSuccessChatBotResponse();
-
             return new HttpResponse(ApiResultCode.OK,"연락처를 수정하였습니다.");
         }catch (Exception e) {
             if (isChatBotRequest) return chatBotExceptionResponse.createException();
@@ -144,10 +140,10 @@ public class MemberServiceImpl implements MemberService {
             memberRepository.delete(userKey);
 
             if(isChatBotRequest) return customerChatBotResponseService.deleteCustomerSuccessChatBotResponse();
-
             return new HttpResponse(ApiResultCode.OK,"회원탈퇴를 성공적으로 완료하였습니다.");
         }catch (IllegalStateException i) {
-            return chatBotExceptionResponse.createException(i.getMessage());
+            if (isChatBotRequest)return chatBotExceptionResponse.createException(i.getMessage());
+            return new HttpResponse(ApiResultCode.FAIL,"회원탈퇴를 실패하였습니다. e= "+i.getMessage());
         }catch (Exception e) {
             if (isChatBotRequest) return chatBotExceptionResponse.createException();
             return new HttpResponse(ApiResultCode.FAIL,"회원탈퇴를 실패하였습니다. e= "+e.getMessage());
@@ -156,7 +152,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public Object updateCustomerProfileImage(String userKey, String profileImageUrl, boolean isChatBotRequest) {
+    public ChatBotResponse updateCustomerProfileImage(String userKey, String profileImageUrl) {
         try {
             Member member = memberRepository.findByUserKey(userKey).get();
             List<String> uploadImages = new ArrayList<>();

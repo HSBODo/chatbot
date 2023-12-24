@@ -28,7 +28,7 @@ public class MemberController {
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.GET)
     public Object getMembers(){
-        return memberService.getCustomers(false);
+        return memberService.getCustomers();
     }
 
     @ResponseBody
@@ -46,7 +46,7 @@ public class MemberController {
     @ResponseBody
     @RequestMapping(value = "{memberUserKey}",method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
     public Object updateMemberPhoneNumber(@PathVariable String memberUserKey, @RequestBody Member member){
-        return memberService.updateMember(memberUserKey,member,false);
+        return memberService.updateMember(memberUserKey,member);
     }
 
     @ResponseBody
@@ -54,5 +54,4 @@ public class MemberController {
     public Object deleteMember(@PathVariable String memberUserKey){
         return memberService.withdrawalCustomer(memberUserKey,false);
     }
-
 }
