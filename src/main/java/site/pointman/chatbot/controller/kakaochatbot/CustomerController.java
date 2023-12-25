@@ -47,6 +47,7 @@ public class CustomerController {
 
             return memberService.join(userKey, name, phoneNumber,true);
         }catch (Exception e){
+            log.info("eeeeeeeee={}",e.getStackTrace());
             return chatBotExceptionResponse.createException();
         }
     }
