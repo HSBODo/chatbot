@@ -18,12 +18,12 @@ jobs:
       uses: actions/checkout@v3
 
     ## 1) git ignore에 등록된 application.properties 파일 생성해주기
-      - name: make application.properties
-        run: |
+    - name: make application.properties
+      run: |
           cd ./src/main/resources
           touch ./application.yml
           echo "${{ secrets.SPRING_SECRET_APPLICATION_PROPERTIES }}" > ./application.yml
-        shell: bash
+      shell: bash
 
     ## 2) 스프링 프로젝트 jar 파일 빌드
     - name: Grant execute permission for gradlew
