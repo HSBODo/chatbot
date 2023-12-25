@@ -1,7 +1,6 @@
 package site.pointman.chatbot.service;
 
 
-import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
 
