@@ -192,10 +192,9 @@ public class ProductController {
     @PostMapping(value = "GET/special" , headers = {"Accept=application/json; UTF-8"})
     public Object getSpecialProducts(@RequestBody ChatBotRequest chatBotRequest) {
         int currentPage = chatBotRequest.getPageNumber();
-        int firstProduct = chatBotRequest.getFirstNumber();
-        int lastProduct = chatBotRequest.getLastNumber();
+        int firstNumber = chatBotRequest.getFirstNumber();
 
-        return productService.getSpecialProducts(currentPage,firstProduct,lastProduct);
+        return productService.getSpecialProducts(currentPage,firstNumber);
     }
 
 }

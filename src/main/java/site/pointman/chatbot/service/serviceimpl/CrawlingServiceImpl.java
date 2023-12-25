@@ -19,6 +19,7 @@ public class CrawlingServiceImpl implements CrawlingService {
     @Override
     public Elements getJsoupElements(String url, String cssQuery) throws Exception {
         Document document = Jsoup.connect(url).get();
+        log.info("Connect");
         Elements elements = document.select(cssQuery);
         return elements;
     }
@@ -63,7 +64,9 @@ public class CrawlingServiceImpl implements CrawlingService {
                 detailUrl = "https://quasarzone.com/"+filterElements.get(i).select("a.subject-link").get(0).attr("href");
             }
 
+            Thread.sleep(400);
             Document productInfoDetail = Jsoup.connect(detailUrl).get();
+            log.info("Detail Connect");
 
             String purchaseUrl = productInfoDetail.select("table.market-info-view-table > tbody > tr:nth-child(1) > td > a").text();
             String brandName = productInfoDetail.select("table.market-info-view-table > tbody > tr:nth-child(2) > td").text();

@@ -31,7 +31,8 @@ public class SpecialProduct {
     public int getFormatPrice() {
         int first = price.indexOf(" ")+1;
         int last = price.indexOf(" ",first);
-        int formatPrice = Integer.parseInt(price.substring(first, last).replaceAll(",",""));
+        String[] split = price.substring(first, last).replaceAll(",", "").split("\\.");
+        int formatPrice = Integer.parseInt(split[0]);
 
         if (formatPrice == 0) formatPrice = 1;
         return formatPrice;

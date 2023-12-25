@@ -239,15 +239,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ChatBotResponse getSpecialProducts(int currentPage, int firstProduct, int lastProduct) {
+    public ChatBotResponse getSpecialProducts(int currentPage, int firstNumber) {
         try {
-            lastProduct = firstProduct+5;
+            int lastProduct = firstNumber+5;
+            log.info("page={} first={} last={}",currentPage,firstNumber,lastProduct);
             String url = "https://quasarzone.com/bbs/qb_saleinfo?page="+currentPage;
             String cssQuery = "#frmSearch > div > div.list-board-wrap > div.market-type-list.market-info-type-list.relative > table > tbody > tr";
 
             Elements jsoupElements = crawlingService.getJsoupElements(url, cssQuery);
             List<Element> filterElements = crawlingService.filterElements(jsoupElements);
-            List<SpecialProduct> specialProducts = crawlingService.getSpecialProducts(filterElements,firstProduct,lastProduct);
+            log.info("total product={}",filterElements.size());
+            List<SpecialProduct> specialProducts = crawlingService.getSpecialProducts(filterElements,firstNumber,lastProduct);
 
             int nextFirstNumber = lastProduct;
             int nextPage = currentPage;
@@ -257,6 +259,7 @@ public class ProductServiceImpl implements ProductService {
                 nextPage++;
             }
 
+            log.info("nextPage={} nextFirst={} last={}",nextPage,nextFirstNumber);
             return productChatBotResponseService.getSpecialProductsSuccessChatBotResponse(specialProducts, nextFirstNumber,  nextPage);
         }catch (Exception e) {
             log.info("e={}",e.getStackTrace());

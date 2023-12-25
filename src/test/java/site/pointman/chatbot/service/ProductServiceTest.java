@@ -167,7 +167,6 @@ class ProductServiceTest {
 
     @Test
     void getSpecialProducts() {
-
-        ChatBotResponse specialProducts = productService.getSpecialProducts(1, 1, 1);
+        ChatBotResponse specialProducts = productService.getSpecialProducts(1, 1);
     }
 }
