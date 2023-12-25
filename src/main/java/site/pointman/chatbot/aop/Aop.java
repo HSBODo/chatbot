@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import site.pointman.chatbot.constant.ApiResultCode;
@@ -43,12 +44,12 @@ public class Aop {
     @Around("chatBotControllerPointcut()")
     public ChatBotResponse chatBotLog(ProceedingJoinPoint joinPoint) throws Throwable {
         ChatBotLog logEntity = new ChatBotLog();
-
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         String controllerName = joinPoint.getSignature().getDeclaringType().getName();
         String methodName = joinPoint.getSignature().getName();
         log.info("==== AOP JOINPOINT ====");
-        log.info("controllerName={}",controllerName);
-        log.info("methodName={}",methodName);
+        log.info("{}",controllerName+"/"+methodName);
         //메서드에 들어가는 매개변수 배열을 읽어옴
         Object[] args = joinPoint.getArgs();
 
@@ -61,12 +62,15 @@ public class Aop {
 
         try {
             ChatBotResponse chatBotResponse = (ChatBotResponse) joinPoint.proceed();
-
-            log.info("==== AOP ENDPOINT ====");
             logService.insertChatBotResponseLog(logEntity,chatBotResponse);
+
+            stopWatch.stop();
+            log.info("==== AOP ENDPOINT {} ====",stopWatch.getTotalTimeSeconds());
             return chatBotResponse;
         }catch (Throwable e){
             logService.insertChatBotResponseLog(logEntity,e.getMessage());
+            stopWatch.stop();
+            log.info("==== AOP Exception ENDPOINT {} ====",stopWatch.getTotalTimeSeconds());
             return new ChatBotExceptionResponse().createException();
         }
     }
