@@ -64,7 +64,7 @@ public class CrawlingServiceImpl implements CrawlingService {
                 detailUrl = "https://quasarzone.com/"+filterElements.get(i).select("a.subject-link").get(0).attr("href");
             }
 
-            Thread.sleep(200);
+            Thread.sleep(230);
             Document productInfoDetail = Jsoup.connect(detailUrl).get();
             log.info("Detail Connect");
 
