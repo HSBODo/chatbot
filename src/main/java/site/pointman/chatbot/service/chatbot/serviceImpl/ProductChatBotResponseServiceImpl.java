@@ -10,6 +10,7 @@ import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.Context;
 import site.pointman.chatbot.domain.response.property.common.Button;
+import site.pointman.chatbot.domain.response.property.common.Link;
 import site.pointman.chatbot.domain.response.property.common.Profile;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.Carousel;
@@ -19,7 +20,6 @@ import site.pointman.chatbot.dto.product.SpecialProduct;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.service.chatbot.ProductChatBotResponseService;
-import site.pointman.chatbot.utill.CustomStringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -316,6 +316,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     public ChatBotResponse getSpecialProductsSuccessChatBotResponse(List<SpecialProduct> specialProducts, int nextFirstNumber, int nextPage) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<CommerceCard> commerceCardCarousel = new Carousel<>();
+
         Button nextButton = new Button(ButtonName.더보기.name(),ButtonAction.블럭이동,BlockId.PRODUCT_HOT_DEAL.getBlockId());
 
         nextButton.setExtra(ButtonParamKey.pageNumber,String.valueOf(nextPage));
@@ -323,13 +324,15 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
         specialProducts.forEach(specialProduct -> {
             CommerceCard commerceCard = new CommerceCard();
+            Link thumbnailLink = new Link();
+            thumbnailLink.setMobile(specialProduct.getPurchaseUrl());
 
             StringBuilder description = new StringBuilder();
             description
                     .append(specialProduct.getCategory())
                     .append("\n")
                     .append("금액단위: "+specialProduct.getCurrency());
-            commerceCard.setThumbnails(specialProduct.getProductThumbnailImageUrl(),true);
+            commerceCard.setThumbnails(specialProduct.getProductThumbnailImageUrl(), thumbnailLink,true);
             commerceCard.setProfile(new Profile(specialProduct.getBrandNameAndStatus(),specialProduct.getBrandImageUrl()));
             commerceCard.setPrice(specialProduct.getFormatPrice());
             commerceCard.setTitle(specialProduct.getTitle());
