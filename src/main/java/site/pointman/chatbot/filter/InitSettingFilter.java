@@ -21,11 +21,11 @@ public class InitSettingFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        log.info("---필터 인스턴스 초기화---");
+        log.info("==== 필터 인스턴스 초기화 ====");
     }
 
     @Override
     public void destroy() {
-        log.info("---필터 인스턴스 종료---");
+        log.info("==== 필터 인스턴스 종료 ====");
     }
 }
