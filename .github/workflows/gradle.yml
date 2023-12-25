@@ -43,7 +43,8 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_PASSWORD }}
-        port: ${{ secrets.EC2_SSH_PORT }}          
+        port: ${{ secrets.EC2_SSH_PORT }}     
+        AWS_DEFAULT_REGION: ap-northeast-2
         script: |
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PW }}
           docker rm $(docker ps -a -q)
