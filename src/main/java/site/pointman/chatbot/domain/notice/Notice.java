@@ -48,7 +48,7 @@ public class Notice extends BaseEntity {
     private String imageUrl = "https://pbs.twimg.com/media/FVbk8XaaMAA2ux_?format=jpg&name=small";
 
     @Convert(converter = StringListConverter.class)
-    private List<Button> buttons = new ArrayList<>();
+    private List<Button> buttons;
 
     @Enumerated(EnumType.STRING)
     private NoticeStatus status;

@@ -30,7 +30,8 @@ public enum BlockId {
     PURCHASE_SUCCESS_CONFIRM("상품 구매확정","658463e835bee670bd302d52"),
     SALE_SUCCESS_RECONFIRM("상품 판매확정 재확인","6586749af96d71675b454bd4"),
     SALE_SUCCESS_CONFIRM("상품 판매확정","658674b53fa0457f23d7fcdf"),
-    PRODUCT_HOT_DEAL("핫딜 상품 조회","65882697def18a0edd183edf")
+    PRODUCT_HOT_DEAL("핫딜 상품 조회","65882697def18a0edd183edf"),
+    CUSTOMER_UPDATE_PROFILE_IMAGE("프로필 이미지 변경","6586c039dcd6f94a82e30203")
     ;
     private final String name;
     private final String blockId;

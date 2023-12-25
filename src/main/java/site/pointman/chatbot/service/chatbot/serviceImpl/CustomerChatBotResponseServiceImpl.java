@@ -15,7 +15,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.\n프로필 사진을 등록하시려면 버튼을 눌러주세요.");
-        chatBotResponse.addQuickButton(ButtonName.프로필사진등록.name(),ButtonAction.블럭이동,"6586c039dcd6f94a82e30203");
+        chatBotResponse.addQuickButton(ButtonName.프로필사진등록.name(),ButtonAction.블럭이동,BlockId.CUSTOMER_UPDATE_PROFILE_IMAGE.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.메인으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }
