@@ -313,9 +313,13 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     }
 
     @Override
-    public ChatBotResponse getSpecialProductsSuccessChatBotResponse(List<SpecialProduct> specialProducts, int lastPage) {
+    public ChatBotResponse getSpecialProductsSuccessChatBotResponse(List<SpecialProduct> specialProducts, int nextFirstNumber, int nextPage) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<CommerceCard> commerceCardCarousel = new Carousel<>();
+        Button nextButton = new Button(ButtonName.더보기.name(),ButtonAction.블럭이동,BlockId.PRODUCT_HOT_DEAL.getBlockId());
+
+        nextButton.setExtra(ButtonParamKey.pageNumber,String.valueOf(nextPage));
+        nextButton.setExtra(ButtonParamKey.firstNumber,String.valueOf(nextFirstNumber));
 
         specialProducts.forEach(specialProduct -> {
             CommerceCard commerceCard = new CommerceCard();
@@ -325,9 +329,6 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
                     .append(specialProduct.getCategory())
                     .append("\n")
                     .append("금액단위: "+specialProduct.getCurrency());
-
-
-
             commerceCard.setThumbnails(specialProduct.getProductThumbnailImageUrl(),true);
             commerceCard.setProfile(new Profile(specialProduct.getBrandNameAndStatus(),specialProduct.getBrandImageUrl()));
             commerceCard.setPrice(specialProduct.getFormatPrice());
@@ -341,7 +342,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
         chatBotResponse.addCarousel(commerceCardCarousel);
         chatBotResponse.addQuickButton(ButtonName.메인으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
-        chatBotResponse.addQuickButton(ButtonName.더보기.name(),ButtonAction.블럭이동,BlockId.PRODUCT_HOT_DEAL.getBlockId(),ButtonParamKey.pageNumber,String.valueOf(lastPage));
+        chatBotResponse.addQuickButton(nextButton);
         return chatBotResponse;
     }
 

@@ -20,7 +20,7 @@ public interface ProductService {
     ChatBotResponse deleteProduct(String productId, String utterance);
     ChatBotResponse getContractProducts(String userKey);
     ChatBotResponse getContractProductProfile(String userKey,String orderId);
-    ChatBotResponse getSpecialProducts(int startPage);
+    ChatBotResponse getSpecialProducts(int currentPage,int firstProduct, int lastProduct);
     Object getProducts();
     Object getProducts(String userKey);
     Object getProduct(Long productId);

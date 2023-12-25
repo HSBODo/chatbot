@@ -164,4 +164,10 @@ class ProductServiceTest {
         //then
         Assertions.assertThat(text).isEqualTo("상품을 정상적으로 삭제하였습니다.");
     }
+
+    @Test
+    void getSpecialProducts() {
+
+        ChatBotResponse specialProducts = productService.getSpecialProducts(1, 1, 1);
+    }
 }

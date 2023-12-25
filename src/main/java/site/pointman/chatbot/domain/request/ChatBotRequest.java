@@ -137,8 +137,18 @@ public class ChatBotRequest {
     }
 
     public int getPageNumber(){
-        if (Objects.isNull(action.getClientExtra().getPageNumber())) return 0;
+        if (Objects.isNull(action.getClientExtra().getPageNumber())) return 1;
         return Integer.parseInt(action.getClientExtra().getPageNumber());
+    }
+
+    public int getFirstNumber(){
+        if (Objects.isNull(action.getClientExtra().getFirstNumber())) return 1;
+        return Integer.parseInt(action.getClientExtra().getFirstNumber());
+    }
+
+    public int getLastNumber(){
+        if (Objects.isNull(action.getClientExtra().getLastNumber())) return 1;
+        return Integer.parseInt(action.getClientExtra().getLastNumber());
     }
 
     public String getValidationData(){
