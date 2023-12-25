@@ -25,7 +25,7 @@ public class Interceptor implements HandlerInterceptor {
     @Override
     //	Controller 진입 전 실행
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("인터셉터-preHandle");
+        log.info("==== 2.인터셉터-preHandle ====");
         return true;
     }
 
@@ -51,11 +51,11 @@ public class Interceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        log.info("인터셉터-postHandle");
+        log.info("5.인터셉터-postHandle");
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        log.info("인터셉터-afterCompletion");
+        log.info("6.인터셉터-afterCompletion");
     }
 }

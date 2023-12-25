@@ -1,14 +1,9 @@
-package site.pointman.filter;
+package site.pointman.chatbot.filter;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import org.springframework.web.util.ContentCachingRequestWrapper;
-import org.springframework.web.util.ContentCachingResponseWrapper;
-
 
 import javax.servlet.*;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
@@ -19,7 +14,7 @@ public class InitSettingFilter implements Filter {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         // 전처리
-        log.info("필터 스타트");
+        log.info("==== 1.필터 스타트 ====");
         log.info("request Url = {}", httpServletRequest.getRequestURL());
         chain.doFilter(request, response);
     }

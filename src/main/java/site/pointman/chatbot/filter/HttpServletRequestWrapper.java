@@ -1,4 +1,4 @@
-package site.pointman.filter;
+package site.pointman.chatbot.filter;
 
 import org.apache.commons.io.IOUtils;
 

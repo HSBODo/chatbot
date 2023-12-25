@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import site.pointman.chatbot.Interceptor.Interceptor;
-import site.pointman.filter.InitSettingFilter;
+import site.pointman.chatbot.filter.InitSettingFilter;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {

@@ -48,7 +48,7 @@ public class Aop {
         stopWatch.start();
         String controllerName = joinPoint.getSignature().getDeclaringType().getName();
         String methodName = joinPoint.getSignature().getName();
-        log.info("==== AOP JOINPOINT ====");
+        log.info("==== 3.AOP JOINPOINT ====");
         log.info("{}",controllerName+"/"+methodName);
         //메서드에 들어가는 매개변수 배열을 읽어옴
         Object[] args = joinPoint.getArgs();
@@ -65,12 +65,12 @@ public class Aop {
             logService.insertChatBotResponseLog(logEntity,chatBotResponse);
 
             stopWatch.stop();
-            log.info("==== AOP ENDPOINT {} ====",stopWatch.getTotalTimeSeconds());
+            log.info("==== 4.AOP END {} ====",stopWatch.getTotalTimeSeconds());
             return chatBotResponse;
         }catch (Throwable e){
             logService.insertChatBotResponseLog(logEntity,e.getMessage());
             stopWatch.stop();
-            log.info("==== AOP Exception ENDPOINT {} ====",stopWatch.getTotalTimeSeconds());
+            log.info("==== 4.AOP Exception END {} ====",stopWatch.getTotalTimeSeconds());
             return new ChatBotExceptionResponse().createException();
         }
     }
@@ -79,7 +79,7 @@ public class Aop {
     public Object adminAuthentication(ProceedingJoinPoint joinPoint) throws Throwable {
         String controllerName = joinPoint.getSignature().getDeclaringType().getName();
         String methodName = joinPoint.getSignature().getName();
-        log.info("==== AOP JOINPOINT ====");
+        log.info("==== 3.AOP JOINPOINT ====");
         log.info("controllerName={}",controllerName);
         log.info("methodName={}",methodName);
 
@@ -93,7 +93,7 @@ public class Aop {
 
         Object proceed = joinPoint.proceed();
 
-        log.info("==== AOP ENDPOINT ====");
+        log.info("==== 4.AOP END ====");
         return proceed;
     }
 
