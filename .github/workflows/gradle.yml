@@ -4,17 +4,11 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    types:
-      - closed
+#  pull_request:
+#    branches: [ "master" ]
+
 
 jobs:
-  if_merged:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    steps:
-    - run: |
-        echo The PR was merged
   deploy: 
     runs-on: ubuntu-latest
 
