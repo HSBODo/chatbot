@@ -38,18 +38,13 @@ public class CustomerController {
     @ResponseBody
     @PostMapping(value = "POST/join" , headers = {"Accept=application/json; UTF-8"})
     public Object join(@RequestBody ChatBotRequest chatBotRequest) {
-        try {
-            String userKey = chatBotRequest.getUserKey();
-            String name = chatBotRequest.getCustomerName();
-            String phoneNumber = chatBotRequest.getCustomerPhone();
+        String userKey = chatBotRequest.getUserKey();
+        String name = chatBotRequest.getCustomerName();
+        String phoneNumber = chatBotRequest.getCustomerPhone();
 
-            if (memberService.isCustomer(userKey)) return chatBotExceptionResponse.createException("이미 존재하는 회원입니다.");
+        if (memberService.isCustomer(userKey)) return chatBotExceptionResponse.createException("이미 존재하는 회원입니다.");
 
-            return memberService.join(userKey, name, phoneNumber,true);
-        }catch (Exception e){
-            log.info("eeeeeeeee={}",e.getStackTrace());
-            return chatBotExceptionResponse.createException();
-        }
+        return memberService.join(userKey, name, phoneNumber,true);
     }
 
     @ResponseBody
