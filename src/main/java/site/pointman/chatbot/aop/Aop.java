@@ -42,7 +42,7 @@ public class Aop {
     }
 
     @Around("chatBotControllerPointcut()")
-    public ChatBotResponse chatBotLog(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object chatBotLog(ProceedingJoinPoint joinPoint) throws Throwable {
         ChatBotLog logEntity = new ChatBotLog();
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -61,12 +61,13 @@ public class Aop {
         }
 
         try {
-            ChatBotResponse chatBotResponse = (ChatBotResponse) joinPoint.proceed();
-            logService.insertChatBotResponseLog(logEntity,chatBotResponse);
+            Object proceed = joinPoint.proceed();
+
+            logService.insertChatBotResponseLog(logEntity,proceed);
 
             stopWatch.stop();
             log.info("==== 4.AOP END {} ====",stopWatch.getTotalTimeSeconds());
-            return chatBotResponse;
+            return proceed;
         }catch (Throwable e){
             logService.insertChatBotResponseLog(logEntity,e.getMessage());
             stopWatch.stop();
