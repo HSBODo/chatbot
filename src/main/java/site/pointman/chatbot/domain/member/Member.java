@@ -4,62 +4,71 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.BaseEntity;
-import site.pointman.chatbot.dto.member.MemberDto;
+import site.pointman.chatbot.domain.response.property.common.Profile;
+import site.pointman.chatbot.utill.CustomStringUtils;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 
 @Getter
 @Entity
 @Table(name = "tb_member")
-@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
 public class Member extends BaseEntity {
-    @Id
-    private String kakaoUserkey ;
-    private String id;
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long seq ;
+
+    @Id
+    @NotBlank
+    @Column(name = "user_key")
+    private String userKey;
+
+    @NotBlank
     private String name;
 
-    private String password;
+    @NotBlank
+    private String phoneNumber;
 
-    private String phone;
+    @Embedded
+    private Profile profile;
 
-    private String email;
+    @Convert(converter = MemberRoleEnumConverter.class)
+    @NotNull
+    private MemberRole role;
 
-    private String baseAddress;
-
-    @Enumerated(EnumType.STRING)
-    private RoleType roleType;
-    @Enumerated(EnumType.STRING)
-    private Platform platform;
     @Builder
-    public Member(String kakaoUserkey, String id, String name, String password, String phone, String email, String baseAddress, RoleType roleType, Platform platform) {
-        this.kakaoUserkey = kakaoUserkey;
-        this.id = id;
+    public Member(String userKey, String name, String phoneNumber , Profile profile, MemberRole memberRole) {
+        this.userKey = userKey;
         this.name = name;
-        this.password = password;
-        this.phone = phone;
-        this.email = email;
-        this.baseAddress = baseAddress;
-        this.roleType = roleType;
-        this.platform = platform;
+        this.phoneNumber = phoneNumber;
+        this.profile = profile;
+        this.role = memberRole;
     }
 
-    public MemberDto toMemberDto(){
-        return MemberDto.builder()
-                .kakaoUserkey(this.kakaoUserkey)
-                .id(this.id)
-                .name(this.name)
-                .password(this.password)
-                .phone(this.phone)
-                .email(this.email)
-                .baseAddress(this.baseAddress)
-                .build();
+    public String getFormatCreateDate(){
+      return CustomStringUtils.dateFormat(getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
     }
 
-    public void Withdrawal(){
-        super.changeIsUse("N");
+    public void changePhoneNumber(String updatePhoneNumber){
+        this.phoneNumber = updatePhoneNumber;
+    }
+    public void changeRole(MemberRole role){
+        this.role = role;
+    }
+    public void changeUserKey(String userKey){
+        this.userKey = userKey;
+    }
+    public void changeName(String name){
+        this.name = name;
+    }
+    public void changeMemberProfileImage(String profileImage){
+        this.profile.changeProfileImage(profileImage);
     }
 }

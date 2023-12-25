@@ -1,16 +1,16 @@
 package site.pointman.chatbot.repository.impl;
 
-
-import org.springframework.transaction.annotation.Transactional;
-import site.pointman.chatbot.domain.member.KakaoMemberLocation;
+import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.domain.member.MemberAttribute;
-import site.pointman.chatbot.domain.member.Platform;
+import site.pointman.chatbot.domain.order.Order;
+import site.pointman.chatbot.domain.product.Product;
+import site.pointman.chatbot.domain.product.ProductImage;
 import site.pointman.chatbot.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
-import java.math.BigDecimal;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Transactional
@@ -22,101 +22,86 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public Member save(Member member) {
+    public void save(Member member) {
         em.persist(member);
-        return member;
     }
 
     @Override
-    public Member delete(String kakaoUserkey) {
-        Member member = em.find(Member.class,kakaoUserkey);
-        member.Withdrawal();
-       return member;
+    public Optional<Member> findByUserKey(String userKey) {
+        return em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
+                .setParameter("userKey", userKey)
+                .setParameter("isUse", true)
+                .getResultList().stream().findAny();
     }
 
     @Override
-    public List<Member> findAll() {
+    public List<Member> findByAll() {
         return em.createQuery("select m from Member m", Member.class)
                 .getResultList();
     }
 
     @Override
-    public Optional<Member> findByMember(String kakaoUserkey) {
-        Member findMember = em.find(Member.class,kakaoUserkey);
-        return Optional.ofNullable(findMember);
+    public Optional<Member> findByName(String name) {
+        return em.createQuery("select m from Member m where m.name=:name", Member.class)
+                .setParameter("name", name)
+                .getResultList().stream().findAny();
     }
 
     @Override
-    public Optional<Member> findByKakaoMember(String kakaoUserkey) {
-     List<Member> findKakaoMember = em.createQuery("select m from Member m where kakaoUserkey=:kakaoUserkey and isUse=:isUse and platform=:platform", Member.class)
-                .setParameter("kakaoUserkey", kakaoUserkey)
-                .setParameter("isUse", "Y")
-                .setParameter("platform", Platform.KAKAO)
+    public void updateMember(String userKey, Member member) {
+        Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
+                .setParameter("userKey", userKey)
+                .setParameter("isUse", true)
+                .getSingleResult();
+        if (Objects.nonNull(member.getName())) findMember.changeName(member.getName());
+        if (Objects.nonNull(member.getUserKey())) findMember.changeUserKey(member.getUserKey());
+        if (Objects.nonNull(member.getPhoneNumber())) findMember.changePhoneNumber(member.getPhoneNumber());
+        if (Objects.nonNull(member.getRole())) findMember.changeRole(member.getRole());
+    }
+
+    @Override
+    public void updateMemberPhoneNumber(String userKey, String phoneNumber) {
+        Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
+                .setParameter("userKey", userKey)
+                .setParameter("isUse", true)
+                .getSingleResult();
+        findMember.changePhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public void delete(String userKey) {
+        Member removeMember = em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
+                .setParameter("userKey", userKey)
+                .setParameter("isUse", true)
+                .getSingleResult();
+
+        List<Product> removeProducts = em.createQuery("select p from Product p where p.member.userKey=:userKey AND p.isUse = :isUse", Product.class)
+                .setParameter("userKey", userKey)
+                .setParameter("isUse", true)
                 .getResultList();
-        return  findKakaoMember.stream().findAny();
+
+        removeProducts.forEach(removeProduct -> {
+            Long productImageId = removeProduct.getProductImages().getId();
+
+            ProductImage removeProductImage = em.createQuery("select p from ProductImage p where p.id=:id AND p.isUse = :isUse", ProductImage.class)
+                    .setParameter("id", productImageId)
+                    .setParameter("isUse", true)
+                    .getSingleResult();
+
+            removeProductImage.delete();
+            removeProduct.delete();
+        });
+
+        removeMember.delete();
     }
 
     @Override
-    public Optional<Member> findByKakaoWithdrawalMember(String kakaoUserkey) {
-        List<Member> findKakaoMember = em.createQuery("select m from Member m where kakaoUserkey=:kakaoUserkey and isUse=:isUse and platform=:platform", Member.class)
-                .setParameter("kakaoUserkey", kakaoUserkey)
-                .setParameter("isUse", "N")
-                .setParameter("platform", Platform.KAKAO)
-                .getResultList();
-        return  findKakaoMember.stream().findAny();
-    }
-
-    @Override
-    public KakaoMemberLocation saveLocation(KakaoMemberLocation memberLocation) {
-        em.persist(memberLocation);
-        return memberLocation;
-    }
-
-    @Override
-    public Optional<KakaoMemberLocation> updateLocation(String kakaoUserkey, BigDecimal x , BigDecimal y) {
-        KakaoMemberLocation memberLocation = em.find(KakaoMemberLocation.class,kakaoUserkey);
-        memberLocation.changeX(x);
-        memberLocation.changeY(y);
-        return Optional.ofNullable(memberLocation);
-    }
-
-    @Override
-    public Optional<KakaoMemberLocation> findByLocation(String kakaoUserkey) {
-        KakaoMemberLocation member = em.find(KakaoMemberLocation.class,kakaoUserkey);
-        return Optional.ofNullable(member);
-    }
-
-    @Override
-    public Optional<MemberAttribute> findByAttribute(String kakaoUserkey) {
-        MemberAttribute memberAttribute = em.find(MemberAttribute.class,kakaoUserkey);
-        return Optional.ofNullable(memberAttribute);
-    }
-
-    @Override
-    public MemberAttribute saveAttribute(MemberAttribute memberAttribute) {
-        em.persist(memberAttribute);
-        return memberAttribute;
-    }
-
-    @Override
-    public MemberAttribute updateAttribute(MemberAttribute updateAttribute) {
-        MemberAttribute findMemberAttribute = em.find(MemberAttribute.class,updateAttribute.getKakaoUserkey());
-        findMemberAttribute.changeQuantity(updateAttribute.getQuantity());
-        findMemberAttribute.changeOptionCode(updateAttribute.getOptionCode());
-        return findMemberAttribute;
-    }
-
-    @Override
-    public MemberAttribute updateQuantityAttribute(String kakaoUserkey, int quantity) {
-        MemberAttribute findMemberAttribute = em.find(MemberAttribute.class,kakaoUserkey);
-        findMemberAttribute.changeQuantity(quantity);
-        return findMemberAttribute;
-    }
-
-    @Override
-    public MemberAttribute updateOptionAttribute(String kakaoUserkey, Long optionCode) {
-        MemberAttribute findMemberAttribute = em.find(MemberAttribute.class,kakaoUserkey);
-        findMemberAttribute.changeOptionCode(optionCode);
-        return findMemberAttribute;
+    public Optional<Member> findAdmin(String name, String userKey) {
+        return em.createQuery("select m from Member m where m.userKey=:userKey AND m.name=:name AND m.role=:role AND m.isUse = :isUse", Member.class)
+                .setParameter("name", name)
+                .setParameter("userKey", userKey)
+                .setParameter("role", MemberRole.ADMIN)
+                .setParameter("isUse", true)
+                .getResultList().stream().findAny();
     }
 }

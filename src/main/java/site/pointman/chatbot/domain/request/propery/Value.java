@@ -1,0 +1,11 @@
+package site.pointman.chatbot.domain.request.propery;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+
+@Getter
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public class Value {
+    private String origin;
+    private String resolved;
+}

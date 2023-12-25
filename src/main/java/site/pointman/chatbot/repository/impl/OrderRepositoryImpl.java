@@ -1,9 +1,7 @@
 package site.pointman.chatbot.repository.impl;
 
-import org.springframework.data.jpa.repository.query.JpaQueryMethodFactory;
-import org.springframework.stereotype.Repository;
+import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.domain.order.Order;
-import site.pointman.chatbot.domain.order.OrderStatus;
 import site.pointman.chatbot.repository.OrderRepository;
 
 import javax.persistence.EntityManager;
@@ -20,68 +18,55 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<Order> findByApproveOrders(String kakaoUserkey) {
-        return em.createQuery("select o from Order o where o.status = :status and o.kakao_userkey=:kakaoUserkey", Order.class)
-                .setParameter("status", OrderStatus.결제승인)
-                .setParameter("kakaoUserkey",kakaoUserkey)
-                .getResultList()
-                ;
-    }
-
-    @Override
-    public Order savePayReady(Order order) {
+    public Long save(Order order) {
         em.persist(order);
-        return order;
+        return order.getOrderId();
     }
 
     @Override
-    public Optional<Order> findByReadyOrder(Long orderId) {
-        return Optional.ofNullable(em.createQuery("select o from Order o where o.status=:status AND o.order_id=:orderId", Order.class)
-                .setParameter("status", OrderStatus.결제대기)
+    public Optional<Order> findByOrderId(Long orderId) {
+        return em.createQuery("SELECT o FROM Order o WHERE o.orderId =:orderId",Order.class)
                 .setParameter("orderId",orderId)
-                .getSingleResult()
-        );
+                .getResultList()
+                .stream().findAny();
     }
 
     @Override
-    public Optional<Order> findByApproveOrder(Long orderId) {
-        return em.createQuery("select o from Order o where o.status=:status AND o.order_id=:orderId", Order.class)
-                .setParameter("status",OrderStatus.결제승인)
+    public Optional<Order> findByOrderId(Long orderId, OrderStatus status) {
+        return em.createQuery("SELECT o FROM Order o WHERE o.orderId =:orderId AND o.status =:status",Order.class)
                 .setParameter("orderId",orderId)
-                .getResultList().stream().findAny();
+                .setParameter("status",status)
+                .getResultList()
+                .stream().findAny();
     }
 
     @Override
-    public Optional<Order> findByOrder(String kakaoUserkey, Long orderId) {
-        return Optional.ofNullable(em.createQuery("select o from Order o where  o.order_id=:orderId AND o.kakao_userkey=:kakaoUserkey", Order.class)
-                .setParameter("orderId",orderId)
-                .setParameter("kakaoUserkey",kakaoUserkey)
-                .getSingleResult());
-    }
-
-    @Override
-    public Optional<Order> updatePayApprove(Order updateParams) {
-        Order findOrder = em.find(Order.class, updateParams.getOrder_id());
-        findOrder.changeStatus(updateParams.getStatus());
-        findOrder.changeApprovedAt(updateParams.getApproved_at());
-        findOrder.changeAid(updateParams.getAid());
-        findOrder.changePayMethod(updateParams.getPayment_method_type());
-        return Optional.ofNullable(findOrder);
-    }
-
-    @Override
-    public Optional<Order> updatePayCancel(Order updateParams) {
-        Order findOrder = em.find(Order.class, updateParams.getOrder_id());
-        findOrder.changeStatus(updateParams.getStatus());
-        findOrder.changeCancelAt(updateParams.getCanceled_at());
-        return Optional.ofNullable(findOrder);
-    }
-
-    @Override
-    public List<Order> findBySalesRank() {
-        List<Order> orderList = em.createQuery("select SUM(o.quantity) as quantity, o.item_code from Order o where  o.status=:status group by o.item_code order by o.item_code desc", Order.class)
-                .setParameter("status", OrderStatus.결제승인)
+    public List<Order> findByBuyerUserKey(String buyerUserKey) {
+        return em.createQuery("SELECT o FROM Order o WHERE o.buyerMember.userKey =:userKey AND o.status <>: status",Order.class)
+                .setParameter("userKey",buyerUserKey)
+                .setParameter("status",OrderStatus.주문취소)
                 .getResultList();
-        return orderList;
+    }
+
+    @Override
+    public Optional<Order> findByProductId(Long productId, OrderStatus orderStatus) {
+        return em.createQuery("SELECT o FROM Order o WHERE o.product.id =:productId AND o.status =:orderStatus",Order.class)
+                .setParameter("productId",productId)
+                .setParameter("orderStatus",orderStatus)
+                .getResultList()
+                .stream().findAny();
+    }
+
+    @Override
+    public List<Order> findByOrderStatus(OrderStatus orderStatus) {
+        return em.createQuery("SELECT o FROM Order o WHERE o.status =: status",Order.class)
+                .setParameter("status",orderStatus)
+                .getResultList();
+    }
+
+    @Override
+    public List<Order> findByAll() {
+        return em.createQuery("SELECT o FROM Order o",Order.class)
+                .getResultList();
     }
 }

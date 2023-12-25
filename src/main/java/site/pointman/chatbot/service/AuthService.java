@@ -1,14 +1,14 @@
 package site.pointman.chatbot.service;
 
-import org.json.simple.JSONObject;
-import site.pointman.chatbot.dto.RequestDto;
+
+import site.pointman.chatbot.domain.request.ChatBotRequest;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
 
 public interface AuthService {
-
-    JSONObject createAuthForm(RequestDto reqDto) throws Exception;
-    JSONObject createAuthInfo(RequestDto reqDto) throws Exception;
-    JSONObject createAuthCancel(RequestDto reqDto) throws Exception;
-    boolean isAuthMember(String userKey);
-    JSONObject createProfileSuccessMessage(String msg) throws Exception;
-    JSONObject createFailMessage(String msg) throws Exception;
+    OAuthTokenDto createNaverOAuthToken();
+    String createJwtToken(String name, String userKey);
+    boolean isTokenVerification (String token);
+    ChatBotResponse addJwtToken(ChatBotResponse chatBotResponse, String accessToken);
 }
+

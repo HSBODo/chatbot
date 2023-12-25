@@ -11,11 +11,9 @@ import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 class UtillityTest {
-    Utillity utillity;
-
+    CustomStringUtils utillity;
     @Test
     void replaceAll() {
     }

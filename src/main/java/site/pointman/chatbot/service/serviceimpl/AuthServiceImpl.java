@@ -1,128 +1,157 @@
 package site.pointman.chatbot.service.serviceimpl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import org.json.simple.JSONObject;
+import okhttp3.*;
+import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.dto.KakaoResponseDto;
-import site.pointman.chatbot.dto.RequestDto;
-import site.pointman.chatbot.dto.kakaoui.ButtonDto;
-import site.pointman.chatbot.dto.kakaoui.ButtonAction;
-import site.pointman.chatbot.dto.kakaoui.DisplayType;
-import site.pointman.chatbot.dto.member.MemberDto;
-import site.pointman.chatbot.repository.MemberRepository;
+import site.pointman.chatbot.dto.oauthtoken.OAuthTokenDto;
+import site.pointman.chatbot.domain.request.ChatBotRequest;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.property.Context;
 import site.pointman.chatbot.service.AuthService;
-import site.pointman.chatbot.service.KakaoJsonUiService;
+import site.pointman.chatbot.utill.HttpUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static site.pointman.chatbot.utill.ConstantBlockId.*;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Slf4j
 public class AuthServiceImpl implements AuthService {
-    KakaoJsonUiService kakaoJsonUiService;
-    MemberRepository memberRepository;
 
-    public AuthServiceImpl(KakaoJsonUiService kakaoJsonUiService, MemberRepository memberRepository) {
-        this.kakaoJsonUiService = kakaoJsonUiService;
-        this.memberRepository = memberRepository;
-    }
+    @Value("naver.api.client.id")
+    private String naverApiClientId;
 
-    @Override
-    public JSONObject createAuthForm(RequestDto reqDto) throws Exception{
+    @Value("naver.api.client.secret_sign")
+    private String naverApiClientSecretSign;
 
-        KakaoResponseDto resDto = new KakaoResponseDto();
-        ButtonDto quickButton = new ButtonDto();
-        List<ButtonDto> buttons = new ArrayList<>();
+    @Value("secret.encrypt.key")
+    private  String SECRET_ENCRYPT;
 
-        ButtonDto selectAddressButton = new ButtonDto(ButtonAction.webLink,"인증하기","https://newsimg.sedaily.com/2021/03/09/22JQPRY173_3.jpg");
-        buttons.add(selectAddressButton);
-        JSONObject basicCard = kakaoJsonUiService.createBasicCard(
-                DisplayType.basic,
-                "인증하기",
-                "서비스를 사용하시려면 인증이 필요합니다.",
-                "https://newsimg.sedaily.com/2021/03/09/22JQPRY173_3.jpg",
-                buttons);
-        resDto.addContent(basicCard);
+    private static String iv;
+    private static Key keySpec;
 
-        resDto.addQuickButton(ButtonAction.block,"인증완료",BLK_AUTH_INFO);
-
-        return resDto.createKakaoResponse();
-    }
+    HttpUtils httpUtils;
 
     @Override
-    public JSONObject createAuthInfo(RequestDto reqDto) throws Exception {
-        KakaoResponseDto resDto = new KakaoResponseDto();
-        List<ButtonDto> buttons = new ArrayList<>();
+    public OAuthTokenDto createNaverOAuthToken() {
+        Long timestamp = System.currentTimeMillis();
+        timestamp = timestamp - 360L;
+        log.info("timestamp= {} ",timestamp );
 
-        ButtonDto button =  new ButtonDto(ButtonAction.block,"인증철회",BLK_AUTH_CANCEL);
-        buttons.add(button);
 
-        MemberDto memberDto = MemberDto.builder()
-                .name("홍길동")
-                .phone("01000000000")
-                .build();
+        String signature = createSignature(timestamp);
 
-        JSONObject basicCard = kakaoJsonUiService.createBasicCard(
-                DisplayType.basic,
-                "인증정보",
-                "이름: " + memberDto.getName() + "\n" +
-                        "연락처: " + memberDto.getPhone() + "\n",
-                "https://newsimg.sedaily.com/2021/03/09/22JQPRY173_3.jpg",
-                buttons);
+        String client_id = naverApiClientId;
+        String client_secret_sign = signature;
+        String grant_type = "client_credentials";
+        String type = "SELF";
+        String account_id = "";
 
-        resDto.addContent(basicCard);
-        resDto.addQuickButton(ButtonAction.block,"처음으로",BLK_MAIN);
-
-        return resDto.createKakaoResponse();
-    }
-
-    @Override
-    public JSONObject createAuthCancel(RequestDto reqDto) throws Exception {
-        KakaoResponseDto resDto = new KakaoResponseDto();
-        ButtonDto quickButton = new ButtonDto();
-
-        JSONObject simpleText = kakaoJsonUiService.createSimpleText("인증철회가 왼료 되었습니다,");
-        resDto.addContent(simpleText);
-        resDto.addQuickButton(ButtonAction.block,"처음으로",BLK_MAIN);
-        return resDto.createKakaoResponse();
-    }
-
-    @Override
-    public boolean isAuthMember(String userKey) {
+        String url = "https://api.commerce.naver.com/external/v1/oauth2/token?client_id="+client_id+"&"+"timestamp="+timestamp+"&"+"client_secret_sign="+client_secret_sign+"&"+"grant_type="+grant_type+"&"+"type="+type+"&account_id="+account_id;
+        MediaType mediaType = MediaType.parse("application/json");
+        Map<String,Object> headers = new HashMap<>();
+        headers.put("Content-type","application/json");
+        Map<String,Object> body = new HashMap<>();
+        String httpResponse = httpUtils.post(url, headers, body, mediaType);
+        log.info("response = {}", httpResponse);
         try {
-            Optional<Member> maybeMember = memberRepository.findByMember(userKey);
-            if(maybeMember.isEmpty()){
-                return false;
-            }
-
-        }catch (Exception e){
-            log.info("error={}",e.getMessage());
-            return true;
+            ObjectMapper mapper = new ObjectMapper();
+            OAuthTokenDto oAuthTokenDto = mapper.readValue(httpResponse, OAuthTokenDto.class);
+            return oAuthTokenDto;
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
-        return true;
     }
 
     @Override
-    public JSONObject createProfileSuccessMessage(String msg) throws Exception {
-        KakaoResponseDto resDto = new KakaoResponseDto();
-        ButtonDto quickButton = new ButtonDto();
+    public String createJwtToken(String name, String userKey) {
+        Date currentDate = new Date(System.currentTimeMillis());
+        Long expiration = 1000* 60L * 60L * 1L; //유효시간
+        Date expirationDate = new Date(currentDate.getTime()+ expiration);
+        // Header
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("typ", "JWT");
+        headers.put("alg", "HS256");
 
-        JSONObject simpleText = kakaoJsonUiService.createSimpleText(msg);
-        resDto.addContent(simpleText);
-        resDto.addQuickButton(ButtonAction.block,"다음으로","649e512b90088a2cf5c391e4");
-        return resDto.createKakaoResponse();
+        // Payload
+        Map<String, Object> payloads = new HashMap<>();
+        payloads.put("name", name);
+        payloads.put("userKey", userKey);
+
+        return Jwts.builder()
+                .setSubject("token")
+                .setHeader(headers)
+                .setClaims(payloads)
+                .signWith(SignatureAlgorithm.HS256,SECRET_ENCRYPT)
+                .setIssuedAt(currentDate)
+                .setExpiration(expirationDate)
+                .compact();
+    }
+
+
+    @Override
+    public boolean isTokenVerification(String token) {
+        try {
+            Jwts.parser().setSigningKey(SECRET_ENCRYPT).parseClaimsJws(token);
+            return true;
+        } catch (SignatureException e) {
+            log.error("Invalid JWT signature", e);
+            return false;
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token", e);
+            return false;
+        } catch (ExpiredJwtException e) {
+            log.error("Expired JWT token", e);
+            return false;
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT token", e);
+            return false;
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty.", e);
+            return false;
+        }
     }
 
     @Override
-    public JSONObject createFailMessage(String msg) throws Exception {
-        KakaoResponseDto resDto = new KakaoResponseDto();
-
-        JSONObject simpleText = kakaoJsonUiService.createSimpleText(msg);
-        resDto.addContent(simpleText);
-        return resDto.createKakaoResponse();
+    public ChatBotResponse addJwtToken(ChatBotResponse chatBotResponse, String accessToken) {
+        Context context = new Context("token",1,600);
+        context.addParam("accessToken",accessToken);
+        chatBotResponse.addContext(context);
+        return chatBotResponse;
     }
+
+    private Claims parseClaims(String accessToken) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_ENCRYPT)
+                .parseClaimsJws(accessToken)
+                .getBody();
+    }
+    private boolean isExpired(String accessToken) {
+        return Jwts.parser().
+                setSigningKey(SECRET_ENCRYPT)
+                .parseClaimsJws(accessToken)
+                .getBody()
+                .getExpiration()
+                .before(new Date());
+    }
+
+    private String createSignature(Long timestamp) {
+        // 밑줄로 연결하여 password 생성
+        String password = naverApiClientId+"_"+timestamp;
+        // bcrypt 해싱
+        String hashedPw = BCrypt.hashpw(password, naverApiClientSecretSign);
+        // base64 인코딩
+        return Base64.getUrlEncoder().encodeToString(hashedPw.getBytes(StandardCharsets.UTF_8));
+    }
+
+
 }
