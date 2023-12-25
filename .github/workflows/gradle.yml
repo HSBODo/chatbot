@@ -65,8 +65,10 @@ jobs:
         script: |
           sudo docker stop spring-chatbot
           sudo docker rm spring-chatbot
+          sudo docker pull fxbin7713/spring-chatbot
           sudo docker run -it -d -p 8080:8080 --name spring-chatbot fxbin7713/spring-chatbot
-
+          sudo docker image prune -f
+          
       # REMOVE Github IP FROM security group (9)
     - name: Remove IP FROM security group
       run: |
