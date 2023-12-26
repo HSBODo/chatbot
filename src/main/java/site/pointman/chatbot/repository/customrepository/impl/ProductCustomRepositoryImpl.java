@@ -81,7 +81,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     @Override
     public List<Product> findByCategory(Category category, ProductStatus firstStatus, ProductStatus secondStatus) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.category=:category AND p.status =:firstStatus OR p.status =:secondStatus AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
+        return em.createQuery("SELECT p FROM Product p WHERE p.category=:category AND (p.status =:firstStatus OR p.status =:secondStatus) AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("category", category)
                 .setParameter("firstStatus", firstStatus)
                 .setParameter("secondStatus", secondStatus)
@@ -136,7 +136,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     @Override
     public List<Product> findByStatus(ProductStatus firstStatus,ProductStatus secondStatus) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.status =:firstStatus OR p.status =:secondStatus AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
+        return em.createQuery("SELECT p FROM Product p WHERE (p.status =:firstStatus OR p.status =:secondStatus) AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("firstStatus",firstStatus)
                 .setParameter("secondStatus",secondStatus)
                 .setParameter("isUse", true)
@@ -145,7 +145,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     @Override
     public List<Product> findByStatus(ProductStatus firstStatus) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.status =:firstStatus OR p.status =:secondStatus AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
+        return em.createQuery("SELECT p FROM Product p WHERE p.status =:firstStatus AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("firstStatus",firstStatus)
                 .getResultList();
 
