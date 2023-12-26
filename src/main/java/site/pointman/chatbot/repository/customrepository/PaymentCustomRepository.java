@@ -1,4 +1,4 @@
-package site.pointman.chatbot.repository.custom;
+package site.pointman.chatbot.repository.customrepository;
 
 import site.pointman.chatbot.constant.PaymentStatus;
 import site.pointman.chatbot.domain.payment.PaymentInfo;

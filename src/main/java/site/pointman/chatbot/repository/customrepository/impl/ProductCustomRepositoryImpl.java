@@ -1,4 +1,4 @@
-package site.pointman.chatbot.repository.custom.impl;
+package site.pointman.chatbot.repository.customrepository.impl;
 
 import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.constant.ProductStatus;
@@ -6,7 +6,7 @@ import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.dto.product.ProductImageDto;
-import site.pointman.chatbot.repository.custom.ProductCustomRepository;
+import site.pointman.chatbot.repository.customrepository.ProductCustomRepository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;

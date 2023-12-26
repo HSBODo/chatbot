@@ -1,10 +1,10 @@
-package site.pointman.chatbot.repository.custom.impl;
+package site.pointman.chatbot.repository.customrepository.impl;
 
 import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
-import site.pointman.chatbot.repository.custom.MemberCustomRepository;
+import site.pointman.chatbot.repository.customrepository.MemberCustomRepository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;

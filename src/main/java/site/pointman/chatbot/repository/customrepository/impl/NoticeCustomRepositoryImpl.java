@@ -1,9 +1,8 @@
-package site.pointman.chatbot.repository.custom.impl;
+package site.pointman.chatbot.repository.customrepository.impl;
 
 import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.domain.notice.Notice;
-import site.pointman.chatbot.repository.NoticeRepository;
-import site.pointman.chatbot.repository.custom.NoticeCustomRepository;
+import site.pointman.chatbot.repository.customrepository.NoticeCustomRepository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;

@@ -1,9 +1,8 @@
-package site.pointman.chatbot.repository.custom.impl;
+package site.pointman.chatbot.repository.customrepository.impl;
 
 import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.domain.order.Order;
-import site.pointman.chatbot.repository.OrderRepository;
-import site.pointman.chatbot.repository.custom.OrderCustomRepository;
+import site.pointman.chatbot.repository.customrepository.OrderCustomRepository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;

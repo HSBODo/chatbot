@@ -1,9 +1,8 @@
-package site.pointman.chatbot.repository.custom.impl;
+package site.pointman.chatbot.repository.customrepository.impl;
 
 import site.pointman.chatbot.constant.PaymentStatus;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
-import site.pointman.chatbot.repository.PaymentRepository;
-import site.pointman.chatbot.repository.custom.PaymentCustomRepository;
+import site.pointman.chatbot.repository.customrepository.PaymentCustomRepository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
