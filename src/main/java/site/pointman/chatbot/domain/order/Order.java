@@ -97,7 +97,7 @@ public class Order extends BaseEntity {
                 .append("상품 설명: " + product.getDescription())
                 .append("\n\n")
                 .append("거래 희망 장소: " + product.getTradingLocation())
-                .append("\n")
+                .append("\n\n")
                 .append("카카오 오픈 채팅방: " + product.getKakaoOpenChatUrl())
                 .append("\n")
                 .append("운송장번호: " + viewTackingNumber())

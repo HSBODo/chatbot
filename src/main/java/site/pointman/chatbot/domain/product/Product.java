@@ -90,7 +90,7 @@ public class Product extends BaseEntity {
                 .append("상품 설명: " + description)
                 .append("\n\n")
                 .append("거래 희망 장소: " + tradingLocation)
-                .append("\n")
+                .append("\n\n")
                 .append("카카오 오픈 채팅방: " + kakaoOpenChatUrl)
                 .append("\n\n")
                 .append("등록일자: " + getFormatCreateDate())
