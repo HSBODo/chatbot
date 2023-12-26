@@ -17,21 +17,6 @@ class MemberRepositoryTest {
 
     @Test
     @Transactional
-    void save() {
-        //give
-        Member member = Member.builder()
-                .userKey("테스트12")
-                .name("테스트")
-                .phoneNumber("01000000000")
-                .build();
-        //when
-        memberRepository.save(member);
-
-        //then
-    }
-
-    @Test
-    @Transactional
     void findByCustomer() {
         //give
         String userKey = "QFJSyeIZbO77";

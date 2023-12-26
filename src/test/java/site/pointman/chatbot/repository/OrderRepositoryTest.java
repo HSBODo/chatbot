@@ -26,7 +26,7 @@ class OrderRepositoryTest {
     @BeforeEach
     public void setUp(){
         userKey = "QFJSyeIZbO77";
-        productId = 91188L;
+        productId = 883586L;
     }
 
     @Test
@@ -55,10 +55,10 @@ class OrderRepositoryTest {
                 .build();
 
         //when
-        Long saveOrderId = orderRepository.save(order);
+        Order saveOrder = orderRepository.save(order);
 
         //then
-        Assertions.assertThat(saveOrderId).isEqualTo(order.getOrderId());
+        Assertions.assertThat(saveOrder.getOrderId()).isEqualTo(order.getOrderId());
     }
 
     @Test
@@ -66,7 +66,7 @@ class OrderRepositoryTest {
     void findByOrderId() {
 
         //give
-        Long orderId = 357403L;
+        Long orderId = 483967L;
 
         //when
         Order order = orderRepository.findByOrderId(orderId).get();
@@ -76,6 +76,7 @@ class OrderRepositoryTest {
     }
 
     @Test
+    @Transactional
     void findByUserKey() {
         String buyerUserKey = userKey;
 

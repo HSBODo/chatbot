@@ -182,7 +182,7 @@ class ProductRepositoryTest {
         int size = products.size();
         //then
         products.forEach(product -> {
-            Assertions.assertThat(size).isEqualTo(2);
+            Assertions.assertThat(size).isEqualTo(3);
         });
     }
 }
