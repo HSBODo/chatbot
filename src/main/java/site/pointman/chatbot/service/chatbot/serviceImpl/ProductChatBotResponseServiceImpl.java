@@ -87,9 +87,11 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         textCard.setTitle(product.getName());
         textCard.setDescription(product.getProductProfileTypeOfChatBot());
 
+        if (!product.getMember().getUserKey().equals(buyerUserKey) && product.getStatus().equals(ProductStatus.예약)) return new ChatBotExceptionResponse().createException("예약중인 상품입니다.");
+
         Optional<Member> buyerMember = memberRepository.findByUserKey(buyerUserKey);
         if(!buyerMember.isEmpty() && !productUserKey.equals(buyerUserKey) && product.getStatus().equals(ProductStatus.판매중)){
-            if (product.getStatus().equals(ProductStatus.예약)) return new ChatBotExceptionResponse().createException("예약중인 상품입니다.");
+
 
             /**
              * 카카오페이 결제버튼 노출조건
