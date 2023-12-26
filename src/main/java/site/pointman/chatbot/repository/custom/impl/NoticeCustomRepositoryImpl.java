@@ -1,29 +1,22 @@
-package site.pointman.chatbot.repository.impl;
+package site.pointman.chatbot.repository.custom.impl;
 
 import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.repository.NoticeRepository;
+import site.pointman.chatbot.repository.custom.NoticeCustomRepository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
 @Transactional
-public class NoticeRepositoryImpl implements NoticeRepository {
+public class NoticeCustomRepositoryImpl implements NoticeCustomRepository {
     private final EntityManager em;
 
-
-    public NoticeRepositoryImpl(EntityManager em) {
+    public NoticeCustomRepositoryImpl(EntityManager em) {
         this.em = em;
-    }
-
-    @Override
-
-    public Long save(Notice notice) {
-        notice.changeStatus(NoticeStatus.작성);
-        em.persist(notice);
-        return notice.getId();
     }
 
     @Override

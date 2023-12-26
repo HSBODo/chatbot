@@ -31,9 +31,9 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public Object addNotice(Notice notice) {
         try {
-            Long noticeId = noticeRepository.save(notice);
+            Notice saveNotice = noticeRepository.save(notice);
 
-            return new HttpResponse(ApiResultCode.OK,"정상적으로 게시글을 등록하였습니다. 게시글 ID="+noticeId);
+            return new HttpResponse(ApiResultCode.OK,"정상적으로 게시글을 등록하였습니다. 게시글 ID="+saveNotice.getId());
         }catch (Exception e){
             return new HttpResponse(ApiResultCode.FAIL,"게시글 등록에 실패하였습니다.");
         }
