@@ -7,6 +7,7 @@ import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
+import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.Context;
 import site.pointman.chatbot.domain.response.property.common.Button;
@@ -88,6 +89,8 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
         Optional<Member> buyerMember = memberRepository.findByUserKey(buyerUserKey);
         if(!buyerMember.isEmpty() && !productUserKey.equals(buyerUserKey) && product.getStatus().equals(ProductStatus.판매중)){
+            if (product.getStatus().equals(ProductStatus.예약)) return new ChatBotExceptionResponse().createException("예약중인 상품입니다.");
+
             /**
              * 카카오페이 결제버튼 노출조건
              * 1. 회원이어야 한다.
