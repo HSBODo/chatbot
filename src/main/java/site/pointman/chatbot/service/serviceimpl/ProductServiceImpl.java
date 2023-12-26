@@ -95,7 +95,6 @@ public class ProductServiceImpl implements ProductService {
             if(products.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"등록된 상품이 없습니다.");
 
             return new HttpResponse(ApiResultCode.OK,"정상적으로 상품을 조회하였습니다.",products);
-//                    productChatBotResponseService.createMyProductListChatBotResponse(products,ButtonName.처음으로,BlockId.MAIN);
         }catch (Exception e){
             return new HttpResponse(ApiResultCode.EXCEPTION,"상품조회를 실패하였습니다.");
         }
