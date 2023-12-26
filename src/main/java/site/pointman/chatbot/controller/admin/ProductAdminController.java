@@ -20,7 +20,7 @@ public class ProductAdminController {
     @ResponseBody
     @GetMapping(value = "all")
     public Object getProducts(){
-        return productService.getProducts(false);
+        return productService.getProducts();
     }
 
     @ResponseBody

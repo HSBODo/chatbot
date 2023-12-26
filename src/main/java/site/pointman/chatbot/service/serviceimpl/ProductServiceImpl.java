@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
 
     CrawlingService crawlingService;
     S3FileService s3FileService;
-    ProductChatBotResponseService productChatBotResponseService;
+
 
     ProductRepository productRepository;
     MemberRepository memberRepository;
@@ -44,17 +44,16 @@ public class ProductServiceImpl implements ProductService {
     @Value("${host.url}")
     private String HOST_URL;
 
-    public ProductServiceImpl(CrawlingService crawlingService, S3FileService s3FileService, ProductRepository productRepository, MemberRepository memberRepository, OrderRepository orderRepository, ProductChatBotResponseService productChatBotResponseService) {
+    public ProductServiceImpl(CrawlingService crawlingService, S3FileService s3FileService, ProductRepository productRepository, MemberRepository memberRepository, OrderRepository orderRepository) {
         this.crawlingService = crawlingService;
         this.s3FileService = s3FileService;
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
         this.orderRepository = orderRepository;
-        this.productChatBotResponseService = productChatBotResponseService;
     }
 
     @Override
-    public ChatBotResponse addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory) {
+    public HttpResponse addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory) {
         try {
             Category category = Category.getCategory(productCategory);
             Member member = memberRepository.findByUserKey(userKey).get();
@@ -69,156 +68,134 @@ public class ProductServiceImpl implements ProductService {
 
             productRepository.insertProduct(productDto,productImageDto);
 
-            return productChatBotResponseService.addProductSuccessChatBotResponse();
+            return new HttpResponse(ApiResultCode.OK,"성공적으로 상품을 등록하였습니다.");
         }catch (Exception e){
-            return  chatBotExceptionResponse.createException();
+            return  new HttpResponse(ApiResultCode.FAIL,"상품등록을 실패하였습니다.");
         }
     }
 
     @Override
-    public ChatBotResponse getProductCategory(String requestBlockId) {
-        if(requestBlockId.equals(BlockId.PRODUCT_ADD_INFO.getBlockId()))  return productChatBotResponseService.getCategoryChatBotResponse(BlockId.PRODUCT_PROFILE_PREVIEW);
-
-        return productChatBotResponseService.getCategoryChatBotResponse(BlockId.FIND_PRODUCTS_BY_CATEGORY);
-    }
-
-    @Override
-    public ChatBotResponse getProductsByCategory(Category category) {
+    public HttpResponse getProductsByCategory(Category category) {
         try {
             List<Product> products = productRepository.findByCategory(category,ProductStatus.판매중);
 
-            if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
+            if(products.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"등록된 상품이 없습니다.");
 
-            return productChatBotResponseService.createProductListChatBotResponse(products,ButtonName.이전으로,BlockId.PRODUCT_GET_CATEGORIES);
+            return  new HttpResponse(ApiResultCode.OK,"정상적으로 상품을 조회하였습니다.",products);
         }catch (Exception e) {
-            return chatBotExceptionResponse.createException();
+            return  new HttpResponse(ApiResultCode.FAIL,"상품 조회를 실패하였습니다.");
         }
     }
 
     @Override
-    public ChatBotResponse getProductInfoPreview(List<String> imageUrls, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl, String category) {
+    public HttpResponse getMyProducts(String userKey, ProductStatus productStatus) {
         try {
-            String formatPrice = CustomStringUtils.formatPrice(Integer.parseInt(productPrice));
+            List<Product> products = productRepository.findByUserKey(userKey,productStatus);
 
-            return productChatBotResponseService.getProductInfoPreviewSuccessChatBotResponse(imageUrls, category, productName,productDescription,formatPrice,tradingLocation,kakaoOpenChatUrl);
+            if(products.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"등록된 상품이 없습니다.");
+
+            return new HttpResponse(ApiResultCode.OK,"정상적으로 상품을 조회하였습니다.",products);
+//                    productChatBotResponseService.createMyProductListChatBotResponse(products,ButtonName.처음으로,BlockId.MAIN);
         }catch (Exception e){
-            return chatBotExceptionResponse.createException();
+            return new HttpResponse(ApiResultCode.EXCEPTION,"상품조회를 실패하였습니다.");
         }
     }
 
     @Override
-    public ChatBotResponse getMyProducts(String userKey, String productStatus) {
-        try {
-            ProductStatus status = ProductStatus.getProductStatus(productStatus);
-
-            List<Product> products = productRepository.findByUserKey(userKey,status);
-
-            if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
-
-            return productChatBotResponseService.createMyProductListChatBotResponse(products,ButtonName.처음으로,BlockId.MAIN);
-        }catch (Exception e){
-            return chatBotExceptionResponse.createException();
-        }
-    }
-
-    @Override
-    public ChatBotResponse getMainProducts() {
+    public HttpResponse getMainProducts() {
         List<Product> products = productRepository.findByStatus(ProductStatus.판매중, ProductStatus.예약);
-        if (products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
-        return productChatBotResponseService.getMainProductsChatBotResponse(products);
+
+        if (products.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"등록된 상품이 없습니다.");
+
+        return new HttpResponse(ApiResultCode.OK,"정상적으로 상품을 조회하였습니다.",products);
     }
 
     @Override
-    public ChatBotResponse getProductProfile(String productId, String userKey) {
+    public HttpResponse getProductProfile(Long productId) {
         try {
-            Optional<Product> mayBeProduct = productRepository.findByProductId(Long.parseLong(productId));
+            Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
 
-            if(mayBeProduct.isEmpty()) return chatBotExceptionResponse.createException("상품이 존재하지 않습니다.");
+            if(mayBeProduct.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"상품이 존재하지 않습니다.");
             
             Product product = mayBeProduct.get();
 
-            return productChatBotResponseService.getProductProfileSuccessChatBotResponse(userKey, product);
+            return new HttpResponse(ApiResultCode.OK,"정상적으로 상품을 조회하였습니다.",product);
         }catch (Exception e){
-            return chatBotExceptionResponse.createException();
+            return new HttpResponse(ApiResultCode.FAIL,"상품조회를 실패하였습니다.");
         }
     }
 
     @Override
-    public ChatBotResponse updateProductStatus(String productId, String utterance) {
+    public HttpResponse updateProductStatus(String productId, String utterance) {
         try {
             long parseProductId = Long.parseLong(productId);
             ProductStatus productStatus = ProductStatus.getProductStatus(utterance);
             if (productStatus.equals(ProductStatus.예약취소)) productStatus = ProductStatus.판매중;
 
             Optional<Product> mayBeProduct = productRepository.findByProductId(parseProductId);
-            if(mayBeProduct.isEmpty()) return chatBotExceptionResponse.createException("상품이 존재하지 않습니다.");
+            if(mayBeProduct.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION ,"상품이 존재하지 않습니다.");
 
             productRepository.updateStatus(parseProductId,productStatus);
 
-            return productChatBotResponseService.updateStatusSuccessChatBotResponse(productStatus);
+            return new HttpResponse(ApiResultCode.EXCEPTION ,"정상적으로 상품상태를 변경하였습니다.");
         }catch (Exception e){
-            return chatBotExceptionResponse.createException("상태변경을 실패하였습니다.");
+            return new HttpResponse(ApiResultCode.FAIL ,"상품 상태변경을 실패하였습니다.");
         }
     }
 
     @Override
-    public ChatBotResponse deleteProduct(String productId, String utterance) {
+    public HttpResponse deleteProduct(String productId, String utterance) {
         try {
             long parseProductId = Long.parseLong(productId);
 
             Optional<Product> mayBeProduct = productRepository.findByProductId(parseProductId);
-            if(mayBeProduct.isEmpty()) return chatBotExceptionResponse.createException("상품이 존재하지 않습니다.");
+            if(mayBeProduct.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"상품이 존재하지 않습니다.");
 
             if(ProductStatus.삭제.name().equals(utterance)){
                 productRepository.deleteProduct(parseProductId);
-                return productChatBotResponseService.deleteProductSuccessChatBotResponse();
+                return new HttpResponse(ApiResultCode.OK,"상품을 정상적으로 삭제하였습니다.");
             }
 
-            return chatBotExceptionResponse.createException("상품 삭제를 실패하였습니다.");
+            return new HttpResponse(ApiResultCode.EXCEPTION,"상품 삭제를 실패하였습니다.");
         }catch (Exception e){
-            return chatBotExceptionResponse.createException();
+            return new HttpResponse(ApiResultCode.FAIL,"상품 삭제를 실패하였습니다.");
         }
     }
 
     @Override
-    public ChatBotResponse verificationCustomerSuccessResponse() {
-       return productChatBotResponseService.verificationCustomerSuccessChatBotResponse();
-    }
-
-    @Override
-    public ChatBotResponse getProductsBySearchWord(String searchWord) {
+    public HttpResponse getProductsBySearchWord(String searchWord) {
         try {
             List<Product> products = productRepository.findBySearchWord(searchWord, ProductStatus.판매중);
 
-            if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없어 상품을 찾을수 없습니다.");
+            if(products.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"등록된 상품이 없어 상품을 찾을수 없습니다.");
 
-            return productChatBotResponseService.createProductListChatBotResponse(products,ButtonName.처음으로,BlockId.MAIN);
+            return new HttpResponse(ApiResultCode.OK,"정상적으로 상품을 조회하였습니다.",products);
         }catch (Exception e) {
-            return chatBotExceptionResponse.createException();
+            return new HttpResponse(ApiResultCode.FAIL,"상품조회에 실패하였습니다.");
         }
     }
 
     @Override
-    public ChatBotResponse getContractProducts(String userKey) {
+    public HttpResponse getContractProducts(String userKey) {
         List<Product> contractProducts = productRepository.findByUserKey(userKey, ProductStatus.판매대기);
-        if(contractProducts.isEmpty()) return chatBotExceptionResponse.createException("결제가 체결된 상품이 없습니다.");
+        if(contractProducts.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"결제가 체결된 상품이 없습니다.");
 
-        return productChatBotResponseService.getContractProductsSuccessChatBotResponse(contractProducts);
+        return new HttpResponse(ApiResultCode.OK,"성공적으로 결게자 체결된 상품을 조회하였습니다.",contractProducts);
     }
 
     @Override
-    public ChatBotResponse getContractProductProfile(String userKey, String orderId) {
+    public HttpResponse getContractProductProfile(String userKey, String orderId) {
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId),OrderStatus.주문체결);
-        if (mayBeOrder.isEmpty()) return chatBotExceptionResponse.createException("체결된 주문이 없습니다.");
+        if (mayBeOrder.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"체결된 주문이 없습니다.");
 
         Order order = mayBeOrder.get();
-        if(!userKey.equals(order.getProduct().getMember().getUserKey())) return chatBotExceptionResponse.createException();
+        if(!userKey.equals(order.getProduct().getMember().getUserKey())) return new HttpResponse(ApiResultCode.EXCEPTION,"체결된 주문이 없습니다.");
 
-        return productChatBotResponseService.getContractProductProfileSuccessChatBotResponse(order);
+        return new HttpResponse(ApiResultCode.OK,"성공적으로 결게자 체결된 상품을 조회하였습니다.",order);
     }
 
     @Override
-    public Object getProducts(boolean isChatBotRequest) {
+    public Object getProducts() {
         List<Product> products = productRepository.findByAll();
         if (products.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"상품이 존재하지 않습니다.");
         return products;
@@ -245,32 +222,32 @@ public class ProductServiceImpl implements ProductService {
         return new HttpResponse(ApiResultCode.OK,"상품 "+productId+"을 "+status+"상태로 변경하였습니다.");
     }
 
-    @Override
-    public ChatBotResponse getSpecialProducts(int currentPage, int firstNumber) {
-        try {
-            int lastProduct = firstNumber+5;
-            String url = "https://quasarzone.com/bbs/qb_saleinfo?page="+currentPage;
-            String cssQuery = "#frmSearch > div > div.list-board-wrap > div.market-type-list.market-info-type-list.relative > table > tbody > tr";
-
-            Elements jsoupElements = crawlingService.getJsoupElements(url, cssQuery);
-            List<Element> filterElements = crawlingService.filterElements(jsoupElements);
-
-            List<SpecialProduct> specialProducts = crawlingService.getSpecialProducts(filterElements,firstNumber,lastProduct);
-
-            int nextFirstNumber = lastProduct;
-            int nextPage = currentPage;
-
-            if (filterElements.size() <= lastProduct){
-                nextFirstNumber = 1;
-                nextPage++;
-            }
-
-            return productChatBotResponseService.getSpecialProductsSuccessChatBotResponse(specialProducts, nextFirstNumber,  nextPage);
-        }catch (Exception e) {
-            log.info("e={}",e.getStackTrace());
-            return chatBotExceptionResponse.createException();
-        }
-    }
+//    @Override
+//    public ChatBotResponse getSpecialProducts(int currentPage, int firstNumber) {
+//        try {
+//            int lastProduct = firstNumber+5;
+//            String url = "https://quasarzone.com/bbs/qb_saleinfo?page="+currentPage;
+//            String cssQuery = "#frmSearch > div > div.list-board-wrap > div.market-type-list.market-info-type-list.relative > table > tbody > tr";
+//
+//            Elements jsoupElements = crawlingService.getJsoupElements(url, cssQuery);
+//            List<Element> filterElements = crawlingService.filterElements(jsoupElements);
+//
+//            List<SpecialProduct> specialProducts = crawlingService.getSpecialProducts(filterElements,firstNumber,lastProduct);
+//
+//            int nextFirstNumber = lastProduct;
+//            int nextPage = currentPage;
+//
+//            if (filterElements.size() <= lastProduct){
+//                nextFirstNumber = 1;
+//                nextPage++;
+//            }
+//
+//            return productChatBotResponseService.getSpecialProductsSuccessChatBotResponse(specialProducts, nextFirstNumber,  nextPage);
+//        }catch (Exception e) {
+//            log.info("e={}",e.getStackTrace());
+//            return chatBotExceptionResponse.createException();
+//        }
+//    }
 
 
 }
