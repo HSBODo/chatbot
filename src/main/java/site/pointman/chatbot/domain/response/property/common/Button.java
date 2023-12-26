@@ -13,6 +13,7 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Getter
+@NoArgsConstructor
 public class Button {
     private String label;
     private String action;
