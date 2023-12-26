@@ -9,21 +9,18 @@ import site.pointman.chatbot.dto.product.ProductDto;
 import java.util.List;
 
 public interface ProductService {
+    HttpResponse addProduct(ProductDto productDto, String userKey, List<String> imageUrls);
     HttpResponse getProductsByCategory(Category category);
-    HttpResponse getMyProducts(String userKey, ProductStatus productStatus);
-    HttpResponse getProductProfile(Long productId);
-    HttpResponse getProductsBySearchWord(String searchWord);
-    HttpResponse addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory);
-    HttpResponse updateProductStatus(String productId, String utterance);
-    HttpResponse deleteProduct(String productId, String utterance);
-    HttpResponse getContractProducts(String userKey);
-    HttpResponse getContractProductProfile(String userKey,String orderId);
-//    ChatBotResponse getSpecialProducts(int currentPage,int firstNumber);
+    HttpResponse getProduct(Long productId);
+    HttpResponse getProductsAll();
+    HttpResponse getMemberProducts(String userKey);
+    HttpResponse getMemberProductsByStatus(String userKey, ProductStatus productStatus);
     HttpResponse getMainProducts();
-    Object getProducts();
-    Object getProducts(String userKey);
-    Object getProduct(Long productId);
-    Object updateProductStatus(Long productId, ProductStatus status);
+    HttpResponse getProductsBySearchWord(String searchWord);
+    HttpResponse getSalesContractProducts(String userKey);
+    HttpResponse getSalesContractProduct(String userKey,Long orderId);
+    HttpResponse updateProductStatus(Long productId, ProductStatus status);
+    HttpResponse deleteProduct(Long productId);
 
-
+//    ChatBotResponse getSpecialProducts(int currentPage,int firstNumber);
 }

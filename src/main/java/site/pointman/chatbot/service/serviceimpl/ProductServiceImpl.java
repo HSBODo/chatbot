@@ -22,6 +22,7 @@ import site.pointman.chatbot.service.CrawlingService;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.S3FileService;
 import site.pointman.chatbot.service.chatbot.ProductChatBotResponseService;
+import site.pointman.chatbot.utill.CustomNumberUtils;
 import site.pointman.chatbot.utill.CustomStringUtils;
 
 import java.util.List;
@@ -53,14 +54,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public HttpResponse addProduct(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory) {
+    public HttpResponse addProduct(ProductDto productDto, String userKey, List<String> imageUrls) {
         try {
-            Category category = Category.getCategory(productCategory);
+            Long productId = CustomNumberUtils.createNumberId();
+
+
             Member member = memberRepository.findByUserKey(userKey).get();
             String productName = productDto.getName();
 
             productDto.setStatus(ProductStatus.판매중);
-            productDto.setCategory(category);
             productDto.setMember(member);
             productDto.setId(productId);
 
@@ -77,7 +79,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public HttpResponse getProductsByCategory(Category category) {
         try {
-            List<Product> products = productRepository.findByCategory(category,ProductStatus.판매중);
+            List<Product> products = productRepository.findByCategory(category,ProductStatus.판매중,ProductStatus.예약);
 
             if(products.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"등록된 상품이 없습니다.");
 
@@ -88,7 +90,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public HttpResponse getMyProducts(String userKey, ProductStatus productStatus) {
+    public HttpResponse getMemberProductsByStatus(String userKey, ProductStatus productStatus) {
         try {
             List<Product> products = productRepository.findByUserKey(userKey,productStatus);
 
@@ -102,6 +104,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public HttpResponse getMainProducts() {
+
         List<Product> products = productRepository.findByStatus(ProductStatus.판매중, ProductStatus.예약);
 
         if (products.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"등록된 상품이 없습니다.");
@@ -110,12 +113,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public HttpResponse getProductProfile(Long productId) {
+    public HttpResponse getProduct(Long productId) {
         try {
             Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
 
             if(mayBeProduct.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"상품이 존재하지 않습니다.");
-            
+
             Product product = mayBeProduct.get();
 
             return new HttpResponse(ApiResultCode.OK,"정상적으로 상품을 조회하였습니다.",product);
@@ -125,38 +128,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public HttpResponse updateProductStatus(String productId, String utterance) {
+    public HttpResponse deleteProduct(Long productId) {
         try {
-            long parseProductId = Long.parseLong(productId);
-            ProductStatus productStatus = ProductStatus.getProductStatus(utterance);
-
-            if (productStatus.equals(ProductStatus.예약취소)) productStatus = ProductStatus.판매중;
-
-            Optional<Product> mayBeProduct = productRepository.findByProductId(parseProductId);
-            if(mayBeProduct.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION ,"상품이 존재하지 않습니다.");
-
-            productRepository.updateStatus(parseProductId,productStatus);
-
-            return new HttpResponse(ApiResultCode.OK ,"정상적으로 상품상태를 변경하였습니다.");
-        }catch (Exception e){
-            return new HttpResponse(ApiResultCode.FAIL ,"상품 상태변경을 실패하였습니다.");
-        }
-    }
-
-    @Override
-    public HttpResponse deleteProduct(String productId, String utterance) {
-        try {
-            long parseProductId = Long.parseLong(productId);
-
-            Optional<Product> mayBeProduct = productRepository.findByProductId(parseProductId);
+            Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
             if(mayBeProduct.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"상품이 존재하지 않습니다.");
 
-            if(ProductStatus.삭제.name().equals(utterance)){
-                productRepository.deleteProduct(parseProductId);
-                return new HttpResponse(ApiResultCode.OK,"상품을 정상적으로 삭제하였습니다.");
-            }
+            productRepository.deleteProduct(productId);
+            return new HttpResponse(ApiResultCode.OK,"상품을 정상적으로 삭제하였습니다.");
 
-            return new HttpResponse(ApiResultCode.EXCEPTION,"상품 삭제를 실패하였습니다.");
         }catch (Exception e){
             return new HttpResponse(ApiResultCode.FAIL,"상품 삭제를 실패하였습니다.");
         }
@@ -165,7 +144,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public HttpResponse getProductsBySearchWord(String searchWord) {
         try {
-            List<Product> products = productRepository.findBySearchWord(searchWord, ProductStatus.판매중);
+            List<Product> products = productRepository.findBySearchWord(searchWord, ProductStatus.판매중,ProductStatus.예약);
 
             if(products.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"등록된 상품이 없어 상품을 찾을수 없습니다.");
 
@@ -176,7 +155,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public HttpResponse getContractProducts(String userKey) {
+    public HttpResponse getSalesContractProducts(String userKey) {
         List<Product> contractProducts = productRepository.findByUserKey(userKey, ProductStatus.판매대기);
         if(contractProducts.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"결제가 체결된 상품이 없습니다.");
 
@@ -184,8 +163,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public HttpResponse getContractProductProfile(String userKey, String orderId) {
-        Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId),OrderStatus.주문체결);
+    public HttpResponse getSalesContractProduct(String userKey, Long orderId) {
+        Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId,OrderStatus.주문체결);
         if (mayBeOrder.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"체결된 주문이 없습니다.");
 
         Order order = mayBeOrder.get();
@@ -195,31 +174,31 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Object getProducts() {
+    public HttpResponse getProductsAll() {
         List<Product> products = productRepository.findByAll();
         if (products.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"상품이 존재하지 않습니다.");
-        return products;
+        return  new HttpResponse(ApiResultCode.OK,"성공적으로 상품을 조회하였습니다.",products);
     }
 
     @Override
-    public Object getProducts(String userKey) {
+    public HttpResponse getMemberProducts(String userKey) {
         List<Product> products = productRepository.findByUserKey(userKey);
         if (products.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"상품이 존재하지 않습니다.");
-        return products;
+        return new HttpResponse(ApiResultCode.OK,"성공적으로 상품을 조회하였습니다.",products);
     }
 
     @Override
-    public Object getProduct(Long productId) {
-        Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
-        if (mayBeProduct.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"상품이 존재하지 않습니다.");
-        Product product = mayBeProduct.get();
-        return product;
-    }
+    public HttpResponse updateProductStatus(Long productId, ProductStatus status) {
+        try {
+            Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
+            if(mayBeProduct.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION ,"상품이 존재하지 않습니다.");
 
-    @Override
-    public Object updateProductStatus(Long productId, ProductStatus status) {
-        productRepository.updateStatus(productId,status);
-        return new HttpResponse(ApiResultCode.OK,"상품 "+productId+"을 "+status+"상태로 변경하였습니다.");
+            productRepository.updateStatus(productId,status);
+
+            return new HttpResponse(ApiResultCode.OK,"상품 "+productId+"를 "+status+"상태로 변경하였습니다.");
+        }catch (Exception e){
+            return new HttpResponse(ApiResultCode.FAIL ,"상품 상태변경을 실패하였습니다.");
+        }
     }
 
 //    @Override

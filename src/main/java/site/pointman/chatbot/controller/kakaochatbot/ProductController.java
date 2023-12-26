@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.constant.Category;
+import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.service.OrderService;
@@ -44,7 +46,7 @@ public class ProductController {
 
     @ResponseBody
     @PostMapping(value = "POST/verificationCustomer" , headers = {"Accept=application/json; UTF-8"})
-    public Object verificationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse verificationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
         if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
@@ -54,7 +56,7 @@ public class ProductController {
 
     @ResponseBody
     @PostMapping(value = "GET/category" , headers = {"Accept=application/json; UTF-8"})
-    public Object getCategory(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getCategory(@RequestBody ChatBotRequest chatBotRequest) {
         String requestBlockId = chatBotRequest.getRequestBlockId();
 
         return productChatBotResponseService.getCategoryChatBotResponse(requestBlockId);
@@ -62,7 +64,7 @@ public class ProductController {
 
     @ResponseBody
     @PostMapping(value = "GET/preview" , headers = {"Accept=application/json; UTF-8"})
-    public Object preview(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse preview(@RequestBody ChatBotRequest chatBotRequest) {
         List<String> imageUrls = chatBotRequest.getProductImages();
         String productName = chatBotRequest.getProductName();
         String productDescription = chatBotRequest.getProductDescription();
@@ -71,101 +73,98 @@ public class ProductController {
         String kakaoOpenChatUrl = chatBotRequest.getKakaoOpenChatUrl();
         String category = chatBotRequest.getChoiceParam();
 
-        return productChatBotResponseService.getProductInfoPreviewSuccessChatBotResponse(imageUrls,category,productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl);
+        return productChatBotResponseService.getProductInfoPreviewChatBotResponse(imageUrls,category,productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl);
     }
 
     @ResponseBody
     @PostMapping(value = "GET/byCategory" , headers = {"Accept=application/json; UTF-8"})
-    public Object getProductsByCategory(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getProductsByCategory(@RequestBody ChatBotRequest chatBotRequest) {
         Category category = Category.getCategory(chatBotRequest.getChoiceParam());
 
-        return productChatBotResponseService.createProductListChatBotResponse(category);
+        return productChatBotResponseService.getProductsByCategoryChatBotResponse(category);
     }
 
     @ResponseBody
     @PostMapping(value = "POST" , headers = {"Accept=application/json; UTF-8"})
-    public Object add(@RequestBody ChatBotRequest chatBotRequest){
+    public ChatBotResponse add(@RequestBody ChatBotRequest chatBotRequest){
         String userKey = chatBotRequest.getUserKey();
         List<String> imageUrls = chatBotRequest.getProductImages();
         String productCategory = chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue();
         ProductDto productDto = chatBotRequest.createProductDto();
-
+        Category category = Category.getCategory(productCategory);
+        productDto.setCategory(category);
         if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        Long productId = CustomNumberUtils.createNumberId();
-
-        return productChatBotResponseService.addProductSuccessChatBotResponse(
+        return productChatBotResponseService.addProductChatBotResponse(
                 productDto,
-                productId,
                 userKey,
-                imageUrls,
-                productCategory
+                imageUrls
                 );
     }
 
     @ResponseBody
     @PostMapping(value = "GET/myProductsByStatus" , headers = {"Accept=application/json; UTF-8"})
-    public Object getMyProducts(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getMyProducts(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String productStatus = chatBotRequest.getProductStatus();
 
         if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return productChatBotResponseService.createMyProductListChatBotResponse(userKey,productStatus);
+        return productChatBotResponseService.createMyProductsByStatusChatBotResponse(userKey,productStatus);
     }
 
     @ResponseBody
     @PostMapping(value = "GET/mainProducts" , headers = {"Accept=application/json; UTF-8"})
-    public Object getMainProducts(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getMainProducts(@RequestBody ChatBotRequest chatBotRequest) {
         return productChatBotResponseService.getMainProductsChatBotResponse();
     }
 
     @ResponseBody
     @PostMapping(value = "GET/profile" , headers = {"Accept=application/json; UTF-8"})
-    public Object getProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
         String productId = chatBotRequest.getProductId();
         String userKey = chatBotRequest.getUserKey();
 
         if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return productChatBotResponseService.getProductProfileSuccessChatBotResponse(userKey, productId);
+        return productChatBotResponseService.getProductChatBotResponse(userKey, productId);
     }
 
     @ResponseBody
     @PostMapping(value = "PATCH/status" , headers = {"Accept=application/json; UTF-8"})
-    public Object updateProductStatus(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse updateProductStatus(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String productId = chatBotRequest.getProductId();
         String utterance = chatBotRequest.getUtterance();
 
         if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return productChatBotResponseService.updateStatusSuccessChatBotResponse(productId,utterance);
+        return productChatBotResponseService.updateStatusChatBotResponse(productId,utterance);
     }
 
     @ResponseBody
     @PostMapping(value = "DELETE" , headers = {"Accept=application/json; UTF-8"})
-    public Object delete(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse delete(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String productId = chatBotRequest.getProductId();
         String utterance = chatBotRequest.getUtterance();
 
         if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return productChatBotResponseService.deleteProductSuccessChatBotResponse(productId,utterance);
+        return productChatBotResponseService.deleteProductChatBotResponse(productId,utterance);
     }
 
     @ResponseBody
     @PostMapping(value = "GET/search" , headers = {"Accept=application/json; UTF-8"})
-    public Object search(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse search(@RequestBody ChatBotRequest chatBotRequest) {
         String searchWord = chatBotRequest.getSearchWord();
 
-        return productChatBotResponseService.createProductListChatBotResponse(searchWord);
+        return productChatBotResponseService.searchProductsChatBotResponse(searchWord);
     }
 
     @ResponseBody
     @PostMapping(value = "GET/purchaseProducts" , headers = {"Accept=application/json; UTF-8"})
-    public Object getPurchaseProducts(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getPurchaseProducts(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
         return orderService.getPurchaseProducts(userKey);
@@ -173,7 +172,7 @@ public class ProductController {
 
     @ResponseBody
     @PostMapping(value = "GET/purchaseProductProfile" , headers = {"Accept=application/json; UTF-8"})
-    public Object getPurchaseProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getPurchaseProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String orderId = chatBotRequest.getOrderId();
 
@@ -182,27 +181,27 @@ public class ProductController {
 
     @ResponseBody
     @PostMapping(value = "GET/contractProducts" , headers = {"Accept=application/json; UTF-8"})
-    public Object getContractProducts(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getContractProducts(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        return productChatBotResponseService.getContractProductsSuccessChatBotResponse(userKey);
+        return productChatBotResponseService.getSalesContractProductsChatBotResponse(userKey);
     }
 
     @ResponseBody
     @PostMapping(value = "GET/contractProduct/profile" , headers = {"Accept=application/json; UTF-8"})
-    public Object getContractProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getContractProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String orderId = chatBotRequest.getOrderId();
-        return productChatBotResponseService.getContractProductProfileSuccessChatBotResponse(userKey,orderId);
+        return productChatBotResponseService.getSalesContractProductChatBotResponse(userKey,orderId);
     }
 
     @ResponseBody
     @PostMapping(value = "GET/special" , headers = {"Accept=application/json; UTF-8"})
-    public Object getSpecialProducts(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getSpecialProducts(@RequestBody ChatBotRequest chatBotRequest) {
         int currentPage = chatBotRequest.getPageNumber();
         int firstNumber = chatBotRequest.getFirstNumber();
 
-        return productChatBotResponseService.getSpecialProductsSuccessChatBotResponse(currentPage,firstNumber);
+        return productChatBotResponseService.getSpecialProductsChatBotResponse(currentPage,firstNumber);
     }
 
 }
