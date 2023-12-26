@@ -7,9 +7,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import site.pointman.chatbot.constant.PaymentStatus;
 import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.constant.PaymentStatus;
 import site.pointman.chatbot.domain.order.PayMethod;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.payment.kakaopay.*;
@@ -17,7 +17,6 @@ import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.PaymentService;
 import site.pointman.chatbot.utill.CustomNumberUtils;
 
