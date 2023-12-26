@@ -14,18 +14,18 @@ import java.util.List;
 
 public interface ProductChatBotResponseService {
 
-    ChatBotResponse updateStatusSuccessChatBotResponse(String productId, String utterance);
-    ChatBotResponse deleteProductSuccessChatBotResponse(String productId, String utterance);
+    ChatBotResponse updateStatusChatBotResponse(String productId, String utterance);
+    ChatBotResponse deleteProductChatBotResponse(String productId, String utterance);
     ChatBotResponse verificationCustomerSuccessChatBotResponse();
-    ChatBotResponse getProductProfileSuccessChatBotResponse(String userKey, String productId);
-    ChatBotResponse createProductListChatBotResponse(String searchWord);
-    ChatBotResponse createProductListChatBotResponse(Category category);
-    ChatBotResponse createMyProductListChatBotResponse(String userKey, String productStatus);
-    ChatBotResponse getProductInfoPreviewSuccessChatBotResponse(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl);
-    ChatBotResponse addProductSuccessChatBotResponse(ProductDto productDto, Long productId, String userKey, List<String> imageUrls, String productCategory);
+    ChatBotResponse getProductChatBotResponse(String userKey, String productId);
+    ChatBotResponse searchProductsChatBotResponse(String searchWord);
+    ChatBotResponse getProductsByCategoryChatBotResponse(Category category);
+    ChatBotResponse createMyProductsByStatusChatBotResponse(String userKey, String productStatus);
+    ChatBotResponse getProductInfoPreviewChatBotResponse(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl);
+    ChatBotResponse addProductChatBotResponse(ProductDto productDto, String userKey, List<String> imageUrls);
     ChatBotResponse getCategoryChatBotResponse(String requestBlockId);
-    ChatBotResponse getContractProductsSuccessChatBotResponse(String userKey);
-    ChatBotResponse getContractProductProfileSuccessChatBotResponse(String userKey, String orderId);
-    ChatBotResponse getSpecialProductsSuccessChatBotResponse(int nextFirstNumber, int nextPage);
+    ChatBotResponse getSalesContractProductsChatBotResponse(String userKey);
+    ChatBotResponse getSalesContractProductChatBotResponse(String userKey, String orderId);
+    ChatBotResponse getSpecialProductsChatBotResponse(int nextFirstNumber, int nextPage);
     ChatBotResponse getMainProductsChatBotResponse();
 }

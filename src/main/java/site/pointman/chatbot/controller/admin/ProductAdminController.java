@@ -20,13 +20,13 @@ public class ProductAdminController {
     @ResponseBody
     @GetMapping(value = "all")
     public Object getProducts(){
-        return productService.getProducts();
+        return productService.getProductsAll();
     }
 
     @ResponseBody
     @GetMapping(value = "")
     public Object getProductsByUserKey(@RequestParam("userKey") String userKey){
-        return productService.getProducts(userKey);
+        return productService.getMemberProducts(userKey);
     }
 
     @ResponseBody
