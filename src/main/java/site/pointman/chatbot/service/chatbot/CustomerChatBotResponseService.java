@@ -4,11 +4,11 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 
 public interface CustomerChatBotResponseService {
-    ChatBotResponse joinSuccessChatBotResponse();
-    ChatBotResponse getCustomerProfileSuccessChatBotResponse(Member member);
-    ChatBotResponse updateCustomerPhoneNumberSuccessChatBotResponse();
-    ChatBotResponse deleteCustomerSuccessChatBotResponse();
+    ChatBotResponse joinChatBotResponse(String userKey, String name, String phoneNumber);
+    ChatBotResponse getCustomerProfileChatBotResponse(String userKey);
+    ChatBotResponse updateCustomerPhoneNumberBotResponse(String userKey, String updatePhoneNumber);
+    ChatBotResponse withdrawalCustomerChatBotResponse(String userKey);
     ChatBotResponse getMyPageSuccessChatBotResponse();
     ChatBotResponse getSalesCategorySuccessChatBotResponse();
-    ChatBotResponse updateCustomerProfileImageSuccessChatBotResponse();
+    ChatBotResponse updateCustomerProfileImageChatBotResponse(String userKey, String profileImageUrl);
 }

@@ -3,15 +3,29 @@ package site.pointman.chatbot.service.chatbot.serviceImpl;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
+import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
 
 @Service
 public class CustomerChatBotResponseServiceImpl implements CustomerChatBotResponseService {
 
+    MemberService memberService;
+    ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
+
+    public CustomerChatBotResponseServiceImpl(MemberService memberService) {
+        this.memberService = memberService;
+    }
+
     @Override
-    public ChatBotResponse joinSuccessChatBotResponse() {
+    public ChatBotResponse joinChatBotResponse(String userKey, String name, String phoneNumber) {
+        HttpResponse result = memberService.join(userKey, name, phoneNumber);
+
+        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("회원가입에 실패하였습니다.");
+
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.\n프로필 사진을 등록하시려면 버튼을 눌러주세요.");
@@ -21,7 +35,12 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
     }
 
     @Override
-    public ChatBotResponse getCustomerProfileSuccessChatBotResponse(Member member) {
+    public ChatBotResponse getCustomerProfileChatBotResponse(String userKey) {
+        HttpResponse result = memberService.getMember(userKey);
+
+        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("회원조회를 실패하였습니다.");
+        Member member = (Member) result.getResult();
+
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         String description =
                 "등급: "+member.getRole().getValue()+"\n\n"+
@@ -89,7 +108,10 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
     }
 
     @Override
-    public ChatBotResponse updateCustomerPhoneNumberSuccessChatBotResponse() {
+    public ChatBotResponse updateCustomerPhoneNumberBotResponse(String userKey, String updatePhoneNumber) {
+        HttpResponse result = memberService.updateMemberPhoneNumber(userKey, updatePhoneNumber);
+        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("연락처 변경을 실패하였습니다.");
+
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("연락처 변경이 완료 되었습니다.");
@@ -98,7 +120,11 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
     }
 
     @Override
-    public ChatBotResponse deleteCustomerSuccessChatBotResponse() {
+    public ChatBotResponse withdrawalCustomerChatBotResponse(String userKey) {
+        HttpResponse result = memberService.deleteMember(userKey);
+
+        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("회원탈퇴를 실패하였습니다.");
+
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("회원탈퇴가 완료 되었습니다.");
@@ -107,7 +133,11 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
     }
 
     @Override
-    public ChatBotResponse updateCustomerProfileImageSuccessChatBotResponse() {
+    public ChatBotResponse updateCustomerProfileImageChatBotResponse(String userKey, String profileImageUrl) {
+        HttpResponse result = memberService.updateMemberProfileImage(userKey, profileImageUrl);
+
+        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("프로필사진 등록을 실패하였습니다");
+
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("정상적으로 프로필사진을 등록하였습니다.");

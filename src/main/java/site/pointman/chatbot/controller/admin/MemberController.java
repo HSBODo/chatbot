@@ -22,19 +22,19 @@ public class MemberController {
         String name = member.getName();
         String userKey = member.getUserKey();
         String phoneNumber = member.getPhoneNumber();
-        return memberService.join(name,userKey,phoneNumber,false);
+        return memberService.join(name,userKey,phoneNumber);
     }
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.GET)
     public Object getMembers(){
-        return memberService.getCustomers();
+        return memberService.getMembers();
     }
 
     @ResponseBody
     @RequestMapping(value = "{memberUserKey}",method = RequestMethod.GET)
     public Object getMember(@PathVariable String memberUserKey){
-        return memberService.getCustomerProfile(memberUserKey,false);
+        return memberService.getMember(memberUserKey);
     }
 
     @ResponseBody
@@ -46,6 +46,6 @@ public class MemberController {
     @ResponseBody
     @RequestMapping(value = "{memberUserKey}",method = RequestMethod.DELETE)
     public Object deleteMember(@PathVariable String memberUserKey){
-        return memberService.withdrawalCustomer(memberUserKey,false);
+        return memberService.deleteMember(memberUserKey);
     }
 }
