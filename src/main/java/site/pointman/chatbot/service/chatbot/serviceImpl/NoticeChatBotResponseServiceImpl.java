@@ -1,5 +1,6 @@
 package site.pointman.chatbot.service.chatbot.serviceImpl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.notice.Notice;
@@ -8,11 +9,12 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.property.common.ListItem;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.ListCard;
+import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.service.chatbot.NoticeChatBotResponseService;
 
 import java.util.List;
-import java.util.Optional;
 
+@Slf4j
 @Service
 public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseService {
     ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
@@ -54,7 +56,15 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
             String description = notice.getDescriptionTypeOfChatBot();
 
             if(notice.getType().equals(NoticeType.TEXT_CARD)){
-                chatBotResponse.addTextCard(title,description);
+                TextCard textCard = new TextCard();
+
+                textCard.setTitle(title);
+                textCard.setDescription(description);
+                notice.getButtons().forEach(button -> {
+                    textCard.setButtons(button);
+                });
+
+                chatBotResponse.addTextCard(textCard);
                 chatBotResponse.addQuickButton(ButtonName.이전으로.name(), ButtonAction.블럭이동,BlockId.FIND_NOTICES.getBlockId());
                 return chatBotResponse;
             }
@@ -77,6 +87,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
 
             return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다. e = type");
         }catch (Exception e) {
+            log.info("eeeeeeeeee={}",e.getStackTrace());
             return chatBotExceptionResponse.createException();
         }
     }
