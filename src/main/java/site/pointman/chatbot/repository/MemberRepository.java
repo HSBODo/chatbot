@@ -1,19 +1,9 @@
 package site.pointman.chatbot.repository;
 
-import site.pointman.chatbot.constant.MemberRole;
+import org.springframework.data.jpa.repository.JpaRepository;
 import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.repository.custom.MemberCustomRepository;
 
-import java.util.List;
-import java.util.Optional;
-
-public interface MemberRepository {
-    void save(Member member);
-    List<Member> findByAll();
-    Optional<Member> findByUserKey(String userKey);
-    Optional<Member> findAdmin(String name, String userKey);
-    Optional<Member> findByName(String name);
-    void updateMember(String userKey, Member member);
-    void updateMemberPhoneNumber(String userKey, String phoneNumber);
-    void delete(String userKey);
+public interface MemberRepository extends JpaRepository<Member,String>, MemberCustomRepository {
 
 }

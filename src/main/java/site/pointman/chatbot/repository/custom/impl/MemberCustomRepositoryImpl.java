@@ -1,11 +1,10 @@
-package site.pointman.chatbot.repository.impl;
+package site.pointman.chatbot.repository.custom.impl;
 
 import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
-import site.pointman.chatbot.repository.MemberRepository;
+import site.pointman.chatbot.repository.custom.MemberCustomRepository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -14,16 +13,11 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Transactional
-public class MemberRepositoryImpl implements MemberRepository {
+public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     private final EntityManager em;
 
-    public MemberRepositoryImpl(EntityManager em) {
+    public MemberCustomRepositoryImpl(EntityManager em) {
         this.em = em;
-    }
-
-    @Override
-    public void save(Member member) {
-        em.persist(member);
     }
 
     @Override
