@@ -123,7 +123,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             int productPrice = product.getPrice().intValue();
             StringBuilder productDescription = new StringBuilder();
             productDescription
-                    .append(product.getCategory())
+                    .append(product.getCategory().getValue())
                     .append("\n")
                     .append("등록일자: " + product.getFormatCreateDate());
             String thumbnailImageUrl = product.getProductImages().getImageUrls().get(0);
@@ -163,7 +163,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             String createDate = product.getFormatCreateDate();
 
             productDescription
-                    .append(product.getCategory())
+                    .append(product.getCategory().getValue())
                     .append("\n")
                     .append("등록일자: " + createDate);
 
@@ -282,20 +282,8 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
         StringBuilder productDescription = new StringBuilder();
         productDescription
-                .append("상품상태: " + product.getStatus().getValue())
-                .append("\n")
-                .append("카테고리: " + product.getCategory().getValue())
+                .append(order.getProduct().getProductProfileTypeOfChatBot())
                 .append("\n\n")
-                .append("판매가격: " + product.getFormatPrice()+"원")
-                .append("\n\n")
-                .append("상품 설명: " + product.getDescription())
-                .append("\n\n")
-                .append("거래 희망 장소: " + product.getTradingLocation())
-                .append("\n")
-                .append("카카오 오픈 채팅방: " + product.getKakaoOpenChatUrl())
-                .append("\n\n")
-                .append("등록일자: " + product.getFormatCreateDate())
-                .append("\n")
                 .append("운송장번호: " + order.viewTackingNumber())
                 .append("\n\n")
                 .append("구매자: " + order.getBuyerMember().getName())
@@ -373,7 +361,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
             StringBuilder productDescription = new StringBuilder();
             productDescription
-                    .append(product.getCategory())
+                    .append(product.getCategory().getValue())
                     .append("\n")
                     .append("등록일자: " + product.getFormatCreateDate());
             String thumbnailImageUrl = product.getProductImages().getImageUrls().get(0);
