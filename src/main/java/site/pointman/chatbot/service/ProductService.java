@@ -21,7 +21,8 @@ public interface ProductService {
     ChatBotResponse getContractProducts(String userKey);
     ChatBotResponse getContractProductProfile(String userKey,String orderId);
     ChatBotResponse getSpecialProducts(int currentPage,int firstNumber);
-    Object getProducts();
+    ChatBotResponse getMainProducts();
+    Object getProducts(boolean isChatBotRequest);
     Object getProducts(String userKey);
     Object getProduct(Long productId);
     Object updateProductStatus(Long productId, ProductStatus status);

@@ -22,4 +22,7 @@ public interface ProductRepository {
     Optional<Product> findByProductId(Long productId);
     List<Product> findBySearchWord(String searchWord, ProductStatus status);
     List<Product> findByAll();
+    List<Product> findByStatus(ProductStatus firstStatus,ProductStatus secondStatus);
+    List<Product> findByStatus(ProductStatus firstStatus);
+
 }
