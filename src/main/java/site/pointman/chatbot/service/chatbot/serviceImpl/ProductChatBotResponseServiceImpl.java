@@ -121,8 +121,11 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
             String productName = product.getName();
             int productPrice = product.getPrice().intValue();
-
-            String productDescription = "등록일자: " + product.getFormatCreateDate();
+            StringBuilder productDescription = new StringBuilder();
+            productDescription
+                    .append(product.getCategory())
+                    .append("\n")
+                    .append("등록일자: " + product.getFormatCreateDate());
             String thumbnailImageUrl = product.getProductImages().getImageUrls().get(0);
             String productId = String.valueOf(product.getId());
 
@@ -131,7 +134,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             commerceCard.setThumbnails(thumbnailImageUrl,true);
             commerceCard.setProfile(product.getMember().getProfile());
             commerceCard.setTitle(productName);
-            commerceCard.setDescription(productDescription);
+            commerceCard.setDescription(productDescription.toString());
             commerceCard.setPrice(productPrice);
             commerceCard.setButton(button);
 
@@ -160,8 +163,9 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             String createDate = product.getFormatCreateDate();
 
             productDescription
-                    .append("등록일자: "+ createDate)
-            ;
+                    .append(product.getCategory())
+                    .append("\n")
+                    .append("등록일자: " + createDate);
 
             Button button = new Button("상세보기", ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCT_DETAIL.getBlockId(), ButtonParamKey.productId, productId);
 
@@ -367,7 +371,11 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
             int productPrice = product.getPrice().intValue();
 
-            String productDescription = "등록일자: " + product.getFormatCreateDate();
+            StringBuilder productDescription = new StringBuilder();
+            productDescription
+                    .append(product.getCategory())
+                    .append("\n")
+                    .append("등록일자: " + product.getFormatCreateDate());
             String thumbnailImageUrl = product.getProductImages().getImageUrls().get(0);
             String productId = String.valueOf(product.getId());
 
@@ -376,7 +384,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             commerceCard.setThumbnails(thumbnailImageUrl,true);
             commerceCard.setProfile(product.getMember().getProfile());
             commerceCard.setTitle(productName);
-            commerceCard.setDescription(productDescription);
+            commerceCard.setDescription(productDescription.toString());
             commerceCard.setPrice(productPrice);
             commerceCard.setButton(button);
 
