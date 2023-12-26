@@ -49,7 +49,6 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
     @Override
     public ChatBotResponse getNoticeSuccessChatBotResponse(Notice notice) {
         try {
-
             ChatBotResponse chatBotResponse = new ChatBotResponse();
 
             String title = notice.getTitle();
@@ -77,6 +76,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
                 basicCard.setThumbnail(imageUrl);
                 basicCard.setTitle(title);
                 basicCard.setDescription(description);
+
                 notice.getButtons().forEach(button -> {
                     basicCard.setButton(button);
                 });
@@ -87,7 +87,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
 
             return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다. e = type");
         }catch (Exception e) {
-            log.info("eeeeeeeeee={}",e.getStackTrace());
+            log.info("eeeeeeeeee={}",e.getMessage());
             return chatBotExceptionResponse.createException();
         }
     }
