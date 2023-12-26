@@ -137,9 +137,8 @@ public class ProductServiceImpl implements ProductService {
 
             productRepository.updateStatus(parseProductId,productStatus);
 
-            return new HttpResponse(ApiResultCode.EXCEPTION ,"정상적으로 상품상태를 변경하였습니다.");
+            return new HttpResponse(ApiResultCode.OK ,"정상적으로 상품상태를 변경하였습니다.");
         }catch (Exception e){
-            log.info("eeeeeeeee={}",e.getStackTrace());
             return new HttpResponse(ApiResultCode.FAIL ,"상품 상태변경을 실패하였습니다.");
         }
     }
