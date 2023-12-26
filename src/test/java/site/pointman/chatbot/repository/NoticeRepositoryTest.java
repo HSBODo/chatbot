@@ -13,6 +13,7 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.property.common.Button;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ class NoticeRepositoryTest {
     NoticeRepository noticeRepository;
 
     @Test
+    @Transactional
     void save() {
         //give
         Member member = Member.builder()
@@ -32,27 +34,32 @@ class NoticeRepositoryTest {
                 .build();
 
         List<Button> buttons = new ArrayList<>();
-        Button button = new Button("btnName", ButtonAction.블럭이동, "asdasd", ButtonParamKey.productId, "asdasdasd");
+        Button button = new Button("문의하기", ButtonAction.전화연결, "01000000000");
         buttons.add(button);
 
         Notice notice = Notice.builder()
                 .member(member)
-                .type(NoticeType.TEXT_CARD)
-                .title("제목 테스트")
-                .description("설명 테스트")
-                .imageUrl("https://")
+                .type(NoticeType.BASIC_CARD)
+                .title("1차 베타 테스트 오픈")
+                .description("1차 베타 테스가 오픈하였습니다.\n" +
+                        "많은 이용 부탁드리며\n" +
+                        "오류가 발생시 문의해주시면 감사하겠습니다.")
+                .imageUrl("https://it.chosun.com/news/photo/202111/2021110801782_1.jpg")
                 .buttons(buttons)
+                .status(NoticeStatus.메인)
                 .build();
 
         //when
-        Long id = noticeRepository.save(notice);
+        Notice saveNotice = noticeRepository.save(notice);
+
 
         //then
-        Assertions.assertThat(id).isNotEqualTo(0);
+        Assertions.assertThat(saveNotice.getId()).isNotEqualTo(0);
     }
 
 
     @Test
+    @Transactional
     void findByStatus() {
         //give
         NoticeStatus status = NoticeStatus.작성;
@@ -70,9 +77,10 @@ class NoticeRepositoryTest {
     }
 
     @Test
+    @Transactional
     void findByNoticeId() {
         //give
-        Long id = 10L;
+        Long id = 16L;
 
         //when
         Notice notice = noticeRepository.findByNoticeId(id).get();

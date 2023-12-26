@@ -2,10 +2,8 @@ package site.pointman.chatbot.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import site.pointman.chatbot.repository.*;
-import site.pointman.chatbot.repository.custom.MemberCustomRepository;
-import site.pointman.chatbot.repository.custom.impl.MemberCustomRepositoryImpl;
-import site.pointman.chatbot.repository.impl.*;
+import site.pointman.chatbot.repository.customrepository.*;
+import site.pointman.chatbot.repository.customrepository.impl.*;
 
 import javax.persistence.EntityManager;
 
@@ -23,23 +21,19 @@ public class JpaEntityManagerBeanConfig {
         return new MemberCustomRepositoryImpl(em) ;
     }
     @Bean
-    public ProductRepository productRepository(){
-        return new ProductRepositoryImpl(em);
+    public ProductCustomRepository productCustomRepository(){
+        return new ProductCustomRepositoryImpl(em);
     }
     @Bean
-    public LogRepository logRepository(){
-        return new LogRepositoryImpl(em);
+    public NoticeCustomRepository noticeCustomRepository(){
+        return new NoticeCustomRepositoryImpl(em);
     }
     @Bean
-    public NoticeRepository noticeRepository(){
-        return new NoticeRepositoryImpl(em);
+    public OrderCustomRepository orderCustomRepository(){
+        return new OrderCustomRepositoryImpl(em);
     }
     @Bean
-    public OrderRepository orderRepository(){
-        return new OrderRepositoryImpl(em);
-    }
-    @Bean
-    public PaymentRepository paymentRepository(){
-        return new PaymentRepositoryImpl(em);
+    public PaymentCustomRepository paymentCustomRepository(){
+        return new PaymentCustomRepositoryImpl(em);
     }
 }

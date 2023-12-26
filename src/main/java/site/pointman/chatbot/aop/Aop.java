@@ -60,20 +60,13 @@ public class Aop {
             logEntity = logService.insertChatBotRequestLog(chatBotRequest);
         }
 
-        try {
-            Object proceed = joinPoint.proceed();
+        Object proceed = joinPoint.proceed();
 
-            logService.insertChatBotResponseLog(logEntity,proceed);
+        logService.insertChatBotResponseLog(logEntity,proceed);
 
-            stopWatch.stop();
-            log.info("==== 4.AOP END {} ====",stopWatch.getTotalTimeSeconds());
-            return proceed;
-        }catch (Throwable e){
-            logService.insertChatBotResponseLog(logEntity,e.getMessage());
-            stopWatch.stop();
-            log.info("==== 4.AOP Exception END {} ====",stopWatch.getTotalTimeSeconds());
-            return new ChatBotExceptionResponse().createException();
-        }
+        stopWatch.stop();
+        log.info("==== 4.AOP END {} ====",stopWatch.getTotalTimeSeconds());
+        return proceed;
     }
 
     @Around("adminControllerPointcut()")

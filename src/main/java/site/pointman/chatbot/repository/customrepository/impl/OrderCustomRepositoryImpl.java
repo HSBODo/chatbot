@@ -1,8 +1,8 @@
-package site.pointman.chatbot.repository.impl;
+package site.pointman.chatbot.repository.customrepository.impl;
 
 import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.domain.order.Order;
-import site.pointman.chatbot.repository.OrderRepository;
+import site.pointman.chatbot.repository.customrepository.OrderCustomRepository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -10,17 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Transactional
-public class OrderRepositoryImpl implements OrderRepository {
+public class OrderCustomRepositoryImpl implements OrderCustomRepository {
     private final EntityManager em;
 
-    public OrderRepositoryImpl(EntityManager em) {
+    public OrderCustomRepositoryImpl(EntityManager em) {
         this.em = em;
-    }
-
-    @Override
-    public Long save(Order order) {
-        em.persist(order);
-        return order.getOrderId();
     }
 
     @Override

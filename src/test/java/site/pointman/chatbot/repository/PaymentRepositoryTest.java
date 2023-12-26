@@ -27,16 +27,16 @@ class PaymentRepositoryTest {
 
     private String userKey;
     private Long productId;
-    private Long readyOrderId;
-    private Long approveOrderId;
+    private Long readyPaymentId;
+    private Long approvePaymentId;
 
 
     @BeforeEach
     public void setUp() throws JsonProcessingException {
         userKey = "QFJSyeIZbO77";
-        productId = 648502L;
-        readyOrderId = 822609L;
-        approveOrderId = 993801L;
+        productId = 883586L;
+        readyPaymentId = 938231L;
+        approvePaymentId = 187911L;
     }
 
     @Test
@@ -67,7 +67,7 @@ class PaymentRepositoryTest {
     void findByPaymentReadyStatus() {
 
         //when
-        PaymentInfo paymentInfo = paymentRepository.findByPaymentStatus(readyOrderId,PaymentStatus.결제준비).get();
+        PaymentInfo paymentInfo = paymentRepository.findByPaymentStatus(readyPaymentId,PaymentStatus.결제준비).get();
 
         //then
         Assertions.assertThat(paymentInfo.getStatus()).isEqualTo(PaymentStatus.결제준비);
@@ -78,7 +78,7 @@ class PaymentRepositoryTest {
     void findByPaymentSuccessStatus() {
 
         //when
-        PaymentInfo paymentInfo = paymentRepository.findByPaymentStatus(approveOrderId,PaymentStatus.결제완료).get();
+        PaymentInfo paymentInfo = paymentRepository.findByPaymentStatus(approvePaymentId,PaymentStatus.결제완료).get();
 
         //then
         Assertions.assertThat(paymentInfo.getStatus()).isEqualTo(PaymentStatus.결제완료);
