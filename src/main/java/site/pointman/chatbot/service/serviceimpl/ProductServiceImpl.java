@@ -113,12 +113,19 @@ public class ProductServiceImpl implements ProductService {
 
             List<Product> products = productRepository.findByUserKey(userKey,status);
 
-            if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다");
+            if(products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
 
             return productChatBotResponseService.createMyProductListChatBotResponse(products,ButtonName.처음으로,BlockId.MAIN);
         }catch (Exception e){
             return chatBotExceptionResponse.createException();
         }
+    }
+
+    @Override
+    public ChatBotResponse getMainProducts() {
+        List<Product> products = productRepository.findByStatus(ProductStatus.판매중, ProductStatus.예약);
+        if (products.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
+        return productChatBotResponseService.getMainProductsChatBotResponse(products);
     }
 
     @Override
@@ -211,7 +218,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Object getProducts() {
+    public Object getProducts(boolean isChatBotRequest) {
         List<Product> products = productRepository.findByAll();
         if (products.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"상품이 존재하지 않습니다.");
         return products;
@@ -264,4 +271,6 @@ public class ProductServiceImpl implements ProductService {
             return chatBotExceptionResponse.createException();
         }
     }
+
+
 }

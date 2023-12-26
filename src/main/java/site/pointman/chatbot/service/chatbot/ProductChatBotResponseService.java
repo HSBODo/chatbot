@@ -24,4 +24,5 @@ public interface ProductChatBotResponseService {
     ChatBotResponse getContractProductsSuccessChatBotResponse(List<Product> contractProducts);
     ChatBotResponse getContractProductProfileSuccessChatBotResponse(Order order);
     ChatBotResponse getSpecialProductsSuccessChatBotResponse(List<SpecialProduct> specialProducts, int nextFirstNumber, int nextPage);
+    ChatBotResponse getMainProductsChatBotResponse(List<Product> products);
 }

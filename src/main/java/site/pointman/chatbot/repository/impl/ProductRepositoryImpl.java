@@ -45,7 +45,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public List<Product> findByUserKey(String userKey) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.member.userKey=:user_Key AND p.isUse=:isUse", Product.class)
+        return em.createQuery("SELECT p FROM Product p WHERE p.member.userKey=:user_Key AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("user_Key", userKey)
                 .setParameter("isUse", true)
                 .getResultList();
@@ -53,7 +53,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public List<Product> findByUserKey(String userKey, ProductStatus status) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.member.userKey=:user_Key AND p.status =:status AND p.isUse=:isUse", Product.class)
+        return em.createQuery("SELECT p FROM Product p WHERE p.member.userKey=:user_Key AND p.status =:status AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("user_Key", userKey)
                 .setParameter("status", status)
                 .setParameter("isUse", true)
@@ -71,7 +71,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public List<Product> findByCategory(Category category,ProductStatus status) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.category=:category AND p.status =:status AND p.isUse=:isUse", Product.class)
+        return em.createQuery("SELECT p FROM Product p WHERE p.category=:category AND p.status =:status AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("category", category)
                 .setParameter("status", status)
                 .setParameter("isUse", true)
@@ -108,7 +108,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public List<Product> findBySearchWord(String searchWord, ProductStatus status) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.name LIKE concat('%', :searchWord, '%') OR p.description LIKE concat('%', :searchWord, '%') AND p.status =:status AND p.isUse=:isUse", Product.class)
+        return em.createQuery("SELECT p FROM Product p WHERE p.name LIKE concat('%', :searchWord, '%') OR p.description LIKE concat('%', :searchWord, '%') AND p.status =:status AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("searchWord", searchWord)
                 .setParameter("status",status)
                 .setParameter("isUse", true)
@@ -118,7 +118,24 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public List<Product> findByAll() {
-        return em.createQuery("SELECT p FROM Product p", Product.class)
+        return em.createQuery("SELECT p FROM Product p ORDER BY p.createDate DESC", Product.class)
                 .getResultList();
+    }
+
+    @Override
+    public List<Product> findByStatus(ProductStatus firstStatus,ProductStatus secondStatus) {
+        return em.createQuery("SELECT p FROM Product p WHERE p.status =:firstStatus OR p.status =:secondStatus AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
+                .setParameter("firstStatus",firstStatus)
+                .setParameter("secondStatus",secondStatus)
+                .setParameter("isUse", true)
+                .getResultList();
+    }
+
+    @Override
+    public List<Product> findByStatus(ProductStatus firstStatus) {
+        return em.createQuery("SELECT p FROM Product p WHERE p.status =:firstStatus OR p.status =:secondStatus AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
+                .setParameter("firstStatus",firstStatus)
+                .getResultList();
+
     }
 }

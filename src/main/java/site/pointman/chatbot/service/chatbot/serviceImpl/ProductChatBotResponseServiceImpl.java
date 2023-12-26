@@ -349,6 +349,40 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         return chatBotResponse;
     }
 
+    @Override
+    public ChatBotResponse getMainProductsChatBotResponse(List<Product> products) {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+        Carousel<CommerceCard> commerceCardCarousel = new Carousel<>();
+
+        products.forEach(product -> {
+            CommerceCard commerceCard = new CommerceCard();
+
+            String productName = product.getName();
+            if (product.getStatus().equals(ProductStatus.예약)) productName = productName+"(예약중)";
+
+            int productPrice = product.getPrice().intValue();
+
+            String productDescription = "등록일자: " + product.getFormatCreateDate();
+            String thumbnailImageUrl = product.getProductImages().getImageUrls().get(0);
+            String productId = String.valueOf(product.getId());
+
+            Button button = new Button("상세보기", ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCT_DETAIL.getBlockId(), ButtonParamKey.productId, productId);
+
+            commerceCard.setThumbnails(thumbnailImageUrl,true);
+            commerceCard.setProfile(product.getMember().getProfile());
+            commerceCard.setTitle(productName);
+            commerceCard.setDescription(productDescription);
+            commerceCard.setPrice(productPrice);
+            commerceCard.setButton(button);
+
+            commerceCardCarousel.addComponent(commerceCard);
+        });
+
+        chatBotResponse.addQuickButton(ButtonName.메인메뉴.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
+        chatBotResponse.addCarousel(commerceCardCarousel);
+        return chatBotResponse;
+    }
+
     private Carousel<BasicCard> createCarouselImage(List<String> imageUrls){
         Carousel<BasicCard> basicCardCarousel = new Carousel<>();
         imageUrls.forEach(imageUrl -> {

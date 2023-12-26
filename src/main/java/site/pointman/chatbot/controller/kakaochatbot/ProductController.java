@@ -113,6 +113,12 @@ public class ProductController {
     }
 
     @ResponseBody
+    @PostMapping(value = "GET/mainProducts" , headers = {"Accept=application/json; UTF-8"})
+    public Object getMainProducts(@RequestBody ChatBotRequest chatBotRequest) {
+        return productService.getMainProducts();
+    }
+
+    @ResponseBody
     @PostMapping(value = "GET/profile" , headers = {"Accept=application/json; UTF-8"})
     public Object getProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
         String productId = chatBotRequest.getProductId();
