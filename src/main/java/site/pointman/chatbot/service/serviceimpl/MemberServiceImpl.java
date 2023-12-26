@@ -110,25 +110,25 @@ public class MemberServiceImpl implements MemberService {
     public HttpResponse deleteMember(String userKey) {
         try {
             List<Order> orders = orderRepository.findByBuyerUserKey(userKey);
-            orders.forEach(order -> {
+
+            for (Order order : orders) {
                 if (order.getStatus().equals(OrderStatus.주문체결)){
-                    throw new IllegalStateException("구매중인 주문이 있어 회원탈퇴가 불가능합니다.");
+                    return new HttpResponse(ApiResultCode.EXCEPTION,"구매중인 주문이 있어 회원탈퇴가 불가능합니다.");
                 }
-            });
+            }
 
             List<Product> products = productRepository.findByUserKey(userKey);
-            products.forEach(product -> {
+
+            for (Product product : products) {
                 Optional<Order> salesProduct = orderRepository.findByProductId(product.getId(), OrderStatus.주문체결);
-                if (!salesProduct.isEmpty()) throw new IllegalStateException("거래가 체결된 상품이 있어 회원탈퇴가 불가능합니다.");
-            });
+                if (!salesProduct.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"거래가 체결된 상품이 있어 회원탈퇴가 불가능합니다.");
+            }
 
             memberRepository.delete(userKey);
 
             return new HttpResponse(ApiResultCode.OK,"회원탈퇴를 성공적으로 완료하였습니다.");
-        }catch (IllegalStateException i) {
-            return new HttpResponse(ApiResultCode.FAIL,"회원탈퇴를 실패하였습니다. e= "+i.getMessage());
         }catch (Exception e) {
-            return new HttpResponse(ApiResultCode.FAIL,"회원탈퇴를 실패하였습니다. e= "+e.getMessage());
+            return new HttpResponse(ApiResultCode.FAIL,"회원탈퇴를 실패하였습니다.");
         }
     }
 
