@@ -123,7 +123,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
     public ChatBotResponse withdrawalCustomerChatBotResponse(String userKey) {
         HttpResponse result = memberService.deleteMember(userKey);
 
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("회원탈퇴를 실패하였습니다.");
+        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
