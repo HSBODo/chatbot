@@ -71,7 +71,7 @@ public class ProductController {
         String kakaoOpenChatUrl = chatBotRequest.getKakaoOpenChatUrl();
         String category = chatBotRequest.getChoiceParam();
 
-        return productChatBotResponseService.getProductInfoPreviewSuccessChatBotResponse(imageUrls,productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl,category);
+        return productChatBotResponseService.getProductInfoPreviewSuccessChatBotResponse(imageUrls,category,productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl);
     }
 
     @ResponseBody

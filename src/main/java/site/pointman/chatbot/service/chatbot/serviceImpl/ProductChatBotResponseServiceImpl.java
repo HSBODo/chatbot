@@ -221,6 +221,8 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         ProductStatus status = ProductStatus.getProductStatus(findStatus);
 
         HttpResponse result = productService.getMyProducts(userKey, status);
+        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
+
         List<Product> products = (List<Product>) result.getResult();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
