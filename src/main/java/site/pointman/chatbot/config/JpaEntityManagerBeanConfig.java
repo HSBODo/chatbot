@@ -4,7 +4,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import site.pointman.chatbot.repository.*;
 import site.pointman.chatbot.repository.custom.MemberCustomRepository;
+import site.pointman.chatbot.repository.custom.ProductCustomRepository;
 import site.pointman.chatbot.repository.custom.impl.MemberCustomRepositoryImpl;
+import site.pointman.chatbot.repository.custom.impl.ProductCustomRepositoryImpl;
 import site.pointman.chatbot.repository.impl.*;
 
 import javax.persistence.EntityManager;
@@ -23,8 +25,8 @@ public class JpaEntityManagerBeanConfig {
         return new MemberCustomRepositoryImpl(em) ;
     }
     @Bean
-    public ProductRepository productRepository(){
-        return new ProductRepositoryImpl(em);
+    public ProductCustomRepository productCustomRepository(){
+        return new ProductCustomRepositoryImpl(em);
     }
     @Bean
     public LogRepository logRepository(){
