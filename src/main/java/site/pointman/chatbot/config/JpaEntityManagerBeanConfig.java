@@ -2,10 +2,8 @@ package site.pointman.chatbot.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import site.pointman.chatbot.repository.*;
 import site.pointman.chatbot.repository.custom.*;
 import site.pointman.chatbot.repository.custom.impl.*;
-import site.pointman.chatbot.repository.impl.*;
 
 import javax.persistence.EntityManager;
 
@@ -25,10 +23,6 @@ public class JpaEntityManagerBeanConfig {
     @Bean
     public ProductCustomRepository productCustomRepository(){
         return new ProductCustomRepositoryImpl(em);
-    }
-    @Bean
-    public LogRepository logRepository(){
-        return new LogRepositoryImpl(em);
     }
     @Bean
     public NoticeCustomRepository noticeCustomRepository(){
