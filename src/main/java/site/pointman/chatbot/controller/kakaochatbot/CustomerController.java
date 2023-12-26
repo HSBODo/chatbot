@@ -44,7 +44,7 @@ public class CustomerController {
 
         if (memberService.isCustomer(userKey)) return chatBotExceptionResponse.createException("이미 존재하는 회원입니다.");
 
-        return memberService.join(userKey, name, phoneNumber,true);
+        return customerChatBotResponseService.joinChatBotResponse(userKey, name, phoneNumber);
     }
 
     @ResponseBody
@@ -56,7 +56,7 @@ public class CustomerController {
 
         if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return memberService.updateCustomerProfileImage(userKey,customerProfileImage);
+        return customerChatBotResponseService.updateCustomerProfileImageChatBotResponse(userKey,customerProfileImage);
     }
 
     @ResponseBody
@@ -76,7 +76,7 @@ public class CustomerController {
 
         if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return memberService.getCustomerProfile(userKey, true);
+        return customerChatBotResponseService.getCustomerProfileChatBotResponse(userKey);
     }
 
     @ResponseBody
@@ -97,7 +97,7 @@ public class CustomerController {
 
         if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return memberService.updateCustomerPhoneNumber(userKey, updatePhoneNumber,true);
+        return customerChatBotResponseService.updateCustomerPhoneNumberBotResponse(userKey, updatePhoneNumber);
     }
 
     @ResponseBody
@@ -107,6 +107,6 @@ public class CustomerController {
 
         if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return memberService.withdrawalCustomer(userKey, true);
+        return customerChatBotResponseService.withdrawalCustomerChatBotResponse(userKey);
     }
 }
