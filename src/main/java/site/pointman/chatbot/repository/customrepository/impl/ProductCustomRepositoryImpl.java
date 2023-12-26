@@ -119,7 +119,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     @Override
     public List<Product> findBySearchWord(String searchWord, ProductStatus firstStatus, ProductStatus secondStatus) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.name LIKE concat('%', :searchWord, '%') OR p.description LIKE concat('%', :searchWord, '%') AND p.status =:firstStatus OR p.status =:secondStatus AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
+        return em.createQuery("SELECT p FROM Product p WHERE p.name LIKE concat('%', :searchWord, '%') OR p.description LIKE concat('%', :searchWord, '%') AND (p.status =:firstStatus OR p.status =:secondStatus) AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("searchWord", searchWord)
                 .setParameter("firstStatus",firstStatus)
                 .setParameter("secondStatus",secondStatus)
