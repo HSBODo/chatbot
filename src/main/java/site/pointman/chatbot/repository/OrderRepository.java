@@ -1,17 +1,9 @@
 package site.pointman.chatbot.repository;
 
-import site.pointman.chatbot.constant.OrderStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
 import site.pointman.chatbot.domain.order.Order;
+import site.pointman.chatbot.repository.custom.OrderCustomRepository;
 
-import java.util.List;
-import java.util.Optional;
+public interface OrderRepository extends JpaRepository<Order,Long>, OrderCustomRepository {
 
-public interface OrderRepository {
-    Long save(Order order);
-    Optional<Order> findByOrderId(Long orderId);
-    Optional<Order> findByOrderId(Long orderId,OrderStatus status);
-    List<Order> findByBuyerUserKey(String buyerUserKey);
-    Optional<Order> findByProductId(Long productId, OrderStatus orderStatus);
-    List<Order> findByOrderStatus(OrderStatus orderStatus);
-    List<Order> findByAll();
 }

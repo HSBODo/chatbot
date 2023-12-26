@@ -4,8 +4,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import site.pointman.chatbot.repository.*;
 import site.pointman.chatbot.repository.custom.MemberCustomRepository;
+import site.pointman.chatbot.repository.custom.OrderCustomRepository;
 import site.pointman.chatbot.repository.custom.ProductCustomRepository;
 import site.pointman.chatbot.repository.custom.impl.MemberCustomRepositoryImpl;
+import site.pointman.chatbot.repository.custom.impl.OrderCustomRepositoryImpl;
 import site.pointman.chatbot.repository.custom.impl.ProductCustomRepositoryImpl;
 import site.pointman.chatbot.repository.impl.*;
 
@@ -37,8 +39,8 @@ public class JpaEntityManagerBeanConfig {
         return new NoticeRepositoryImpl(em);
     }
     @Bean
-    public OrderRepository orderRepository(){
-        return new OrderRepositoryImpl(em);
+    public OrderCustomRepository orderCustomRepository(){
+        return new OrderCustomRepositoryImpl(em);
     }
     @Bean
     public PaymentRepository paymentRepository(){
