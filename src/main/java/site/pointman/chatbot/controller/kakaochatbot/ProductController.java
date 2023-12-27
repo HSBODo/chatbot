@@ -158,6 +158,15 @@ public class ProductController {
     }
 
     @ResponseBody
+    @PostMapping(value = "GET/searchNext" , headers = {"Accept=application/json; UTF-8"})
+    public ChatBotResponse searchNext(@RequestBody ChatBotRequest chatBotRequest) {
+        String searchWord = chatBotRequest.getSearchWord();
+        int pageNumber = chatBotRequest.getPageNumber();
+
+        return productChatBotResponseService.searchProductsChatBotResponse(searchWord,pageNumber);
+    }
+
+    @ResponseBody
     @PostMapping(value = "GET/purchaseProducts" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getPurchaseProducts(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
