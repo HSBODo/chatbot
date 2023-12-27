@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ProductService {
     HttpResponse addProduct(ProductDto productDto, String userKey, List<String> imageUrls);
-    HttpResponse getProductsByCategory(Category category);
+    HttpResponse getProductsByCategory(Category category, int pageNumber);
     HttpResponse getProduct(Long productId);
     HttpResponse getProductsAll();
     HttpResponse getMemberProducts(String userKey);

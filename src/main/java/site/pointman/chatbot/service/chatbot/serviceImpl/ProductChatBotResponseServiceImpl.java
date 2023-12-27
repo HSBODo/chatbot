@@ -141,16 +141,16 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     }
 
     @Override
-    public ChatBotResponse getProductsByCategoryChatBotResponse(Category category) {
-        HttpResponse result = productService.getProductsByCategory(category);
+    public ChatBotResponse getProductsByCategoryChatBotResponse(Category category, int pageNumber) {
+        HttpResponse result = productService.getProductsByCategory(category, pageNumber);
         if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
 
-        List<Product> products = (List<Product>) result.getResult();
+        Page<Product> products = (Page<Product>) result.getResult();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<CommerceCard> carousel = new Carousel<>();
 
-        products.forEach(product -> {
+        products.getContent().forEach(product -> {
             CommerceCard commerceCard = new CommerceCard();
 
             String productName = product.getName();
@@ -178,7 +178,13 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         });
 
         chatBotResponse.addCarousel(carousel);
-        chatBotResponse.addQuickButton(ButtonName.이전으로.name(), ButtonAction.블럭이동, BlockId.PRODUCT_GET_CATEGORIES.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.카테고리.name(), ButtonAction.블럭이동, BlockId.PRODUCT_GET_CATEGORIES.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.메인메뉴.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
+        if (products.hasNext()){
+            Button nextButton = new Button(ButtonName.더보기.name(), ButtonAction.블럭이동, BlockId.FIND_PRODUCTS_BY_CATEGORY.getBlockId());
+            nextButton.setExtra(ButtonParamKey.choice,category.getValue());
+            nextButton.setExtra(ButtonParamKey.pageNumber,String.valueOf(++pageNumber));
+        }
         return chatBotResponse;
     }
 
@@ -221,6 +227,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
         chatBotResponse.addCarousel(carousel);
         chatBotResponse.addQuickButton(ButtonName.상품검색.name(), ButtonAction.블럭이동, BlockId.PRODUCT_SEARCH.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.메인메뉴.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
         if (products.hasNext()) {
             Button nextButton = new Button(ButtonName.더보기.name(), ButtonAction.블럭이동, BlockId.PRODUCT_SEARCH_NEXT.getBlockId());
             nextButton.setExtra(ButtonParamKey.pageNumber,String.valueOf(++pageNumber));
