@@ -8,14 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.constant.ApiResultCode;
 import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
-import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentReadyResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.service.OrderService;
-import site.pointman.chatbot.service.PaymentService;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Optional;
 
 @Slf4j

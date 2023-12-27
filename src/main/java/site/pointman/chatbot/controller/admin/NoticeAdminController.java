@@ -8,8 +8,6 @@ import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.service.NoticeService;
 
-import java.util.List;
-
 @Slf4j
 @Controller
 @RequestMapping(value = "admin/notice")

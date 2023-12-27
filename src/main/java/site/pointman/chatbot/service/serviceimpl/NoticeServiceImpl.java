@@ -19,13 +19,9 @@ import java.util.Optional;
 public class NoticeServiceImpl implements NoticeService {
 
     NoticeRepository noticeRepository;
-    ChatBotExceptionResponse chatBotExceptionResponse;
-    NoticeChatBotResponseService noticeChatBotResponseService;
 
-    public NoticeServiceImpl(NoticeRepository noticeRepository, NoticeChatBotResponseService noticeChatBotResponseService) {
+    public NoticeServiceImpl(NoticeRepository noticeRepository) {
         this.noticeRepository = noticeRepository;
-        this.noticeChatBotResponseService = noticeChatBotResponseService;
-        this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
     @Override
