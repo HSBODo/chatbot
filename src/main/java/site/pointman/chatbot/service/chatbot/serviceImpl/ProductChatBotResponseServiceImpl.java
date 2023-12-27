@@ -183,16 +183,16 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     }
 
     @Override
-    public ChatBotResponse searchProductsChatBotResponse(String searchWord) {
-        HttpResponse result = productService.getProductsBySearchWord(searchWord);
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
+    public ChatBotResponse searchProductsChatBotResponse(String searchWord, int pageNumber) {
+        HttpResponse result = productService.getProductsBySearchWord(searchWord,pageNumber);
+        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
 
-        List<Product> products = (List<Product>) result.getResult();
+        Page<Product> products = (Page<Product>) result.getResult();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<CommerceCard> carousel = new Carousel<>();
 
-        products.forEach(product -> {
+        products.getContent().forEach(product -> {
             CommerceCard commerceCard = new CommerceCard();
 
             String productName = product.getName();
@@ -220,7 +220,13 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         });
 
         chatBotResponse.addCarousel(carousel);
-        chatBotResponse.addQuickButton(ButtonName.이전으로.name(), ButtonAction.블럭이동, BlockId.PRODUCT_GET_CATEGORIES.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.상품검색.name(), ButtonAction.블럭이동, BlockId.PRODUCT_SEARCH.getBlockId());
+        if (products.hasNext()) {
+            Button nextButton = new Button(ButtonName.더보기.name(), ButtonAction.블럭이동, BlockId.PRODUCT_SEARCH.getBlockId());
+            nextButton.setExtra(ButtonParamKey.pageNumber,String.valueOf(++pageNumber));
+            nextButton.setExtra(ButtonParamKey.searchWord,searchWord);
+            chatBotResponse.addQuickButton(nextButton);
+        }
         return chatBotResponse;
     }
 

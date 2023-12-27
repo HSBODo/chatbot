@@ -21,7 +21,6 @@ public interface ProductCustomRepository {
     List<Product> findByCategory(Category category, ProductStatus status);
     List<Product> findByCategory(Category category, ProductStatus firstStatus,ProductStatus secondStatus);
     Optional<Product> findByProductId(Long productId);
-    List<Product> findBySearchWord(String searchWord, ProductStatus firstStatus, ProductStatus secondStatus);
     List<Product> findByAll();
     List<Product> findByStatus(ProductStatus firstStatus,ProductStatus secondStatus);
     List<Product> findByStatus(ProductStatus firstStatus);

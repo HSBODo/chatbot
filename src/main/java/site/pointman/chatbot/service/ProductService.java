@@ -16,7 +16,7 @@ public interface ProductService {
     HttpResponse getMemberProducts(String userKey);
     HttpResponse getMemberProductsByStatus(String userKey, ProductStatus productStatus);
     HttpResponse getMainProducts(int page);
-    HttpResponse getProductsBySearchWord(String searchWord);
+    HttpResponse getProductsBySearchWord(String searchWord, int pageNumber);
     HttpResponse getSalesContractProducts(String userKey);
     HttpResponse getSalesContractProduct(String userKey,Long orderId);
     HttpResponse getPurchaseProducts(String userKey);
