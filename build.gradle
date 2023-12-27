@@ -59,6 +59,9 @@ dependencies {
 
 	//크롤링 jsoup HTML parser library @ https://jsoup.org/
 	implementation 'org.jsoup:jsoup:1.17.1'
+
+	// Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {

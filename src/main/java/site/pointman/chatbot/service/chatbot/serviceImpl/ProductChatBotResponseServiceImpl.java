@@ -28,6 +28,7 @@ import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.service.CrawlingService;
 import site.pointman.chatbot.service.ProductService;
+import site.pointman.chatbot.service.RedisService;
 import site.pointman.chatbot.service.chatbot.ProductChatBotResponseService;
 import site.pointman.chatbot.utill.CustomStringUtils;
 
@@ -42,20 +43,23 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
     @Value("${host.url}")
     private String HOST_URL;
+    private ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
 
     MemberRepository memberRepository;
     OrderRepository orderRepository;
 
     ProductService productService;
     CrawlingService crawlingService;
+    RedisService redisService;
 
-    ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
 
-    public ProductChatBotResponseServiceImpl(MemberRepository memberRepository, OrderRepository orderRepository, ProductService productService, CrawlingService crawlingService) {
+
+    public ProductChatBotResponseServiceImpl(MemberRepository memberRepository, OrderRepository orderRepository, ProductService productService, CrawlingService crawlingService, RedisService redisService) {
         this.memberRepository = memberRepository;
         this.orderRepository = orderRepository;
         this.productService = productService;
         this.crawlingService = crawlingService;
+        this.redisService = redisService;
     }
 
     @Override
@@ -444,7 +448,19 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
             Elements jsoupElements = crawlingService.getJsoupElements(url, cssQuery);
             List<Element> filterElements = crawlingService.filterElements(jsoupElements);
-            List<SpecialProduct> specialProducts = crawlingService.getSpecialProducts(filterElements,firstProduct,lastProduct);
+
+            List<SpecialProduct> specialProducts;
+            specialProducts = redisService.isSameSpecialProduct(currentPage, firstProduct, lastProduct, filterElements);
+            if (specialProducts.isEmpty()) {
+                int cnt = firstProduct;
+
+                specialProducts = crawlingService.getSpecialProducts(filterElements,firstProduct,lastProduct);
+
+                for (SpecialProduct specialProduct : specialProducts) {
+                    redisService.setRedisSpecialProductValue(currentPage+"-"+cnt,specialProduct);
+                    cnt++;
+                }
+            }
 
             int nextFirstProduct= lastProduct;
             int nextPage = currentPage;
