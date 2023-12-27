@@ -6,10 +6,12 @@ import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.domain.response.property.common.ListItem;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.ListCard;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
+import site.pointman.chatbot.service.NoticeService;
 import site.pointman.chatbot.service.chatbot.NoticeChatBotResponseService;
 
 import java.util.List;
@@ -17,13 +19,20 @@ import java.util.List;
 @Slf4j
 @Service
 public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseService {
+    NoticeService noticeService;
     ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
 
-    @Override
-    public ChatBotResponse getNoticesSuccessChatBotResponse(List<Notice> notices) {
-        ChatBotResponse chatBotResponse = new ChatBotResponse();
+    public NoticeChatBotResponseServiceImpl(NoticeService noticeService) {
+        this.noticeService = noticeService;
+    }
 
-        if (notices.isEmpty()) return chatBotExceptionResponse.createException("등록된 게시글이 없습니다.");
+    @Override
+    public ChatBotResponse getNoticesSuccessChatBotResponse() {
+        HttpResponse result = noticeService.getNotices();
+        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
+        List<Notice> notices = (List<Notice>) result.getResult();
+
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         ListCard listCard = new ListCard();
         listCard.setHeader("공지사항");
@@ -47,48 +56,46 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
     }
 
     @Override
-    public ChatBotResponse getNoticeSuccessChatBotResponse(Notice notice) {
-        try {
-            ChatBotResponse chatBotResponse = new ChatBotResponse();
+    public ChatBotResponse getNoticeSuccessChatBotResponse(String noticeId) {
+        HttpResponse result = noticeService.getNotice(noticeId);
+        if (result.getResult() != ApiResultCode.OK) return chatBotExceptionResponse.createException(result.getMessage());
+        Notice notice = (Notice) result.getResult();
 
-            String title = notice.getTitle();
-            String description = notice.getDescriptionTypeOfChatBot();
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
 
-            if(notice.getType().equals(NoticeType.TEXT_CARD)){
-                TextCard textCard = new TextCard();
+        String title = notice.getTitle();
+        String description = notice.getDescriptionTypeOfChatBot();
 
-                textCard.setTitle(title);
-                textCard.setDescription(description);
-                notice.getButtons().forEach(button -> {
-                    textCard.setButtons(button);
-                });
+        if(notice.getType().equals(NoticeType.TEXT_CARD)){
+            TextCard textCard = new TextCard();
 
-                chatBotResponse.addTextCard(textCard);
-                chatBotResponse.addQuickButton(ButtonName.이전으로.name(), ButtonAction.블럭이동,BlockId.FIND_NOTICES.getBlockId());
-                return chatBotResponse;
-            }
+            textCard.setTitle(title);
+            textCard.setDescription(description);
+            notice.getButtons().forEach(button -> {
+                textCard.setButtons(button);
+            });
 
-            if(notice.getType().equals(NoticeType.BASIC_CARD)){
-                BasicCard basicCard = new BasicCard();
-
-                String imageUrl = notice.getImageUrl();
-
-                basicCard.setThumbnail(imageUrl);
-                basicCard.setTitle(title);
-                basicCard.setDescription(description);
-
-                notice.getButtons().forEach(button -> {
-                    basicCard.setButton(button);
-                });
-                chatBotResponse.addBasicCard(basicCard);
-                chatBotResponse.addQuickButton(ButtonName.이전으로.name(),ButtonAction.블럭이동,BlockId.FIND_NOTICES.getBlockId());
-                return chatBotResponse;
-            }
-
-            return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다. e = type");
-        }catch (Exception e) {
-            log.info("eeeeeeeeee={}",e.getMessage());
-            return chatBotExceptionResponse.createException();
+            chatBotResponse.addTextCard(textCard);
+            chatBotResponse.addQuickButton(ButtonName.이전으로.name(), ButtonAction.블럭이동,BlockId.FIND_NOTICES.getBlockId());
+            return chatBotResponse;
         }
+
+        if(notice.getType().equals(NoticeType.BASIC_CARD)){
+            BasicCard basicCard = new BasicCard();
+
+            String imageUrl = notice.getImageUrl();
+
+            basicCard.setThumbnail(imageUrl);
+            basicCard.setTitle(title);
+            basicCard.setDescription(description);
+
+            notice.getButtons().forEach(button -> {
+                basicCard.setButton(button);
+            });
+            chatBotResponse.addBasicCard(basicCard);
+            chatBotResponse.addQuickButton(ButtonName.이전으로.name(),ButtonAction.블럭이동,BlockId.FIND_NOTICES.getBlockId());
+            return chatBotResponse;
+        }
+        return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다. e = type");
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.domain.notice.Notice;
+import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.service.NoticeService;
 
 import java.util.List;
@@ -21,31 +22,31 @@ public class NoticeAdminController {
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Object add(@RequestBody Notice notice){
+    public HttpResponse add(@RequestBody Notice notice){
         return noticeService.addNotice(notice);
     }
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.GET)
-    public List<Notice> getNotices(){
+    public HttpResponse getNotices(){
         return noticeService.getNoticeAll();
     }
 
     @ResponseBody
     @RequestMapping(value = "{noticeId}",method = RequestMethod.GET)
-    public Object getNotice(@PathVariable String noticeId){
-        return noticeService.getNotice(noticeId,false);
+    public HttpResponse getNotice(@PathVariable String noticeId){
+        return noticeService.getNotice(noticeId);
     }
 
     @ResponseBody
     @RequestMapping(value = "{noticeId}",method = RequestMethod.DELETE)
-    public Object deleteNotice(@PathVariable Long noticeId){
+    public HttpResponse deleteNotice(@PathVariable Long noticeId){
         return noticeService.removeNotice(noticeId);
     }
 
     @ResponseBody
     @RequestMapping(value = "{noticeId}",method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Object updateNotice(@PathVariable Long noticeId, @RequestBody Notice notice){
+    public HttpResponse updateNotice(@PathVariable Long noticeId, @RequestBody Notice notice){
         return noticeService.updateNotice(noticeId,notice);
     }
 }
