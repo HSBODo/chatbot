@@ -410,25 +410,30 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     }
 
     @Override
-    public ChatBotResponse getSpecialProductsChatBotResponse(int firstNumber, int currentPage) {
+    public ChatBotResponse getSpecialProductsChatBotResponse(int firstProduct, int currentPage) {
         try {
             if (currentPage == 0) currentPage++;
-            int lastProduct = firstNumber+5;
+            int lastProduct = firstProduct+5;
             String url = "https://quasarzone.com/bbs/qb_saleinfo?page="+currentPage;
             String cssQuery = "#frmSearch > div > div.list-board-wrap > div.market-type-list.market-info-type-list.relative > table > tbody > tr";
 
             Elements jsoupElements = crawlingService.getJsoupElements(url, cssQuery);
             List<Element> filterElements = crawlingService.filterElements(jsoupElements);
+            log.info("firstNumber={}",firstProduct);
+            log.info("currentPage={}",currentPage);
+            log.info("lastProduct={}",lastProduct);
+            List<SpecialProduct> specialProducts = crawlingService.getSpecialProducts(filterElements,firstProduct,lastProduct);
 
-            List<SpecialProduct> specialProducts = crawlingService.getSpecialProducts(filterElements,firstNumber,lastProduct);
-
-            int nextFirstNumber = lastProduct;
+            int nextFirstProduct= lastProduct;
             int nextPage = currentPage;
 
             if (filterElements.size() <= lastProduct){
-                nextFirstNumber = 0;
+                nextFirstProduct = 0;
                 nextPage++;
             }
+
+            log.info("nextFirstNumber={}",nextFirstProduct);
+            log.info("nextPage={}",nextPage);
 
             ChatBotResponse chatBotResponse = new ChatBotResponse();
             Carousel<CommerceCard> commerceCardCarousel = new Carousel<>();
@@ -436,7 +441,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             Button nextButton = new Button(ButtonName.더보기.name(),ButtonAction.블럭이동,BlockId.PRODUCT_HOT_DEAL.getBlockId());
 
             nextButton.setExtra(ButtonParamKey.pageNumber,String.valueOf(nextPage));
-            nextButton.setExtra(ButtonParamKey.firstNumber,String.valueOf(nextFirstNumber));
+            nextButton.setExtra(ButtonParamKey.firstNumber,String.valueOf(nextFirstProduct));
 
             specialProducts.forEach(specialProduct -> {
                 CommerceCard commerceCard = new CommerceCard();
