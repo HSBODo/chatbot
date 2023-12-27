@@ -7,16 +7,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.constant.Category;
-import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.service.MemberService;
-import site.pointman.chatbot.service.OrderService;
-import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.chatbot.ProductChatBotResponseService;
-import site.pointman.chatbot.utill.CustomNumberUtils;
 
 import java.util.List;
 
@@ -28,15 +24,12 @@ public class ProductController {
 
     ProductChatBotResponseService productChatBotResponseService;
     MemberService memberService;
-    OrderService orderService;
-    ProductService productService;
+
     ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
 
-    public ProductController(ProductChatBotResponseService productChatBotResponseService, MemberService memberService, OrderService orderService, ProductService productService) {
+    public ProductController(ProductChatBotResponseService productChatBotResponseService, MemberService memberService) {
         this.productChatBotResponseService = productChatBotResponseService;
         this.memberService = memberService;
-        this.orderService = orderService;
-        this.productService = productService;
     }
 
     /**
