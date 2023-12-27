@@ -184,6 +184,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             Button nextButton = new Button(ButtonName.더보기.name(), ButtonAction.블럭이동, BlockId.FIND_PRODUCTS_BY_CATEGORY.getBlockId());
             nextButton.setExtra(ButtonParamKey.choice,category.getValue());
             nextButton.setExtra(ButtonParamKey.pageNumber,String.valueOf(++pageNumber));
+            chatBotResponse.addQuickButton(nextButton);
         }
         return chatBotResponse;
     }
