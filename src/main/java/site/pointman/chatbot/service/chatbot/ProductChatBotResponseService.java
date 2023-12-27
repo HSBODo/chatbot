@@ -19,7 +19,7 @@ public interface ProductChatBotResponseService {
     ChatBotResponse verificationCustomerSuccessChatBotResponse();
     ChatBotResponse getProductChatBotResponse(String userKey, String productId);
     ChatBotResponse searchProductsChatBotResponse(String searchWord, int pageNumber);
-    ChatBotResponse getProductsByCategoryChatBotResponse(Category category);
+    ChatBotResponse getProductsByCategoryChatBotResponse(Category category, int pageNumber);
     ChatBotResponse createMyProductsByStatusChatBotResponse(String userKey, String productStatus);
     ChatBotResponse getProductInfoPreviewChatBotResponse(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl);
     ChatBotResponse addProductChatBotResponse(ProductDto productDto, String userKey, List<String> imageUrls);

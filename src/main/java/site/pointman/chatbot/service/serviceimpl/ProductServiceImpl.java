@@ -69,11 +69,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public HttpResponse getProductsByCategory(Category category) {
+    public HttpResponse getProductsByCategory(Category category, int pageNumber) {
         try {
-            List<Product> products = productRepository.findByCategory(category,ProductStatus.판매중,ProductStatus.예약);
+            Sort sort = Sort.by("createDate").descending();
 
-            if(products.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"등록된 상품이 없습니다.");
+            Page<Product> products = productRepository.findByCategory(category, ProductStatus.판매중, ProductStatus.예약, PageRequest.of(pageNumber, 10, sort));
+
+            if(products.getContent().isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"등록된 상품이 없습니다.");
 
             return  new HttpResponse(ApiResultCode.OK,"정상적으로 상품을 조회하였습니다.",products);
         }catch (Exception e) {
