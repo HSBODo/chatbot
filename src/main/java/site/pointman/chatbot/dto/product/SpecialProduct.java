@@ -1,9 +1,11 @@
 package site.pointman.chatbot.dto.product;
 
+import com.mysql.cj.util.StringUtils;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Getter
+@NoArgsConstructor
 public class SpecialProduct {
     private String productThumbnailImageUrl;
     private String brandName;
@@ -28,6 +30,11 @@ public class SpecialProduct {
         this.status = status;
     }
 
+    public String getTitle() {
+        if (StringUtils.isNullOrEmpty(title)) return "";
+        return title;
+    }
+
     public int getFormatPrice() {
         int first = price.indexOf(" ")+1;
         int last = price.indexOf(" ",first);
@@ -48,4 +55,35 @@ public class SpecialProduct {
         return price.substring(first + 1).replaceAll("\\(", "").replaceAll("\\)","");
     }
 
+    public String getProductThumbnailImageUrl() {
+        return productThumbnailImageUrl;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public String getBrandImageUrl() {
+        return brandImageUrl;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getDetailInfoUrl() {
+        return detailInfoUrl;
+    }
+
+    public String getPurchaseUrl() {
+        return purchaseUrl;
+    }
+
+    public String getStatus() {
+        return status;
+    }
 }
