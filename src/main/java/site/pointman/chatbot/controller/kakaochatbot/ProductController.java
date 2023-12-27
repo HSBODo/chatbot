@@ -167,7 +167,7 @@ public class ProductController {
     public ChatBotResponse getPurchaseProducts(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        return orderService.getPurchaseProducts(userKey);
+        return productChatBotResponseService.getPurchaseProducts(userKey);
     }
 
     @ResponseBody
@@ -176,7 +176,7 @@ public class ProductController {
         String userKey = chatBotRequest.getUserKey();
         String orderId = chatBotRequest.getOrderId();
 
-        return orderService.getPurchaseProductProfile(userKey,orderId);
+        return productChatBotResponseService.getPurchaseProductProfile(userKey,orderId);
     }
 
     @ResponseBody

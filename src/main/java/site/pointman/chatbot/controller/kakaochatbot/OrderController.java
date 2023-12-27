@@ -12,6 +12,7 @@ import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.PaymentService;
+import site.pointman.chatbot.service.chatbot.OrderChatBotResponseService;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -26,10 +27,12 @@ public class OrderController {
 
     PaymentService paymentService;
     OrderService orderService;
+    OrderChatBotResponseService orderChatBotResponseService;
 
-    public OrderController(PaymentService paymentService, OrderService orderService) {
+    public OrderController(PaymentService paymentService, OrderService orderService, OrderChatBotResponseService orderChatBotResponseService) {
         this.paymentService = paymentService;
         this.orderService = orderService;
+        this.orderChatBotResponseService = orderChatBotResponseService;
     }
 
     @SkipLogging
@@ -49,7 +52,8 @@ public class OrderController {
     @GetMapping(value = "kakaopay-approve/{orderId}")
     public String kakaoPayApprove (@PathVariable Long orderId, @RequestParam(value = "pg_token") String pgToken) throws UnsupportedEncodingException {
         try {
-            orderService.addOrder(orderId, pgToken);
+            HttpResponse result = orderService.addOrder(orderId, pgToken);
+            if (result.getCode() != ApiResultCode.OK.getValue()) return "redirect:"+KAKAO_CHANNEL_URL+"/"+URLEncoder.encode("결제실패", "UTF-8");
 
             return "redirect:"+KAKAO_CHANNEL_URL+"/"+ URLEncoder.encode("결제성공", "UTF-8");
         }catch (Exception e) {
@@ -69,7 +73,7 @@ public class OrderController {
     public Object updateTrackingNumber (@RequestBody ChatBotRequest chatBotRequest) {
         String trackingNumber = chatBotRequest.getTrackingNumber();
         String orderId = chatBotRequest.getOrderId();
-        return orderService.updateTrackingNumber(orderId,trackingNumber);
+        return orderChatBotResponseService.updateTrackingNumber(orderId,trackingNumber);
     }
 
     @ResponseBody
@@ -77,7 +81,7 @@ public class OrderController {
     public Object purchaseSuccessReconfirm (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
-        return orderService.purchaseSuccessReconfirm(orderId);
+        return orderChatBotResponseService.purchaseReconfirm(orderId);
     }
 
     @ResponseBody
@@ -85,7 +89,7 @@ public class OrderController {
     public Object purchaseSuccessConfirmation (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
-        return orderService.purchaseSuccessConfirm(orderId);
+        return orderChatBotResponseService.purchaseConfirm(orderId);
     }
 
     @ResponseBody
@@ -93,7 +97,7 @@ public class OrderController {
     public Object saleSuccessReconfirm (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
-        return orderService.saleSuccessReconfirm(orderId);
+        return orderChatBotResponseService.salesReconfirm(orderId);
     }
 
     @ResponseBody
@@ -101,7 +105,7 @@ public class OrderController {
     public Object saleSuccessConfirmation (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
-        return orderService.saleSuccessConfirm(orderId);
+        return orderChatBotResponseService.salesConfirm(orderId);
     }
 
 }

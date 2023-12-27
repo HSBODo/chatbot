@@ -6,11 +6,9 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 import java.util.List;
 
 public interface OrderChatBotResponseService {
-    ChatBotResponse getPurchaseProducts(List<Order> purchaseOrders);
-    ChatBotResponse getPurchaseProductProfile(Order order);
-    ChatBotResponse purchaseSuccessReconfirm(String orderId);
-    ChatBotResponse purchaseSuccessConfirm(Order order);
-    ChatBotResponse saleSuccessReconfirm(String orderId);
-    ChatBotResponse saleSuccessConfirm(Order order);
-    ChatBotResponse updateTrackingNumber();
+    ChatBotResponse purchaseReconfirm(String orderId);
+    ChatBotResponse purchaseConfirm(String orderId);
+    ChatBotResponse salesReconfirm(String orderId);
+    ChatBotResponse salesConfirm(String orderId);
+    ChatBotResponse updateTrackingNumber(String orderId, String trackingNumber);
 }

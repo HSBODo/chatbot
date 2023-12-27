@@ -57,7 +57,7 @@ public class OrderAdminController {
     @GetMapping(value = "paymentInfo/{orderId}")
     public Object getPaymentInfoByOrderId (@PathVariable("orderId") Long orderId) {
         Optional<PaymentInfo> mayBePaymentInfo = paymentRepository.findByOrderId(orderId);
-        if (mayBePaymentInfo.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"결제정보가 없습니다.");
+        if (mayBePaymentInfo.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"결제정보가 없습니다.");
         PaymentInfo paymentInfo = mayBePaymentInfo.get();
 
         return paymentInfo;
@@ -73,9 +73,7 @@ public class OrderAdminController {
     @PostMapping(value = "kakaopay-cancel/{orderId}")
     public HttpResponse kakaoPayCancel (@PathVariable Long orderId) {
         try {
-            orderService.cancelOrder(orderId);
-
-            return new HttpResponse(ApiResultCode.OK,"주문번호 "+orderId+"의 주문을 정상적으로 취소하였습니다.");
+            return  orderService.cancelOrder(orderId);
         }catch (Exception e) {
             return new HttpResponse(ApiResultCode.FAIL,"주문번호 "+orderId+"의 주문취소를 실패하였습니다.");
         }

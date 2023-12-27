@@ -509,6 +509,74 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         return chatBotResponse;
     }
 
+    @Override
+    public ChatBotResponse getPurchaseProducts(String userKey) {
+        HttpResponse result = productService.getPurchaseProducts(userKey);
+        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
+        List<Order> purchaseOrders = (List<Order>) result.getResult();
+
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+        Carousel<CommerceCard> basicCardCarousel = new Carousel<>();
+
+        purchaseOrders.forEach(order -> {
+            CommerceCard commerceCard = new CommerceCard();
+
+            Product product = order.getProduct();
+
+            String orderId = String.valueOf(order.getOrderId());
+            String status = product.getStatus().getOppositeValue();
+
+            String title = product.getName();
+            String description = new StringBuilder()
+                    .append("상품상태: "+status)
+                    .append("\n")
+                    .append("운송장번호: "+order.viewTackingNumber())
+                    .toString();
+
+            commerceCard.setThumbnails(product.getProductImages().getImageUrls().get(0),true);
+            commerceCard.setProfile(order.getProduct().getMember().getProfile());
+            commerceCard.setPrice(order.getProduct().getPrice().intValue());
+            commerceCard.setTitle(title);
+            commerceCard.setDescription(description);
+            commerceCard.setButton(new Button("상세보기", ButtonAction.블럭이동, BlockId.PRODUCT_GET_PURCHASE_PROFILE.getBlockId(), ButtonParamKey.orderId, orderId));
+
+            basicCardCarousel.addComponent(commerceCard);
+        });
+
+        chatBotResponse.addCarousel(basicCardCarousel);
+        chatBotResponse.addQuickButton(new Button(ButtonName.처음으로.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId()));
+        return chatBotResponse;
+    }
+
+    @Override
+    public ChatBotResponse getPurchaseProductProfile(String userKey, String orderId) {
+        HttpResponse result = productService.getPurchaseProduct(userKey, orderId);
+        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
+        Order order = (Order) result.getResult();
+
+        Product product = order.getProduct();
+
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
+        TextCard textCard = new TextCard();
+
+        Carousel<BasicCard> carouselImage = createCarouselImage(product.getProductImages().getImageUrls());
+
+        chatBotResponse.addCarousel(carouselImage);
+
+        textCard.setTitle(product.getName());
+        textCard.setDescription(order.getPurchaseProductProfile());
+
+        chatBotResponse.addTextCard(textCard);
+
+        if(!StringUtils.isNullOrEmpty(order.getTrackingNumber()) &&
+                !order.getStatus().equals(OrderStatus.거래완료) &&
+                !order.getBuyerConfirmStatus().equals(OrderMemberConfirmStatus.구매확정))
+            chatBotResponse.addQuickButton(new Button(ButtonName.구매확정.name(), ButtonAction.블럭이동, BlockId.PURCHASE_SUCCESS_RECONFIRM.getBlockId(), ButtonParamKey.orderId,orderId));
+
+        chatBotResponse.addQuickButton(new Button(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId()));
+        return chatBotResponse;
+    }
+
     private Carousel<BasicCard> createCarouselImage(List<String> imageUrls){
         Carousel<BasicCard> basicCardCarousel = new Carousel<>();
         imageUrls.forEach(imageUrl -> {
