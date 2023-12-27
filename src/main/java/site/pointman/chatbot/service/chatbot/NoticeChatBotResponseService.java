@@ -6,6 +6,6 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 import java.util.List;
 
 public interface NoticeChatBotResponseService {
-    ChatBotResponse getNoticesSuccessChatBotResponse(List<Notice> notices);
-    ChatBotResponse getNoticeSuccessChatBotResponse(Notice notice);
+    ChatBotResponse getNoticesSuccessChatBotResponse();
+    ChatBotResponse getNoticeSuccessChatBotResponse(String noticeId);
 }

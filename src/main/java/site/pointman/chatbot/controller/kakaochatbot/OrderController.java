@@ -9,6 +9,7 @@ import site.pointman.chatbot.annotation.SkipLogging;
 import site.pointman.chatbot.constant.ApiResultCode;
 import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentReadyResponse;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
+import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.PaymentService;
@@ -70,7 +71,7 @@ public class OrderController {
 
     @ResponseBody
     @PostMapping(value = "PATCH/trackingNumber")
-    public Object updateTrackingNumber (@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse updateTrackingNumber (@RequestBody ChatBotRequest chatBotRequest) {
         String trackingNumber = chatBotRequest.getTrackingNumber();
         String orderId = chatBotRequest.getOrderId();
         return orderChatBotResponseService.updateTrackingNumber(orderId,trackingNumber);
@@ -78,7 +79,7 @@ public class OrderController {
 
     @ResponseBody
     @PostMapping(value = "kakaochatbot/GET/purchaseSuccessReconfirm")
-    public Object purchaseSuccessReconfirm (@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse purchaseSuccessReconfirm (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
         return orderChatBotResponseService.purchaseReconfirm(orderId);
@@ -86,7 +87,7 @@ public class OrderController {
 
     @ResponseBody
     @PostMapping(value = "kakaochatbot/POST/purchaseSuccessConfirm")
-    public Object purchaseSuccessConfirmation (@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse purchaseSuccessConfirmation (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
         return orderChatBotResponseService.purchaseConfirm(orderId);
@@ -94,7 +95,7 @@ public class OrderController {
 
     @ResponseBody
     @PostMapping(value = "kakaochatbot/GET/saleSuccessReconfirm")
-    public Object saleSuccessReconfirm (@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse saleSuccessReconfirm (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
         return orderChatBotResponseService.salesReconfirm(orderId);
@@ -102,7 +103,7 @@ public class OrderController {
 
     @ResponseBody
     @PostMapping(value = "kakaochatbot/POST/saleSuccessConfirm")
-    public Object saleSuccessConfirmation (@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse saleSuccessConfirmation (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
         return orderChatBotResponseService.salesConfirm(orderId);

@@ -37,7 +37,7 @@ public class CustomerController {
 
     @ResponseBody
     @PostMapping(value = "POST/join" , headers = {"Accept=application/json; UTF-8"})
-    public Object join(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse join(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String name = chatBotRequest.getCustomerName();
         String phoneNumber = chatBotRequest.getCustomerPhone();
@@ -71,7 +71,7 @@ public class CustomerController {
 
     @ResponseBody
     @PostMapping(value = "GET/profile" , headers = {"Accept=application/json; UTF-8"})
-    public Object getProfile(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getProfile(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
         if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
@@ -81,7 +81,7 @@ public class CustomerController {
 
     @ResponseBody
     @PostMapping(value = "GET/salesCategory" , headers = {"Accept=application/json; UTF-8"})
-    public Object getSalesHistory(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse getSalesHistory(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
         if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
@@ -91,7 +91,7 @@ public class CustomerController {
 
     @ResponseBody
     @PostMapping(value = "PATCH/phoneNumber" , headers = {"Accept=application/json; UTF-8"})
-    public Object updatePhoneNumber(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse updatePhoneNumber(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String updatePhoneNumber = chatBotRequest.getCustomerPhone();
 
@@ -102,7 +102,7 @@ public class CustomerController {
 
     @ResponseBody
     @PostMapping(value = "DELETE" , headers = {"Accept=application/json; UTF-8"})
-    public Object withdrawalCustomer(@RequestBody ChatBotRequest chatBotRequest) {
+    public ChatBotResponse withdrawalCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
         if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();

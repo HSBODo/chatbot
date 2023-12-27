@@ -29,7 +29,7 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public Object addNotice(Notice notice) {
+    public HttpResponse addNotice(Notice notice) {
         try {
             Notice saveNotice = noticeRepository.save(notice);
 
@@ -40,39 +40,34 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public List<Notice> getNoticeAll() {
+    public HttpResponse getNoticeAll() {
         List<Notice> notices = noticeRepository.findByAll();
-        return notices;
+        if (notices.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"게시글이 존재하지 않습니다.");
+
+        return new HttpResponse(ApiResultCode.OK,"정상적으로 게시글을 조회하였습니다.",notices);
     }
 
     @Override
-    public Object getNotices(boolean isChatBotRequest) {
+    public HttpResponse getNotices() {
         List<Notice> notices = noticeRepository.findByStatus(NoticeStatus.작성);
+        if (notices.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"게시글이 존재하지 않습니다.");
 
-
-        return noticeChatBotResponseService.getNoticesSuccessChatBotResponse(notices);
+        return new HttpResponse(ApiResultCode.OK,"정상적으로 게시글을 조회하였습니다.",notices);
     }
 
     @Override
-    public Object getNotice(String noticeId, boolean isChatBotRequest) {
+    public HttpResponse getNotice(String noticeId) {
         long parseNoticeId = Long.parseLong(noticeId);
 
         Optional<Notice> mayBeNotice = noticeRepository.findByNoticeId(parseNoticeId);
-
-        if (isChatBotRequest){
-            if (mayBeNotice.isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");
-            Notice notice = mayBeNotice.get();
-
-            return noticeChatBotResponseService.getNoticeSuccessChatBotResponse(notice);
-        }
-
-        if (mayBeNotice.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"게시글이 존재하지 않습니다.");
+        if (mayBeNotice.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"게시글이 존재하지 않습니다.");
         Notice notice = mayBeNotice.get();
-        return notice;
+
+        return new HttpResponse(ApiResultCode.OK,"정상적으로 게시글을 조회하였습니다.",notice);
     }
 
     @Override
-    public Object removeNotice(Long noticeId) {
+    public HttpResponse removeNotice(Long noticeId) {
         noticeRepository.deleteNotice(noticeId);
 
 
@@ -80,7 +75,7 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public Object updateNotice(Long noticeId, Notice notice) {
+    public HttpResponse updateNotice(Long noticeId, Notice notice) {
         try {
             noticeRepository.updateNotice(noticeId, notice);
 

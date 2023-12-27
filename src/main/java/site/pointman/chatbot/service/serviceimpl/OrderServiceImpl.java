@@ -8,15 +8,11 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.product.Product;
-import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.repository.OrderRepository;
-import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.PaymentService;
-import site.pointman.chatbot.service.chatbot.OrderChatBotResponseService;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -28,27 +24,20 @@ public class OrderServiceImpl implements OrderService {
 
     OrderRepository orderRepository;
     ProductRepository productRepository;
-    PaymentRepository paymentRepository;
 
     PaymentService paymentService;
-    OrderChatBotResponseService orderChatBotResponseService;
 
-
-    public OrderServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, PaymentService paymentService, PaymentRepository paymentRepository, OrderChatBotResponseService orderChatBotResponseService) {
+    public OrderServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, PaymentService paymentService) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.paymentService = paymentService;
-        this.paymentRepository = paymentRepository;
-        this.orderChatBotResponseService = orderChatBotResponseService;
     }
 
     @Override
     public HttpResponse addOrder(Long orderId, String pgToken) {
-        Optional<PaymentInfo> maybePaymentInfo = paymentRepository.findByPaymentStatus(orderId, PaymentStatus.결제준비);
-
-        if(maybePaymentInfo.isEmpty()) throw new IllegalArgumentException("결제준비중인 주문이 존재하지 않습니다.");
-
-        PaymentInfo paymentReadyInfo = maybePaymentInfo.get();
+        HttpResponse result = paymentService.getPaymentInfoByStatus(orderId, PaymentStatus.결제준비);
+        if (result.getCode() != ApiResultCode.OK.getValue()) return new HttpResponse(ApiResultCode.EXCEPTION, result.getMessage());
+        PaymentInfo paymentReadyInfo = (PaymentInfo) result.getResult();
 
         paymentService.kakaoPaymentApprove(pgToken,paymentReadyInfo);
         Order order;
@@ -106,10 +95,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public HttpResponse cancelOrder(Long orderId) {
-        Optional<PaymentInfo> maybeSuccessPaymentInfo = paymentRepository.findByPaymentStatus(orderId, PaymentStatus.결제완료);
+        HttpResponse result = paymentService.getPaymentInfoByStatus(orderId, PaymentStatus.결제완료);
+        if (result.getCode() != ApiResultCode.OK.getValue()) return result;
 
-        if(maybeSuccessPaymentInfo.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"결제승인 주문이 아닙니다.");
-        PaymentInfo successPaymentInfo = maybeSuccessPaymentInfo.get();
+        PaymentInfo successPaymentInfo = (PaymentInfo) result.getResult();
 
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId);
         if (mayBeOrder.isEmpty()) throw new IllegalArgumentException("주문이 존재하지 않습니다.");

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.service.NoticeService;
+import site.pointman.chatbot.service.chatbot.NoticeChatBotResponseService;
 
 
 @Slf4j
@@ -15,16 +16,16 @@ import site.pointman.chatbot.service.NoticeService;
 @RequestMapping(value = "/kakaochatbot/notice")
 public class NoticeController {
 
-    NoticeService noticeService;
+    NoticeChatBotResponseService noticeChatBotResponseService;
 
-    public NoticeController(NoticeService noticeService) {
-        this.noticeService = noticeService;
+    public NoticeController(NoticeChatBotResponseService noticeChatBotResponseService) {
+        this.noticeChatBotResponseService = noticeChatBotResponseService;
     }
 
     @ResponseBody
     @PostMapping(value = "GET" , headers = {"Accept=application/json; UTF-8"})
     public Object getNotices(@RequestBody ChatBotRequest chatBotRequest){
-       return noticeService.getNotices(true);
+       return noticeChatBotResponseService.getNoticesSuccessChatBotResponse();
     }
 
     @ResponseBody
@@ -32,6 +33,6 @@ public class NoticeController {
     public Object getNotice(@RequestBody ChatBotRequest chatBotRequest){
         String noticeId = chatBotRequest.getNoticeId();
 
-        return noticeService.getNotice(noticeId,true);
+        return noticeChatBotResponseService.getNoticeSuccessChatBotResponse(noticeId);
     }
 }
