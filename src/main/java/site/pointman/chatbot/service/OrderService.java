@@ -10,8 +10,6 @@ public interface OrderService {
     ChatBotResponse saleSuccessReconfirm(String orderId);
     ChatBotResponse saleSuccessConfirm(String orderId);
     ChatBotResponse updateTrackingNumber(String orderId, String trackingNumber);
-    ChatBotResponse getPurchaseProducts(String userKey);
-    ChatBotResponse getPurchaseProductProfile(String userKey,String orderId);
     Long addOrder(Long orderId, String pgToken);
     Long cancelOrder(Long orderId);
     HttpResponse successOrder(Long orderId);

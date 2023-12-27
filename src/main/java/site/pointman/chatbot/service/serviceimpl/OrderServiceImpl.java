@@ -154,29 +154,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ChatBotResponse getPurchaseProducts(String userKey) {
-
-        List<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey);
-        if (purchaseOrders.isEmpty()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
-
-        return orderChatBotResponseService.getPurchaseProducts(purchaseOrders);
-    }
-
-    @Override
-    public ChatBotResponse getPurchaseProductProfile(String userKey, String orderId) {
-        try {
-            Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId));
-            if (mayBeOrder.isEmpty()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
-
-            Order order = mayBeOrder.get();
-
-            return orderChatBotResponseService.getPurchaseProductProfile(order);
-        }catch (Exception e) {
-            return chatBotExceptionResponse.createException();
-        }
-    }
-
-    @Override
     public ChatBotResponse purchaseSuccessReconfirm(String orderId) {
 
         return orderChatBotResponseService.purchaseSuccessReconfirm(orderId);

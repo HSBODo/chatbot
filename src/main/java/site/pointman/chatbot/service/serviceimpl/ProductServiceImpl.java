@@ -159,7 +159,7 @@ public class ProductServiceImpl implements ProductService {
         List<Product> contractProducts = productRepository.findByUserKey(userKey, ProductStatus.판매대기);
         if(contractProducts.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"결제가 체결된 상품이 없습니다.");
 
-        return new HttpResponse(ApiResultCode.OK,"성공적으로 결게자 체결된 상품을 조회하였습니다.",contractProducts);
+        return new HttpResponse(ApiResultCode.OK,"성공적으로 결제가 체결된 상품을 조회하였습니다.",contractProducts);
     }
 
     @Override
@@ -170,7 +170,29 @@ public class ProductServiceImpl implements ProductService {
         Order order = mayBeOrder.get();
         if(!userKey.equals(order.getProduct().getMember().getUserKey())) return new HttpResponse(ApiResultCode.EXCEPTION,"체결된 주문이 없습니다.");
 
-        return new HttpResponse(ApiResultCode.OK,"성공적으로 결게자 체결된 상품을 조회하였습니다.",order);
+        return new HttpResponse(ApiResultCode.OK,"성공적으로 결제가 체결된 상품을 조회하였습니다.",order);
+    }
+
+    @Override
+    public HttpResponse getPurchaseProducts(String userKey) {
+        List<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey);
+        if (purchaseOrders.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"구매내역이 없습니다.");
+
+        return new HttpResponse(ApiResultCode.OK,"정상적으로 구매내역을 조회하였습니다.",purchaseOrders);
+    }
+
+    @Override
+    public HttpResponse getPurchaseProduct(String userKey, String orderId) {
+        try {
+            Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId));
+            if (mayBeOrder.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"구매내역이 없습니다.");
+
+            Order order = mayBeOrder.get();
+
+            return new HttpResponse(ApiResultCode.OK,"정상적으로 구매내역을 조회하였습니다.",order);
+        }catch (Exception e) {
+            return new HttpResponse(ApiResultCode.FAIL,"구매내역 조회에 실패하였습니다.");
+        }
     }
 
     @Override

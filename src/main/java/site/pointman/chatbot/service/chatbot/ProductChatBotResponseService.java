@@ -26,6 +26,8 @@ public interface ProductChatBotResponseService {
     ChatBotResponse getCategoryChatBotResponse(String requestBlockId);
     ChatBotResponse getSalesContractProductsChatBotResponse(String userKey);
     ChatBotResponse getSalesContractProductChatBotResponse(String userKey, String orderId);
+    ChatBotResponse getPurchaseProducts(String userKey);
+    ChatBotResponse getPurchaseProductProfile(String userKey,String orderId);
     ChatBotResponse getSpecialProductsChatBotResponse(int nextFirstNumber, int nextPage);
     ChatBotResponse getMainProductsChatBotResponse();
 }
