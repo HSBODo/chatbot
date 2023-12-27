@@ -109,7 +109,8 @@ public class ProductController {
     @ResponseBody
     @PostMapping(value = "GET/mainProducts" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getMainProducts(@RequestBody ChatBotRequest chatBotRequest) {
-        return productChatBotResponseService.getMainProductsChatBotResponse();
+        int pageNumber = chatBotRequest.getPageNumber();
+        return productChatBotResponseService.getMainProductsChatBotResponse(pageNumber);
     }
 
     @ResponseBody

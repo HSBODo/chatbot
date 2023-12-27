@@ -29,5 +29,5 @@ public interface ProductChatBotResponseService {
     ChatBotResponse getPurchaseProducts(String userKey);
     ChatBotResponse getPurchaseProductProfile(String userKey,String orderId);
     ChatBotResponse getSpecialProductsChatBotResponse(int nextFirstNumber, int nextPage);
-    ChatBotResponse getMainProductsChatBotResponse();
+    ChatBotResponse getMainProductsChatBotResponse(int currentPage);
 }
