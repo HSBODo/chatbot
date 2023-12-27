@@ -84,11 +84,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public HttpResponse getMemberProductsByStatus(String userKey, ProductStatus productStatus) {
+    public HttpResponse getMemberProductsByStatus(String userKey, ProductStatus productStatus, int pageNumber) {
         try {
-            List<Product> products = productRepository.findByUserKey(userKey,productStatus);
+            Sort sort = Sort.by("createDate").descending();
+            Page<Product> products = productRepository.findByStatusAndUserKey(productStatus, userKey, PageRequest.of(pageNumber, 10, sort));
 
-            if(products.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"등록된 상품이 없습니다.");
+            if(products.getContent().isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"등록된 상품이 없습니다.");
 
             return new HttpResponse(ApiResultCode.OK,"정상적으로 상품을 조회하였습니다.",products);
         }catch (Exception e){
@@ -150,9 +151,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public HttpResponse getSalesContractProducts(String userKey) {
-        List<Product> contractProducts = productRepository.findByUserKey(userKey, ProductStatus.판매대기);
-        if(contractProducts.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"결제가 체결된 상품이 없습니다.");
+    public HttpResponse getSalesContractProducts(String userKey, int pageNumber) {
+        Sort sort = Sort.by("createDate").descending();
+        Page<Product> contractProducts = productRepository.findByStatusAndUserKey(ProductStatus.판매대기, userKey, PageRequest.of(pageNumber, 10, sort));
+
+        if(contractProducts.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"판매대기 중인 상품이 존재하지 않습니다.");
 
         return new HttpResponse(ApiResultCode.OK,"성공적으로 결제가 체결된 상품을 조회하였습니다.",contractProducts);
     }
@@ -169,9 +172,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public HttpResponse getPurchaseProducts(String userKey) {
-        List<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey);
-        if (purchaseOrders.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"구매내역이 없습니다.");
+    public HttpResponse getPurchaseProducts(String userKey, int pageNumber) {
+        Sort sort = Sort.by("createDate").descending();
+        Page<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey, OrderStatus.주문취소, PageRequest.of(pageNumber, 10, sort));
+
+        if (purchaseOrders.getContent().isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"구매내역이 없습니다.");
 
         return new HttpResponse(ApiResultCode.OK,"정상적으로 구매내역을 조회하였습니다.",purchaseOrders);
     }

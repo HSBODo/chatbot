@@ -101,10 +101,11 @@ public class ProductController {
     public ChatBotResponse getMyProducts(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String productStatus = chatBotRequest.getProductStatus();
+        int pageNumber = chatBotRequest.getPageNumber();
 
         if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
-        return productChatBotResponseService.createMyProductsByStatusChatBotResponse(userKey,productStatus);
+        return productChatBotResponseService.getMyProductsByStatusChatBotResponse(userKey,productStatus,pageNumber);
     }
 
     @ResponseBody
@@ -171,8 +172,9 @@ public class ProductController {
     @PostMapping(value = "GET/purchaseProducts" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getPurchaseProducts(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
+        int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotResponseService.getPurchaseProducts(userKey);
+        return productChatBotResponseService.getPurchaseProducts(userKey,pageNumber);
     }
 
     @ResponseBody
@@ -188,8 +190,9 @@ public class ProductController {
     @PostMapping(value = "GET/contractProducts" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getContractProducts(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
+        int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotResponseService.getSalesContractProductsChatBotResponse(userKey);
+        return productChatBotResponseService.getSalesContractProductsChatBotResponse(userKey,pageNumber);
     }
 
     @ResponseBody
