@@ -11,6 +11,7 @@ public class ClientExtra {
     private String noticeId;
     private String choice;
     private String productStatus;
+    private String searchWord;
     private String pageNumber;
     private String firstNumber;
     private String lastNumber;
