@@ -412,8 +412,9 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     @Override
     public ChatBotResponse getSpecialProductsChatBotResponse(int firstNumber, int currentPage) {
         try {
-            int lastProduct = firstNumber+4;
-            String url = "https://quasarzone.com/bbs/qb_saleinfo?page="+currentPage+1;
+            if (currentPage == 0) currentPage++;
+            int lastProduct = firstNumber+5;
+            String url = "https://quasarzone.com/bbs/qb_saleinfo?page="+currentPage;
             String cssQuery = "#frmSearch > div > div.list-board-wrap > div.market-type-list.market-info-type-list.relative > table > tbody > tr";
 
             Elements jsoupElements = crawlingService.getJsoupElements(url, cssQuery);
