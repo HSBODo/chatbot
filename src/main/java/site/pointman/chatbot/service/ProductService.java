@@ -14,12 +14,12 @@ public interface ProductService {
     HttpResponse getProduct(Long productId);
     HttpResponse getProductsAll();
     HttpResponse getMemberProducts(String userKey);
-    HttpResponse getMemberProductsByStatus(String userKey, ProductStatus productStatus);
+    HttpResponse getMemberProductsByStatus(String userKey, ProductStatus productStatus, int pageNumber);
     HttpResponse getMainProducts(int page);
     HttpResponse getProductsBySearchWord(String searchWord, int pageNumber);
-    HttpResponse getSalesContractProducts(String userKey);
+    HttpResponse getSalesContractProducts(String userKey, int pageNumber);
     HttpResponse getSalesContractProduct(String userKey,Long orderId);
-    HttpResponse getPurchaseProducts(String userKey);
+    HttpResponse getPurchaseProducts(String userKey, int pageNumber);
     HttpResponse getPurchaseProduct(String userKey,String orderId);
     HttpResponse updateProductStatus(Long productId, ProductStatus status);
     HttpResponse deleteProduct(Long productId);
