@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.member.Member;
@@ -411,8 +412,8 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     @Override
     public ChatBotResponse getSpecialProductsChatBotResponse(int firstNumber, int currentPage) {
         try {
-            int lastProduct = firstNumber+5;
-            String url = "https://quasarzone.com/bbs/qb_saleinfo?page="+currentPage;
+            int lastProduct = firstNumber+4;
+            String url = "https://quasarzone.com/bbs/qb_saleinfo?page="+currentPage+1;
             String cssQuery = "#frmSearch > div > div.list-board-wrap > div.market-type-list.market-info-type-list.relative > table > tbody > tr";
 
             Elements jsoupElements = crawlingService.getJsoupElements(url, cssQuery);
@@ -424,7 +425,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             int nextPage = currentPage;
 
             if (filterElements.size() <= lastProduct){
-                nextFirstNumber = 1;
+                nextFirstNumber = 0;
                 nextPage++;
             }
 
@@ -468,15 +469,15 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     }
 
     @Override
-    public ChatBotResponse getMainProductsChatBotResponse() {
-        HttpResponse result = productService.getMainProducts();
+    public ChatBotResponse getMainProductsChatBotResponse(int currentPage) {
+        HttpResponse result = productService.getMainProducts(currentPage);
         if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("상품조회를 실패하였습니다.");
-        List<Product> products = (List<Product>) result.getResult();
+        Page<Product> products = (Page<Product>) result.getResult();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<CommerceCard> commerceCardCarousel = new Carousel<>();
 
-        products.forEach(product -> {
+        products.getContent().forEach(product -> {
             CommerceCard commerceCard = new CommerceCard();
 
             String productName = product.getName();
@@ -505,6 +506,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         });
 
         chatBotResponse.addQuickButton(ButtonName.메인메뉴.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
+        if (products.hasNext()) chatBotResponse.addQuickButton(ButtonName.더보기.name(),ButtonAction.블럭이동,BlockId.PRODUCT_GET_MAIN.getBlockId(),ButtonParamKey.pageNumber,String.valueOf(currentPage+1));
         chatBotResponse.addCarousel(commerceCardCarousel);
         return chatBotResponse;
     }

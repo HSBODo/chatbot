@@ -45,7 +45,7 @@ public class CrawlingServiceImpl implements CrawlingService {
 
         if (lastProduct > filterElements.size()) lastProduct = filterElements.size();
 
-        for (int i = firstProduct-1 ; i < lastProduct-1 ; i++){
+        for (int i = firstProduct ; i < lastProduct ; i++){
             String imageUrl = "";
             String brandImageUrl = "";
             String detailUrl = "";

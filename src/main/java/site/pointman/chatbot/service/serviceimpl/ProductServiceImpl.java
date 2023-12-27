@@ -1,29 +1,27 @@
 package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.*;
+import site.pointman.chatbot.constant.ApiResultCode;
+import site.pointman.chatbot.constant.Category;
+import site.pointman.chatbot.constant.OrderStatus;
+import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
-import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.dto.product.ProductImageDto;
-import site.pointman.chatbot.dto.product.SpecialProduct;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.service.CrawlingService;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.S3FileService;
-import site.pointman.chatbot.service.chatbot.ProductChatBotResponseService;
 import site.pointman.chatbot.utill.CustomNumberUtils;
-import site.pointman.chatbot.utill.CustomStringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,22 +29,16 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class ProductServiceImpl implements ProductService {
+    @Value("${host.url}")
+    private String HOST_URL;
 
-    CrawlingService crawlingService;
     S3FileService s3FileService;
-
 
     ProductRepository productRepository;
     MemberRepository memberRepository;
     OrderRepository orderRepository;
 
-    ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
-
-    @Value("${host.url}")
-    private String HOST_URL;
-
-    public ProductServiceImpl(CrawlingService crawlingService, S3FileService s3FileService, ProductRepository productRepository, MemberRepository memberRepository, OrderRepository orderRepository) {
-        this.crawlingService = crawlingService;
+    public ProductServiceImpl(S3FileService s3FileService, ProductRepository productRepository, MemberRepository memberRepository, OrderRepository orderRepository) {
         this.s3FileService = s3FileService;
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
@@ -103,13 +95,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public HttpResponse getMainProducts() {
+    public HttpResponse getMainProducts(int page) {
+        Sort sort = Sort.by("createDate").descending();
+        Page<Product> mainProducts = productRepository.findMain(ProductStatus.판매중, ProductStatus.예약, PageRequest.of(page, 10, sort));
+        if (!mainProducts.hasContent()) return new HttpResponse(ApiResultCode.EXCEPTION,"등록된 상품이 없습니다.");
 
-        List<Product> products = productRepository.findByStatus(ProductStatus.판매중, ProductStatus.예약);
-
-        if (products.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"등록된 상품이 없습니다.");
-
-        return new HttpResponse(ApiResultCode.OK,"정상적으로 상품을 조회하였습니다.",products);
+        return new HttpResponse(ApiResultCode.OK,"정상적으로 상품을 조회하였습니다.",mainProducts);
     }
 
     @Override
@@ -222,33 +213,4 @@ public class ProductServiceImpl implements ProductService {
             return new HttpResponse(ApiResultCode.FAIL ,"상품 상태변경을 실패하였습니다.");
         }
     }
-
-//    @Override
-//    public ChatBotResponse getSpecialProducts(int currentPage, int firstNumber) {
-//        try {
-//            int lastProduct = firstNumber+5;
-//            String url = "https://quasarzone.com/bbs/qb_saleinfo?page="+currentPage;
-//            String cssQuery = "#frmSearch > div > div.list-board-wrap > div.market-type-list.market-info-type-list.relative > table > tbody > tr";
-//
-//            Elements jsoupElements = crawlingService.getJsoupElements(url, cssQuery);
-//            List<Element> filterElements = crawlingService.filterElements(jsoupElements);
-//
-//            List<SpecialProduct> specialProducts = crawlingService.getSpecialProducts(filterElements,firstNumber,lastProduct);
-//
-//            int nextFirstNumber = lastProduct;
-//            int nextPage = currentPage;
-//
-//            if (filterElements.size() <= lastProduct){
-//                nextFirstNumber = 1;
-//                nextPage++;
-//            }
-//
-//            return productChatBotResponseService.getSpecialProductsSuccessChatBotResponse(specialProducts, nextFirstNumber,  nextPage);
-//        }catch (Exception e) {
-//            log.info("e={}",e.getStackTrace());
-//            return chatBotExceptionResponse.createException();
-//        }
-//    }
-
-
 }
