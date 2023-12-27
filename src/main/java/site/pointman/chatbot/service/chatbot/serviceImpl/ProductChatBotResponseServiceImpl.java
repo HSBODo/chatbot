@@ -334,7 +334,6 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("결제가 체결된 상품이 없습니다.");
         List<Product> contractProducts = (List<Product>) result.getResult();
 
-
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<CommerceCard> carousel = new Carousel<>();
 
@@ -410,7 +409,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     }
 
     @Override
-    public ChatBotResponse getSpecialProductsChatBotResponse(int firstProduct, int currentPage) {
+    public ChatBotResponse getSpecialProductsChatBotResponse(int currentPage,int firstProduct) {
         try {
             if (currentPage == 0) currentPage++;
             int lastProduct = firstProduct+5;
@@ -419,9 +418,6 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
             Elements jsoupElements = crawlingService.getJsoupElements(url, cssQuery);
             List<Element> filterElements = crawlingService.filterElements(jsoupElements);
-            log.info("firstNumber={}",firstProduct);
-            log.info("currentPage={}",currentPage);
-            log.info("lastProduct={}",lastProduct);
             List<SpecialProduct> specialProducts = crawlingService.getSpecialProducts(filterElements,firstProduct,lastProduct);
 
             int nextFirstProduct= lastProduct;
@@ -431,9 +427,6 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
                 nextFirstProduct = 0;
                 nextPage++;
             }
-
-            log.info("nextFirstNumber={}",nextFirstProduct);
-            log.info("nextPage={}",nextPage);
 
             ChatBotResponse chatBotResponse = new ChatBotResponse();
             Carousel<CommerceCard> commerceCardCarousel = new Carousel<>();
