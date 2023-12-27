@@ -29,4 +29,6 @@ public enum ButtonName {
     프로필사진등록,
     더보기,
     메인메뉴,
+    카테고리,
+    상품검색
 }

@@ -133,11 +133,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public HttpResponse getProductsBySearchWord(String searchWord) {
+    public HttpResponse getProductsBySearchWord(String searchWord, int pageNumber) {
         try {
-            List<Product> products = productRepository.findBySearchWord(searchWord, ProductStatus.판매중,ProductStatus.예약);
+            Sort sort = Sort.by("createDate").descending();
+            Page<Product> products = productRepository.findBySearchWord(searchWord, ProductStatus.판매중, ProductStatus.예약,PageRequest.of(0,10,sort));
 
-            if(products.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"등록된 상품이 없어 상품을 찾을수 없습니다.");
+
+            if(products.getContent().isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"등록된 상품이 없어 상품을 찾을수 없습니다.");
 
             return new HttpResponse(ApiResultCode.OK,"정상적으로 상품을 조회하였습니다.",products);
         }catch (Exception e) {

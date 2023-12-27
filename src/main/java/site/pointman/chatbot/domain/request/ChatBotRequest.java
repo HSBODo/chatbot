@@ -107,7 +107,10 @@ public class ChatBotRequest {
     }
 
     public String getSearchWord(){
-        if (Objects.isNull(action.getParams().getSearchWord())) return null;
+        if (Objects.isNull(action.getParams().getSearchWord())){
+            if (Objects.isNull(action.getClientExtra().getSearchWord())) return null;
+            return action.getClientExtra().getSearchWord();
+        }
         return action.getParams().getSearchWord();
     }
 

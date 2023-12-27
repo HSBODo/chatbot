@@ -16,4 +16,7 @@ public interface ProductRepository extends JpaRepository<Product,Long>, ProductC
     @Query("SELECT p FROM Product p WHERE (p.status =:firstStatus OR p.status =:secondStatus) AND p.isUse=true")
     Page<Product> findMain(@Param("firstStatus") ProductStatus firstStatus, @Param("secondStatus") ProductStatus secondStatus, Pageable pageable);
 
+    @Query("SELECT p FROM Product p WHERE p.name LIKE concat('%', :searchWord, '%') OR p.description LIKE concat('%', :searchWord, '%') AND (p.status =:firstStatus OR p.status =:secondStatus) AND p.isUse=true")
+    Page<Product> findBySearchWord(@Param("searchWord") String searchWord, @Param("firstStatus") ProductStatus firstStatus, @Param("secondStatus") ProductStatus secondStatus, Pageable pageable);
+
 }

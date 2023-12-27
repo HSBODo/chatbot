@@ -18,7 +18,7 @@ public interface ProductChatBotResponseService {
     ChatBotResponse deleteProductChatBotResponse(String productId, String utterance);
     ChatBotResponse verificationCustomerSuccessChatBotResponse();
     ChatBotResponse getProductChatBotResponse(String userKey, String productId);
-    ChatBotResponse searchProductsChatBotResponse(String searchWord);
+    ChatBotResponse searchProductsChatBotResponse(String searchWord, int pageNumber);
     ChatBotResponse getProductsByCategoryChatBotResponse(Category category);
     ChatBotResponse createMyProductsByStatusChatBotResponse(String userKey, String productStatus);
     ChatBotResponse getProductInfoPreviewChatBotResponse(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl);
