@@ -31,10 +31,8 @@ public class OrderServiceImpl implements OrderService {
     PaymentRepository paymentRepository;
 
     PaymentService paymentService;
-
-
     OrderChatBotResponseService orderChatBotResponseService;
-    ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
+
 
     public OrderServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, PaymentService paymentService, PaymentRepository paymentRepository, OrderChatBotResponseService orderChatBotResponseService) {
         this.orderRepository = orderRepository;
@@ -45,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Long addOrder(Long orderId, String pgToken) {
+    public HttpResponse addOrder(Long orderId, String pgToken) {
         Optional<PaymentInfo> maybePaymentInfo = paymentRepository.findByPaymentStatus(orderId, PaymentStatus.결제준비);
 
         if(maybePaymentInfo.isEmpty()) throw new IllegalArgumentException("결제준비중인 주문이 존재하지 않습니다.");
@@ -53,13 +51,13 @@ public class OrderServiceImpl implements OrderService {
         PaymentInfo paymentReadyInfo = maybePaymentInfo.get();
 
         paymentService.kakaoPaymentApprove(pgToken,paymentReadyInfo);
-
+        Order order;
         try {
             Member buyerMember = paymentReadyInfo.getBuyerMember();
             Product product = paymentReadyInfo.getProduct();
 
 
-            Order order = Order.builder()
+            order = Order.builder()
                     .orderId(paymentReadyInfo.getOrderId())
                     .buyerMember(buyerMember)
                     .product(product)
@@ -71,9 +69,9 @@ public class OrderServiceImpl implements OrderService {
             addOrderTransactional(order,product);
         }catch (Exception e) {
             paymentService.kakaoPaymentCancel(paymentReadyInfo);
-            throw new RuntimeException("결제 실패");
+            return new HttpResponse(ApiResultCode.FAIL,"결제실패");
         }
-        return paymentReadyInfo.getOrderId();
+        return new HttpResponse(ApiResultCode.OK,"주문성공",order);
     }
 
     @Transactional
@@ -83,41 +81,41 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Object getOrders() {
+    public HttpResponse getOrders() {
         List<Order> orders = orderRepository.findByAll();
-        if (orders.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"주문이 존재하지 않습니다.");
+        if (orders.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"주문이 존재하지 않습니다.");
 
-        return orders;
+        return new HttpResponse(ApiResultCode.OK,"전체 주문을 조회하였습니다.",orders);
     }
 
     @Override
-    public Object getOrders(OrderStatus status) {
+    public HttpResponse getOrders(OrderStatus status) {
         List<Order> orders = orderRepository.findByOrderStatus(status);
-        if (orders.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"주문이 존재하지 않습니다.");
-        return orders;
+        if (orders.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"주문이 존재하지 않습니다.");
+        return  new HttpResponse(ApiResultCode.OK,status+" 주문을 조회하였습니다.",orders);
     }
 
     @Override
-    public Object getOrder(Long orderId) {
+    public HttpResponse getOrder(Long orderId) {
         Optional<Order> mayBeOrderId = orderRepository.findByOrderId(orderId);
-        if (mayBeOrderId.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"주문이 존재하지 않습니다.");
+        if (mayBeOrderId.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"주문이 존재하지 않습니다.");
         Order order = mayBeOrderId.get();
-        return order;
+        return new HttpResponse(ApiResultCode.OK,order.getOrderId()+" 주문을 조회하였습니다.",order);
     }
 
     @Override
     @Transactional
-    public Long cancelOrder(Long orderId) {
+    public HttpResponse cancelOrder(Long orderId) {
         Optional<PaymentInfo> maybeSuccessPaymentInfo = paymentRepository.findByPaymentStatus(orderId, PaymentStatus.결제완료);
 
-        if(maybeSuccessPaymentInfo.isEmpty()) throw new IllegalArgumentException("결제승인 주문이 존재하지 않습니다.");
+        if(maybeSuccessPaymentInfo.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"결제승인 주문이 아닙니다.");
         PaymentInfo successPaymentInfo = maybeSuccessPaymentInfo.get();
 
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId);
         if (mayBeOrder.isEmpty()) throw new IllegalArgumentException("주문이 존재하지 않습니다.");
         Order order = mayBeOrder.get();
         OrderStatus status = order.getStatus();
-        if(!status.equals(OrderStatus.주문체결)) throw new IllegalArgumentException("주문체결된 주문이 아닙니다.");
+        if(!status.equals(OrderStatus.주문체결)) return new HttpResponse(ApiResultCode.EXCEPTION,"주문체결된 주문이 아닙니다.");
 
         //카카오페이 결제 취소 및 결제정보 상태변경
         paymentService.kakaoPaymentCancel(successPaymentInfo);
@@ -132,7 +130,7 @@ public class OrderServiceImpl implements OrderService {
         productRepository.updateStatus(productId, ProductStatus.판매중);
         order.changeStatus(OrderStatus.주문취소);
 
-        return order.getOrderId();
+        return new HttpResponse(ApiResultCode.OK,"주문번호 "+orderId+"의 주문을 정상적으로 취소하였습니다.",order);
     }
 
     @Override
@@ -154,48 +152,37 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ChatBotResponse purchaseSuccessReconfirm(String orderId) {
-
-        return orderChatBotResponseService.purchaseSuccessReconfirm(orderId);
-    }
-
-    @Override
     @Transactional
-    public ChatBotResponse purchaseSuccessConfirm(String orderId) {
+    public HttpResponse purchaseConfirm(String orderId) {
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId), OrderStatus.주문체결);
-        if (mayBeOrder.isEmpty()) return new ChatBotExceptionResponse().createException("체결된 주문이 존재하지 않습니다.");
+        if (mayBeOrder.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"체결된 주문이 존재하지 않습니다.");
         Order order = mayBeOrder.get();
         order.changeBuyerConfirmStatus(OrderMemberConfirmStatus.구매확정);
 
-        return orderChatBotResponseService.purchaseSuccessConfirm(order);
-    }
-
-    @Override
-    public ChatBotResponse saleSuccessReconfirm(String orderId) {
-        return orderChatBotResponseService.saleSuccessReconfirm(orderId);
+        return new HttpResponse(ApiResultCode.OK,"정상적으로 구매확정 하였습니다.",order);
     }
 
     @Override
     @Transactional
-    public ChatBotResponse saleSuccessConfirm(String orderId) {
+    public HttpResponse salesConfirm(String orderId) {
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId), OrderStatus.주문체결);
-        if (mayBeOrder.isEmpty()) return new ChatBotExceptionResponse().createException("체결된 주문이 존재하지 않습니다.");
+        if (mayBeOrder.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"체결된 주문이 존재하지 않습니다.");
         Order order = mayBeOrder.get();
         order.changeSellerConfirmStatus(OrderMemberConfirmStatus.판매확정);
         order.orderSuccessConfirm();
-        return orderChatBotResponseService.saleSuccessConfirm(order);
+        return new HttpResponse(ApiResultCode.OK,"정상적으로 판매확정 하였습니다.",order);
     }
 
     @Override
     @Transactional
-    public ChatBotResponse updateTrackingNumber(String orderId, String trackingNumber) {
+    public HttpResponse updateTrackingNumber(String orderId, String trackingNumber) {
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId),OrderStatus.주문체결);
-        if (mayBeOrder.isEmpty()) return new ChatBotExceptionResponse().createException("주문이 존재하지 않습니다.");
+        if (mayBeOrder.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"주문이 존재하지 않습니다.");
 
         Order order = mayBeOrder.get();
 
         order.changeTrackingNumber(trackingNumber);
 
-        return orderChatBotResponseService.updateTrackingNumber();
+        return new HttpResponse(ApiResultCode.OK,"정상적으로 운송장번호를 변경 하였습니다.",trackingNumber);
     }
 }

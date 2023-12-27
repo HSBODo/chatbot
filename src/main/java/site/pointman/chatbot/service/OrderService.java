@@ -5,15 +5,13 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
 
 public interface OrderService {
-    ChatBotResponse purchaseSuccessReconfirm(String orderId);
-    ChatBotResponse purchaseSuccessConfirm(String orderId);
-    ChatBotResponse saleSuccessReconfirm(String orderId);
-    ChatBotResponse saleSuccessConfirm(String orderId);
-    ChatBotResponse updateTrackingNumber(String orderId, String trackingNumber);
-    Long addOrder(Long orderId, String pgToken);
-    Long cancelOrder(Long orderId);
+    HttpResponse purchaseConfirm(String orderId);
+    HttpResponse salesConfirm(String orderId);
+    HttpResponse updateTrackingNumber(String orderId, String trackingNumber);
+    HttpResponse addOrder(Long orderId, String pgToken);
+    HttpResponse cancelOrder(Long orderId);
     HttpResponse successOrder(Long orderId);
-    Object getOrders();
-    Object getOrders(OrderStatus status);
-    Object getOrder(Long orderId);
+    HttpResponse getOrders();
+    HttpResponse getOrders(OrderStatus status);
+    HttpResponse getOrder(Long orderId);
 }
