@@ -24,6 +24,7 @@ public enum BlockId {
     PRODUCT_GET_CONTRACT_PROFILE("판매대기 상품 프로필 조회","658440c5dcd6f94a82e2b683"),
     PRODUCT_GET_MAIN("메인 상품 조회","658a684e1e9a5e5b2660bffd"),
     PRODUCT_SEARCH("상품검색","657fb4894923ba4502fcfa07"),
+    PRODUCT_SEARCH_NEXT("상품검색 더보기","658c0d3a37a16b3deb7b1dce"),
     ORDER_ADD_TRACKING_NUMBER("판매상품 운송장번호 등록","6583d9c93fa0457f23d7ac03"),
     FIND_PRODUCTS_BY_CATEGORY("카테고리로 상품 조회","657da1bac75579280e900af9"),
     FIND_NOTICES("공지사항 목록","65262c152dd06e457d91c7c2"),

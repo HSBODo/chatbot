@@ -222,7 +222,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         chatBotResponse.addCarousel(carousel);
         chatBotResponse.addQuickButton(ButtonName.상품검색.name(), ButtonAction.블럭이동, BlockId.PRODUCT_SEARCH.getBlockId());
         if (products.hasNext()) {
-            Button nextButton = new Button(ButtonName.더보기.name(), ButtonAction.블럭이동, BlockId.PRODUCT_SEARCH.getBlockId());
+            Button nextButton = new Button(ButtonName.더보기.name(), ButtonAction.블럭이동, BlockId.PRODUCT_SEARCH_NEXT.getBlockId());
             nextButton.setExtra(ButtonParamKey.pageNumber,String.valueOf(++pageNumber));
             nextButton.setExtra(ButtonParamKey.searchWord,searchWord);
             chatBotResponse.addQuickButton(nextButton);

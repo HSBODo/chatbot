@@ -136,7 +136,7 @@ public class ProductServiceImpl implements ProductService {
     public HttpResponse getProductsBySearchWord(String searchWord, int pageNumber) {
         try {
             Sort sort = Sort.by("createDate").descending();
-            Page<Product> products = productRepository.findBySearchWord(searchWord, ProductStatus.판매중, ProductStatus.예약,PageRequest.of(0,10,sort));
+            Page<Product> products = productRepository.findBySearchWord(searchWord, ProductStatus.판매중, ProductStatus.예약,PageRequest.of(pageNumber,10,sort));
 
 
             if(products.getContent().isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"등록된 상품이 없어 상품을 찾을수 없습니다.");
