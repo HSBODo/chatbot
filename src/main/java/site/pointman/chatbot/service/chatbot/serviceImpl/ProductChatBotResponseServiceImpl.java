@@ -445,34 +445,32 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             int lastProduct = firstNumber+5;
             String url = "https://quasarzone.com/bbs/qb_saleinfo?page="+pageNumber;
             String cssQuery = "#frmSearch > div > div.list-board-wrap > div.market-type-list.market-info-type-list.relative > table > tbody > tr";
+            List<SpecialProduct> specialProducts;
 
             Elements jsoupElements = crawlingService.getJsoupElements(url, cssQuery);
             List<Element> filterElements = crawlingService.filterElements(jsoupElements);
 
-            List<SpecialProduct> specialProducts;
             specialProducts = redisService.isSameSpecialProduct(pageNumber, firstNumber, lastProduct, filterElements);
 
             if (specialProducts.isEmpty()) {
-                int cnt = firstNumber;
+                int number = firstNumber;
 
                 specialProducts = crawlingService.getSpecialProducts(filterElements,firstNumber,lastProduct);
 
                 for (SpecialProduct specialProduct : specialProducts) {
-                    log.info("setRedisKey={}",pageNumber+"-"+cnt);
-                    redisService.setRedisSpecialProductValue(pageNumber+"-"+cnt,specialProduct);
-                    cnt++;
+                    redisService.setRedisSpecialProductValue(pageNumber+"-"+number,specialProduct);
+                    number++;
                 }
             }
 
-            int nextFirstProduct= lastProduct;
+            int nextFirstProduct = lastProduct;
             int nextPage = pageNumber;
 
-            if (filterElements.size() <= lastProduct){
+            if (filterElements.size() <= nextFirstProduct){
                 nextFirstProduct = 0;
                 nextPage++;
             }
-            log.info("nextNum={}",nextFirstProduct);
-            log.info("nextPage={}",nextPage);
+
             ChatBotResponse chatBotResponse = new ChatBotResponse();
             Carousel<CommerceCard> commerceCardCarousel = new Carousel<>();
 
@@ -507,7 +505,6 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             chatBotResponse.addQuickButton(nextButton);
             return chatBotResponse;
         }catch (Exception e) {
-            log.info("e={}",e.getStackTrace());
             return chatBotExceptionResponse.createException();
         }
     }

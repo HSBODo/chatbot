@@ -41,25 +41,29 @@ public class RedisService {
         ValueOperations<String, String> stringValueOperations = stringRedisTemplate.opsForValue();
         String value = objectMapper.writeValueAsString(specialProduct);
 
-        stringValueOperations.set(key,value,10, TimeUnit.MINUTES);
+        stringValueOperations.set(key,value,15, TimeUnit.MINUTES);
     }
 
     public List<SpecialProduct> isSameSpecialProduct(int page, int firstProduct, int lastProduct, List<Element> filterElements) throws JsonProcessingException {
-        boolean isSame = false;
+        boolean isAllSame = false;
         List<SpecialProduct> specialProducts = new ArrayList<>();
-        for (int i = firstProduct; i < lastProduct; i++){
+
+        for (int i = firstProduct; i < filterElements.size(); i++){
             String text = filterElements.get(i).select("span.ellipsis-with-reply-cnt").text();
             SpecialProduct redisValue = getRedisSpecialProductValue(page + "-" + i);
-            log.info("getRedisKey={}",page + "-" + i);
+
             if (Objects.isNull(redisValue) || !text.equals(redisValue.getTitle())) {
-                isSame = false;
+                isAllSame = false;
                 break;
             }
-            isSame = true;
+
+            isAllSame = true;
             specialProducts.add(redisValue);
+
+            if (i == lastProduct-1) break;
         }
 
-        if (isSame) return specialProducts;
+        if (isAllSame) return specialProducts;
         return new ArrayList<>();
     }
 }
