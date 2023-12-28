@@ -41,7 +41,7 @@ public class RedisService {
         ValueOperations<String, String> stringValueOperations = stringRedisTemplate.opsForValue();
         String value = objectMapper.writeValueAsString(specialProduct);
 
-        stringValueOperations.set(key,value,15, TimeUnit.MINUTES);
+        stringValueOperations.set(key,value,20, TimeUnit.MINUTES);
     }
 
     public List<SpecialProduct> isSameSpecialProduct(int page, int firstProduct, int lastProduct, List<Element> filterElements) throws JsonProcessingException {

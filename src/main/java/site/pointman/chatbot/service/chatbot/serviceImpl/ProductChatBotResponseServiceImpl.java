@@ -505,6 +505,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
             chatBotResponse.addQuickButton(nextButton);
             return chatBotResponse;
         }catch (Exception e) {
+            log.info("e={}",e.getMessage());
             return chatBotExceptionResponse.createException();
         }
     }

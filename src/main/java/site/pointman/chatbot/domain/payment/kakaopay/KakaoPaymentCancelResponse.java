@@ -39,4 +39,7 @@ public class KakaoPaymentCancelResponse {
     @JsonProperty("approved_at")
     private String approvedAt;
 
+    @JsonProperty("canceled_at")
+    private String canceledAt;
+
 }
