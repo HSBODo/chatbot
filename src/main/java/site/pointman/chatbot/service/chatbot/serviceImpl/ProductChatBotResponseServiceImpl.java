@@ -439,37 +439,40 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     }
 
     @Override
-    public ChatBotResponse getSpecialProductsChatBotResponse(int currentPage,int firstProduct) {
+    public ChatBotResponse getSpecialProductsChatBotResponse(int pageNumber, int firstNumber) {
         try {
-            if (currentPage == 0) currentPage++;
-            int lastProduct = firstProduct+5;
-            String url = "https://quasarzone.com/bbs/qb_saleinfo?page="+currentPage;
+            if (pageNumber == 0) pageNumber++;
+            int lastProduct = firstNumber+5;
+            String url = "https://quasarzone.com/bbs/qb_saleinfo?page="+pageNumber;
             String cssQuery = "#frmSearch > div > div.list-board-wrap > div.market-type-list.market-info-type-list.relative > table > tbody > tr";
 
             Elements jsoupElements = crawlingService.getJsoupElements(url, cssQuery);
             List<Element> filterElements = crawlingService.filterElements(jsoupElements);
 
             List<SpecialProduct> specialProducts;
-            specialProducts = redisService.isSameSpecialProduct(currentPage, firstProduct, lastProduct, filterElements);
-            if (specialProducts.isEmpty()) {
-                int cnt = firstProduct;
+            specialProducts = redisService.isSameSpecialProduct(pageNumber, firstNumber, lastProduct, filterElements);
 
-                specialProducts = crawlingService.getSpecialProducts(filterElements,firstProduct,lastProduct);
+            if (specialProducts.isEmpty()) {
+                int cnt = firstNumber;
+
+                specialProducts = crawlingService.getSpecialProducts(filterElements,firstNumber,lastProduct);
 
                 for (SpecialProduct specialProduct : specialProducts) {
-                    redisService.setRedisSpecialProductValue(currentPage+"-"+cnt,specialProduct);
+                    log.info("setRedisKey={}",pageNumber+"-"+cnt);
+                    redisService.setRedisSpecialProductValue(pageNumber+"-"+cnt,specialProduct);
                     cnt++;
                 }
             }
 
             int nextFirstProduct= lastProduct;
-            int nextPage = currentPage;
+            int nextPage = pageNumber;
 
             if (filterElements.size() <= lastProduct){
                 nextFirstProduct = 0;
                 nextPage++;
             }
-
+            log.info("nextNum={}",nextFirstProduct);
+            log.info("nextPage={}",nextPage);
             ChatBotResponse chatBotResponse = new ChatBotResponse();
             Carousel<CommerceCard> commerceCardCarousel = new Carousel<>();
 
