@@ -78,7 +78,9 @@
 
 
 ---
-
+## 🚀 관리자 API 명세서
+![img_2.png](images/Api명세.png)
+- **`POSTMAN:`**  **https://documenter.getpostman.com/view/22940487/2s9YkuZy7W#1ebc0f0c-9ebc-495c-b852-c4e939130267**
 
 ## 🎯 비즈니스 프로세스  
 ## 1. 첫번째 거래방법
