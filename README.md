@@ -4,14 +4,14 @@
 ## 🔍 개발 스팩
 - 프론트엔드: 카카오 챗봇 (Json 통신)
 - 백엔드:
-  - 언어: Java 11
-  - 프레임워크: Spring boot 2.7
-  - 데이터베이스: Mysql 8.0
-  - ORM: JPA (Hibernate)
-  - 주요 라이브러리: Redis, JWT, Jsoup
-  - 테스트 라이브러리: Junit, MockMvc 
-  - AWS: Ec2, S3, Route 53
-  - CI/CD: GitHub Action, Docker
+  - 언어: **`Java 11`**
+  - 프레임워크: **`Spring boot 2.7`**
+  - 데이터베이스: **`Mysql 8.0`**
+  - ORM: **`JPA (Hibernate)`**
+  - 주요 라이브러리: **`Redis, JWT, Jsoup`**
+  - 테스트 라이브러리: **`Junit, MockMvc`**
+  - AWS: **`Ec2, S3, Route 53`**
+  - CI/CD: **`GitHub Action, Docker`**
 ---
 ## 📮 아키텍처 설계
 ![img_1.png](img_1.png)
