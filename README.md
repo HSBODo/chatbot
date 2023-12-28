@@ -20,11 +20,11 @@
 
 ---
 ## 📮 아키텍처 설계
-![img_1.png](img_1.png)
+![img_1.png](images/img_1.png)
 
 ---
 ## 🚀 도메인 ERD 설계
-![img.png](img.png)
+![img.png](images/img.png)
 
 ---
 
@@ -32,19 +32,19 @@
 ### 1. Redis와 Jsoup 사용이유 및 트러블 슈팅
 * **`특가상품 기능`** 을 개발하기 위해 **`Jsoup`** 라이브러리를 활용하여 내가 자주 이용하는 특가정보 공유 사이트를 타겟하여 실제 데이터를 크롤링 하기로 했다. 
 * 1페이지에 5개의 상품 데이터를 보여주기 위한 타겟 사이트의 총 Request 6회다.  
-![img_17.png](img_17.png)
+![img_17.png](images/img_17.png)
 
   
 * **`타겟 사이트에서 한번에 빠르게 반복적인 Request 요청을 막는 이슈가 발생하였다.`**
-![img_15.png](img_15.png)
+![img_15.png](images/img_15.png)
 * **`이슈를 해결하기 위해서 Thread.sleep(230)으로 요청 간격을 주어 해결하였다.`**
 * 이슈는 해결하였지만 최종적으로 클라이언트에 응답하는 시간이 4~5초가 정도의 느린 응답속도였고, 카카오톡 챗봇의 타임아웃 5초 정책에 걸렸다.
 
 
 * **`Request 요청 횟수를 줄이고 응답속도를 개선하기 위해 Redis를 사용하기로 하였다`**
 * **`Redis를 활용하여 첫번째 조회 데이터를 메모리에 저장하고 똑같은 요청이 있으면 메모리에서 데이터를 가져와 응답 해주는 방식으로 이슈를 해결하였다.`**
-* 그 결과 Request 횟수를 **`6회 -> 1회`** 로 줄였고, 최종 응답시간을 **`5초 -> 0.35초`** 로 개선하였다.
-![img_16.png](img_16.png)
+* 그 결과 Request 횟수를 **`6회 -> 1회`** 로 줄였고, 최종 응답시간을 **`5초 -> 0.35초`** 로 개선하였다.  
+![img_16.png](images/img_16.png)
 
 
 ### 2. AOP와 JWT 사용이유
@@ -71,7 +71,7 @@
 * 이슈를 해결하기 위해 **`Swap Memory`** 를 사용하기로 결정하였다.
 * **`Swap Memory`** 는 하드디스크를 가상메모리로 활용하기 때문에 메모리보다 속도가 현저히 느리다.
 * 2GB 하드디시크의 용량을 가상메모리로 할당하여 **`점유률이 92% -> 70%`** 로 임시적으로 이슈를 해결하였다.  
-![img_14.png](img_14.png)
+![img_14.png](images/img_14.png)
 
 
 
@@ -82,54 +82,54 @@
 ## 1. 첫번째 거래방법
   - **`구매할 상품을 찾는다.`**
     
-    <img src="img_2.png" width="30%" height="30%"/>
+    <img src="images/img_2.png" width="25%" height="25%"/>
     
 
   - **`구매할 상품정보 및 상품사진을 확인하여 상품상태를 확인한다.`**
     
-    <img src="img_3.png" width="30%" height="30%"/>
+    <img src="images/img_3.png" width="25%" height="25%"/>
     
 
   - **`오픈채팅방에 입장해서 판매자와 대화하여 약속시간과 장소를 정한다.`**
     
-    <img src="img_4.png" width="30%" height="30%"/>
+    <img src="images/img_4.png" width="25%" height="25%"/>
     
 
   - **`판매자는 약속시간까지 판매상품을 예약상태로 변경한다.`**
     
-    <img src="img_5.png" width="30%" height="30%"/>
-    <img src="img_6.png" width="30%" height="30%"/>
+    <img src="images/img_5.png" width="25%" height="25%"/>
+    <img src="images/img_6.png" width="25%" height="25%"/>
     
 
   - **`약속시간에 장소에 가서 판매자와 구매자가 직접 거래를 한다.`**
   - **`거래가 완료된 후 판매자는 예약상품을 판매완료 상태로 변경한다.`**
     
-    <img src="img_7.png" width="30%" height="30%"/>
+    <img src="images/img_7.png" width="25%" height="25%"/>
 ## 2. 두번째 거래방법
   - **`구매할 상품을 찾는다.`**
     
-     <img src="img_2.png" width="30%" height="30%"/>
+     <img src="images/img_2.png" width="25%" height="25%"/>
     
 
   - **`구매할 상품정보 및 상품 이미지를 확인한다.`**
     
-     <img src="img_3.png" width="30%" height="30%"/>
+     <img src="images/img_3.png" width="25%" height="25%"/>
     
 
   - **`카카오페이 결제를 한다.`**
     
-     <img src="img_8.png" width="30%" height="30%"/>
-     <img src="img_9.png" width="30%" height="30%"/>
-     <img src="img_10.png" width="30%" height="30%"/>
+     <img src="images/img_8.png" width="25%" height="25%"/>
+     <img src="images/img_9.png" width="25%" height="25%"/>
+     <img src="images/img_10.png" width="25%" height="25%"/>
 
 
   - **`판매자는 운송장번호를 필수로 입력해야 구매확정 버튼이 활성화 되어 구매자가 구매확정을 할 수 있다.`**
   - **`운송장번호가 입력되고 상품을 정상적으로 받은 후 구매확정을 한다 구매확정이 되면 판매확정 버튼이 활성화 된다. `**
   - **`구매확정이 되면 판매자는 최종적으로 판매확정을 하여 거래완료가 되고 상품은 판매완료 상태로 된다.`**
     
-     <img src="img_11.png" width="30%" height="30%"/>
-     <img src="img_12.png" width="30%" height="30%"/>
-     <img src="img_13.png" width="30%" height="30%"/>
+     <img src="images/img_11.png" width="25%" height="25%"/>
+     <img src="images/img_12.png" width="25%" height="25%"/>
+     <img src="images/img_13.png" width="25%" height="25%"/>
 
 
 
