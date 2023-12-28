@@ -47,16 +47,16 @@ public class RedisService {
     public List<SpecialProduct> isSameSpecialProduct(int page, int firstProduct, int lastProduct, List<Element> filterElements) throws JsonProcessingException {
         boolean isSame = false;
         List<SpecialProduct> specialProducts = new ArrayList<>();
-        for (int i = firstProduct; i<lastProduct; i++){
+        for (int i = firstProduct; i < lastProduct; i++){
             String text = filterElements.get(i).select("span.ellipsis-with-reply-cnt").text();
-            SpecialProduct redisStringValue = getRedisSpecialProductValue(page + "-" + i);
-
-            if (Objects.isNull(redisStringValue) || !text.equals(redisStringValue.getTitle())) {
+            SpecialProduct redisValue = getRedisSpecialProductValue(page + "-" + i);
+            log.info("getRedisKey={}",page + "-" + i);
+            if (Objects.isNull(redisValue) || !text.equals(redisValue.getTitle())) {
                 isSame = false;
                 break;
             }
             isSame = true;
-            specialProducts.add(redisStringValue);
+            specialProducts.add(redisValue);
         }
 
         if (isSame) return specialProducts;

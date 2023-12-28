@@ -28,6 +28,6 @@ public interface ProductChatBotResponseService {
     ChatBotResponse getSalesContractProductChatBotResponse(String userKey, String orderId);
     ChatBotResponse getPurchaseProducts(String userKey,int pageNumber);
     ChatBotResponse getPurchaseProductProfile(String userKey,String orderId);
-    ChatBotResponse getSpecialProductsChatBotResponse(int nextPage, int nextFirstNumber);
+    ChatBotResponse getSpecialProductsChatBotResponse(int pageNumber, int firstNumber);
     ChatBotResponse getMainProductsChatBotResponse(int currentPage);
 }
