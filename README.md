@@ -2,6 +2,7 @@
 - 중고거래 사이트를 벤치마크 하여 구매자와 판매자를 연결하여 중계해주는 중고거래 챗봇을 만들었습니다.
 ---
 ## 🔍 개발 스팩
+- GitHub: https://github.com/HSBODo/chatbot
 - 도메인: https://www.pointman.shop
 - 카카오 채널: https://pf.kakao.com/_eeEjG
 - 프론트엔드: **`카카오 챗봇 (JSON 통신)`**
