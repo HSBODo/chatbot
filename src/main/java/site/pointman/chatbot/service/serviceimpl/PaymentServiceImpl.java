@@ -202,6 +202,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         //결제정보 상태변경
         successPaymentInfo.changeStatus(PaymentStatus.결제취소);
+        successPaymentInfo.changeCancelAt(kakaoPaymentCancelResponse.getCanceledAt());
         return kakaoPaymentCancelResponse;
     }
 
