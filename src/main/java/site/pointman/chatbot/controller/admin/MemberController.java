@@ -23,7 +23,7 @@ public class MemberController {
         String name = member.getName();
         String userKey = member.getUserKey();
         String phoneNumber = member.getPhoneNumber();
-        return memberService.join(name,userKey,phoneNumber);
+        return memberService.join(userKey, name, phoneNumber);
     }
 
     @ResponseBody
