@@ -23,6 +23,10 @@
 ![img.png](images/아키텍처.png)
 
 ---
+## 🎯 CI/CD 파이프라인
+![img_1.png](images/파이프라인.png)
+
+---
 ## 🚀 도메인 ERD 설계
 ![img.png](images/img.png)
 
