@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.dto.member.MemberDto;
 
 import java.util.Optional;
 
@@ -15,41 +17,83 @@ class MemberRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
 
+    private boolean isUse = true;
+    private String userKey = "QFJSyeIZbO77";
+    private String name = "라이언";
+
     @Test
     @Transactional
-    void findByCustomer() {
-        //give
-        String userKey = "QFJSyeIZbO77";
+    void findByUserKey() {
+        Optional<Member> mayBeMember = memberRepository.findByUserKey(userKey, isUse);
 
-        //when
-        Optional<Member> byCustomer = memberRepository.findByUserKey(userKey);
-        Member member = byCustomer.get();
+        Assertions.assertThat(mayBeMember).isNotEmpty();
+        Assertions.assertThat(mayBeMember.get().getName()).isEqualTo(name);
+        Assertions.assertThat(mayBeMember.get().getUserKey()).isEqualTo(userKey);
+    }
 
-        //then
-        Assertions.assertThat(member.getUserKey()).isEqualTo(userKey);
+    @Test
+    @Transactional
+    void findByName() {
+        Optional<Member> mayBeMember = memberRepository.findByName(name, isUse);
+
+        Assertions.assertThat(mayBeMember).isNotEmpty();
+        Assertions.assertThat(mayBeMember.get().getName()).isEqualTo(name);
+        Assertions.assertThat(mayBeMember.get().getUserKey()).isEqualTo(userKey);
+    }
+
+    @Test
+    @Transactional
+    void findByRole() {
+        MemberRole admin = MemberRole.ADMIN;
+
+        Optional<Member> mayBeMember = memberRepository.findByRole(name, userKey,admin ,isUse);
+
+        Assertions.assertThat(mayBeMember).isNotEmpty();
+        Assertions.assertThat(mayBeMember.get().getName()).isEqualTo(name);
+        Assertions.assertThat(mayBeMember.get().getUserKey()).isEqualTo(userKey);
+        Assertions.assertThat(mayBeMember.get().getRole()).isEqualTo(admin);
     }
 
     @Test
     @Transactional
     void updateCustomerPhoneNumber() {
         //give
-        String userKey = "QFJSyeIZbO77";
         String phoneNumber = "01011112222";
+
         //when
-        memberRepository.updateMemberPhoneNumber(userKey,phoneNumber);
+        Member member = memberRepository.updateMemberPhoneNumber(userKey, phoneNumber, isUse);
 
         //then
+        Assertions.assertThat(member.getPhoneNumber()).isEqualTo(phoneNumber);
+    }
+
+    @Test
+    @Transactional
+    void updateMember() {
+        MemberDto memberDto = MemberDto.builder()
+                .name("이름")
+                .phoneNumber("01015154789")
+                .build();
+        Member member = memberDto.toEntity();
+
+        Member updateMember = memberRepository.updateMember(userKey, member, isUse);
+
+        //then
+        Assertions.assertThat(updateMember.getPhoneNumber()).isEqualTo(memberDto.getPhoneNumber());
+        Assertions.assertThat(updateMember.getName()).isEqualTo(memberDto.getName());
     }
 
     @Test
     @Transactional
     void delete() {
         //give
-        String userKey = "QFJSyeIZbO77";
+        String userKey = "userKey";
 
         //when
-        memberRepository.delete("QFJSyeIZbO77");
+        memberRepository.delete(userKey,isUse);
 
         //then
     }
+
+
 }
