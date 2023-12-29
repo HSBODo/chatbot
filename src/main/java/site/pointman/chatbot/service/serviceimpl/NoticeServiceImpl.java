@@ -30,18 +30,19 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public Notice addNotice(NoticeDto noticeDto) {
+    public Response addNotice(NoticeDto noticeDto) {
         Optional<Member> myBeMember = memberRepository.findByName(noticeDto.getWriter(),isUse);
-        if (myBeMember.isEmpty()) throw new NoSuchElementException("작성자가 존재하지 않습니다.");
+        if (myBeMember.isEmpty()) return new Response(ResultCode.FAIL,"작성자가 존재하지 않습니다.");
 
         Member member = myBeMember.get();
-        noticeDto.setWriter(member.getUserKey());
+
 
         Notice notice = noticeDto.toEntity();
+        notice.changeMember(member);
 
         Notice saveNotice = noticeRepository.save(notice);
 
-        return saveNotice;
+        return new Response(ResultCode.OK,"성공적으로 글을 작서하였습니다.","게시글 번호= "+saveNotice.getId());
     }
 
     @Override

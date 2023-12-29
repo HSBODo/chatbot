@@ -90,7 +90,9 @@ public class Notice extends BaseEntity {
     public void changeTitle(String title){
         this.title = title;
     }
-
+    public void changeMember(Member member){
+        this.member = member;
+    }
     public void changeDescription(String description){
         this.description = description;
     }
