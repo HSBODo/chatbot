@@ -73,7 +73,7 @@ public class PaymentServiceImpl implements PaymentService {
         Optional<Member> mayBeMember = memberRepository.findByUserKey(userKey,isUse);
         if (mayBeMember.isEmpty()) throw new IllegalArgumentException("회원이 존재하지 않습니다.");
 
-        Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
+        Optional<Product> mayBeProduct = productRepository.findByProductId(productId, isUse);
         if (mayBeProduct.isEmpty()) throw new IllegalArgumentException("상품이 존재하지 않습니다");
 
         Product product = mayBeProduct.get();

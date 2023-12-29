@@ -115,7 +115,7 @@ public class MemberServiceImpl implements MemberService {
                 }
             }
 
-            List<Product> products = productRepository.findByUserKey(userKey);
+            List<Product> products = productRepository.findByUserKey(userKey, isUse);
 
             for (Product product : products) {
                 Optional<Order> salesProduct = orderRepository.findByProductId(product.getId(), OrderStatus.주문체결);

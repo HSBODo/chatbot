@@ -1,27 +1,29 @@
 package site.pointman.chatbot.service;
 
+import org.springframework.data.domain.Page;
 import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.constant.ProductStatus;
+import site.pointman.chatbot.domain.order.Order;
+import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.product.ProductDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductService {
     Response addProduct(ProductDto productDto, String userKey, List<String> imageUrls);
-    Response getProductsByCategory(Category category, int pageNumber);
-    Response getProduct(Long productId);
-    Response getProductsAll();
-    Response getMemberProducts(String userKey);
-    Response getMemberProductsByStatus(String userKey, ProductStatus productStatus, int pageNumber);
-    Response getMainProducts(int page);
-    Response getProductsBySearchWord(String searchWord, int pageNumber);
-    Response getSalesContractProducts(String userKey, int pageNumber);
-    Response getSalesContractProduct(String userKey, Long orderId);
-    Response getPurchaseProducts(String userKey, int pageNumber);
-    Response getPurchaseProduct(String userKey, String orderId);
+    Page<Product> getProductsByCategory(Category category, int pageNumber);
+    Optional<Product> getProduct(Long productId);
+    List<Product> getProductsAll();
+    List<Product> getMemberProducts(String userKey);
+    Page<Product> getMemberProductsByStatus(String userKey, ProductStatus productStatus, int pageNumber);
+    Page<Product> getMainProducts(int pageNumber);
+    Page<Product> getProductsBySearchWord(String searchWord, int pageNumber);
+    Page<Product> getSalesContractProducts(String userKey, int pageNumber);
+    Optional<Order> getSalesContractProduct(String userKey, Long orderId);
+    Page<Order> getPurchaseProducts(String userKey, int pageNumber);
+    Optional<Order> getPurchaseProduct(String userKey, Long orderId);
     Response updateProductStatus(Long productId, ProductStatus status);
     Response deleteProduct(Long productId);
-
-//    ChatBotResponse getSpecialProducts(int currentPage,int firstNumber);
 }

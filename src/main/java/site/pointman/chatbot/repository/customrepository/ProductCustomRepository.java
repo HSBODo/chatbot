@@ -14,15 +14,15 @@ public interface ProductCustomRepository {
     void saveProduct(Product product);
     void saveProductImage(ProductImage productImage);
     void insertProduct(ProductDto productDto, ProductImageDto productImageDto);
-    void updateStatus(Long productId, ProductStatus productStatus);
-    void deleteProduct(Long productId);
-    List<Product> findByUserKey(String userKey);
-    List<Product> findByUserKey(String userKey, ProductStatus status);
-    List<Product> findByCategory(Category category, ProductStatus status);
-    List<Product> findByCategory(Category category, ProductStatus firstStatus,ProductStatus secondStatus);
-    Optional<Product> findByProductId(Long productId);
+    void updateStatus(Long productId, ProductStatus productStatus, boolean isUse);
+    void deleteProduct(Long productId, boolean isUse);
+    List<Product> findByUserKey(String userKey, boolean isUse);
+    List<Product> findByUserKey(String userKey, ProductStatus status, boolean isUse);
+    List<Product> findByCategory(Category category, ProductStatus status, boolean isUse);
+    List<Product> findByCategory(Category category, ProductStatus firstStatus,ProductStatus secondStatus, boolean isUse);
+    Optional<Product> findByProductId(Long productId, boolean isUse);
     List<Product> findByAll();
-    List<Product> findByStatus(ProductStatus firstStatus,ProductStatus secondStatus);
-    List<Product> findByStatus(ProductStatus firstStatus);
+    List<Product> findByStatus(ProductStatus firstStatus, ProductStatus secondStatus, boolean isUse);
+    List<Product> findByStatus(ProductStatus firstStatus, boolean isUse);
 
 }
