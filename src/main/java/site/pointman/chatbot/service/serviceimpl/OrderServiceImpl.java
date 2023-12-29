@@ -71,26 +71,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Response getOrders() {
+    public List<Order> getOrders() {
         List<Order> orders = orderRepository.findByAll();
-        if (orders.isEmpty()) return new Response(ResultCode.EXCEPTION,"주문이 존재하지 않습니다.");
 
-        return new Response(ResultCode.OK,"전체 주문을 조회하였습니다.",orders);
+        return orders;
     }
 
     @Override
-    public Response getOrders(OrderStatus status) {
+    public List<Order> getOrdersByStatus(OrderStatus status) {
         List<Order> orders = orderRepository.findByOrderStatus(status);
-        if (orders.isEmpty()) return new Response(ResultCode.EXCEPTION,"주문이 존재하지 않습니다.");
-        return  new Response(ResultCode.OK,status+" 주문을 조회하였습니다.",orders);
+
+        return orders;
     }
 
     @Override
-    public Response getOrder(Long orderId) {
-        Optional<Order> mayBeOrderId = orderRepository.findByOrderId(orderId);
-        if (mayBeOrderId.isEmpty()) return new Response(ResultCode.EXCEPTION,"주문이 존재하지 않습니다.");
-        Order order = mayBeOrderId.get();
-        return new Response(ResultCode.OK,order.getOrderId()+" 주문을 조회하였습니다.",order);
+    public Optional<Order> getOrder(Long orderId) {
+        Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId);
+
+        return mayBeOrder;
     }
 
     @Override
