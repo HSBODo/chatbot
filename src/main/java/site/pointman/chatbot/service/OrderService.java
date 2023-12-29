@@ -1,7 +1,11 @@
 package site.pointman.chatbot.service;
 
 import site.pointman.chatbot.constant.OrderStatus;
+import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.response.Response;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface OrderService {
     Response purchaseConfirm(String orderId);
@@ -10,7 +14,7 @@ public interface OrderService {
     Response addOrder(Long orderId, String pgToken);
     Response cancelOrder(Long orderId);
     Response successOrder(Long orderId);
-    Response getOrders();
-    Response getOrders(OrderStatus status);
-    Response getOrder(Long orderId);
+    List<Order> getOrders();
+    List<Order> getOrdersByStatus(OrderStatus status);
+    Optional<Order> getOrder(Long orderId);
 }

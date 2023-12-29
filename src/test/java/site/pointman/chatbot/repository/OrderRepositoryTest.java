@@ -66,7 +66,7 @@ class OrderRepositoryTest {
     void findByOrderId() {
 
         //give
-        Long orderId = 483967L;
+        Long orderId = 512054L;
 
         //when
         Order order = orderRepository.findByOrderId(orderId).get();

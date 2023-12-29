@@ -7,11 +7,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.constant.OrderStatus;
+import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.service.OrderService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -33,20 +35,27 @@ public class OrderAdminController {
 
     @ResponseBody
     @GetMapping(value = "all")
-    public Response getOrders () {
-        return orderService.getOrders();
+    public Object getOrders () {
+        List<Order> orders = orderService.getOrders();
+        if (orders.isEmpty()) return new Response(ResultCode.FAIL,"주문이 존재하지 않습니다.");
+
+        return orders;
     }
 
     @ResponseBody
     @GetMapping(value = "")
-    public Response getOrdersByStatus (@RequestParam("status") OrderStatus orderStatus) {
-        return orderService.getOrders(orderStatus);
+    public Object getOrdersByStatus (@RequestParam("status") OrderStatus orderStatus) {
+        List<Order> orders = orderService.getOrdersByStatus(orderStatus);
+        if (orders.isEmpty()) return new Response(ResultCode.FAIL,"주문이 존재하지 않습니다.");
+        return orders;
     }
 
     @ResponseBody
     @GetMapping(value = "{orderId}")
-    public Response getOrderByOrderId (@PathVariable("orderId") Long orderId) {
-        return orderService.getOrder(orderId);
+    public Object getOrderByOrderId (@PathVariable("orderId") Long orderId) {
+        Optional<Order> order = orderService.getOrder(orderId);
+        if (order.isEmpty()) return new Response(ResultCode.FAIL,"주문이 존재하지 않습니다.");
+        return order.get();
     }
 
     @ResponseBody
