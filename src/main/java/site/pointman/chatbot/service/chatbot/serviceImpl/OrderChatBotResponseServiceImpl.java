@@ -1,21 +1,14 @@
 package site.pointman.chatbot.service.chatbot.serviceImpl;
 
-import com.mysql.cj.util.StringUtils;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
-import site.pointman.chatbot.domain.order.Order;
-import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
-import site.pointman.chatbot.domain.response.property.common.Button;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.Carousel;
-import site.pointman.chatbot.domain.response.property.components.CommerceCard;
-import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.chatbot.OrderChatBotResponseService;
-import site.pointman.chatbot.utill.CustomStringUtils;
 
 import java.util.List;
 
@@ -50,7 +43,7 @@ public class OrderChatBotResponseServiceImpl implements OrderChatBotResponseServ
     @Override
     public ChatBotResponse purchaseConfirm(String orderId) {
         HttpResponse result = orderService.purchaseConfirm(orderId);
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
@@ -77,7 +70,7 @@ public class OrderChatBotResponseServiceImpl implements OrderChatBotResponseServ
     @Override
     public ChatBotResponse salesConfirm(String orderId) {
         HttpResponse result = orderService.salesConfirm(orderId);
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
@@ -90,7 +83,7 @@ public class OrderChatBotResponseServiceImpl implements OrderChatBotResponseServ
     @Override
     public ChatBotResponse updateTrackingNumber(String orderId, String trackingNumber) {
         HttpResponse result = orderService.updateTrackingNumber(orderId, trackingNumber);
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 

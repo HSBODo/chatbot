@@ -1,0 +1,154 @@
+package site.pointman.chatbot.service;
+
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+import site.pointman.chatbot.constant.MemberRole;
+import site.pointman.chatbot.constant.ResultCode;
+import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.domain.response.property.common.Profile;
+
+import java.util.List;
+
+@SpringBootTest
+@Transactional
+class MemberServiceTest {
+
+    @Autowired
+    MemberService memberService;
+
+    private String userKey;
+    private String name;
+    private String phoneNumber;
+
+    @BeforeEach
+    void setUp() {
+        userKey = "test123";
+        name = "테스트123";
+        phoneNumber = "01012345678";
+
+        memberService.join(userKey, name, phoneNumber);
+    }
+
+    @AfterEach
+    public void clear() {
+//        memberRepository.delete(userKey);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+         "userKey1:name1:phoneNumber1"
+    }, delimiter = ':')
+    void join(String userKey, String name, String phoneNumber) {
+        //give
+
+        //when
+        HttpResponse response = memberService.join(userKey, name, phoneNumber);
+
+        //then
+        Assertions.assertThat(response.getCode()).isEqualTo(200);
+    }
+
+    @Test
+    void getMembers() {
+        //give
+
+        //when
+        List<Member> members = memberService.getMembers();
+
+        //then
+        members.forEach(member -> {
+            Assertions.assertThat(member.getUserKey()).isNotNull();
+        });
+
+    }
+
+    @Test
+    void getMember() {
+        //give
+
+        //when
+        Member member = memberService.getMember(userKey);
+
+        //then
+        Assertions.assertThat(member.getUserKey()).isEqualTo(userKey);
+    }
+
+    @Test
+    void updateMember() {
+        //give
+        Member updateMember = Member.builder()
+                .name("변경")
+                .phoneNumber("01000000000")
+                .memberRole(MemberRole.CUSTOMER_PLATINUM)
+                .build();
+
+        //when
+        HttpResponse response = memberService.updateMember(userKey, updateMember);
+
+        //then
+        Assertions.assertThat(response.getCode()).isEqualTo(ResultCode.OK.getValue());
+    }
+
+    @Test
+    void updateMemberPhoneNumber() {
+        //give
+        String updatePhoneNumber ="01011112222";
+
+        //when
+        HttpResponse result = memberService.updateMemberPhoneNumber(userKey, updatePhoneNumber);
+        //then
+        Assertions.assertThat(result.getCode()).isEqualTo(ResultCode.OK.getValue());
+    }
+
+    @Test
+    void deleteMember() {
+        //give
+
+        //when
+        HttpResponse response = memberService.deleteMember(userKey);
+        //then
+        Assertions.assertThat(response.getCode()).isEqualTo(ResultCode.OK.getValue());
+    }
+
+    @Test
+    void updateMemberProfileImage() {
+        //give
+        String updateProfileImage ="https://item.kakaocdn.net/do/a7fd7c0630f8aea8419a565fb2773bbc82f3bd8c9735553d03f6f982e10ebe70";
+        //when
+        HttpResponse response = memberService.updateMemberProfileImage(userKey,updateProfileImage);
+        //then
+        Assertions.assertThat(response.getCode()).isEqualTo(ResultCode.OK.getValue());
+    }
+
+    @Test
+    void isCustomer() {
+        //give
+
+        //when
+        boolean customer = memberService.isCustomer(userKey);
+
+        //then
+        Assertions.assertThat(customer).isTrue();
+    }
+
+    @Test
+    void isAdmin() {
+        //give
+        String adminKey= "QFJSyeIZbO77";
+        String adminName= "라이언";
+        //when
+        boolean customer = memberService.isAdmin(adminName,adminKey);
+
+        //then
+        Assertions.assertThat(customer).isTrue();
+    }
+
+}

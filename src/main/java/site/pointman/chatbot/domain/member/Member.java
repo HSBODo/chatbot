@@ -23,6 +23,7 @@ import javax.validation.constraints.NotNull;
 public class Member extends BaseEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable=false)
     private Long seq ;
 
     @Id
@@ -55,7 +56,9 @@ public class Member extends BaseEntity {
     public String getFormatCreateDate(){
       return CustomStringUtils.dateFormat(getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
     }
-
+    public void changeProfileNickname(String nickname){
+        this.profile.changeProfileNickname(nickname);
+    }
     public void changePhoneNumber(String updatePhoneNumber){
         this.phoneNumber = updatePhoneNumber;
     }

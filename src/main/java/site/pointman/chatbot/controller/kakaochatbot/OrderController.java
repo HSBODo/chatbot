@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.annotation.SkipLogging;
-import site.pointman.chatbot.constant.ApiResultCode;
+import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentReadyResponse;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
@@ -54,7 +54,7 @@ public class OrderController {
     public String kakaoPayApprove (@PathVariable Long orderId, @RequestParam(value = "pg_token") String pgToken) throws UnsupportedEncodingException {
         try {
             HttpResponse result = orderService.addOrder(orderId, pgToken);
-            if (result.getCode() != ApiResultCode.OK.getValue()) return "redirect:"+KAKAO_CHANNEL_URL+"/"+URLEncoder.encode("결제실패", "UTF-8");
+            if (result.getCode() != ResultCode.OK.getValue()) return "redirect:"+KAKAO_CHANNEL_URL+"/"+URLEncoder.encode("결제실패", "UTF-8");
 
             return "redirect:"+KAKAO_CHANNEL_URL+"/"+ URLEncoder.encode("결제성공", "UTF-8");
         }catch (Exception e) {

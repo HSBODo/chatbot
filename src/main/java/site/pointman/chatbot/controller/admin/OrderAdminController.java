@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import site.pointman.chatbot.constant.ApiResultCode;
+import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.response.HttpResponse;
@@ -53,7 +53,7 @@ public class OrderAdminController {
     @GetMapping(value = "paymentInfo/{orderId}")
     public Object getPaymentInfoByOrderId (@PathVariable("orderId") Long orderId) {
         Optional<PaymentInfo> mayBePaymentInfo = paymentRepository.findByOrderId(orderId);
-        if (mayBePaymentInfo.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"결제정보가 없습니다.");
+        if (mayBePaymentInfo.isEmpty()) return new HttpResponse(ResultCode.EXCEPTION,"결제정보가 없습니다.");
         PaymentInfo paymentInfo = mayBePaymentInfo.get();
 
         return paymentInfo;
@@ -71,7 +71,7 @@ public class OrderAdminController {
         try {
             return  orderService.cancelOrder(orderId);
         }catch (Exception e) {
-            return new HttpResponse(ApiResultCode.FAIL,"주문번호 "+orderId+"의 주문취소를 실패하였습니다.");
+            return new HttpResponse(ResultCode.FAIL,"주문번호 "+orderId+"의 주문취소를 실패하였습니다.");
         }
     }
 }

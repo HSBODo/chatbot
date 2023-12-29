@@ -29,7 +29,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
     @Override
     public ChatBotResponse getNoticesSuccessChatBotResponse() {
         HttpResponse result = noticeService.getNotices();
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
         List<Notice> notices = (List<Notice>) result.getResult();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
@@ -58,7 +58,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
     @Override
     public ChatBotResponse getNoticeSuccessChatBotResponse(String noticeId) {
         HttpResponse result = noticeService.getNotice(noticeId);
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
         Notice notice = (Notice) result.getResult();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();

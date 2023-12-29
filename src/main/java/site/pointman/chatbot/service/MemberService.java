@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface MemberService {
     HttpResponse join(String userKey, String name, String phoneNumber);
-    HttpResponse getMembers();
-    HttpResponse getMember(String userKey);
+    List<Member> getMembers();
+    Member getMember(String userKey);
     HttpResponse updateMember(String userKey, Member member);
     HttpResponse updateMemberPhoneNumber(String userKey, String updatePhoneNumber);
     HttpResponse deleteMember(String userKey);

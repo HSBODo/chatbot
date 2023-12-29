@@ -1,7 +1,7 @@
 package site.pointman.chatbot.domain.response;
 
 import lombok.Getter;
-import site.pointman.chatbot.constant.ApiResultCode;
+import site.pointman.chatbot.constant.ResultCode;
 
 
 @Getter
@@ -10,13 +10,13 @@ public class HttpResponse {
     private String message;
     private Object result;
 
-    public HttpResponse(ApiResultCode code, String message, Object result) {
+    public HttpResponse(ResultCode code, String message, Object result) {
         this.code = code.getValue();
         this.message = message;
         this.result = result;
     }
 
-    public HttpResponse(ApiResultCode code, String message) {
+    public HttpResponse(ResultCode code, String message) {
         this.code = code.getValue();
         this.message = message;
     }

@@ -29,12 +29,6 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     }
 
     @Override
-    public List<Member> findByAll() {
-        return em.createQuery("select m from Member m", Member.class)
-                .getResultList();
-    }
-
-    @Override
     public Optional<Member> findByName(String name) {
         return em.createQuery("select m from Member m where m.name=:name", Member.class)
                 .setParameter("name", name)
@@ -47,11 +41,14 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
                 .setParameter("userKey", userKey)
                 .setParameter("isUse", true)
                 .getSingleResult();
+
         if (Objects.nonNull(member.getName())) findMember.changeName(member.getName());
         if (Objects.nonNull(member.getUserKey())) findMember.changeUserKey(member.getUserKey());
         if (Objects.nonNull(member.getPhoneNumber())) findMember.changePhoneNumber(member.getPhoneNumber());
         if (Objects.nonNull(member.getRole())) findMember.changeRole(member.getRole());
     }
+
+
 
     @Override
     public void updateMemberPhoneNumber(String userKey, String phoneNumber) {
