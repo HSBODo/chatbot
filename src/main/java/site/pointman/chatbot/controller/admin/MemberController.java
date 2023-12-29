@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.dto.member.MemberDto;
 import site.pointman.chatbot.service.MemberService;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class MemberController {
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.GET)
-    public List<Member> getMembers() throws Exception {
+    public List<Member> getMembers() {
         return memberService.getMembers();
     }
 

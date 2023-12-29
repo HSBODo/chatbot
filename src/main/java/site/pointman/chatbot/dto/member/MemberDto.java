@@ -1,9 +1,11 @@
 package site.pointman.chatbot.dto.member;
 
 import lombok.Builder;
+import lombok.Getter;
 import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
 
+@Getter
 public class MemberDto {
     private String userKey;
     private String name;

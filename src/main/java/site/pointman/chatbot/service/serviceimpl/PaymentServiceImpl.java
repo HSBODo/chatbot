@@ -46,6 +46,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Value("${kakao.pay.fail.host.url}")
     private String KAKAO_FAIL_HOST_URL;
+    private boolean isUse = true;
 
     private final String KAKAO_PAY_READY_API_URL ="https://kapi.kakao.com/v1/payment/ready";
     private final String KAKAO_PAY_APPROVE_API_URL ="https://kapi.kakao.com/v1/payment/approve";
@@ -69,7 +70,7 @@ public class PaymentServiceImpl implements PaymentService {
         final int taxFreeAmount = 0;
         final int vatAmount = 0;
 
-        Optional<Member> mayBeMember = memberRepository.findByUserKey(userKey);
+        Optional<Member> mayBeMember = memberRepository.findByUserKey(userKey,isUse);
         if (mayBeMember.isEmpty()) throw new IllegalArgumentException("회원이 존재하지 않습니다.");
 
         Optional<Product> mayBeProduct = productRepository.findByProductId(productId);

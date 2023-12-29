@@ -21,54 +21,42 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     }
 
     @Override
-    public Optional<Member> findByUserKey(String userKey) {
-        return em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
-                .setParameter("userKey", userKey)
-                .setParameter("isUse", true)
-                .getResultList().stream().findAny();
-    }
-
-    @Override
-    public Optional<Member> findByName(String name) {
-        return em.createQuery("select m from Member m where m.name=:name", Member.class)
-                .setParameter("name", name)
-                .getResultList().stream().findAny();
-    }
-
-    @Override
-    public void updateMember(String userKey, Member member) {
+    public Member updateMember(String userKey, Member member, boolean isUse) {
         Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
                 .setParameter("userKey", userKey)
-                .setParameter("isUse", true)
+                .setParameter("isUse", isUse)
                 .getSingleResult();
 
         if (Objects.nonNull(member.getName())) findMember.changeName(member.getName());
         if (Objects.nonNull(member.getUserKey())) findMember.changeUserKey(member.getUserKey());
         if (Objects.nonNull(member.getPhoneNumber())) findMember.changePhoneNumber(member.getPhoneNumber());
         if (Objects.nonNull(member.getRole())) findMember.changeRole(member.getRole());
+
+        return findMember;
     }
 
 
 
     @Override
-    public void updateMemberPhoneNumber(String userKey, String phoneNumber) {
+    public Member updateMemberPhoneNumber(String userKey, String phoneNumber, boolean isUse) {
         Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
                 .setParameter("userKey", userKey)
-                .setParameter("isUse", true)
+                .setParameter("isUse", isUse)
                 .getSingleResult();
         findMember.changePhoneNumber(phoneNumber);
+        return findMember;
     }
 
     @Override
-    public void delete(String userKey) {
+    public void delete(String userKey, boolean isUse) {
         Member removeMember = em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
                 .setParameter("userKey", userKey)
-                .setParameter("isUse", true)
+                .setParameter("isUse", isUse)
                 .getSingleResult();
 
         List<Product> removeProducts = em.createQuery("select p from Product p where p.member.userKey=:userKey AND p.isUse = :isUse", Product.class)
                 .setParameter("userKey", userKey)
-                .setParameter("isUse", true)
+                .setParameter("isUse", isUse)
                 .getResultList();
 
         removeProducts.forEach(removeProduct -> {
@@ -76,7 +64,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
 
             ProductImage removeProductImage = em.createQuery("select p from ProductImage p where p.id=:id AND p.isUse = :isUse", ProductImage.class)
                     .setParameter("id", productImageId)
-                    .setParameter("isUse", true)
+                    .setParameter("isUse", isUse)
                     .getSingleResult();
 
             removeProductImage.delete();
@@ -86,13 +74,4 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
         removeMember.delete();
     }
 
-    @Override
-    public Optional<Member> findAdmin(String name, String userKey) {
-        return em.createQuery("select m from Member m where m.userKey=:userKey AND m.name=:name AND m.role=:role AND m.isUse = :isUse", Member.class)
-                .setParameter("name", name)
-                .setParameter("userKey", userKey)
-                .setParameter("role", MemberRole.ADMIN)
-                .setParameter("isUse", true)
-                .getResultList().stream().findAny();
-    }
 }
