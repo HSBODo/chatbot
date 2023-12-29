@@ -10,7 +10,7 @@ import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentReadyResponse;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.PaymentService;
 import site.pointman.chatbot.service.chatbot.OrderChatBotResponseService;
@@ -53,7 +53,7 @@ public class OrderController {
     @GetMapping(value = "kakaopay-approve/{orderId}")
     public String kakaoPayApprove (@PathVariable Long orderId, @RequestParam(value = "pg_token") String pgToken) throws UnsupportedEncodingException {
         try {
-            HttpResponse result = orderService.addOrder(orderId, pgToken);
+            Response result = orderService.addOrder(orderId, pgToken);
             if (result.getCode() != ResultCode.OK.getValue()) return "redirect:"+KAKAO_CHANNEL_URL+"/"+URLEncoder.encode("결제실패", "UTF-8");
 
             return "redirect:"+KAKAO_CHANNEL_URL+"/"+ URLEncoder.encode("결제성공", "UTF-8");

@@ -4,7 +4,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.service.MemberService;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class MemberController {
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpResponse join(@RequestBody Member member){
+    public Response join(@RequestBody Member member){
         String name = member.getName();
         String userKey = member.getUserKey();
         String phoneNumber = member.getPhoneNumber();
@@ -42,13 +42,13 @@ public class MemberController {
 
     @ResponseBody
     @RequestMapping(value = "{memberUserKey}",method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpResponse updateMember(@PathVariable String memberUserKey, @RequestBody Member member){
+    public Response updateMember(@PathVariable String memberUserKey, @RequestBody Member member){
         return memberService.updateMember(memberUserKey,member);
     }
 
     @ResponseBody
     @RequestMapping(value = "{memberUserKey}",method = RequestMethod.DELETE)
-    public HttpResponse deleteMember(@PathVariable String memberUserKey){
+    public Response deleteMember(@PathVariable String memberUserKey){
         return memberService.deleteMember(memberUserKey);
     }
 }

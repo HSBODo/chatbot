@@ -6,7 +6,7 @@ import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.response.property.common.ListItem;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.ListCard;
@@ -28,7 +28,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
 
     @Override
     public ChatBotResponse getNoticesSuccessChatBotResponse() {
-        HttpResponse result = noticeService.getNotices();
+        Response result = noticeService.getNotices();
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
         List<Notice> notices = (List<Notice>) result.getResult();
 
@@ -57,7 +57,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
 
     @Override
     public ChatBotResponse getNoticeSuccessChatBotResponse(String noticeId) {
-        HttpResponse result = noticeService.getNotice(noticeId);
+        Response result = noticeService.getNotice(noticeId);
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
         Notice notice = (Notice) result.getResult();
 
