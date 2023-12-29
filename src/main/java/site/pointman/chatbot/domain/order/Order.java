@@ -87,6 +87,8 @@ public class Order extends BaseEntity {
 
         return productProfile
                 .append("상품상태: " + product.getStatus().getOppositeValue())
+                .append("\n")
+                .append("주문번호: " + orderId)
                 .append("\n\n")
                 .append("판매자: " + product.getMember().getName())
                 .append("\n")

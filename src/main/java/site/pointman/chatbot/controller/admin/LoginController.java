@@ -33,6 +33,6 @@ public class LoginController {
 
         String jwtToken = authService.createJwtToken(login.getName(), login.getUserKey());
 
-        return new Response(ResultCode.OK,"로그인 성공 token=["+jwtToken+"]");
+        return new Response(ResultCode.OK,"로그인 성공",jwtToken);
     }
 }

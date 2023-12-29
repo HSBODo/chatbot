@@ -418,6 +418,8 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         productDescription
                 .append(order.getProduct().getProductProfileTypeOfChatBot())
                 .append("\n\n")
+                .append("주문번호: " + order.getOrderId())
+                .append("\n\n")
                 .append("운송장번호: " + order.viewTackingNumber())
                 .append("\n\n")
                 .append("구매자: " + order.getBuyerMember().getName())
