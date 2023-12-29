@@ -10,6 +10,7 @@ import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.product.StringListConverter;
 import site.pointman.chatbot.domain.response.property.common.Button;
+import site.pointman.chatbot.dto.notice.NoticeDto;
 import site.pointman.chatbot.utill.CustomStringUtils;
 
 import javax.persistence.*;
@@ -63,6 +64,21 @@ public class Notice extends BaseEntity {
         this.imageUrl = imageUrl;
         this.buttons = buttons;
         this.status = status;
+    }
+
+    public NoticeDto toDto(){
+        return NoticeDto.builder()
+                .id(id)
+                .writer(member.getName())
+                .type(type)
+                .title(title)
+                .description(description)
+                .imageUrl(imageUrl)
+                .buttons(buttons)
+                .status(status)
+                .createDate(getCreateDate())
+                .modificationDate(getLastModifiedDate())
+                .build();
     }
 
     public void changeStatus(NoticeStatus status) {

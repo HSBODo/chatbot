@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.constant.OrderStatus;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
-import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.service.OrderService;
 
@@ -33,19 +33,19 @@ public class OrderAdminController {
 
     @ResponseBody
     @GetMapping(value = "all")
-    public HttpResponse getOrders () {
+    public Response getOrders () {
         return orderService.getOrders();
     }
 
     @ResponseBody
     @GetMapping(value = "")
-    public HttpResponse getOrdersByStatus (@RequestParam("status") OrderStatus orderStatus) {
+    public Response getOrdersByStatus (@RequestParam("status") OrderStatus orderStatus) {
         return orderService.getOrders(orderStatus);
     }
 
     @ResponseBody
     @GetMapping(value = "{orderId}")
-    public HttpResponse getOrderByOrderId (@PathVariable("orderId") Long orderId) {
+    public Response getOrderByOrderId (@PathVariable("orderId") Long orderId) {
         return orderService.getOrder(orderId);
     }
 
@@ -53,7 +53,7 @@ public class OrderAdminController {
     @GetMapping(value = "paymentInfo/{orderId}")
     public Object getPaymentInfoByOrderId (@PathVariable("orderId") Long orderId) {
         Optional<PaymentInfo> mayBePaymentInfo = paymentRepository.findByOrderId(orderId);
-        if (mayBePaymentInfo.isEmpty()) return new HttpResponse(ResultCode.EXCEPTION,"결제정보가 없습니다.");
+        if (mayBePaymentInfo.isEmpty()) return new Response(ResultCode.EXCEPTION,"결제정보가 없습니다.");
         PaymentInfo paymentInfo = mayBePaymentInfo.get();
 
         return paymentInfo;
@@ -61,17 +61,17 @@ public class OrderAdminController {
 
     @ResponseBody
     @PostMapping(value = "/success/{orderId}")
-    public HttpResponse orderSuccess (@PathVariable Long orderId) {
+    public Response orderSuccess (@PathVariable Long orderId) {
         return orderService.successOrder(orderId);
     }
 
     @ResponseBody
     @PostMapping(value = "kakaopay-cancel/{orderId}")
-    public HttpResponse kakaoPayCancel (@PathVariable Long orderId) {
+    public Response kakaoPayCancel (@PathVariable Long orderId) {
         try {
             return  orderService.cancelOrder(orderId);
         }catch (Exception e) {
-            return new HttpResponse(ResultCode.FAIL,"주문번호 "+orderId+"의 주문취소를 실패하였습니다.");
+            return new Response(ResultCode.FAIL,"주문번호 "+orderId+"의 주문취소를 실패하였습니다.");
         }
     }
 }

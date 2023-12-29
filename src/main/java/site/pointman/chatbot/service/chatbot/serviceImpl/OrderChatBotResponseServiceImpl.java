@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.Carousel;
 import site.pointman.chatbot.service.OrderService;
@@ -42,7 +42,7 @@ public class OrderChatBotResponseServiceImpl implements OrderChatBotResponseServ
 
     @Override
     public ChatBotResponse purchaseConfirm(String orderId) {
-        HttpResponse result = orderService.purchaseConfirm(orderId);
+        Response result = orderService.purchaseConfirm(orderId);
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
@@ -69,7 +69,7 @@ public class OrderChatBotResponseServiceImpl implements OrderChatBotResponseServ
 
     @Override
     public ChatBotResponse salesConfirm(String orderId) {
-        HttpResponse result = orderService.salesConfirm(orderId);
+        Response result = orderService.salesConfirm(orderId);
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
@@ -82,7 +82,7 @@ public class OrderChatBotResponseServiceImpl implements OrderChatBotResponseServ
 
     @Override
     public ChatBotResponse updateTrackingNumber(String orderId, String trackingNumber) {
-        HttpResponse result = orderService.updateTrackingNumber(orderId, trackingNumber);
+        Response result = orderService.updateTrackingNumber(orderId, trackingNumber);
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();

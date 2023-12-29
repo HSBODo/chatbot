@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.domain.notice.Notice;
-import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.dto.notice.NoticeDto;
 import site.pointman.chatbot.repository.NoticeRepository;
 import site.pointman.chatbot.service.NoticeService;
 
@@ -15,6 +16,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class NoticeServiceImpl implements NoticeService {
+    private boolean isUse = true;
 
     NoticeRepository noticeRepository;
 
@@ -23,59 +25,52 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public HttpResponse addNotice(Notice notice) {
-        try {
-            Notice saveNotice = noticeRepository.save(notice);
+    public Notice addNotice(Notice notice) {
+        Notice saveNotice = noticeRepository.save(notice);
 
-            return new HttpResponse(ResultCode.OK,"정상적으로 게시글을 등록하였습니다. 게시글 ID="+saveNotice.getId());
-        }catch (Exception e){
-            return new HttpResponse(ResultCode.FAIL,"게시글 등록에 실패하였습니다.");
+        return saveNotice;
+    }
+
+    @Override
+    public List<Notice> getNoticeAll() {
+        List<Notice> notices = noticeRepository.findAll();
+
+        return notices;
+    }
+
+    @Override
+    public List<Notice> getDefaultNotices() {
+        List<Notice> notices = noticeRepository.findByStatusOrStatus(NoticeStatus.메인,NoticeStatus.작성,isUse);
+
+        return notices;
+    }
+
+    @Override
+    public Optional<Notice> getNotice(Long noticeId) {
+        Optional<Notice> mayBeNotice = noticeRepository.findById(noticeId);
+
+        return mayBeNotice;
+    }
+
+    @Override
+    public Response removeNotice(Long noticeId) {
+        try {
+            noticeRepository.deleteById(noticeId);
+
+            return new Response(ResultCode.OK,"정상적으로 게시글을 삭제하였습니다.");
+        }catch (Exception e) {
+            return new Response(ResultCode.FAIL,"게시글 삭제를 실패하였습니다.");
         }
     }
 
     @Override
-    public HttpResponse getNoticeAll() {
-        List<Notice> notices = noticeRepository.findByAll();
-        if (notices.isEmpty()) return new HttpResponse(ResultCode.EXCEPTION,"게시글이 존재하지 않습니다.");
-
-        return new HttpResponse(ResultCode.OK,"정상적으로 게시글을 조회하였습니다.",notices);
-    }
-
-    @Override
-    public HttpResponse getNotices() {
-        List<Notice> notices = noticeRepository.findByStatus(NoticeStatus.작성);
-        if (notices.isEmpty()) return new HttpResponse(ResultCode.EXCEPTION,"게시글이 존재하지 않습니다.");
-
-        return new HttpResponse(ResultCode.OK,"정상적으로 게시글을 조회하였습니다.",notices);
-    }
-
-    @Override
-    public HttpResponse getNotice(String noticeId) {
-        long parseNoticeId = Long.parseLong(noticeId);
-
-        Optional<Notice> mayBeNotice = noticeRepository.findByNoticeId(parseNoticeId);
-        if (mayBeNotice.isEmpty()) return new HttpResponse(ResultCode.EXCEPTION,"게시글이 존재하지 않습니다.");
-        Notice notice = mayBeNotice.get();
-
-        return new HttpResponse(ResultCode.OK,"정상적으로 게시글을 조회하였습니다.",notice);
-    }
-
-    @Override
-    public HttpResponse removeNotice(Long noticeId) {
-        noticeRepository.deleteNotice(noticeId);
-
-
-        return new HttpResponse(ResultCode.OK,"정상적으로 게시글을 삭제하였습니다.");
-    }
-
-    @Override
-    public HttpResponse updateNotice(Long noticeId, Notice notice) {
+    public Response updateNotice(Long noticeId, NoticeDto noticeDto) {
         try {
-            noticeRepository.updateNotice(noticeId, notice);
+            noticeRepository.updateNotice(noticeId, noticeDto);
 
-            return new HttpResponse(ResultCode.OK,"정상적으로 게시글을 수정하였습니다.");
+            return new Response(ResultCode.OK,"정상적으로 게시글을 수정하였습니다.");
         }catch (Exception e){
-            return new HttpResponse(ResultCode.FAIL,"게시글 수정을 실패하였습니다.");
+            return new Response(ResultCode.FAIL,"게시글 수정을 실패하였습니다.");
         }
     }
 }

@@ -1,15 +1,17 @@
 package site.pointman.chatbot.service;
 
 import site.pointman.chatbot.domain.notice.Notice;
-import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.dto.notice.NoticeDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface NoticeService {
-    HttpResponse addNotice(Notice notice);
-    HttpResponse getNoticeAll();
-    HttpResponse removeNotice(Long noticeId);
-    HttpResponse getNotices();
-    HttpResponse getNotice(String noticeId);
-    HttpResponse updateNotice(Long noticeId, Notice notice);
+    Notice addNotice(Notice notice);
+    List<Notice> getNoticeAll();
+    List<Notice> getDefaultNotices();
+    Optional<Notice> getNotice(Long noticeId);
+    Response removeNotice(Long noticeId);
+    Response updateNotice(Long noticeId, NoticeDto noticeDto);
 }

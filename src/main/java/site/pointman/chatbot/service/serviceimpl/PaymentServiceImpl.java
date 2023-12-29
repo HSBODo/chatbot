@@ -15,7 +15,7 @@ import site.pointman.chatbot.domain.order.PayMethod;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.payment.kakaopay.*;
 import site.pointman.chatbot.domain.product.Product;
-import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.repository.ProductRepository;
@@ -207,11 +207,11 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public HttpResponse getPaymentInfoByStatus(Long orderId, PaymentStatus paymentStatus) {
+    public Response getPaymentInfoByStatus(Long orderId, PaymentStatus paymentStatus) {
         Optional<PaymentInfo> maBePaymentInfo = paymentRepository.findByPaymentStatus(orderId, paymentStatus);
-        if (maBePaymentInfo.isEmpty()) return new HttpResponse(ResultCode.EXCEPTION,"결제정보가 존재하지 않습니다.");
+        if (maBePaymentInfo.isEmpty()) return new Response(ResultCode.EXCEPTION,"결제정보가 존재하지 않습니다.");
         PaymentInfo paymentInfo = maBePaymentInfo.get();
-        return new HttpResponse(ResultCode.OK,"결제정보를 조회하였습니다.",paymentInfo);
+        return new Response(ResultCode.OK,"결제정보를 조회하였습니다.",paymentInfo);
     }
 
     private HttpHeaders getKakaoPayRequestHeaders(){

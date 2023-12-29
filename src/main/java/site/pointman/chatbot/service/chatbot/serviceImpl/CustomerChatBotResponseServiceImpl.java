@@ -5,7 +5,7 @@ import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.HttpResponse;
+import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
@@ -24,7 +24,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
 
     @Override
     public ChatBotResponse joinChatBotResponse(String userKey, String name, String phoneNumber) {
-        HttpResponse result = memberService.join(userKey, name, phoneNumber);
+        Response result = memberService.join(userKey, name, phoneNumber);
 
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("회원가입에 실패하였습니다.");
 
@@ -110,7 +110,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
 
     @Override
     public ChatBotResponse updateCustomerPhoneNumberBotResponse(String userKey, String updatePhoneNumber) {
-        HttpResponse result = memberService.updateMemberPhoneNumber(userKey, updatePhoneNumber);
+        Response result = memberService.updateMemberPhoneNumber(userKey, updatePhoneNumber);
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("연락처 변경을 실패하였습니다.");
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
@@ -122,7 +122,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
 
     @Override
     public ChatBotResponse withdrawalCustomerChatBotResponse(String userKey) {
-        HttpResponse result = memberService.deleteMember(userKey);
+        Response result = memberService.deleteMember(userKey);
 
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
 
@@ -135,7 +135,7 @@ public class CustomerChatBotResponseServiceImpl implements CustomerChatBotRespon
 
     @Override
     public ChatBotResponse updateCustomerProfileImageChatBotResponse(String userKey, String profileImageUrl) {
-        HttpResponse result = memberService.updateMemberProfileImage(userKey, profileImageUrl);
+        Response result = memberService.updateMemberProfileImage(userKey, profileImageUrl);
 
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("프로필사진 등록을 실패하였습니다");
 
