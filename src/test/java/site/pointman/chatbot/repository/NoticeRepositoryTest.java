@@ -12,80 +12,76 @@ import site.pointman.chatbot.constant.NoticeType;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.property.common.Button;
+import site.pointman.chatbot.dto.notice.NoticeDto;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-
-@SpringBootTest
 @Slf4j
+@Transactional
+@SpringBootTest
 class NoticeRepositoryTest {
 
     @Autowired
     NoticeRepository noticeRepository;
 
+
     @Test
-    @Transactional
-    void save() {
-        //give
-        Member member = Member.builder()
-                .userKey("QFJSyeIZbO77")
-                .build();
-
-        List<Button> buttons = new ArrayList<>();
-        Button button = new Button("문의하기", ButtonAction.전화연결, "01000000000");
-        buttons.add(button);
-
-        Notice notice = Notice.builder()
-                .member(member)
-                .type(NoticeType.BASIC_CARD)
-                .title("1차 베타 테스트 오픈")
-                .description("1차 베타 테스가 오픈하였습니다.\n" +
-                        "많은 이용 부탁드리며\n" +
-                        "오류가 발생시 문의해주시면 감사하겠습니다.")
-                .imageUrl("https://it.chosun.com/news/photo/202111/2021110801782_1.jpg")
-                .buttons(buttons)
-                .status(NoticeStatus.메인)
-                .build();
-
-        //when
-        Notice saveNotice = noticeRepository.save(notice);
+    void findAll() {
 
 
-        //then
-        Assertions.assertThat(saveNotice.getId()).isNotEqualTo(0);
+        List<Notice> notices = noticeRepository.findAll();
+
+        Assertions.assertThat(notices.size()).isNotZero();
     }
 
-
     @Test
-    @Transactional
-    void findByStatus() {
-        //give
-        NoticeStatus status = NoticeStatus.작성;
+    void findByStatusOrStatus() {
+        NoticeStatus firstStatus = NoticeStatus.메인;
+        NoticeStatus secondStatus = NoticeStatus.작성;
+        boolean isUse = true;
 
-        //when
-        List<Notice> notices = noticeRepository.findByStatus(status);
-
-        //then
-        Assertions.assertThat(notices.size()).isNotZero();
+        List<Notice> notices = noticeRepository.findByStatusOrStatus(firstStatus, secondStatus, isUse);
 
         notices.forEach(notice -> {
-            log.info("title={}",notice.getTitle());
-            Assertions.assertThat(notice.getStatus()).isIn(status,NoticeStatus.메인);
+            Assertions.assertThat(notice.getStatus()).isIn(firstStatus,secondStatus);
+            Assertions.assertThat(notice.isUse()).isEqualTo(isUse);
         });
+
     }
 
     @Test
-    @Transactional
-    void findByNoticeId() {
-        //give
-        Long id = 16L;
+    void findById() {
+        Long noticeId =21L;
 
-        //when
-        Notice notice = noticeRepository.findByNoticeId(id).get();
+        Optional<Notice> myBeNotice = noticeRepository.findById(noticeId);
 
-        //then
-        Assertions.assertThat(notice.getId()).isEqualTo(id);
+        Assertions.assertThat(myBeNotice).isNotEmpty();
+        Assertions.assertThat(myBeNotice.get().getId()).isEqualTo(noticeId);
+    }
+
+    @Test
+    void deleteById() {
+        Long noticeId =21L;
+
+        noticeRepository.deleteById(noticeId);
+    }
+
+    @Test
+    void updateNotice() {
+        Long noticeId =21L;
+
+        NoticeDto noticeDto = NoticeDto.builder()
+                .title("제목변경")
+                .description("본문 변경")
+                .build();
+
+        Notice notice = noticeRepository.updateNotice(noticeId, noticeDto);
+
+        Assertions.assertThat(notice.getId()).isEqualTo(noticeId);
+        Assertions.assertThat(notice.getTitle()).isEqualTo(noticeDto.getTitle());
+        Assertions.assertThat(notice.getDescription()).isEqualTo(noticeDto.getDescription());
     }
 }
