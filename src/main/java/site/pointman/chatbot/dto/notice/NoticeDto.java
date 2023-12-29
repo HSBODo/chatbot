@@ -11,6 +11,7 @@ import site.pointman.chatbot.constant.NoticeType;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.notice.ButtonListConverter;
+import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.notice.NoticeTypeEnumConverter;
 import site.pointman.chatbot.domain.response.property.common.Button;
 import site.pointman.chatbot.utill.CustomStringUtils;
@@ -47,5 +48,20 @@ public class NoticeDto {
         this.status = status;
         this.createDate = createDate;
         this.modificationDate = modificationDate;
+    }
+
+    public Notice toEntity(){
+        return Notice.builder()
+                .type(type)
+                .title(title)
+                .description(description)
+                .imageUrl(imageUrl)
+                .buttons(buttons)
+                .status(status)
+                .build();
+    }
+
+    public void setWriter(String writer) {
+        this.writer = writer;
     }
 }
