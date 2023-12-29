@@ -39,21 +39,17 @@ class NoticeServiceTest {
     @Test
     void addNotice() {
         //give
-        Member member = Member.builder()
-                .userKey("QFJSyeIZbO77")
-                .build();
-
-        Notice notice = Notice.builder()
-                .member(member)
+        NoticeDto noticeDto = NoticeDto.builder()
+                .writer("라이언")
                 .type(NoticeType.TEXT_CARD)
                 .title("테스트")
                 .description("테스트중")
                 .build();
         //when
-        Notice addNotice = noticeService.addNotice(notice);
+        Notice addNotice = noticeService.addNotice(noticeDto);
 
         //then
-        Assertions.assertThat(notice.getTitle()).isEqualTo(addNotice.getTitle());
+        Assertions.assertThat(addNotice.getTitle()).isEqualTo(noticeDto.getTitle());
 
     }
 

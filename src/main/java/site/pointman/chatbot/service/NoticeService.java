@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface NoticeService {
-    Notice addNotice(Notice notice);
+    Notice addNotice(NoticeDto noticeDto);
     List<Notice> getNoticeAll();
     List<Notice> getDefaultNotices();
     Optional<Notice> getNotice(Long noticeId);

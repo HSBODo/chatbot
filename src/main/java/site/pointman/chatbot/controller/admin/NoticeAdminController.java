@@ -26,8 +26,8 @@ public class NoticeAdminController {
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Notice add(@RequestBody Notice notice){
-        return noticeService.addNotice(notice);
+    public Notice add(@RequestBody NoticeDto noticeDto){
+        return noticeService.addNotice(noticeDto);
     }
 
     @ResponseBody

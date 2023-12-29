@@ -4,13 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.constant.NoticeStatus;
+import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.notice.NoticeDto;
+import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.NoticeRepository;
 import site.pointman.chatbot.service.NoticeService;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -19,13 +22,23 @@ public class NoticeServiceImpl implements NoticeService {
     private boolean isUse = true;
 
     NoticeRepository noticeRepository;
+    MemberRepository memberRepository;
 
-    public NoticeServiceImpl(NoticeRepository noticeRepository) {
+    public NoticeServiceImpl(NoticeRepository noticeRepository, MemberRepository memberRepository) {
         this.noticeRepository = noticeRepository;
+        this.memberRepository = memberRepository;
     }
 
     @Override
-    public Notice addNotice(Notice notice) {
+    public Notice addNotice(NoticeDto noticeDto) {
+        Optional<Member> myBeMember = memberRepository.findByName(noticeDto.getWriter());
+        if (myBeMember.isEmpty()) throw new NoSuchElementException("작성자가 존재하지 않습니다.");
+
+        Member member = myBeMember.get();
+        noticeDto.setWriter(member.getUserKey());
+
+        Notice notice = noticeDto.toEntity();
+
         Notice saveNotice = noticeRepository.save(notice);
 
         return saveNotice;
