@@ -21,6 +21,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class OrderServiceImpl implements OrderService {
+    private boolean isUse = true;
 
     OrderRepository orderRepository;
     ProductRepository productRepository;
@@ -66,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     private void addOrderTransactional(Order order, Product product){
         orderRepository.save(order);
-        productRepository.updateStatus(product.getId(), ProductStatus.판매대기);
+        productRepository.updateStatus(product.getId(), ProductStatus.판매대기, isUse);
     }
 
     @Override
@@ -116,7 +117,7 @@ public class OrderServiceImpl implements OrderService {
          * 1. 상품(product)은 판매중 상태로 변경
          * 2. 결제정보(paymentInfo)는 결제취소 상태로 변경
          */
-        productRepository.updateStatus(productId, ProductStatus.판매중);
+        productRepository.updateStatus(productId, ProductStatus.판매중, isUse);
         order.changeStatus(OrderStatus.주문취소);
 
         return new Response(ResultCode.OK,"주문번호 "+orderId+"의 주문을 정상적으로 취소하였습니다.",order);

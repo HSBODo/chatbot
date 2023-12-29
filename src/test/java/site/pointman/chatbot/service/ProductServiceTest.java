@@ -1,6 +1,5 @@
 package site.pointman.chatbot.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -8,165 +7,219 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import site.pointman.chatbot.constant.Category;
-import site.pointman.chatbot.constant.ProductStatus;
+import org.springframework.data.domain.Page;
+import site.pointman.chatbot.constant.*;
+import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.utill.CustomNumberUtils;
+import site.pointman.chatbot.service.chatbot.ProductChatBotResponseService;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @SpringBootTest
-
 class ProductServiceTest {
-
     @Autowired
     ProductService productService;
-
     @Autowired
     ProductRepository productRepository;
+    @Autowired
+    ProductChatBotResponseService productChatBotResponseService;
 
     private ObjectMapper mapper = new ObjectMapper();
     private ChatBotRequest chatBotRequest;
     private String userKey;
-    private String productId;
+    private Long productId;
 
     @BeforeEach
-    public void setUp() throws JsonProcessingException {
+    public void setUp() {
         userKey = "QFJSyeIZbO77";
-        productId = "5942";
+        productId = 19528L;
     }
 
     @Test
     @Transactional
-    void validationCustomer() throws Exception{
-
-        Object response = productService.verificationCustomerSuccessResponse();
-        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
-        String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
-
-        Assertions.assertThat(text).isEqualTo("상품을 등록하시겠습니까?");
-    }
-
-    @Test
-    @Transactional
-    void createProductInfoPreview() throws Exception{
+    void addProduct() {
         //give
+        String imageUrl = "https://item.kakaocdn.net/do/a7fd7c0630f8aea8419a565fb2773bbc82f3bd8c9735553d03f6f982e10ebe70";
         List<String> imageUrls = new ArrayList<>();
-        imageUrls.add("http://secure.kakaocdn.net/dna/eAWeuk/K6beei5MQR/XXX/img_org.jpg?credential");
+        imageUrls.add(imageUrl);
 
-        String productName = "테스트상품명";
-        String productDescription = "테스트 상품 설명";
-        String productPrice = "10000";
-        String tradingLocation = "서울특별시";
-        String kakaoOpenChatUrl = "https://open.kakao.com/o";
-        String category = Category.스포츠_레저.getValue();
+        Member member = Member.builder()
+                .userKey(userKey)
+                .name("테스트")
+                .build();
+        ProductDto productDto = ProductDto.builder()
+                .member(member)
+                .name("상품이름")
+                .description("상품설명")
+                .price(10000L)
+                .build();
 
         //when
-        Object response = productService.getProductInfoPreview(
-                imageUrls,
-                productName,
-                productDescription,
-                productPrice,
-                tradingLocation,
-                kakaoOpenChatUrl,
-                category
-                );
-        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
-        String text = chatBotResponse.getTemplate().getOutputs().get(1).getTextCard().getTitle();
+        Response response = productService.addProduct(productDto, userKey, imageUrls);
+
 
         //then
-        Assertions.assertThat(text).isEqualTo("상품이름");
+        Assertions.assertThat(response.getCode()).isEqualTo(ResultCode.OK.getValue());
     }
 
     @Test
     @Transactional
-    void addProduct() throws JsonProcessingException {
-        //give
-        Long productId = CustomNumberUtils.createNumberId();
-        String userKey = chatBotRequest.getUserKey();
-        List<String> imageUrls = chatBotRequest.getProductImages();
-        String productCategory = chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue();
-        ProductDto productDto = chatBotRequest.createProductDto();
+    void getProductsByCategory() {
+        Category category = Category.패션_잡화;
+        int pageNumber = 1;
 
-        //when
-        Object response = productService.addProduct(productDto,productId,userKey,imageUrls,productCategory);
-        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
-        String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
+        Page<Product> productsByCategory = productService.getProductsByCategory(category, pageNumber);
 
-        //then
-        Assertions.assertThat(text).isEqualTo("상품을 정상적으로 등록하셨습니다.");
-    }
-
-
-    @Test
-    @Transactional
-    void getMyProducts() throws JsonProcessingException {
-        //give
-        List<Product> products = productRepository.findByUserKey(userKey);
-
-        //when
-        Object response = productService.getMyProducts(userKey,"판매중");
-        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
-
-        int customerProductsSize = chatBotResponse.getTemplate().getOutputs().get(0).getCarousel().getItems().size();
-
-        //then
-        Assertions.assertThat(customerProductsSize).isEqualTo(products.size());
+        productsByCategory.getContent().forEach(product -> {
+            Assertions.assertThat(product.getCategory()).isEqualTo(category);
+        });
     }
 
     @Test
     @Transactional
-    void getCustomerProductDetail() throws JsonProcessingException {
-        //give
-        Product product = productRepository.findByProductId(Long.parseLong(productId)).get();
+    void getProduct() {
 
-        //when
-        Object response = productService.getProductProfile(productId,userKey);
-        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
-        String title = chatBotResponse.getTemplate().getOutputs().get(1).getTextCard().getTitle();
+        Optional<Product> product = productService.getProduct(productId);
 
-        //then
-        Assertions.assertThat(title).isEqualTo(product.getName());
-    }
-
-    @Test
-    void updateProductStatus() throws JsonProcessingException {
-        //give
-        String utterance =  ProductStatus.판매중.name();;
-
-        //when
-        Object response = productService.updateProductStatus(productId,utterance);
-        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
-        String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
-
-        //then
-        Assertions.assertThat(text).isEqualTo("상품을 "+utterance+" 상태로 변경하였습니다.");
+        Assertions.assertThat(product).isNotEmpty();
+        Assertions.assertThat(product.get().getId()).isEqualTo(productId);
     }
 
     @Test
     @Transactional
-    void deleteProduct() throws JsonProcessingException {
-        //give
-        String utterance = ProductStatus.삭제.name();
+    void getProductsAll() {
 
-        //when
-        Object response = productService.deleteProduct(productId,utterance);
-        ChatBotResponse chatBotResponse = (ChatBotResponse) response;
-        String text = chatBotResponse.getTemplate().getOutputs().get(0).getSimpleText().getText();
+        List<Product> productsAll = productService.getProductsAll();
 
-        //then
-        Assertions.assertThat(text).isEqualTo("상품을 정상적으로 삭제하였습니다.");
+        productsAll.forEach(product -> {
+            Assertions.assertThat(product.getId()).isNotNull();
+        });
     }
 
     @Test
-    void getSpecialProducts() {
-        ChatBotResponse specialProducts = productService.getSpecialProducts(1, 1);
+    @Transactional
+    void getMemberProducts() {
+
+        List<Product> memberProducts = productService.getMemberProducts(userKey);
+
+        memberProducts.forEach(product -> {
+            Assertions.assertThat(product.getMember().getUserKey()).isEqualTo(userKey);
+        });
+    }
+
+    @Test
+    @Transactional
+    void getMemberProductsByStatus() {
+        ProductStatus productStatus= ProductStatus.판매중;
+        int pageNumber = 1;
+
+
+        Page<Product> memberProductsByStatus = productService.getMemberProductsByStatus(userKey, productStatus, pageNumber);
+
+        memberProductsByStatus.getContent().forEach(product -> {
+            Assertions.assertThat(product.getStatus()).isEqualTo(productStatus);
+        });
+    }
+
+    @Test
+    @Transactional
+    void getMainProducts() {
+        int pageNumber = 1;
+
+        Page<Product> mainProducts = productService.getMainProducts(pageNumber);
+
+        mainProducts.getContent().forEach(product -> {
+            Assertions.assertThat(product.getStatus()).isIn(ProductStatus.판매중, ProductStatus.예약);
+        });
+    }
+
+    @Test
+    @Transactional
+    void getProductsBySearchWord() {
+        String searchWord = "판매";
+        int pageNumber = 1;
+
+        Page<Product> searchProducts = productService.getProductsBySearchWord(searchWord,pageNumber);
+
+        searchProducts.getContent().forEach(product -> {
+            Assertions.assertThat(product.getStatus()).isIn(ProductStatus.판매중, ProductStatus.예약);
+        });
+
+    }
+
+    @Test
+    @Transactional
+    void getSalesContractProducts() {
+        int pageNumber = 1;
+        Page<Product> salesContractProducts = productService.getSalesContractProducts(userKey, pageNumber);
+        salesContractProducts.getContent().forEach(product -> {
+            Assertions.assertThat(product.getMember().getUserKey()).isEqualTo(userKey);
+            Assertions.assertThat(product.getStatus()).isEqualTo(ProductStatus.판매대기);
+        });
+    }
+
+    @Test
+    @Transactional
+    void getSalesContractProduct() {
+        Long orderId = 512054L;
+
+        Optional<Order> salesContractProduct = productService.getSalesContractProduct(userKey, orderId);
+
+        Assertions.assertThat(salesContractProduct).isNotEmpty();
+        Assertions.assertThat(salesContractProduct.get().getProduct().getStatus()).isEqualTo(ProductStatus.판매대기);
+        Assertions.assertThat(salesContractProduct.get().getStatus()).isEqualTo(OrderStatus.주문체결);
+        Assertions.assertThat(salesContractProduct.get().getPaymentInfo().getStatus()).isEqualTo(PaymentStatus.결제완료);
+    }
+
+    @Test
+    @Transactional
+    void getPurchaseProducts() {
+        int pageNumber = 1;
+
+        Page<Order> purchaseProducts = productService.getPurchaseProducts(userKey, pageNumber);
+
+        purchaseProducts.getContent().forEach(order -> {
+            Assertions.assertThat(order.getProduct().getStatus()).isEqualTo(ProductStatus.판매대기);
+            Assertions.assertThat(order.getStatus()).isEqualTo(OrderStatus.주문체결);
+            Assertions.assertThat(order.getPaymentInfo().getStatus()).isEqualTo(PaymentStatus.결제완료);
+        });
+    }
+
+    @Test
+    @Transactional
+    void getPurchaseProduct() {
+        Long orderId = 512054L;
+        Optional<Order> purchaseProduct = productService.getPurchaseProduct(userKey, orderId);
+
+        Assertions.assertThat(purchaseProduct).isNotEmpty();
+        Assertions.assertThat(purchaseProduct.get().getProduct().getStatus()).isEqualTo(ProductStatus.판매대기);
+        Assertions.assertThat(purchaseProduct.get().getStatus()).isEqualTo(OrderStatus.주문체결);
+        Assertions.assertThat(purchaseProduct.get().getPaymentInfo().getStatus()).isEqualTo(PaymentStatus.결제완료);
+
+    }
+
+    @Test
+    @Transactional
+    void updateProductStatus() {
+        Response response = productService.updateProductStatus(productId, ProductStatus.숨김);
+
+        Assertions.assertThat(response.getCode()).isEqualTo(ResultCode.OK.getValue());
+    }
+
+    @Test
+    @Transactional
+    void deleteProduct() {
+        Response response = productService.deleteProduct(productId);
+
+        Assertions.assertThat(response.getCode()).isEqualTo(ResultCode.OK.getValue());
     }
 }

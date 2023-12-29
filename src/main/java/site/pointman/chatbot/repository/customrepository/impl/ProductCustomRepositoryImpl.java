@@ -44,73 +44,73 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     }
 
     @Override
-    public List<Product> findByUserKey(String userKey) {
+    public List<Product> findByUserKey(String userKey, boolean isUse) {
         return em.createQuery("SELECT p FROM Product p WHERE p.member.userKey=:user_Key AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("user_Key", userKey)
-                .setParameter("isUse", true)
+                .setParameter("isUse", isUse)
                 .getResultList();
     }
 
     @Override
-    public List<Product> findByUserKey(String userKey, ProductStatus status) {
+    public List<Product> findByUserKey(String userKey, ProductStatus status, boolean isUse) {
         return em.createQuery("SELECT p FROM Product p WHERE p.member.userKey=:user_Key AND p.status =:status AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("user_Key", userKey)
                 .setParameter("status", status)
-                .setParameter("isUse", true)
+                .setParameter("isUse", isUse)
                 .getResultList();
     }
 
     @Override
-    public Optional<Product> findByProductId(Long productId) {
+    public Optional<Product> findByProductId(Long productId, boolean isUse) {
         return em.createQuery("SELECT p FROM Product p WHERE p.id=:id AND p.isUse=:isUse", Product.class)
                 .setParameter("id", productId)
-                .setParameter("isUse", true)
+                .setParameter("isUse", isUse)
                 .getResultList()
                 .stream().findAny();
     }
 
     @Override
-    public List<Product> findByCategory(Category category,ProductStatus status) {
+    public List<Product> findByCategory(Category category,ProductStatus status, boolean isUse) {
         return em.createQuery("SELECT p FROM Product p WHERE p.category=:category AND p.status =:status AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("category", category)
                 .setParameter("status", status)
-                .setParameter("isUse", true)
+                .setParameter("isUse", isUse)
                 .setMaxResults(10)
                 .getResultList();
     }
 
     @Override
-    public List<Product> findByCategory(Category category, ProductStatus firstStatus, ProductStatus secondStatus) {
+    public List<Product> findByCategory(Category category, ProductStatus firstStatus, ProductStatus secondStatus, boolean isUse) {
         return em.createQuery("SELECT p FROM Product p WHERE p.category=:category AND (p.status =:firstStatus OR p.status =:secondStatus) AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("category", category)
                 .setParameter("firstStatus", firstStatus)
                 .setParameter("secondStatus", secondStatus)
-                .setParameter("isUse", true)
+                .setParameter("isUse", isUse)
                 .setMaxResults(10)
                 .getResultList();
     }
 
     @Override
-    public void updateStatus(Long productId, ProductStatus productStatus) {
+    public void updateStatus(Long productId, ProductStatus productStatus, boolean isUse) {
         Product product = em.createQuery("SELECT p FROM Product p WHERE p.id=:id AND p.isUse=:isUse", Product.class)
                 .setParameter("id", productId)
-                .setParameter("isUse", true)
+                .setParameter("isUse", isUse)
                 .getSingleResult();
 
         product.changeStatus(productStatus);
     }
 
     @Override
-    public void deleteProduct(Long productId) {
+    public void deleteProduct(Long productId, boolean isUse) {
         Product findProduct = em.createQuery("SELECT p FROM Product p WHERE p.id=:id AND p.isUse=:isUse", Product.class)
                 .setParameter("id", productId)
-                .setParameter("isUse", true)
+                .setParameter("isUse", isUse)
                 .getSingleResult();
 
         Long productImageId = findProduct.getProductImages().getId();
         ProductImage findProductImage = em.createQuery("SELECT p FROM ProductImage p WHERE p.id=:id AND p.isUse=:isUse", ProductImage.class)
                 .setParameter("id", productImageId)
-                .setParameter("isUse", true)
+                .setParameter("isUse", isUse)
                 .getSingleResult();
 
         findProduct.delete();
@@ -124,18 +124,19 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     }
 
     @Override
-    public List<Product> findByStatus(ProductStatus firstStatus,ProductStatus secondStatus) {
+    public List<Product> findByStatus(ProductStatus firstStatus,ProductStatus secondStatus, boolean isUse) {
         return em.createQuery("SELECT p FROM Product p WHERE (p.status =:firstStatus OR p.status =:secondStatus) AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("firstStatus",firstStatus)
                 .setParameter("secondStatus",secondStatus)
-                .setParameter("isUse", true)
+                .setParameter("isUse", isUse)
                 .getResultList();
     }
 
     @Override
-    public List<Product> findByStatus(ProductStatus firstStatus) {
+    public List<Product> findByStatus(ProductStatus firstStatus, boolean isUse) {
         return em.createQuery("SELECT p FROM Product p WHERE p.status =:firstStatus AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
                 .setParameter("firstStatus",firstStatus)
+                .setParameter("isUse", true)
                 .getResultList();
 
     }

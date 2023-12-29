@@ -70,65 +70,44 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response getProductsByCategory(Category category, int pageNumber) {
-        try {
-            Sort sort = Sort.by("createDate").descending();
-
-            Page<Product> products = productRepository.findByCategory(category, ProductStatus.판매중, ProductStatus.예약, PageRequest.of(pageNumber, 10, sort));
-
-            if(products.getContent().isEmpty()) return new Response(ResultCode.FAIL,"등록된 상품이 없습니다.");
-
-            return  new Response(ResultCode.OK,"정상적으로 상품을 조회하였습니다.",products);
-        }catch (Exception e) {
-            return  new Response(ResultCode.FAIL,"상품 조회를 실패하였습니다.");
-        }
-    }
-
-    @Override
-    public Response getMemberProductsByStatus(String userKey, ProductStatus productStatus, int pageNumber) {
-        try {
-            Sort sort = Sort.by("createDate").descending();
-            Page<Product> products = productRepository.findByStatusAndUserKey(productStatus, userKey, PageRequest.of(pageNumber, 10, sort));
-
-            if(products.getContent().isEmpty()) return new Response(ResultCode.FAIL,"등록된 상품이 없습니다.");
-
-            return new Response(ResultCode.OK,"정상적으로 상품을 조회하였습니다.",products);
-        }catch (Exception e){
-            return new Response(ResultCode.EXCEPTION,"상품조회를 실패하였습니다.");
-        }
-    }
-
-    @Override
-    public Response getMainProducts(int page) {
+    public Page<Product> getProductsByCategory(Category category, int pageNumber) {
         Sort sort = Sort.by("createDate").descending();
-        Page<Product> mainProducts = productRepository.findMain(ProductStatus.판매중, ProductStatus.예약, PageRequest.of(page, 10, sort));
-        if (!mainProducts.hasContent()) return new Response(ResultCode.EXCEPTION,"등록된 상품이 없습니다.");
 
-        return new Response(ResultCode.OK,"정상적으로 상품을 조회하였습니다.",mainProducts);
+        Page<Product> products = productRepository.findByCategory(isUse,category, ProductStatus.판매중, ProductStatus.예약, PageRequest.of(pageNumber, 10, sort));
+
+        return products;
     }
 
     @Override
-    public Response getProduct(Long productId) {
-        try {
-            Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
+    public Page<Product> getMemberProductsByStatus(String userKey, ProductStatus productStatus, int pageNumber) {
+        Sort sort = Sort.by("createDate").descending();
+        Page<Product> products = productRepository.findByStatusAndUserKey(isUse,productStatus, userKey, PageRequest.of(pageNumber, 10, sort));
 
-            if(mayBeProduct.isEmpty()) return new Response(ResultCode.EXCEPTION,"상품이 존재하지 않습니다.");
+        return products;
+    }
 
-            Product product = mayBeProduct.get();
+    @Override
+    public Page<Product> getMainProducts(int pageNumber) {
+        Sort sort = Sort.by("createDate").descending();
+        Page<Product> mainProducts = productRepository.findMain(isUse,ProductStatus.판매중, ProductStatus.예약, PageRequest.of(pageNumber, 10, sort));
 
-            return new Response(ResultCode.OK,"정상적으로 상품을 조회하였습니다.",product);
-        }catch (Exception e){
-            return new Response(ResultCode.FAIL,"상품조회를 실패하였습니다.");
-        }
+        return mainProducts;
+    }
+
+    @Override
+    public Optional<Product> getProduct(Long productId) {
+        Optional<Product> mayBeProduct = productRepository.findByProductId(productId,isUse);
+
+        return mayBeProduct;
     }
 
     @Override
     public Response deleteProduct(Long productId) {
         try {
-            Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
+            Optional<Product> mayBeProduct = productRepository.findByProductId(productId,isUse);
             if(mayBeProduct.isEmpty()) return new Response(ResultCode.EXCEPTION,"상품이 존재하지 않습니다.");
 
-            productRepository.deleteProduct(productId);
+            productRepository.deleteProduct(productId,isUse);
             return new Response(ResultCode.OK,"상품을 정상적으로 삭제하였습니다.");
 
         }catch (Exception e){
@@ -137,86 +116,65 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response getProductsBySearchWord(String searchWord, int pageNumber) {
-        try {
-            Sort sort = Sort.by("createDate").descending();
-            Page<Product> products = productRepository.findBySearchWord(searchWord, ProductStatus.판매중, ProductStatus.예약,PageRequest.of(pageNumber,10,sort));
+    public Page<Product> getProductsBySearchWord(String searchWord, int pageNumber) {
 
-
-            if(products.getContent().isEmpty()) return new Response(ResultCode.EXCEPTION,"등록된 상품이 없어 상품을 찾을수 없습니다.");
-
-            return new Response(ResultCode.OK,"정상적으로 상품을 조회하였습니다.",products);
-        }catch (Exception e) {
-            return new Response(ResultCode.FAIL,"상품조회에 실패하였습니다.");
-        }
-    }
-
-    @Override
-    public Response getSalesContractProducts(String userKey, int pageNumber) {
         Sort sort = Sort.by("createDate").descending();
-        Page<Product> contractProducts = productRepository.findByStatusAndUserKey(ProductStatus.판매대기, userKey, PageRequest.of(pageNumber, 10, sort));
+        Page<Product> products = productRepository.findBySearchWord(isUse,searchWord, ProductStatus.판매중, ProductStatus.예약,PageRequest.of(pageNumber,10,sort));
 
-        if(contractProducts.isEmpty()) return new Response(ResultCode.EXCEPTION,"판매대기 중인 상품이 존재하지 않습니다.");
-
-        return new Response(ResultCode.OK,"성공적으로 결제가 체결된 상품을 조회하였습니다.",contractProducts);
+        return products;
     }
 
     @Override
-    public Response getSalesContractProduct(String userKey, Long orderId) {
+    public Page<Product> getSalesContractProducts(String userKey, int pageNumber) {
+        Sort sort = Sort.by("createDate").descending();
+        Page<Product> contractProducts = productRepository.findByStatusAndUserKey(isUse,ProductStatus.판매대기, userKey, PageRequest.of(pageNumber, 10, sort));
+
+        return contractProducts;
+    }
+
+    @Override
+    public Optional<Order> getSalesContractProduct(String userKey, Long orderId) {
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId,OrderStatus.주문체결);
-        if (mayBeOrder.isEmpty()) return new Response(ResultCode.EXCEPTION,"체결된 주문이 없습니다.");
-
-        Order order = mayBeOrder.get();
-        if(!userKey.equals(order.getProduct().getMember().getUserKey())) return new Response(ResultCode.EXCEPTION,"체결된 주문이 없습니다.");
-
-        return new Response(ResultCode.OK,"성공적으로 결제가 체결된 상품을 조회하였습니다.",order);
+        return mayBeOrder;
     }
 
     @Override
-    public Response getPurchaseProducts(String userKey, int pageNumber) {
+    public Page<Order> getPurchaseProducts(String userKey, int pageNumber) {
         Sort sort = Sort.by("createDate").descending();
         Page<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey, OrderStatus.주문취소, PageRequest.of(pageNumber, 10, sort));
 
-        if (purchaseOrders.getContent().isEmpty()) return new Response(ResultCode.EXCEPTION,"구매내역이 없습니다.");
-
-        return new Response(ResultCode.OK,"정상적으로 구매내역을 조회하였습니다.",purchaseOrders);
+        return purchaseOrders;
     }
 
     @Override
-    public Response getPurchaseProduct(String userKey, String orderId) {
-        try {
-            Optional<Order> mayBeOrder = orderRepository.findByOrderId(Long.parseLong(orderId));
-            if (mayBeOrder.isEmpty()) return new Response(ResultCode.EXCEPTION,"구매내역이 없습니다.");
+    public Optional<Order> getPurchaseProduct(String userKey, Long orderId) {
 
-            Order order = mayBeOrder.get();
+        Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId);
 
-            return new Response(ResultCode.OK,"정상적으로 구매내역을 조회하였습니다.",order);
-        }catch (Exception e) {
-            return new Response(ResultCode.FAIL,"구매내역 조회에 실패하였습니다.");
-        }
+        return mayBeOrder;
     }
 
     @Override
-    public Response getProductsAll() {
+    public List<Product> getProductsAll() {
         List<Product> products = productRepository.findByAll();
-        if (products.isEmpty()) return new Response(ResultCode.FAIL,"상품이 존재하지 않습니다.");
-        return  new Response(ResultCode.OK,"성공적으로 상품을 조회하였습니다.",products);
+
+        return products;
     }
 
     @Override
-    public Response getMemberProducts(String userKey) {
-        List<Product> products = productRepository.findByUserKey(userKey);
-        if (products.isEmpty()) return new Response(ResultCode.FAIL,"상품이 존재하지 않습니다.");
-        return new Response(ResultCode.OK,"성공적으로 상품을 조회하였습니다.",products);
+    public List<Product> getMemberProducts(String userKey) {
+        List<Product> products = productRepository.findByUserKey(userKey, isUse);
+
+        return products;
     }
 
     @Override
     public Response updateProductStatus(Long productId, ProductStatus status) {
         try {
-            Optional<Product> mayBeProduct = productRepository.findByProductId(productId);
+            Optional<Product> mayBeProduct = productRepository.findByProductId(productId,isUse);
             if(mayBeProduct.isEmpty()) return new Response(ResultCode.EXCEPTION ,"상품이 존재하지 않습니다.");
 
-            productRepository.updateStatus(productId,status);
+            productRepository.updateStatus(productId,status,isUse);
 
             return new Response(ResultCode.OK,"상품 "+productId+"를 "+status+"상태로 변경하였습니다.");
         }catch (Exception e){

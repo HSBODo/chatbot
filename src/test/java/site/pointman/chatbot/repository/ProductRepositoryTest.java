@@ -5,6 +5,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.constant.ProductStatus;
@@ -24,6 +27,7 @@ class ProductRepositoryTest {
 
     @Autowired
     ProductRepository productRepository;
+    private boolean isUse = true;
 
     @Test
     void saveProduct() {
@@ -83,7 +87,7 @@ class ProductRepositoryTest {
         productRepository.insertProduct(productDto,productImageDto);
 
         // when
-        productRepository.updateStatus(123123L, ProductStatus.숨김);
+        productRepository.updateStatus(123123L, ProductStatus.숨김, isUse);
 
         // then
     }
@@ -102,7 +106,7 @@ class ProductRepositoryTest {
         productRepository.insertProduct(productDto,productImageDto);
 
         // when
-        productRepository.deleteProduct(123123L);
+        productRepository.deleteProduct(123123L, isUse);
 
         // then
     }
@@ -125,7 +129,7 @@ class ProductRepositoryTest {
         productRepository.insertProduct(productDto,productImageDto);
 
         // when
-        List<Product> Products = productRepository.findByUserKey("QFJSyeIZbO77");
+        List<Product> Products = productRepository.findByUserKey("QFJSyeIZbO77", isUse);
 
         // then
 
@@ -149,7 +153,7 @@ class ProductRepositoryTest {
         productRepository.insertProduct(productDto,productImageDto);
 
         // when
-        Product product = productRepository.findByProductId(100000L).get();
+        Product product = productRepository.findByProductId(100000L, isUse).get();
 
         // then
         Assertions.assertThat(product.getMember().getUserKey()).isEqualTo(member.getUserKey());
@@ -163,7 +167,7 @@ class ProductRepositoryTest {
         ProductStatus status = ProductStatus.판매중;
 
         //when
-        List<Product> products = productRepository.findByCategory(category,status);
+        List<Product> products = productRepository.findByCategory(category,status, isUse);
 
         //then
         products.forEach(product -> {
@@ -175,14 +179,29 @@ class ProductRepositoryTest {
     @Test
     void findBySearchWord() {
         //give
+        Sort sort = Sort.by("createDate").descending();
         String searchWord = "상품";
-        ProductStatus status = ProductStatus.판매중;
+        ProductStatus firstStatus = ProductStatus.판매중;
+        ProductStatus secondStatus = ProductStatus.예약;
         //when
-        List<Product> products = productRepository.findBySearchWord(searchWord,status);
-        int size = products.size();
+        Page<Product> products = productRepository.findBySearchWord(isUse, searchWord, firstStatus, secondStatus, PageRequest.of(0, 10, sort));
+
         //then
-        products.forEach(product -> {
-            Assertions.assertThat(size).isEqualTo(3);
+        products.getContent().forEach(product -> {
+            Assertions.assertThat(product.getStatus()).isIn(firstStatus,secondStatus);
+        });
+    }
+
+    @Test
+    void findByStatus() {
+        Sort sort = Sort.by("createDate").descending();
+        Page<Product> main = productRepository.findMain(isUse, ProductStatus.판매중, ProductStatus.예약, PageRequest.of(0, 10, sort));
+
+        main.getContent().forEach(product -> {
+            log.info("{}",product.getName());
+            log.info("{}",product.getStatus());
+            log.info("{}",product.getCreateDate());
+
         });
     }
 }
