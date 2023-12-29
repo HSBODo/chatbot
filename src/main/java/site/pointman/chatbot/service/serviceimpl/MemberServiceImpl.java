@@ -2,9 +2,9 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.ApiResultCode;
 import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.constant.OrderStatus;
+import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
@@ -21,7 +21,7 @@ import site.pointman.chatbot.service.S3FileService;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Slf4j
@@ -55,42 +55,39 @@ public class MemberServiceImpl implements MemberService {
                     .memberRole(MemberRole.CUSTOMER_BRONZE)
                     .build();
 
-            memberRepository.save(member);
+            memberRepository.saveAndFlush(member);
 
-            return new HttpResponse(ApiResultCode.OK,"회원가입을 성공적으로 완료하였습니다.");
+            return new HttpResponse(ResultCode.OK,"회원가입을 성공적으로 완료하였습니다.");
         }catch (Exception e) {
-            return new HttpResponse(ApiResultCode.FAIL,"회원가입을 실패하였습니다. e= "+e.getMessage());
+            return new HttpResponse(ResultCode.FAIL,"회원가입을 실패하였습니다. e= "+e.getMessage());
         }
     }
 
     @Override
-    public HttpResponse getMembers() {
-        List<Member> members = memberRepository.findByAll();
-        if (members.isEmpty()) return new HttpResponse(ApiResultCode.FAIL,"회원이 존재하지 않습니다");
+    public List<Member> getMembers(){
+        List<Member> members = memberRepository.findAll();
+        if (members.isEmpty()) throw new NoSuchElementException("회원이 존재하지 않습니다;");
 
-        return new HttpResponse(ApiResultCode.OK,"정상적으로 회원 조회를 완료하였습니다",members);
+        return members;
     }
 
     @Override
-    public HttpResponse getMember(String userKey) {
-        try {
-            Member member = memberRepository.findByUserKey(userKey).get();
+    public Member getMember(String userKey) {
+        Optional<Member> mayBeMember = Optional.ofNullable(memberRepository.findByUserKey(userKey)
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다.")));
 
-            if (Objects.isNull(member)) return new HttpResponse(ApiResultCode.FAIL,"회원이 존재하지 않습니다");
+        Member member = mayBeMember.get();
 
-            return new HttpResponse(ApiResultCode.OK,"회원 조회를 성공하였습니다",member);
-        }catch (Exception e) {
-            return  new HttpResponse(ApiResultCode.FAIL,"회원 조회 실패");
-        }
+        return member;
     }
 
     @Override
     public HttpResponse updateMember(String userKey, Member member) {
         try {
             memberRepository.updateMember(userKey,member);
-            return new HttpResponse(ApiResultCode.OK,"회원정보 변경을 완료하였습니다.");
+            return new HttpResponse(ResultCode.OK,"회원정보 변경을 완료하였습니다.");
         }catch (Exception e){
-            return new HttpResponse(ApiResultCode.FAIL,"회원정보 변경을 실패하였습니다.");
+            return new HttpResponse(ResultCode.FAIL,"회원정보 변경을 실패하였습니다.");
         }
     }
 
@@ -99,10 +96,10 @@ public class MemberServiceImpl implements MemberService {
         try {
             memberRepository.updateMemberPhoneNumber(userKey, updatePhoneNumber);
 
-            return new HttpResponse(ApiResultCode.OK,"연락처를 수정하였습니다.");
+            return new HttpResponse(ResultCode.OK,"연락처를 수정하였습니다.");
         }catch (Exception e) {
 
-            return new HttpResponse(ApiResultCode.FAIL,"연락처 수정을 실패하였습니다. e= "+e.getMessage());
+            return new HttpResponse(ResultCode.FAIL,"연락처 수정을 실패하였습니다. e= "+e.getMessage());
         }
     }
 
@@ -113,7 +110,7 @@ public class MemberServiceImpl implements MemberService {
 
             for (Order order : orders) {
                 if (order.getStatus().equals(OrderStatus.주문체결)){
-                    return new HttpResponse(ApiResultCode.EXCEPTION,"구매중인 주문이 있어 회원탈퇴가 불가능합니다.");
+                    return new HttpResponse(ResultCode.EXCEPTION,"구매중인 주문이 있어 회원탈퇴가 불가능합니다.");
                 }
             }
 
@@ -121,14 +118,14 @@ public class MemberServiceImpl implements MemberService {
 
             for (Product product : products) {
                 Optional<Order> salesProduct = orderRepository.findByProductId(product.getId(), OrderStatus.주문체결);
-                if (!salesProduct.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"거래가 체결된 상품이 있어 회원탈퇴가 불가능합니다.");
+                if (!salesProduct.isEmpty()) return new HttpResponse(ResultCode.EXCEPTION,"거래가 체결된 상품이 있어 회원탈퇴가 불가능합니다.");
             }
 
             memberRepository.delete(userKey);
 
-            return new HttpResponse(ApiResultCode.OK,"회원탈퇴를 성공적으로 완료하였습니다.");
+            return new HttpResponse(ResultCode.OK,"회원탈퇴를 성공적으로 완료하였습니다.");
         }catch (Exception e) {
-            return new HttpResponse(ApiResultCode.FAIL,"회원탈퇴를 실패하였습니다.");
+            return new HttpResponse(ResultCode.FAIL,"회원탈퇴를 실패하였습니다.");
         }
     }
 
@@ -144,9 +141,10 @@ public class MemberServiceImpl implements MemberService {
 
             member.changeMemberProfileImage(productImageDto.getImageUrls().get(0));
 
-            return new HttpResponse(ApiResultCode.OK,"성공적으로 프로필사진을 변경하였습니다.");
+            return new HttpResponse(ResultCode.OK,"성공적으로 프로필사진을 변경하였습니다.");
         }catch (Exception e) {
-            return new HttpResponse(ApiResultCode.FAIL,"프로필사진 등록을 실패하였습니다.");
+            log.info("eeeeeeeeeeeeeeeeeeee={}",e.getMessage());
+            return new HttpResponse(ResultCode.FAIL,"프로필사진 등록을 실패하였습니다.");
         }
     }
 

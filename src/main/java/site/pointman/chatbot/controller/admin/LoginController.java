@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.annotation.SkipAop;
-import site.pointman.chatbot.constant.ApiResultCode;
+import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.login.Login;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.service.AuthService;
@@ -29,10 +29,10 @@ public class LoginController {
     @PostMapping(value = "")
     public HttpResponse login(@RequestBody Login login){
         boolean isAdmin = memberService.isAdmin(login.getName(), login.getUserKey());
-        if (!isAdmin) return new HttpResponse(ApiResultCode.FAIL,"이름과 유저키가 옳바르지 않습니다.");
+        if (!isAdmin) return new HttpResponse(ResultCode.FAIL,"이름과 유저키가 옳바르지 않습니다.");
 
         String jwtToken = authService.createJwtToken(login.getName(), login.getUserKey());
 
-        return new HttpResponse(ApiResultCode.OK,"로그인 성공 token=["+jwtToken+"]");
+        return new HttpResponse(ResultCode.OK,"로그인 성공 token=["+jwtToken+"]");
     }
 }

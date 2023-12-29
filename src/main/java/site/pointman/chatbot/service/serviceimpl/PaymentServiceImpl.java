@@ -7,7 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import site.pointman.chatbot.constant.ApiResultCode;
+import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.constant.PaymentStatus;
 import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
@@ -209,9 +209,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public HttpResponse getPaymentInfoByStatus(Long orderId, PaymentStatus paymentStatus) {
         Optional<PaymentInfo> maBePaymentInfo = paymentRepository.findByPaymentStatus(orderId, paymentStatus);
-        if (maBePaymentInfo.isEmpty()) return new HttpResponse(ApiResultCode.EXCEPTION,"결제정보가 존재하지 않습니다.");
+        if (maBePaymentInfo.isEmpty()) return new HttpResponse(ResultCode.EXCEPTION,"결제정보가 존재하지 않습니다.");
         PaymentInfo paymentInfo = maBePaymentInfo.get();
-        return new HttpResponse(ApiResultCode.OK,"결제정보를 조회하였습니다.",paymentInfo);
+        return new HttpResponse(ResultCode.OK,"결제정보를 조회하였습니다.",paymentInfo);
     }
 
     private HttpHeaders getKakaoPayRequestHeaders(){

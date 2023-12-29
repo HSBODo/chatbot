@@ -11,11 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import site.pointman.chatbot.constant.ApiResultCode;
+import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.log.ChatBotLog;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.service.AuthService;
 import site.pointman.chatbot.service.LogService;
@@ -81,9 +79,9 @@ public class Aop {
         HttpServletRequest request = requestAttributes.getRequest();
         String token = request.getHeader("token");
 
-        if(StringUtils.isNullOrEmpty(token)) return new HttpResponse(ApiResultCode.FAIL,"로그인이 필요합니다.");
+        if(StringUtils.isNullOrEmpty(token)) return new HttpResponse(ResultCode.FAIL,"로그인이 필요합니다.");
 
-        if(!authService.isTokenVerification(token)) return new HttpResponse(ApiResultCode.FAIL,"유효하지 않은 토큰입니다.");
+        if(!authService.isTokenVerification(token)) return new HttpResponse(ResultCode.FAIL,"유효하지 않은 토큰입니다.");
 
         Object proceed = joinPoint.proceed();
 

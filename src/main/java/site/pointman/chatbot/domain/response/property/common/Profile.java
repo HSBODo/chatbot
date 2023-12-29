@@ -2,6 +2,7 @@ package site.pointman.chatbot.domain.response.property.common;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -26,5 +27,8 @@ public class Profile {
     }
     public void changeProfileImage(String imageUrl){
         this.imageUrl = imageUrl;
+    }
+    public void changeProfileNickname(String nickname){
+        this.nickname = nickname;
     }
 }

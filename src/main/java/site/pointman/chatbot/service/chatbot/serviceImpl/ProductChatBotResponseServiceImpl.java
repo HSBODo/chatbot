@@ -68,7 +68,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         if (productStatus.equals(ProductStatus.예약취소)) productStatus = ProductStatus.판매중;
 
         HttpResponse result = productService.updateProductStatus(Long.parseLong(productId), productStatus);
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("상품의 상태변경을 실패하였습니다.");
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("상품의 상태변경을 실패하였습니다.");
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
@@ -87,7 +87,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
         if(!ProductStatus.삭제.name().equals(utterance)) return chatBotExceptionResponse.createException("상품 삭제를 실패하였습니다.");
 
         HttpResponse result = productService.deleteProduct(Long.parseLong(productId));
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("상품을 정상적으로 삭제하였습니다.");
@@ -108,7 +108,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     @Override
     public ChatBotResponse getProductChatBotResponse(String userKey, String productId) {
         HttpResponse result = productService.getProduct(Long.parseLong(productId));
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("상품 조회를 실패하였습니다.");
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("상품 조회를 실패하였습니다.");
         Product product = (Product) result.getResult();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
@@ -147,7 +147,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     @Override
     public ChatBotResponse getProductsByCategoryChatBotResponse(Category category, int pageNumber) {
         HttpResponse result = productService.getProductsByCategory(category, pageNumber);
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
 
         Page<Product> products = (Page<Product>) result.getResult();
 
@@ -196,7 +196,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     @Override
     public ChatBotResponse searchProductsChatBotResponse(String searchWord, int pageNumber) {
         HttpResponse result = productService.getProductsBySearchWord(searchWord,pageNumber);
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
 
         Page<Product> products = (Page<Product>) result.getResult();
 
@@ -248,7 +248,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
         HttpResponse result = productService.getMemberProductsByStatus(userKey, status, pageNumber);
 
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
 
         Page<Product> products = (Page<Product>) result.getResult();
 
@@ -326,7 +326,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     @Override
     public ChatBotResponse addProductChatBotResponse(ProductDto productDto, String userKey, List<String> imageUrls) {
         HttpResponse result = productService.addProduct(productDto, userKey, imageUrls);
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("상품등록을 실패하였습니다.");
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("상품등록을 실패하였습니다.");
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
@@ -357,7 +357,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     @Override
     public ChatBotResponse getSalesContractProductsChatBotResponse(String userKey, int pageNumber) {
         HttpResponse result = productService.getSalesContractProducts(userKey,pageNumber);
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("판매대기 중인 상품이 존재하지 않습니다.");
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("판매대기 중인 상품이 존재하지 않습니다.");
         Page<Product> contractProducts = (Page<Product>) result.getResult();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
@@ -400,7 +400,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     @Override
     public ChatBotResponse getSalesContractProductChatBotResponse(String userKey, String orderId) {
         HttpResponse result = productService.getSalesContractProduct(userKey, Long.parseLong(orderId));
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("체결된 주문이 없습니다.");
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("체결된 주문이 없습니다.");
         Order order = (Order) result.getResult();
 
         Product product = order.getProduct();
@@ -513,7 +513,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     @Override
     public ChatBotResponse getMainProductsChatBotResponse(int currentPage) {
         HttpResponse result = productService.getMainProducts(currentPage);
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("상품조회를 실패하였습니다.");
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("상품조회를 실패하였습니다.");
         Page<Product> products = (Page<Product>) result.getResult();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
@@ -556,7 +556,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     @Override
     public ChatBotResponse getPurchaseProducts(String userKey, int pageNumber) {
         HttpResponse result = productService.getPurchaseProducts(userKey,pageNumber);
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
         Page<Order> purchaseOrders = (Page<Order>) result.getResult();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
@@ -599,7 +599,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
     @Override
     public ChatBotResponse getPurchaseProductProfile(String userKey, String orderId) {
         HttpResponse result = productService.getPurchaseProduct(userKey, orderId);
-        if (result.getCode() != ApiResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
+        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
         Order order = (Order) result.getResult();
 
         Product product = order.getProduct();

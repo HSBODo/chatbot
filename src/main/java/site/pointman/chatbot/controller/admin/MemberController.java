@@ -7,6 +7,8 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.HttpResponse;
 import site.pointman.chatbot.service.MemberService;
 
+import java.util.List;
+
 @Controller
 @RequestMapping(value = "admin/member")
 public class MemberController {
@@ -28,13 +30,13 @@ public class MemberController {
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.GET)
-    public HttpResponse getMembers(){
+    public List<Member> getMembers() throws Exception {
         return memberService.getMembers();
     }
 
     @ResponseBody
     @RequestMapping(value = "{memberUserKey}",method = RequestMethod.GET)
-    public HttpResponse getMember(@PathVariable String memberUserKey){
+    public Member getMember(@PathVariable String memberUserKey){
         return memberService.getMember(memberUserKey);
     }
 
