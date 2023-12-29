@@ -46,10 +46,11 @@ class NoticeServiceTest {
                 .description("테스트중")
                 .build();
         //when
-        Notice addNotice = noticeService.addNotice(noticeDto);
+        Response response = noticeService.addNotice(noticeDto);
+
 
         //then
-        Assertions.assertThat(addNotice.getTitle()).isEqualTo(noticeDto.getTitle());
+        Assertions.assertThat(response.getCode()).isEqualTo(ResultCode.OK);
 
     }
 

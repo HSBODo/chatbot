@@ -19,10 +19,12 @@ import site.pointman.chatbot.utill.CustomStringUtils;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 
 @Getter
+@NoArgsConstructor
 public class NoticeDto {
 
     private Long id ;
@@ -31,7 +33,7 @@ public class NoticeDto {
     private String description;
     private String writer;
     private String imageUrl;
-    private List<Button> buttons;
+    private List<Button> buttons = new ArrayList<>();
     private NoticeStatus status;
     private String createDate;
     private String modificationDate;
@@ -59,9 +61,5 @@ public class NoticeDto {
                 .buttons(buttons)
                 .status(status)
                 .build();
-    }
-
-    public void setWriter(String writer) {
-        this.writer = writer;
     }
 }
