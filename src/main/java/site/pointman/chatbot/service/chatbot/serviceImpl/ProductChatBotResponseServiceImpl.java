@@ -43,6 +43,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
     @Value("${host.url}")
     private String HOST_URL;
+    private boolean isUse = true;
     private ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
 
     MemberRepository memberRepository;
@@ -124,7 +125,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
         if (!product.getMember().getUserKey().equals(userKey) && product.getStatus().equals(ProductStatus.예약)) return new ChatBotExceptionResponse().createException("예약중인 상품입니다.");
 
-        Optional<Member> buyerMember = memberRepository.findByUserKey(userKey);
+        Optional<Member> buyerMember = memberRepository.findByUserKey(userKey,isUse);
         if(!buyerMember.isEmpty() && !productUserKey.equals(userKey) && product.getStatus().equals(ProductStatus.판매중)){
             /**
              * 카카오페이 결제버튼 노출조건

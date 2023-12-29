@@ -27,6 +27,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class MemberServiceImpl implements MemberService {
+    private boolean isUse = true;
 
     MemberRepository memberRepository;
     OrderRepository orderRepository;
@@ -73,7 +74,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member getMember(String userKey) {
-        Optional<Member> mayBeMember = Optional.ofNullable(memberRepository.findByUserKey(userKey)
+        Optional<Member> mayBeMember = Optional.ofNullable(memberRepository.findByUserKey(userKey,isUse)
                 .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다.")));
 
         Member member = mayBeMember.get();
@@ -84,7 +85,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Response updateMember(String userKey, Member member) {
         try {
-            memberRepository.updateMember(userKey,member);
+            memberRepository.updateMember(userKey,member,isUse);
             return new Response(ResultCode.OK,"회원정보 변경을 완료하였습니다.");
         }catch (Exception e){
             return new Response(ResultCode.FAIL,"회원정보 변경을 실패하였습니다.");
@@ -94,7 +95,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Response updateMemberPhoneNumber(String userKey, String updatePhoneNumber) {
         try {
-            memberRepository.updateMemberPhoneNumber(userKey, updatePhoneNumber);
+            memberRepository.updateMemberPhoneNumber(userKey, updatePhoneNumber,isUse);
 
             return new Response(ResultCode.OK,"연락처를 수정하였습니다.");
         }catch (Exception e) {
@@ -121,7 +122,7 @@ public class MemberServiceImpl implements MemberService {
                 if (!salesProduct.isEmpty()) return new Response(ResultCode.EXCEPTION,"거래가 체결된 상품이 있어 회원탈퇴가 불가능합니다.");
             }
 
-            memberRepository.delete(userKey);
+            memberRepository.delete(userKey,isUse);
 
             return new Response(ResultCode.OK,"회원탈퇴를 성공적으로 완료하였습니다.");
         }catch (Exception e) {
@@ -133,7 +134,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public Response updateMemberProfileImage(String userKey, String profileImageUrl) {
         try {
-            Member member = memberRepository.findByUserKey(userKey).get();
+            Member member = memberRepository.findByUserKey(userKey,isUse).get();
             List<String> uploadImages = new ArrayList<>();
             uploadImages.add(profileImageUrl);
 
@@ -143,7 +144,6 @@ public class MemberServiceImpl implements MemberService {
 
             return new Response(ResultCode.OK,"성공적으로 프로필사진을 변경하였습니다.");
         }catch (Exception e) {
-            log.info("eeeeeeeeeeeeeeeeeeee={}",e.getMessage());
             return new Response(ResultCode.FAIL,"프로필사진 등록을 실패하였습니다.");
         }
     }
@@ -151,7 +151,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean isCustomer(String userKey) {
         try {
-            Optional<Member> mayBeCustomer = memberRepository.findByUserKey(userKey);
+            Optional<Member> mayBeCustomer = memberRepository.findByUserKey(userKey,isUse);
 
             if (mayBeCustomer.isEmpty()) return false;
 
@@ -163,7 +163,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean isAdmin(String name,String userKey) {
         try {
-            Optional<Member> mayBeCustomer = memberRepository.findAdmin(name,userKey);
+            Optional<Member> mayBeCustomer = memberRepository.findByRole(name,userKey,MemberRole.ADMIN,isUse);
 
             if (mayBeCustomer.isEmpty()) return false;
 

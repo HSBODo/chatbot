@@ -45,7 +45,7 @@ public class ValidationChatBotServiceImpl implements ValidationChatBotService {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String inputName = chatBotRequest.getValidationData();
 
-        Optional<Member> mayBeMember = memberRepository.findByName(inputName);
+        Optional<Member> mayBeMember = memberRepository.findByName(inputName,true);
 
         if(!mayBeMember.isEmpty()){
             chatBotValidationResponse.validationFail();
@@ -123,7 +123,7 @@ public class ValidationChatBotServiceImpl implements ValidationChatBotService {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String reservationCustomerName= chatBotRequest.getValidationData();
 
-        Optional<Member> mayBeMember = memberRepository.findByName(reservationCustomerName);
+        Optional<Member> mayBeMember = memberRepository.findByName(reservationCustomerName,true);
         if(mayBeMember.isEmpty()){
             chatBotValidationResponse.validationFail();
             return chatBotValidationResponse;

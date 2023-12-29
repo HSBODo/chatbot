@@ -31,7 +31,7 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     public Notice addNotice(NoticeDto noticeDto) {
-        Optional<Member> myBeMember = memberRepository.findByName(noticeDto.getWriter());
+        Optional<Member> myBeMember = memberRepository.findByName(noticeDto.getWriter(),isUse);
         if (myBeMember.isEmpty()) throw new NoSuchElementException("작성자가 존재하지 않습니다.");
 
         Member member = myBeMember.get();

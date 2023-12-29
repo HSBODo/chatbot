@@ -31,6 +31,7 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     @Value("${host.url}")
     private String HOST_URL;
+    private boolean isUse = true;
 
     S3FileService s3FileService;
 
@@ -51,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
             Long productId = CustomNumberUtils.createNumberId();
 
 
-            Member member = memberRepository.findByUserKey(userKey).get();
+            Member member = memberRepository.findByUserKey(userKey,isUse).get();
             String productName = productDto.getName();
 
             productDto.setStatus(ProductStatus.판매중);

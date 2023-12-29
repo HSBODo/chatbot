@@ -2,14 +2,9 @@ package site.pointman.chatbot.repository.customrepository;
 
 import site.pointman.chatbot.domain.member.Member;
 
-import java.util.List;
-import java.util.Optional;
 
 public interface MemberCustomRepository {
-    Optional<Member> findByUserKey(String userKey);
-    Optional<Member> findAdmin(String name, String userKey);
-    Optional<Member> findByName(String name);
-    void updateMember(String userKey, Member member);
-    void updateMemberPhoneNumber(String userKey, String phoneNumber);
-    void delete(String userKey);
+    Member updateMember(String userKey, Member member, boolean isUse);
+    Member updateMemberPhoneNumber(String userKey, String phoneNumber, boolean isUse);
+    void delete(String userKey, boolean isUse);
 }

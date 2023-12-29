@@ -1,7 +1,6 @@
 package site.pointman.chatbot.service;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,8 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.domain.response.HttpResponse;
-import site.pointman.chatbot.domain.response.property.common.Profile;
+import site.pointman.chatbot.domain.response.Response;
 
 import java.util.List;
 
@@ -37,11 +35,6 @@ class MemberServiceTest {
         memberService.join(userKey, name, phoneNumber);
     }
 
-    @AfterEach
-    public void clear() {
-//        memberRepository.delete(userKey);
-    }
-
     @ParameterizedTest
     @CsvSource(value = {
          "userKey1:name1:phoneNumber1"
@@ -50,7 +43,7 @@ class MemberServiceTest {
         //give
 
         //when
-        HttpResponse response = memberService.join(userKey, name, phoneNumber);
+        Response response = memberService.join(userKey, name, phoneNumber);
 
         //then
         Assertions.assertThat(response.getCode()).isEqualTo(200);
@@ -91,7 +84,7 @@ class MemberServiceTest {
                 .build();
 
         //when
-        HttpResponse response = memberService.updateMember(userKey, updateMember);
+        Response response = memberService.updateMember(userKey, updateMember);
 
         //then
         Assertions.assertThat(response.getCode()).isEqualTo(ResultCode.OK.getValue());
@@ -103,7 +96,7 @@ class MemberServiceTest {
         String updatePhoneNumber ="01011112222";
 
         //when
-        HttpResponse result = memberService.updateMemberPhoneNumber(userKey, updatePhoneNumber);
+        Response result = memberService.updateMemberPhoneNumber(userKey, updatePhoneNumber);
         //then
         Assertions.assertThat(result.getCode()).isEqualTo(ResultCode.OK.getValue());
     }
@@ -113,7 +106,7 @@ class MemberServiceTest {
         //give
 
         //when
-        HttpResponse response = memberService.deleteMember(userKey);
+        Response response = memberService.deleteMember(userKey);
         //then
         Assertions.assertThat(response.getCode()).isEqualTo(ResultCode.OK.getValue());
     }
@@ -123,7 +116,7 @@ class MemberServiceTest {
         //give
         String updateProfileImage ="https://item.kakaocdn.net/do/a7fd7c0630f8aea8419a565fb2773bbc82f3bd8c9735553d03f6f982e10ebe70";
         //when
-        HttpResponse response = memberService.updateMemberProfileImage(userKey,updateProfileImage);
+        Response response = memberService.updateMemberProfileImage(userKey,updateProfileImage);
         //then
         Assertions.assertThat(response.getCode()).isEqualTo(ResultCode.OK.getValue());
     }
