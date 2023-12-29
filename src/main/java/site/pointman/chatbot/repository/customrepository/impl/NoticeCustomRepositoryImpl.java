@@ -2,6 +2,7 @@ package site.pointman.chatbot.repository.customrepository.impl;
 
 import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.domain.notice.Notice;
+import site.pointman.chatbot.dto.notice.NoticeDto;
 import site.pointman.chatbot.repository.customrepository.NoticeCustomRepository;
 
 import javax.persistence.EntityManager;
@@ -19,48 +20,17 @@ public class NoticeCustomRepositoryImpl implements NoticeCustomRepository {
     }
 
     @Override
-    public List<Notice> findByStatus(NoticeStatus noticeStatus) {
-        return em.createQuery("select n from Notice n where n.status =:status OR n.status =:main ORDER BY FIELD(n.status,:main,:status)",Notice.class)
-                .setParameter("status",noticeStatus)
-                .setParameter("main",NoticeStatus.메인)
-                .getResultList();
-    }
-
-    @Override
-    public List<Notice> findByAll() {
-        return em.createQuery("select n from Notice n ORDER BY n.createDate DESC",Notice.class)
-                .getResultList();
-    }
-
-    @Override
-    public Optional<Notice> findByNoticeId(Long noticeId) {
-        return em.createQuery("select n from Notice n where n.status <>:status AND n.id =:id",Notice.class)
-                .setParameter("id",noticeId)
-                .setParameter("status",NoticeStatus.숨김)
-                .getResultList().stream().findAny();
-    }
-
-    @Override
-    public void deleteNotice(Long noticeId) {
-        Notice notice = em.createQuery("select n from Notice n where n.id =:id", Notice.class)
-                .setParameter("id", noticeId)
-                .getResultList()
-                .stream().findAny()
-                .get();
-        em.remove(notice);
-    }
-
-    @Override
-    public void updateNotice(Long noticeId, Notice toNotice) {
+    public Notice updateNotice(Long noticeId, NoticeDto noticeDto) {
         Notice findNotice = em.createQuery("select n from Notice n where n.id =:id", Notice.class)
                 .setParameter("id", noticeId)
                 .getResultList().stream().findAny().get();
 
-        if(Objects.nonNull(toNotice.getType())) findNotice.changeType(toNotice.getType());
-        if(Objects.nonNull(toNotice.getImageUrl())) findNotice.changeImageUrl(toNotice.getImageUrl());
-        if(Objects.nonNull(toNotice.getTitle())) findNotice.changeTitle(toNotice.getTitle());
-        if(Objects.nonNull(toNotice.getDescription())) findNotice.changeDescription(toNotice.getDescription());
-        if(Objects.nonNull(toNotice.getButtons())) findNotice.changeButtons(toNotice.getButtons());
-        if(Objects.nonNull(toNotice.getStatus())) findNotice.changeStatus(toNotice.getStatus());
+        if(Objects.nonNull(noticeDto.getType())) findNotice.changeType(noticeDto.getType());
+        if(Objects.nonNull(noticeDto.getImageUrl())) findNotice.changeImageUrl(noticeDto.getImageUrl());
+        if(Objects.nonNull(noticeDto.getTitle())) findNotice.changeTitle(noticeDto.getTitle());
+        if(Objects.nonNull(noticeDto.getDescription())) findNotice.changeDescription(noticeDto.getDescription());
+        if(Objects.nonNull(noticeDto.getButtons())) findNotice.changeButtons(noticeDto.getButtons());
+        if(Objects.nonNull(noticeDto.getStatus())) findNotice.changeStatus(noticeDto.getStatus());
+        return findNotice;
     }
 }

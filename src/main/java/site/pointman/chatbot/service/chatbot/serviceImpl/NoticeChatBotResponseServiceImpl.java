@@ -15,6 +15,8 @@ import site.pointman.chatbot.service.NoticeService;
 import site.pointman.chatbot.service.chatbot.NoticeChatBotResponseService;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -28,16 +30,17 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
 
     @Override
     public ChatBotResponse getNoticesSuccessChatBotResponse() {
-        Response result = noticeService.getNotices();
-        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
-        List<Notice> notices = (List<Notice>) result.getResult();
+        List<Notice> mainNotices = noticeService.getDefaultNotices();
+
+        if (mainNotices.isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");
+
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         ListCard listCard = new ListCard();
         listCard.setHeader("공지사항");
 
-        notices.forEach(notice -> {
+        mainNotices.forEach(notice -> {
             String title = notice.getTitle();
             String writer = "작성자: " + notice.getMember().getName();
 
@@ -57,9 +60,11 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
 
     @Override
     public ChatBotResponse getNoticeSuccessChatBotResponse(String noticeId) {
-        Response result = noticeService.getNotice(noticeId);
-        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
-        Notice notice = (Notice) result.getResult();
+        Optional<Notice> mayBeNotice = noticeService.getNotice(Long.parseLong(noticeId));
+
+        if (mayBeNotice.isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");
+
+        Notice notice = mayBeNotice.get();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 

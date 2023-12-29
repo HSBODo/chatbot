@@ -4,9 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.dto.notice.NoticeDto;
 import site.pointman.chatbot.service.NoticeService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -20,20 +26,34 @@ public class NoticeAdminController {
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Response add(@RequestBody Notice notice){
+    public Notice add(@RequestBody Notice notice){
         return noticeService.addNotice(notice);
     }
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.GET)
-    public Response getNotices(){
-        return noticeService.getNoticeAll();
+    public List<NoticeDto> getNotices(){
+        List<NoticeDto> noticeDtoList = new ArrayList<>();
+
+        List<Notice> noticeAll = noticeService.getNoticeAll();
+        noticeAll.forEach(notice -> {
+            noticeDtoList.add(notice.toDto());
+
+        });
+
+        return noticeDtoList;
     }
 
     @ResponseBody
     @RequestMapping(value = "{noticeId}",method = RequestMethod.GET)
-    public Response getNotice(@PathVariable String noticeId){
-        return noticeService.getNotice(noticeId);
+    public Object getNotice(@PathVariable Long noticeId){
+        Optional<Notice> mayBeNotice = noticeService.getNotice(noticeId);
+
+        if (mayBeNotice.isEmpty()) return new Response(ResultCode.FAIL,"게시글이 존재하지 않습니다.");
+
+        NoticeDto noticeDto = mayBeNotice.get().toDto();
+
+        return noticeDto;
     }
 
     @ResponseBody
@@ -44,7 +64,7 @@ public class NoticeAdminController {
 
     @ResponseBody
     @RequestMapping(value = "{noticeId}",method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Response updateNotice(@PathVariable Long noticeId, @RequestBody Notice notice){
-        return noticeService.updateNotice(noticeId,notice);
+    public Response updateNotice(@PathVariable Long noticeId, @RequestBody NoticeDto noticeDto){
+        return noticeService.updateNotice(noticeId,noticeDto);
     }
 }
