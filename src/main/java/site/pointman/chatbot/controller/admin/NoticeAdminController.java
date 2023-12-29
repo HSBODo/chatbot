@@ -32,7 +32,7 @@ public class NoticeAdminController {
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.GET)
-    public List<NoticeDto> getNotices(){
+    public Object getNotices(){
         List<NoticeDto> noticeDtoList = new ArrayList<>();
 
         List<Notice> noticeAll = noticeService.getNoticeAll();

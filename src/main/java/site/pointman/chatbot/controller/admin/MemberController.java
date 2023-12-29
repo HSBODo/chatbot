@@ -31,13 +31,13 @@ public class MemberController {
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.GET)
-    public List<Member> getMembers() {
+    public Object getMembers() {
         return memberService.getMembers();
     }
 
     @ResponseBody
     @RequestMapping(value = "{memberUserKey}",method = RequestMethod.GET)
-    public Member getMember(@PathVariable String memberUserKey){
+    public Object getMember(@PathVariable String memberUserKey){
         return memberService.getMember(memberUserKey);
     }
 
