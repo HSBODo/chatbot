@@ -2,12 +2,18 @@ package site.pointman.chatbot.Interceptor;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
+import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.service.AuthService;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -20,34 +26,34 @@ import java.nio.charset.StandardCharsets;
 public class Interceptor implements HandlerInterceptor {
 
     private ObjectMapper objectMapper = new ObjectMapper();
+    AuthService authService;
+
+    public Interceptor(AuthService authService) {
+        this.authService = authService;
+    }
 
 
     @Override
     //	Controller 진입 전 실행
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.info("==== 2.인터셉터-preHandle ====");
+
+        String token = request.getHeader("token");
+
+        if(!authService.isTokenVerification(token)) {
+            Response forbiddenResponse = new Response(ResultCode.FAIL,"토큰이 유효하지 않습니다.");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            String forbiddenResponseAsString = objectMapper.writeValueAsString(forbiddenResponse);
+            response.getWriter().write(forbiddenResponseAsString);
+
+            return false;
+        }
+
+
         return true;
     }
-
-    private String getResponseBody(ContentCachingResponseWrapper responseWrapper) {
-        return new String(responseWrapper.getContentAsByteArray());
-    }
-
-    private ContentCachingResponseWrapper getResponseWrapper(HttpServletResponse response) {
-        if (response instanceof ContentCachingResponseWrapper) {
-            return (ContentCachingResponseWrapper)response;
-        }
-        return new ContentCachingResponseWrapper(response);
-    }
-
-    private ChatBotRequest getRequestDtoFromHttpServletRequest(HttpServletRequest request) throws IOException {
-        ServletInputStream inputStream = request.getInputStream();
-        String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
-        ChatBotRequest chatBotRequest = objectMapper.readValue(messageBody, ChatBotRequest.class);
-        return chatBotRequest;
-    }
-
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {

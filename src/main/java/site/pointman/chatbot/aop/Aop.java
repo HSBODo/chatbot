@@ -67,27 +67,27 @@ public class Aop {
         return proceed;
     }
 
-    @Around("adminControllerPointcut()")
-    public Object adminAuthentication(ProceedingJoinPoint joinPoint) throws Throwable {
-        String controllerName = joinPoint.getSignature().getDeclaringType().getName();
-        String methodName = joinPoint.getSignature().getName();
-        log.info("==== 3.AOP JOINPOINT ====");
-        log.info("controllerName={}",controllerName);
-        log.info("methodName={}",methodName);
-
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        HttpServletRequest request = requestAttributes.getRequest();
-        String token = request.getHeader("token");
-
-        if(StringUtils.isNullOrEmpty(token)) return new Response(ResultCode.FAIL,"로그인이 필요합니다.");
-
-        if(!authService.isTokenVerification(token)) return new Response(ResultCode.FAIL,"유효하지 않은 토큰입니다.");
-
-        Object proceed = joinPoint.proceed();
-
-        log.info("==== 4.AOP END ====");
-        return proceed;
-    }
+//    @Around("adminControllerPointcut()")
+//    public Object adminAuthentication(ProceedingJoinPoint joinPoint) throws Throwable {
+//        String controllerName = joinPoint.getSignature().getDeclaringType().getName();
+//        String methodName = joinPoint.getSignature().getName();
+//        log.info("==== 3.AOP JOINPOINT ====");
+//        log.info("controllerName={}",controllerName);
+//        log.info("methodName={}",methodName);
+//
+//        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+//        HttpServletRequest request = requestAttributes.getRequest();
+//        String token = request.getHeader("token");
+//
+//        if(StringUtils.isNullOrEmpty(token)) return new Response(ResultCode.FAIL,"로그인이 필요합니다.");
+//
+//        if(!authService.isTokenVerification(token)) return new Response(ResultCode.FAIL,"유효하지 않은 토큰입니다.");
+//
+//        Object proceed = joinPoint.proceed();
+//
+//        log.info("==== 4.AOP END ====");
+//        return proceed;
+//    }
 
     //    @Before("controllerPointcut()")
 //    public void before(JoinPoint joinPoint) throws Exception {
