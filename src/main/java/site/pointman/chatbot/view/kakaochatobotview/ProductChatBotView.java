@@ -8,20 +8,20 @@ import java.util.List;
 
 public interface ProductChatBotView {
 
-    ChatBotResponse updateStatusChatBotResponse(String productId, String utterance);
-    ChatBotResponse deleteProductChatBotResponse(String productId, String utterance);
-    ChatBotResponse verificationCustomerSuccessChatBotResponse();
-    ChatBotResponse getProductChatBotResponse(String userKey, String productId);
-    ChatBotResponse searchProductsChatBotResponse(String searchWord, int pageNumber);
-    ChatBotResponse getProductsByCategoryChatBotResponse(Category category, int pageNumber);
-    ChatBotResponse getMyProductsByStatusChatBotResponse(String userKey, String productStatus, int pageNumber);
-    ChatBotResponse getProductInfoPreviewChatBotResponse(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl);
-    ChatBotResponse addProductChatBotResponse(ProductDto productDto, String userKey, List<String> imageUrls);
-    ChatBotResponse getCategoryChatBotResponse(String requestBlockId);
-    ChatBotResponse getSalesContractProductsChatBotResponse(String userKey, int pageNumber);
-    ChatBotResponse getSalesContractProductChatBotResponse(String userKey, String orderId);
-    ChatBotResponse getPurchaseProducts(String userKey,int pageNumber);
-    ChatBotResponse getPurchaseProductProfile(String userKey,String orderId);
-    ChatBotResponse getSpecialProductsChatBotResponse(int pageNumber, int firstNumber);
-    ChatBotResponse getMainProductsChatBotResponse(int currentPage);
+    ChatBotResponse updateProductStatusResultPage(String productId, String utterance);
+    ChatBotResponse deleteProductResultPage(String productId, String utterance);
+    ChatBotResponse addProductReconfirmPage();
+    ChatBotResponse productDetailInfoPage(String userKey, String productId);
+    ChatBotResponse ProductListBySearchWordPage(String searchWord, int pageNumber);
+    ChatBotResponse productListByCategoryPage(Category category, int pageNumber);
+    ChatBotResponse myProductListByStatusPage(String userKey, String productStatus, int pageNumber);
+    ChatBotResponse addProductInfoPreviewPage(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl);
+    ChatBotResponse addProductResultPage(ProductDto productDto, String userKey, List<String> imageUrls);
+    ChatBotResponse productCategoryListPage(String requestBlockId);
+    ChatBotResponse mySalesContractProductListPage(String userKey, int pageNumber);
+    ChatBotResponse mySalesContractProductDetailInfoPage(String userKey, String orderId);
+    ChatBotResponse myPurchaseProductListPage(String userKey,int pageNumber);
+    ChatBotResponse myPurchaseProductDetailInfoPage(String userKey,String orderId);
+    ChatBotResponse specialProductListPage(int pageNumber, int firstNumber);
+    ChatBotResponse mainSaleProductListPage(int currentPage);
 }

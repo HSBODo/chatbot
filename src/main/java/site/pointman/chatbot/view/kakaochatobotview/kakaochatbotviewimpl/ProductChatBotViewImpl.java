@@ -64,7 +64,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse updateStatusChatBotResponse(String productId, String utterance) {
+    public ChatBotResponse updateProductStatusResultPage(String productId, String utterance) {
         ProductStatus productStatus = ProductStatus.getProductStatus(utterance);
         if (productStatus.equals(ProductStatus.예약취소)) productStatus = ProductStatus.판매중;
 
@@ -84,7 +84,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse deleteProductChatBotResponse(String productId, String utterance) {
+    public ChatBotResponse deleteProductResultPage(String productId, String utterance) {
         if(!ProductStatus.삭제.name().equals(utterance)) return chatBotExceptionResponse.createException("상품 삭제를 실패하였습니다.");
 
         Response result = productService.deleteProduct(Long.parseLong(productId));
@@ -97,7 +97,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse verificationCustomerSuccessChatBotResponse() {
+    public ChatBotResponse addProductReconfirmPage() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("상품을 등록하시겠습니까?");
@@ -107,7 +107,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse getProductChatBotResponse(String userKey, String productId) {
+    public ChatBotResponse productDetailInfoPage(String userKey, String productId) {
         Optional<Product> mayBeProduct = productService.getProduct(Long.parseLong(productId));
 
         if (mayBeProduct.isEmpty()) return chatBotExceptionResponse.createException("상품이 존재하지 않습니다.");
@@ -147,7 +147,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse getProductsByCategoryChatBotResponse(Category category, int pageNumber) {
+    public ChatBotResponse productListByCategoryPage(Category category, int pageNumber) {
         Page<Product> productsByCategory = productService.getProductsByCategory(category, pageNumber);
 
         if (productsByCategory.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
@@ -195,7 +195,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse searchProductsChatBotResponse(String searchWord, int pageNumber) {
+    public ChatBotResponse ProductListBySearchWordPage(String searchWord, int pageNumber) {
         Page<Product> productsBySearchWord = productService.getProductsBySearchWord(searchWord, pageNumber);
 
         if (productsBySearchWord.getContent().isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 존재하지 않습니다.");
@@ -245,7 +245,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse getMyProductsByStatusChatBotResponse(String userKey, String findStatus, int pageNumber) {
+    public ChatBotResponse myProductListByStatusPage(String userKey, String findStatus, int pageNumber) {
         ProductStatus status = ProductStatus.getProductStatus(findStatus);
 
         Page<Product> memberProductsByStatus = productService.getMemberProductsByStatus(userKey, status, pageNumber);
@@ -297,7 +297,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse getProductInfoPreviewChatBotResponse(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl) {
+    public ChatBotResponse addProductInfoPreviewPage(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl) {
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         StringBuilder productPreviewProfile = new StringBuilder();
@@ -326,7 +326,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse addProductChatBotResponse(ProductDto productDto, String userKey, List<String> imageUrls) {
+    public ChatBotResponse addProductResultPage(ProductDto productDto, String userKey, List<String> imageUrls) {
         Response result = productService.addProduct(productDto, userKey, imageUrls);
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("상품등록을 실패하였습니다.");
 
@@ -338,7 +338,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse getCategoryChatBotResponse(String blockId) {
+    public ChatBotResponse productCategoryListPage(String blockId) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         BlockId nextBlockId = BlockId.FIND_PRODUCTS_BY_CATEGORY;
@@ -357,7 +357,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse getSalesContractProductsChatBotResponse(String userKey, int pageNumber) {
+    public ChatBotResponse mySalesContractProductListPage(String userKey, int pageNumber) {
         Page<Product> salesContractProducts = productService.getSalesContractProducts(userKey, pageNumber);
 
         if (salesContractProducts.getContent().isEmpty()) return chatBotExceptionResponse.createException("판매대기 중인 상품이 존재하지 않습니다.");
@@ -400,7 +400,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse getSalesContractProductChatBotResponse(String userKey, String orderId) {
+    public ChatBotResponse mySalesContractProductDetailInfoPage(String userKey, String orderId) {
         Optional<Order> mayBeSalesContractProduct = productService.getSalesContractProduct(userKey, Long.parseLong(orderId));
 
         if (mayBeSalesContractProduct.isEmpty()) return chatBotExceptionResponse.createException("체결된 주문이 없습니다.");
@@ -444,7 +444,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse getSpecialProductsChatBotResponse(int pageNumber, int firstNumber) {
+    public ChatBotResponse specialProductListPage(int pageNumber, int firstNumber) {
         try {
             if (pageNumber == 0) pageNumber++;
             int lastProduct = firstNumber+5;
@@ -516,7 +516,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse getMainProductsChatBotResponse(int currentPage) {
+    public ChatBotResponse mainSaleProductListPage(int currentPage) {
         Page<Product> mainProducts = productService.getMainProducts(currentPage);
 
         if (mainProducts.getContent().isEmpty()) return chatBotExceptionResponse.createException("상품조회를 실패하였습니다.");
@@ -559,7 +559,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse getPurchaseProducts(String userKey, int pageNumber) {
+    public ChatBotResponse myPurchaseProductListPage(String userKey, int pageNumber) {
         Page<Order> purchaseProducts = productService.getPurchaseProducts(userKey, pageNumber);
 
         if (purchaseProducts.getContent().isEmpty()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
@@ -602,7 +602,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse getPurchaseProductProfile(String userKey, String orderId) {
+    public ChatBotResponse myPurchaseProductDetailInfoPage(String userKey, String orderId) {
         Optional<Order> mayBePurchaseProduct = productService.getPurchaseProduct(userKey, Long.parseLong(orderId));
 
         if (mayBePurchaseProduct.isEmpty()) return chatBotExceptionResponse.createException("구매상품이 존재하지 않습니다.");

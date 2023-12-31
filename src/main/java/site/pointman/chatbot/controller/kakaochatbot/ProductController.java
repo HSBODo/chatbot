@@ -44,7 +44,7 @@ public class ProductController {
     public ChatBotResponse verificationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        return productChatBotView.verificationCustomerSuccessChatBotResponse();
+        return productChatBotView.addProductReconfirmPage();
     }
 
     @ResponseBody
@@ -52,7 +52,7 @@ public class ProductController {
     public ChatBotResponse getCategory(@RequestBody ChatBotRequest chatBotRequest) {
         String requestBlockId = chatBotRequest.getRequestBlockId();
 
-        return productChatBotView.getCategoryChatBotResponse(requestBlockId);
+        return productChatBotView.productCategoryListPage(requestBlockId);
     }
 
     @ResponseBody
@@ -66,7 +66,7 @@ public class ProductController {
         String kakaoOpenChatUrl = chatBotRequest.getKakaoOpenChatUrl();
         String category = chatBotRequest.getChoiceParam();
 
-        return productChatBotView.getProductInfoPreviewChatBotResponse(imageUrls,category,productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl);
+        return productChatBotView.addProductInfoPreviewPage(imageUrls,category,productName,productDescription,productPrice,tradingLocation,kakaoOpenChatUrl);
     }
 
     @ResponseBody
@@ -75,7 +75,7 @@ public class ProductController {
         Category category = Category.getCategory(chatBotRequest.getChoiceParam());
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.getProductsByCategoryChatBotResponse(category,pageNumber);
+        return productChatBotView.productListByCategoryPage(category,pageNumber);
     }
 
     @ValidateMember
@@ -89,7 +89,7 @@ public class ProductController {
         Category category = Category.getCategory(productCategory);
         productDto.setCategory(category);
 
-        return productChatBotView.addProductChatBotResponse(
+        return productChatBotView.addProductResultPage(
                 productDto,
                 userKey,
                 imageUrls
@@ -104,7 +104,7 @@ public class ProductController {
         String productStatus = chatBotRequest.getProductStatus();
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.getMyProductsByStatusChatBotResponse(userKey,productStatus,pageNumber);
+        return productChatBotView.myProductListByStatusPage(userKey,productStatus,pageNumber);
     }
 
     @ResponseBody
@@ -112,7 +112,7 @@ public class ProductController {
     public ChatBotResponse getMainProducts(@RequestBody ChatBotRequest chatBotRequest) {
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.getMainProductsChatBotResponse(pageNumber);
+        return productChatBotView.mainSaleProductListPage(pageNumber);
     }
 
     @ValidateMember
@@ -122,7 +122,7 @@ public class ProductController {
         String productId = chatBotRequest.getProductId();
         String userKey = chatBotRequest.getUserKey();
 
-        return productChatBotView.getProductChatBotResponse(userKey, productId);
+        return productChatBotView.productDetailInfoPage(userKey, productId);
     }
 
     @ValidateMember
@@ -133,7 +133,7 @@ public class ProductController {
         String productId = chatBotRequest.getProductId();
         String utterance = chatBotRequest.getUtterance();
 
-        return productChatBotView.updateStatusChatBotResponse(productId,utterance);
+        return productChatBotView.updateProductStatusResultPage(productId,utterance);
     }
 
     @ValidateMember
@@ -144,7 +144,7 @@ public class ProductController {
         String productId = chatBotRequest.getProductId();
         String utterance = chatBotRequest.getUtterance();
 
-        return productChatBotView.deleteProductChatBotResponse(productId,utterance);
+        return productChatBotView.deleteProductResultPage(productId,utterance);
     }
 
     @ResponseBody
@@ -153,7 +153,7 @@ public class ProductController {
         String searchWord = chatBotRequest.getSearchWord();
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.searchProductsChatBotResponse(searchWord,pageNumber);
+        return productChatBotView.ProductListBySearchWordPage(searchWord,pageNumber);
     }
 
     @ResponseBody
@@ -162,7 +162,7 @@ public class ProductController {
         String searchWord = chatBotRequest.getSearchWord();
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.searchProductsChatBotResponse(searchWord,pageNumber);
+        return productChatBotView.ProductListBySearchWordPage(searchWord,pageNumber);
     }
 
     @ResponseBody
@@ -171,7 +171,7 @@ public class ProductController {
         String userKey = chatBotRequest.getUserKey();
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.getPurchaseProducts(userKey,pageNumber);
+        return productChatBotView.myPurchaseProductListPage(userKey,pageNumber);
     }
 
     @ResponseBody
@@ -180,7 +180,7 @@ public class ProductController {
         String userKey = chatBotRequest.getUserKey();
         String orderId = chatBotRequest.getOrderId();
 
-        return productChatBotView.getPurchaseProductProfile(userKey,orderId);
+        return productChatBotView.myPurchaseProductDetailInfoPage(userKey,orderId);
     }
 
     @ResponseBody
@@ -189,7 +189,7 @@ public class ProductController {
         String userKey = chatBotRequest.getUserKey();
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.getSalesContractProductsChatBotResponse(userKey,pageNumber);
+        return productChatBotView.mySalesContractProductListPage(userKey,pageNumber);
     }
 
     @ResponseBody
@@ -198,7 +198,7 @@ public class ProductController {
         String userKey = chatBotRequest.getUserKey();
         String orderId = chatBotRequest.getOrderId();
 
-        return productChatBotView.getSalesContractProductChatBotResponse(userKey,orderId);
+        return productChatBotView.mySalesContractProductDetailInfoPage(userKey,orderId);
     }
 
     @ResponseBody
@@ -207,7 +207,7 @@ public class ProductController {
         int currentPage = chatBotRequest.getPageNumber();
         int firstNumber = chatBotRequest.getFirstNumber();
 
-        return productChatBotView.getSpecialProductsChatBotResponse(currentPage,firstNumber);
+        return productChatBotView.specialProductListPage(currentPage,firstNumber);
     }
 
 }
