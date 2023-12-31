@@ -1,9 +1,8 @@
 package site.pointman.chatbot.service;
 
-import org.jsoup.Connection;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import site.pointman.chatbot.dto.product.SpecialProduct;
+import site.pointman.chatbot.domain.product.SpecialProduct;
 
 import java.util.List;
 

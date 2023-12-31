@@ -30,7 +30,7 @@ import site.pointman.chatbot.domain.response.property.components.Carousel;
 import site.pointman.chatbot.domain.response.property.components.CommerceCard;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.dto.product.ProductDto;
-import site.pointman.chatbot.dto.product.SpecialProduct;
+import site.pointman.chatbot.domain.product.SpecialProduct;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.service.CrawlingService;

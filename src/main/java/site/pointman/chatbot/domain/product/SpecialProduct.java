@@ -1,4 +1,4 @@
-package site.pointman.chatbot.dto.product;
+package site.pointman.chatbot.domain.product;
 
 import com.mysql.cj.util.StringUtils;
 import lombok.Builder;
