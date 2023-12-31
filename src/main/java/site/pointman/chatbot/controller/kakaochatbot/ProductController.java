@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import site.pointman.chatbot.annotation.ValidateMember;
 import site.pointman.chatbot.constant.Category;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
@@ -37,12 +38,11 @@ public class ProductController {
      *  REST API를 구현하기 위해서 URL의 구성을 "자원(Resource)/행위(HTTP Method)"로 구성하였다.
      */
 
+    @ValidateMember
     @ResponseBody
     @PostMapping(value = "POST/verificationCustomer" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse verificationCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
-
-        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
         return productChatBotResponseService.verificationCustomerSuccessChatBotResponse();
     }
@@ -78,6 +78,7 @@ public class ProductController {
         return productChatBotResponseService.getProductsByCategoryChatBotResponse(category,pageNumber);
     }
 
+    @ValidateMember
     @ResponseBody
     @PostMapping(value = "POST" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse add(@RequestBody ChatBotRequest chatBotRequest){
@@ -87,7 +88,6 @@ public class ProductController {
         ProductDto productDto = chatBotRequest.createProductDto();
         Category category = Category.getCategory(productCategory);
         productDto.setCategory(category);
-        if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
         return productChatBotResponseService.addProductChatBotResponse(
                 productDto,
@@ -96,14 +96,13 @@ public class ProductController {
                 );
     }
 
+    @ValidateMember
     @ResponseBody
     @PostMapping(value = "GET/myProductsByStatus" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getMyProducts(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String productStatus = chatBotRequest.getProductStatus();
         int pageNumber = chatBotRequest.getPageNumber();
-
-        if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
         return productChatBotResponseService.getMyProductsByStatusChatBotResponse(userKey,productStatus,pageNumber);
     }
@@ -112,20 +111,21 @@ public class ProductController {
     @PostMapping(value = "GET/mainProducts" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getMainProducts(@RequestBody ChatBotRequest chatBotRequest) {
         int pageNumber = chatBotRequest.getPageNumber();
+
         return productChatBotResponseService.getMainProductsChatBotResponse(pageNumber);
     }
 
+    @ValidateMember
     @ResponseBody
     @PostMapping(value = "GET/profile" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
         String productId = chatBotRequest.getProductId();
         String userKey = chatBotRequest.getUserKey();
 
-        if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
-
         return productChatBotResponseService.getProductChatBotResponse(userKey, productId);
     }
 
+    @ValidateMember
     @ResponseBody
     @PostMapping(value = "PATCH/status" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse updateProductStatus(@RequestBody ChatBotRequest chatBotRequest) {
@@ -133,19 +133,16 @@ public class ProductController {
         String productId = chatBotRequest.getProductId();
         String utterance = chatBotRequest.getUtterance();
 
-        if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
-
         return productChatBotResponseService.updateStatusChatBotResponse(productId,utterance);
     }
 
+    @ValidateMember
     @ResponseBody
     @PostMapping(value = "DELETE" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse delete(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String productId = chatBotRequest.getProductId();
         String utterance = chatBotRequest.getUtterance();
-
-        if(!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
         return productChatBotResponseService.deleteProductChatBotResponse(productId,utterance);
     }
@@ -200,6 +197,7 @@ public class ProductController {
     public ChatBotResponse getContractProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String orderId = chatBotRequest.getOrderId();
+
         return productChatBotResponseService.getSalesContractProductChatBotResponse(userKey,orderId);
     }
 
