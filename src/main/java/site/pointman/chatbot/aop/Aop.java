@@ -1,7 +1,6 @@
 package site.pointman.chatbot.aop;
 
 
-import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -9,34 +8,34 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.log.ChatBotLog;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.service.AuthService;
 import site.pointman.chatbot.service.LogService;
-
-import javax.servlet.http.HttpServletRequest;
+import site.pointman.chatbot.service.MemberService;
 
 @Aspect
 @Component
 @Slf4j
 public class Aop {
+    ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
+
     LogService logService;
     AuthService authService;
+    MemberService memberService;
 
-    public Aop(LogService logService, AuthService authService) {
+    public Aop(LogService logService, AuthService authService, MemberService memberService) {
         this.logService = logService;
         this.authService = authService;
+        this.memberService = memberService;
     }
 
     @Pointcut("execution(* site.pointman.chatbot.controller.kakaochatbot.*.*(..)) && !@annotation(site.pointman.chatbot.annotation.SkipLogging)") //Pointcut
     public void chatBotControllerPointcut() {
     }
-    @Pointcut("execution(* site.pointman.chatbot.controller.admin.*.*(..)) && !@annotation(site.pointman.chatbot.annotation.SkipAop)") //Pointcut
-    public void adminControllerPointcut() {
+    @Pointcut("execution(* site.pointman.chatbot.controller.kakaochatbot.*.*(..)) && @annotation(site.pointman.chatbot.annotation.ValidateMember)") //Pointcut
+    public void chatBotControllerValidateMemberPointcut() {
     }
 
     @Around("chatBotControllerPointcut()")
@@ -67,27 +66,29 @@ public class Aop {
         return proceed;
     }
 
-//    @Around("adminControllerPointcut()")
-//    public Object adminAuthentication(ProceedingJoinPoint joinPoint) throws Throwable {
-//        String controllerName = joinPoint.getSignature().getDeclaringType().getName();
-//        String methodName = joinPoint.getSignature().getName();
-//        log.info("==== 3.AOP JOINPOINT ====");
-//        log.info("controllerName={}",controllerName);
-//        log.info("methodName={}",methodName);
-//
-//        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-//        HttpServletRequest request = requestAttributes.getRequest();
-//        String token = request.getHeader("token");
-//
-//        if(StringUtils.isNullOrEmpty(token)) return new Response(ResultCode.FAIL,"로그인이 필요합니다.");
-//
-//        if(!authService.isTokenVerification(token)) return new Response(ResultCode.FAIL,"유효하지 않은 토큰입니다.");
-//
-//        Object proceed = joinPoint.proceed();
-//
-//        log.info("==== 4.AOP END ====");
-//        return proceed;
-//    }
+    @Around("chatBotControllerValidateMemberPointcut()")
+    public Object adminAuthentication(ProceedingJoinPoint joinPoint) throws Throwable {
+        String controllerName = joinPoint.getSignature().getDeclaringType().getName();
+        String methodName = joinPoint.getSignature().getName();
+        log.info("==== 3.AOP JOINPOINT ====");
+        log.info("controllerName={}",controllerName);
+        log.info("methodName={}",methodName);
+
+        Object[] args = joinPoint.getArgs();
+
+        for(Object obj : args) {
+            System.out.println("type : "+obj.getClass().getSimpleName());
+            ChatBotRequest chatBotRequest = (ChatBotRequest) obj;
+            String userKey = chatBotRequest.getUserKey();
+            if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
+
+        }
+
+        Object proceed = joinPoint.proceed();
+
+        log.info("==== 4.AOP END ====");
+        return proceed;
+    }
 
     //    @Before("controllerPointcut()")
 //    public void before(JoinPoint joinPoint) throws Exception {

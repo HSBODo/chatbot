@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import site.pointman.chatbot.annotation.ValidateMember;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
@@ -47,65 +48,58 @@ public class CustomerController {
         return customerChatBotResponseService.joinChatBotResponse(userKey, name, phoneNumber);
     }
 
+    @ValidateMember
     @ResponseBody
     @PostMapping(value = "PATCH/profileImage" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse updateProfileImage(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String customerProfileImage = chatBotRequest.getCustomerProfileImages().get(0);
 
-
-        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
-
         return customerChatBotResponseService.updateCustomerProfileImageChatBotResponse(userKey,customerProfileImage);
     }
 
+    @ValidateMember
     @ResponseBody
     @PostMapping(value = "GET/myPage" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getMyPage(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
-
         return customerChatBotResponseService.getMyPageSuccessChatBotResponse();
     }
 
+    @ValidateMember
     @ResponseBody
     @PostMapping(value = "GET/profile" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getProfile(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
-
         return customerChatBotResponseService.getCustomerProfileChatBotResponse(userKey);
     }
 
+    @ValidateMember
     @ResponseBody
     @PostMapping(value = "GET/salesCategory" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getSalesHistory(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
-
         return customerChatBotResponseService.getSalesCategorySuccessChatBotResponse();
     }
 
+    @ValidateMember
     @ResponseBody
     @PostMapping(value = "PATCH/phoneNumber" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse updatePhoneNumber(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
         String updatePhoneNumber = chatBotRequest.getCustomerPhone();
 
-        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
-
         return customerChatBotResponseService.updateCustomerPhoneNumberBotResponse(userKey, updatePhoneNumber);
     }
 
+    @ValidateMember
     @ResponseBody
     @PostMapping(value = "DELETE" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse withdrawalCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
-
-        if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
 
         return customerChatBotResponseService.withdrawalCustomerChatBotResponse(userKey);
     }
