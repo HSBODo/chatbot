@@ -56,8 +56,9 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotView {
         chatBotResponse.addListCard(listCard);
         chatBotResponse.addQuickButton(ButtonName.메인메뉴.name(), ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
         if (mainNotices.hasNext()){
-            chatBotResponse.addQuickButton(ButtonName.더보기.name(), ButtonAction.블럭이동,BlockId.FIND_NOTICES.getBlockId());
+            chatBotResponse.addQuickButton(ButtonName.더보기.name(), ButtonAction.블럭이동,BlockId.FIND_NOTICES.getBlockId(),ButtonParamKey.pageNumber,String.valueOf(++pageNumber));
         }
+
         return chatBotResponse;
     }
 
