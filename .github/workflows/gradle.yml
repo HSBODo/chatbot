@@ -4,8 +4,9 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+#  pull_request:
+#    branches: [ "master" ]
+
 
 jobs:
   deploy: 
@@ -14,25 +15,21 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+      
+    - uses: actions/checkout@v3
+    - run: touch ./src/main/resources/application.properties
+    - run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
+    - run: cat ./src/main/resources/application.properties
     
     # Spring Boot 어플리케이션 Build (1) --exclude-task test(테스트코드 실행 안함)
     - name: Spring Boot Build
       run: ./gradlew clean build --exclude-task test
-    
-    # Docker 이미지 Build (2)
-    - name: docker image build
-      run: docker build -t fxbin7713/spring-chatbot .
-    
-    # DockerHub Login (3)
-    - name: docker login 
-      uses: docker/login-action@v2
-      with: 
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PW }}
-
-    # Docker Hub push (4)
-    - name: docker Hub push
-      run: docker push fxbin7713/spring-chatbot
+      
+    - name: Docker build
+      run: |
+        docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PW }}
+        docker build -t fxbin7713/spring-chatbot .
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-chatbot       
 
     # GET GitHub IP (5)
     - name: get GitHub IP
@@ -63,9 +60,12 @@ jobs:
         timeout: 60s
         script: |
           sudo docker stop spring-chatbot
-          sudo docker rm spring-chatbot
+          docker rm $(docker ps -a -q)
+          docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/spring-chatbot
+          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/spring-chatbot
           sudo docker run -it -d -p 8080:8080 --name spring-chatbot fxbin7713/spring-chatbot
-
+          sudo docker image prune -f
+          
       # REMOVE Github IP FROM security group (9)
     - name: Remove IP FROM security group
       run: |
