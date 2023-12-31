@@ -21,7 +21,8 @@
 
 ---
 ## 📮 아키텍처 설계
-![img.png](images/아키텍처.png)
+![image](https://github.com/HSBODo/chatbot/assets/86594565/3637b603-5aff-4312-8203-2e223711513b)
+
 
 ---
 ## 🎯 CI/CD 파이프라인
