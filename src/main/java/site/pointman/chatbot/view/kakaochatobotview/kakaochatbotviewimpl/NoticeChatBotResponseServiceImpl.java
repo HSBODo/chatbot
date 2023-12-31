@@ -27,7 +27,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotView {
     }
 
     @Override
-    public ChatBotResponse getNoticesSuccessChatBotResponse() {
+    public ChatBotResponse noticeListPage() {
         List<Notice> mainNotices = noticeService.getDefaultNotices();
 
         if (mainNotices.isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");
@@ -57,7 +57,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotView {
     }
 
     @Override
-    public ChatBotResponse getNoticeSuccessChatBotResponse(String noticeId) {
+    public ChatBotResponse noticeDetailPage(String noticeId) {
         Optional<Notice> mayBeNotice = noticeService.getNotice(Long.parseLong(noticeId));
 
         if (mayBeNotice.isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");

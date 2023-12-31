@@ -24,7 +24,7 @@ public class NoticeController {
     @ResponseBody
     @PostMapping(value = "GET" , headers = {"Accept=application/json; UTF-8"})
     public Object getNotices(@RequestBody ChatBotRequest chatBotRequest){
-       return noticeChatBotResponseService.getNoticesSuccessChatBotResponse();
+       return noticeChatBotResponseService.noticeListPage();
     }
 
     @ResponseBody
@@ -32,6 +32,6 @@ public class NoticeController {
     public Object getNotice(@RequestBody ChatBotRequest chatBotRequest){
         String noticeId = chatBotRequest.getNoticeId();
 
-        return noticeChatBotResponseService.getNoticeSuccessChatBotResponse(noticeId);
+        return noticeChatBotResponseService.noticeDetailPage(noticeId);
     }
 }
