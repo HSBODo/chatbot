@@ -45,7 +45,7 @@ public class CustomerController {
 
         if (memberService.isCustomer(userKey)) return chatBotExceptionResponse.createException("이미 존재하는 회원입니다.");
 
-        return memberChatBotView.joinChatBotResponse(userKey, name, phoneNumber);
+        return memberChatBotView.joinMemberResultPage(userKey, name, phoneNumber);
     }
 
     @ValidateMember
@@ -55,7 +55,7 @@ public class CustomerController {
         String userKey = chatBotRequest.getUserKey();
         String customerProfileImage = chatBotRequest.getCustomerProfileImages().get(0);
 
-        return memberChatBotView.updateCustomerProfileImageChatBotResponse(userKey,customerProfileImage);
+        return memberChatBotView.updateMemberProfileImageResultPage(userKey,customerProfileImage);
     }
 
     @ValidateMember
@@ -64,7 +64,7 @@ public class CustomerController {
     public ChatBotResponse getMyPage(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        return memberChatBotView.getMyPageSuccessChatBotResponse();
+        return memberChatBotView.myPage();
     }
 
     @ValidateMember
@@ -73,7 +73,7 @@ public class CustomerController {
     public ChatBotResponse getProfile(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        return memberChatBotView.getCustomerProfileChatBotResponse(userKey);
+        return memberChatBotView.myProfilePage(userKey);
     }
 
     @ValidateMember
@@ -82,7 +82,7 @@ public class CustomerController {
     public ChatBotResponse getSalesHistory(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        return memberChatBotView.getSalesCategorySuccessChatBotResponse();
+        return memberChatBotView.mySalesCategoryListPage();
     }
 
     @ValidateMember
@@ -92,7 +92,7 @@ public class CustomerController {
         String userKey = chatBotRequest.getUserKey();
         String updatePhoneNumber = chatBotRequest.getCustomerPhone();
 
-        return memberChatBotView.updateCustomerPhoneNumberBotResponse(userKey, updatePhoneNumber);
+        return memberChatBotView.updateMemberPhoneNumberResultPage(userKey, updatePhoneNumber);
     }
 
     @ValidateMember
@@ -101,6 +101,6 @@ public class CustomerController {
     public ChatBotResponse withdrawalCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        return memberChatBotView.withdrawalCustomerChatBotResponse(userKey);
+        return memberChatBotView.withdrawalMemberResultPage(userKey);
     }
 }

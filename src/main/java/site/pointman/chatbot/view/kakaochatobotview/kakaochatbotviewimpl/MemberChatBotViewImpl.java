@@ -23,7 +23,7 @@ public class MemberChatBotViewImpl implements MemberChatBotView {
     }
 
     @Override
-    public ChatBotResponse joinChatBotResponse(String userKey, String name, String phoneNumber) {
+    public ChatBotResponse joinMemberResultPage(String userKey, String name, String phoneNumber) {
         Response result = memberService.join(userKey, name, phoneNumber);
 
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("회원가입에 실패하였습니다.");
@@ -37,7 +37,7 @@ public class MemberChatBotViewImpl implements MemberChatBotView {
     }
 
     @Override
-    public ChatBotResponse getCustomerProfileChatBotResponse(String userKey) {
+    public ChatBotResponse myProfilePage(String userKey) {
         Member member = memberService.getMember(userKey);
 
         if (Objects.isNull(member)) return chatBotExceptionResponse.createException("회원조회를 실패하였습니다.");
@@ -61,7 +61,7 @@ public class MemberChatBotViewImpl implements MemberChatBotView {
     }
 
     @Override
-    public ChatBotResponse getMyPageSuccessChatBotResponse() {
+    public ChatBotResponse myPage() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         StringBuilder description = new StringBuilder();
@@ -84,7 +84,7 @@ public class MemberChatBotViewImpl implements MemberChatBotView {
     }
 
     @Override
-    public ChatBotResponse getSalesCategorySuccessChatBotResponse() {
+    public ChatBotResponse mySalesCategoryListPage() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         StringBuilder description = new StringBuilder();
@@ -109,7 +109,7 @@ public class MemberChatBotViewImpl implements MemberChatBotView {
     }
 
     @Override
-    public ChatBotResponse updateCustomerPhoneNumberBotResponse(String userKey, String updatePhoneNumber) {
+    public ChatBotResponse updateMemberPhoneNumberResultPage(String userKey, String updatePhoneNumber) {
         Response result = memberService.updateMemberPhoneNumber(userKey, updatePhoneNumber);
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("연락처 변경을 실패하였습니다.");
 
@@ -121,7 +121,7 @@ public class MemberChatBotViewImpl implements MemberChatBotView {
     }
 
     @Override
-    public ChatBotResponse withdrawalCustomerChatBotResponse(String userKey) {
+    public ChatBotResponse withdrawalMemberResultPage(String userKey) {
         Response result = memberService.deleteMember(userKey);
 
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
@@ -134,7 +134,7 @@ public class MemberChatBotViewImpl implements MemberChatBotView {
     }
 
     @Override
-    public ChatBotResponse updateCustomerProfileImageChatBotResponse(String userKey, String profileImageUrl) {
+    public ChatBotResponse updateMemberProfileImageResultPage(String userKey, String profileImageUrl) {
         Response result = memberService.updateMemberProfileImage(userKey, profileImageUrl);
 
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("프로필사진 등록을 실패하였습니다");
