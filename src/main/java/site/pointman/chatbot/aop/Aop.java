@@ -69,12 +69,7 @@ public class Aop {
 
     @Around("chatBotControllerValidateMemberPointcut()")
     public Object chatBotValidateMember(ProceedingJoinPoint joinPoint) throws Throwable {
-        String controllerName = joinPoint.getSignature().getDeclaringType().getName();
-        String methodName = joinPoint.getSignature().getName();
         log.info("==== 3.AOP ValidateMember JOINPOINT  ====");
-        log.info("controllerName={}",controllerName);
-        log.info("methodName={}",methodName);
-
         Object[] args = joinPoint.getArgs();
 
         for(Object obj : args) {
