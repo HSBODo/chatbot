@@ -2,7 +2,7 @@ package site.pointman.chatbot.dto.member;
 
 import lombok.Builder;
 import lombok.Getter;
-import site.pointman.chatbot.constant.MemberRole;
+import site.pointman.chatbot.constant.member.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
 
 @Getter

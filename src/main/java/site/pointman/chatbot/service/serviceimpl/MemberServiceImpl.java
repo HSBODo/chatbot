@@ -2,8 +2,8 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.MemberRole;
-import site.pointman.chatbot.constant.OrderStatus;
+import site.pointman.chatbot.constant.member.MemberRole;
+import site.pointman.chatbot.constant.order.OrderStatus;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;

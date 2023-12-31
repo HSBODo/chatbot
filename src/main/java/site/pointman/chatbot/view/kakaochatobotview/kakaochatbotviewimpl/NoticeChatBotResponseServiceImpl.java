@@ -4,6 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
+import site.pointman.chatbot.constant.button.ButtonAction;
+import site.pointman.chatbot.constant.button.ButtonName;
+import site.pointman.chatbot.constant.button.ButtonParamKey;
+import site.pointman.chatbot.constant.notice.NoticeType;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
@@ -14,7 +18,6 @@ import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.service.NoticeService;
 import site.pointman.chatbot.view.kakaochatobotview.NoticeChatBotView;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j

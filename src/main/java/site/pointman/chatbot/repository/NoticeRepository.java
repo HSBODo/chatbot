@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import site.pointman.chatbot.constant.NoticeStatus;
+import site.pointman.chatbot.constant.notice.NoticeStatus;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.repository.customrepository.NoticeCustomRepository;
 

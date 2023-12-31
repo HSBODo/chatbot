@@ -2,6 +2,10 @@ package site.pointman.chatbot.view.kakaochatobotview.kakaochatbotviewimpl;
 
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
+import site.pointman.chatbot.constant.button.ButtonAction;
+import site.pointman.chatbot.constant.button.ButtonName;
+import site.pointman.chatbot.constant.button.ButtonParamKey;
+import site.pointman.chatbot.constant.product.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
@@ -31,7 +35,7 @@ public class MemberChatBotViewImpl implements MemberChatBotView {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("회원가입이 완료 되었습니다.\n프로필 사진을 등록하시려면 버튼을 눌러주세요.");
-        chatBotResponse.addQuickButton(ButtonName.프로필사진등록.name(),ButtonAction.블럭이동,BlockId.CUSTOMER_UPDATE_PROFILE_IMAGE.getBlockId());
+        chatBotResponse.addQuickButton(ButtonName.프로필사진등록.name(), ButtonAction.블럭이동,BlockId.CUSTOMER_UPDATE_PROFILE_IMAGE.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.메인으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }

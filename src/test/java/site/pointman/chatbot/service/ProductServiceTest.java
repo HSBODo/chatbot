@@ -9,14 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import site.pointman.chatbot.constant.*;
+import site.pointman.chatbot.constant.order.OrderStatus;
+import site.pointman.chatbot.constant.payment.PaymentStatus;
+import site.pointman.chatbot.constant.product.Category;
+import site.pointman.chatbot.constant.product.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.product.ProductDto;
-import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.view.kakaochatobotview.ProductChatBotView;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;

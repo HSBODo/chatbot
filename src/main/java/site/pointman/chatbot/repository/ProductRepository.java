@@ -5,12 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import site.pointman.chatbot.constant.Category;
-import site.pointman.chatbot.constant.ProductStatus;
+import site.pointman.chatbot.constant.product.Category;
+import site.pointman.chatbot.constant.product.ProductStatus;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.repository.customrepository.ProductCustomRepository;
-
-import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product,Long>, ProductCustomRepository {
 

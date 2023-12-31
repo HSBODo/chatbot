@@ -3,7 +3,7 @@ package site.pointman.chatbot.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import site.pointman.chatbot.constant.MemberRole;
+import site.pointman.chatbot.constant.member.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.repository.customrepository.MemberCustomRepository;
 

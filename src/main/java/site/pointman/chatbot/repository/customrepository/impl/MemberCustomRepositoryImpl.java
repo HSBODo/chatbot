@@ -1,6 +1,5 @@
 package site.pointman.chatbot.repository.customrepository.impl;
 
-import site.pointman.chatbot.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
@@ -10,7 +9,6 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Transactional
 public class MemberCustomRepositoryImpl implements MemberCustomRepository {

@@ -1,4 +1,4 @@
-package site.pointman.chatbot.constant;
+package site.pointman.chatbot.constant.button;
 
 public enum ButtonAction {
     웹링크연결("webLink"),

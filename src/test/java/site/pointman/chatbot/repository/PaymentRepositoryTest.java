@@ -7,16 +7,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import site.pointman.chatbot.constant.PaymentStatus;
+import site.pointman.chatbot.constant.payment.PaymentStatus;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.product.Product;
 
 import javax.transaction.Transactional;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Slf4j

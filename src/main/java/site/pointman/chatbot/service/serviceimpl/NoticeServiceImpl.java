@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.NoticeStatus;
+import site.pointman.chatbot.constant.notice.NoticeStatus;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.notice.Notice;

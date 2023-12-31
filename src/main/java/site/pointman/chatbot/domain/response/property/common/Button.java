@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import site.pointman.chatbot.constant.ButtonAction;
-import site.pointman.chatbot.constant.ButtonParamKey;
+import site.pointman.chatbot.constant.button.ButtonAction;
+import site.pointman.chatbot.constant.button.ButtonParamKey;
 
 import java.util.HashMap;
 import java.util.Map;

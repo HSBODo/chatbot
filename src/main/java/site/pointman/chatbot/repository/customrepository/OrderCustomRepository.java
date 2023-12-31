@@ -1,6 +1,6 @@
 package site.pointman.chatbot.repository.customrepository;
 
-import site.pointman.chatbot.constant.OrderStatus;
+import site.pointman.chatbot.constant.order.OrderStatus;
 import site.pointman.chatbot.domain.order.Order;
 
 import java.util.List;

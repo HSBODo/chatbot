@@ -1,6 +1,6 @@
 package site.pointman.chatbot.domain.notice;
 
-import site.pointman.chatbot.constant.NoticeType;
+import site.pointman.chatbot.constant.notice.NoticeType;
 
 import javax.persistence.AttributeConverter;
 

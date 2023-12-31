@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import site.pointman.chatbot.constant.MemberRole;
+import site.pointman.chatbot.constant.member.MemberRole;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.response.property.common.Profile;
 import site.pointman.chatbot.utill.CustomStringUtils;
