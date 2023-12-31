@@ -41,10 +41,9 @@ public class Notice extends BaseEntity {
     @NotBlank
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer")
     private Member member;
-
 
     private String imageUrl = "https://pbs.twimg.com/media/FVbk8XaaMAA2ux_?format=jpg&name=small";
 
@@ -84,24 +83,31 @@ public class Notice extends BaseEntity {
     public void changeStatus(NoticeStatus status) {
         this.status = status;
     }
+
     public void changeType(NoticeType type){
         this.type = type;
     }
+
     public void changeTitle(String title){
         this.title = title;
     }
+
     public void changeMember(Member member){
         this.member = member;
     }
+
     public void changeDescription(String description){
         this.description = description;
     }
+
     public void changeImageUrl(String imageUrl){
         this.imageUrl = imageUrl;
     }
+
     public void changeButtons(List<Button> buttons){
         this.buttons = buttons;
     }
+
     public String getDescriptionTypeOfChatBot(){
         StringBuilder formatDescription = new StringBuilder();
         formatDescription
