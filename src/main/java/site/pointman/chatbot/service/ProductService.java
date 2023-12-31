@@ -13,17 +13,18 @@ import java.util.Optional;
 
 public interface ProductService {
     Response addProduct(ProductDto productDto, String userKey, List<String> imageUrls);
+    Response updateProductStatus(Long productId, ProductStatus status);
+    Response deleteProduct(Long productId);
     Page<Product> getProductsByCategory(Category category, int pageNumber);
-    Optional<Product> getProduct(Long productId);
-    List<Product> getProductsAll();
-    List<Product> getMemberProducts(String userKey);
     Page<Product> getMemberProductsByStatus(String userKey, ProductStatus productStatus, int pageNumber);
     Page<Product> getMainProducts(int pageNumber);
     Page<Product> getProductsBySearchWord(String searchWord, int pageNumber);
     Page<Product> getSalesContractProducts(String userKey, int pageNumber);
-    Optional<Order> getSalesContractProduct(String userKey, Long orderId);
     Page<Order> getPurchaseProducts(String userKey, int pageNumber);
+    List<Product> getProductsAll();
+    List<Product> getMemberProducts(String userKey);
+    Optional<Product> getProduct(Long productId);
+    Optional<Order> getSalesContractProduct(String userKey, Long orderId);
     Optional<Order> getPurchaseProduct(String userKey, Long orderId);
-    Response updateProductStatus(Long productId, ProductStatus status);
-    Response deleteProduct(Long productId);
+
 }

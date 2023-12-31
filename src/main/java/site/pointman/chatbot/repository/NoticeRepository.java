@@ -15,7 +15,7 @@ public interface NoticeRepository extends JpaRepository<Notice,Long>, NoticeCust
     @Override
     List<Notice> findAll();
 
-    @Query("select n from Notice n where n.status =:firstStatus OR n.status =:secondStatus AND n.isUse =:isUse ORDER BY FIELD(n.status,:firstStatus,:secondStatus)")
+    @Query("select n from Notice n where n.status =:firstStatus OR n.status =:secondStatus AND n.isUse =:isUse ORDER BY FIELD(n.status,:firstStatus,:secondStatus), n.createDate DESC")
     List<Notice> findByStatusOrStatus(
             @Param("firstStatus") NoticeStatus firstNoticeStatus,
             @Param("secondStatus") NoticeStatus secondNoticeStatus,
