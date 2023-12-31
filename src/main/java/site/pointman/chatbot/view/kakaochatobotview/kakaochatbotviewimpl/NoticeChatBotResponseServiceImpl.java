@@ -1,4 +1,4 @@
-package site.pointman.chatbot.service.chatbot.serviceImpl;
+package site.pointman.chatbot.view.kakaochatobotview.kakaochatbotviewimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -6,21 +6,19 @@ import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.response.property.common.ListItem;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.ListCard;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.service.NoticeService;
-import site.pointman.chatbot.service.chatbot.NoticeChatBotResponseService;
+import site.pointman.chatbot.view.kakaochatobotview.NoticeChatBotView;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
 @Service
-public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseService {
+public class NoticeChatBotResponseServiceImpl implements NoticeChatBotView {
     NoticeService noticeService;
     ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
 
@@ -29,7 +27,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
     }
 
     @Override
-    public ChatBotResponse getNoticesSuccessChatBotResponse() {
+    public ChatBotResponse noticeListPage() {
         List<Notice> mainNotices = noticeService.getDefaultNotices();
 
         if (mainNotices.isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");
@@ -59,7 +57,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotResponseSe
     }
 
     @Override
-    public ChatBotResponse getNoticeSuccessChatBotResponse(String noticeId) {
+    public ChatBotResponse noticeDetailPage(String noticeId) {
         Optional<Notice> mayBeNotice = noticeService.getNotice(Long.parseLong(noticeId));
 
         if (mayBeNotice.isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");

@@ -13,7 +13,7 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.service.OrderService;
 import site.pointman.chatbot.service.PaymentService;
-import site.pointman.chatbot.service.chatbot.OrderChatBotResponseService;
+import site.pointman.chatbot.view.kakaochatobotview.OrderChatBotView;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -28,12 +28,12 @@ public class OrderController {
 
     PaymentService paymentService;
     OrderService orderService;
-    OrderChatBotResponseService orderChatBotResponseService;
+    OrderChatBotView orderChatBotView;
 
-    public OrderController(PaymentService paymentService, OrderService orderService, OrderChatBotResponseService orderChatBotResponseService) {
+    public OrderController(PaymentService paymentService, OrderService orderService, OrderChatBotView orderChatBotView) {
         this.paymentService = paymentService;
         this.orderService = orderService;
-        this.orderChatBotResponseService = orderChatBotResponseService;
+        this.orderChatBotView = orderChatBotView;
     }
 
     @SkipLogging
@@ -74,7 +74,7 @@ public class OrderController {
     public ChatBotResponse updateTrackingNumber (@RequestBody ChatBotRequest chatBotRequest) {
         String trackingNumber = chatBotRequest.getTrackingNumber();
         String orderId = chatBotRequest.getOrderId();
-        return orderChatBotResponseService.updateTrackingNumber(orderId,trackingNumber);
+        return orderChatBotView.updateTrackingNumberResultPage(orderId,trackingNumber);
     }
 
     @ResponseBody
@@ -82,7 +82,7 @@ public class OrderController {
     public ChatBotResponse purchaseSuccessReconfirm (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
-        return orderChatBotResponseService.purchaseReconfirm(orderId);
+        return orderChatBotView.purchaseReconfirmPage(orderId);
     }
 
     @ResponseBody
@@ -90,7 +90,7 @@ public class OrderController {
     public ChatBotResponse purchaseSuccessConfirmation (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
-        return orderChatBotResponseService.purchaseConfirm(orderId);
+        return orderChatBotView.purchaseConfirmResultPage(orderId);
     }
 
     @ResponseBody
@@ -98,7 +98,7 @@ public class OrderController {
     public ChatBotResponse saleSuccessReconfirm (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
-        return orderChatBotResponseService.salesReconfirm(orderId);
+        return orderChatBotView.salesReconfirmPage(orderId);
     }
 
     @ResponseBody
@@ -106,7 +106,7 @@ public class OrderController {
     public ChatBotResponse saleSuccessConfirmation (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
-        return orderChatBotResponseService.salesConfirm(orderId);
+        return orderChatBotView.salesConfirmResultPage(orderId);
     }
 
 }

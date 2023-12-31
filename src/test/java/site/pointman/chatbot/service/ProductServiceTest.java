@@ -16,7 +16,7 @@ import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.product.ProductDto;
 import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.service.chatbot.ProductChatBotResponseService;
+import site.pointman.chatbot.view.kakaochatobotview.ProductChatBotView;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -28,10 +28,6 @@ import java.util.Optional;
 class ProductServiceTest {
     @Autowired
     ProductService productService;
-    @Autowired
-    ProductRepository productRepository;
-    @Autowired
-    ProductChatBotResponseService productChatBotResponseService;
 
     private ObjectMapper mapper = new ObjectMapper();
     private ChatBotRequest chatBotRequest;

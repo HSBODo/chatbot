@@ -1,27 +1,27 @@
-package site.pointman.chatbot.service.chatbot.serviceImpl;
+package site.pointman.chatbot.view.kakaochatobotview.kakaochatbotviewimpl;
 
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotValidationResponse;
 import site.pointman.chatbot.repository.MemberRepository;
-import site.pointman.chatbot.service.chatbot.ValidationChatBotService;
+import site.pointman.chatbot.view.kakaochatobotview.ValidationChatBotView;
 import site.pointman.chatbot.utill.CustomNumberUtils;
 
 import java.util.Optional;
 
 @Service
-public class ValidationChatBotServiceImpl implements ValidationChatBotService {
+public class ValidationChatBotViewImpl implements ValidationChatBotView {
     private final String KAKAO_OPEN_CHAT_URL_REQUIRED = "https://open.kakao.com/o";
 
     MemberRepository memberRepository;
 
-    public ValidationChatBotServiceImpl(MemberRepository memberRepository) {
+    public ValidationChatBotViewImpl(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 
     @Override
-    public ChatBotValidationResponse validationCustomerPhoneNumber(ChatBotRequest chatBotRequest) {
+    public ChatBotValidationResponse validationMemberPhoneNumberResult(ChatBotRequest chatBotRequest) {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String inputPhone = chatBotRequest.getValidationData();
         inputPhone = inputPhone.replaceAll("-", "");
@@ -41,7 +41,7 @@ public class ValidationChatBotServiceImpl implements ValidationChatBotService {
     }
 
     @Override
-    public ChatBotValidationResponse validationCustomerName(ChatBotRequest chatBotRequest) {
+    public ChatBotValidationResponse validationMemberNameResult(ChatBotRequest chatBotRequest) {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String inputName = chatBotRequest.getValidationData();
 
@@ -57,7 +57,7 @@ public class ValidationChatBotServiceImpl implements ValidationChatBotService {
     }
 
     @Override
-    public ChatBotValidationResponse validationProductName(ChatBotRequest chatBotRequest) {
+    public ChatBotValidationResponse validationProductNameResult(ChatBotRequest chatBotRequest) {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String productName = chatBotRequest.getValidationData();
         if(productName.length()>30){
@@ -69,7 +69,7 @@ public class ValidationChatBotServiceImpl implements ValidationChatBotService {
     }
 
     @Override
-    public ChatBotValidationResponse validationProductPrice(ChatBotRequest chatBotRequest) {
+    public ChatBotValidationResponse validationProductPriceResult(ChatBotRequest chatBotRequest) {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String productPrice= chatBotRequest.getValidationData();
 
@@ -83,7 +83,7 @@ public class ValidationChatBotServiceImpl implements ValidationChatBotService {
     }
 
     @Override
-    public ChatBotValidationResponse validationProductDescription(ChatBotRequest chatBotRequest) {
+    public ChatBotValidationResponse validationProductDescriptionResult(ChatBotRequest chatBotRequest) {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String productDescription= chatBotRequest.getValidationData();
 
@@ -97,7 +97,7 @@ public class ValidationChatBotServiceImpl implements ValidationChatBotService {
     }
 
     @Override
-    public ChatBotValidationResponse validationProductKakaoOpenChatUrl(ChatBotRequest chatBotRequest) {
+    public ChatBotValidationResponse validationProductKakaoOpenChatUrlResult(ChatBotRequest chatBotRequest) {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String kakaoOpenChayUrl= chatBotRequest.getValidationData();
 
@@ -111,7 +111,7 @@ public class ValidationChatBotServiceImpl implements ValidationChatBotService {
     }
 
     @Override
-    public ChatBotValidationResponse validationTradingLocation(ChatBotRequest chatBotRequest) {
+    public ChatBotValidationResponse validationTradingLocationResult(ChatBotRequest chatBotRequest) {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String tradingLocation= chatBotRequest.getValidationData();
         chatBotValidationResponse.validationSuccess(tradingLocation);
@@ -119,7 +119,7 @@ public class ValidationChatBotServiceImpl implements ValidationChatBotService {
     }
 
     @Override
-    public ChatBotValidationResponse validationReservationCustomer(ChatBotRequest chatBotRequest) {
+    public ChatBotValidationResponse validationReservationMemberResult(ChatBotRequest chatBotRequest) {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String reservationCustomerName= chatBotRequest.getValidationData();
 
@@ -134,7 +134,7 @@ public class ValidationChatBotServiceImpl implements ValidationChatBotService {
     }
 
     @Override
-    public ChatBotValidationResponse validationTrackingNumber(ChatBotRequest chatBotRequest) {
+    public ChatBotValidationResponse validationTrackingNumberResult(ChatBotRequest chatBotRequest) {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String trackingNumber = chatBotRequest.getValidationData();
 
