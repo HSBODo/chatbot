@@ -1,11 +1,8 @@
-package site.pointman.chatbot.service.chatbot;
+package site.pointman.chatbot.view.kakaochatobotview;
 
-import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 
-import java.util.List;
-
-public interface NoticeChatBotResponseService {
+public interface NoticeChatBotView {
     ChatBotResponse getNoticesSuccessChatBotResponse();
     ChatBotResponse getNoticeSuccessChatBotResponse(String noticeId);
 }

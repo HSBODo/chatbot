@@ -1,4 +1,4 @@
-package site.pointman.chatbot.service.chatbot.serviceImpl;
+package site.pointman.chatbot.view.kakaochatobotview.kakaochatbotviewimpl;
 
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.service.CrawlingService;
 import site.pointman.chatbot.service.ProductService;
 import site.pointman.chatbot.service.RedisService;
-import site.pointman.chatbot.service.chatbot.ProductChatBotResponseService;
+import site.pointman.chatbot.view.kakaochatobotview.ProductChatBotView;
 import site.pointman.chatbot.utill.CustomStringUtils;
 
 import java.util.Arrays;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class ProductChatBotResponseServiceImpl implements ProductChatBotResponseService {
+public class ProductChatBotViewImpl implements ProductChatBotView {
 
     @Value("${host.url}")
     private String HOST_URL;
@@ -55,7 +55,7 @@ public class ProductChatBotResponseServiceImpl implements ProductChatBotResponse
 
 
 
-    public ProductChatBotResponseServiceImpl(MemberRepository memberRepository, OrderRepository orderRepository, ProductService productService, CrawlingService crawlingService, RedisService redisService) {
+    public ProductChatBotViewImpl(MemberRepository memberRepository, OrderRepository orderRepository, ProductService productService, CrawlingService crawlingService, RedisService redisService) {
         this.memberRepository = memberRepository;
         this.orderRepository = orderRepository;
         this.productService = productService;

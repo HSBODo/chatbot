@@ -1,11 +1,8 @@
-package site.pointman.chatbot.service.chatbot;
+package site.pointman.chatbot.view.kakaochatobotview;
 
-import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 
-import java.util.List;
-
-public interface OrderChatBotResponseService {
+public interface OrderChatBotView {
     ChatBotResponse purchaseReconfirm(String orderId);
     ChatBotResponse purchaseConfirm(String orderId);
     ChatBotResponse salesReconfirm(String orderId);

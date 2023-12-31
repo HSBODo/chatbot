@@ -12,7 +12,7 @@ import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.service.MemberService;
-import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
+import site.pointman.chatbot.view.kakaochatobotview.MemberChatBotView;
 
 
 @Slf4j
@@ -21,14 +21,14 @@ import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
 public class CustomerController {
 
     MemberService memberService;
-    CustomerChatBotResponseService customerChatBotResponseService;
+    MemberChatBotView memberChatBotView;
 
     ChatBotExceptionResponse chatBotExceptionResponse;
 
-    public CustomerController(MemberService memberService, CustomerChatBotResponseService customerChatBotResponseService) {
+    public CustomerController(MemberService memberService, MemberChatBotView memberChatBotView) {
         this.memberService = memberService;
         this.chatBotExceptionResponse = new ChatBotExceptionResponse();
-        this.customerChatBotResponseService = customerChatBotResponseService;
+        this.memberChatBotView = memberChatBotView;
     }
 
     /**
@@ -45,7 +45,7 @@ public class CustomerController {
 
         if (memberService.isCustomer(userKey)) return chatBotExceptionResponse.createException("이미 존재하는 회원입니다.");
 
-        return customerChatBotResponseService.joinChatBotResponse(userKey, name, phoneNumber);
+        return memberChatBotView.joinChatBotResponse(userKey, name, phoneNumber);
     }
 
     @ValidateMember
@@ -55,7 +55,7 @@ public class CustomerController {
         String userKey = chatBotRequest.getUserKey();
         String customerProfileImage = chatBotRequest.getCustomerProfileImages().get(0);
 
-        return customerChatBotResponseService.updateCustomerProfileImageChatBotResponse(userKey,customerProfileImage);
+        return memberChatBotView.updateCustomerProfileImageChatBotResponse(userKey,customerProfileImage);
     }
 
     @ValidateMember
@@ -64,7 +64,7 @@ public class CustomerController {
     public ChatBotResponse getMyPage(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        return customerChatBotResponseService.getMyPageSuccessChatBotResponse();
+        return memberChatBotView.getMyPageSuccessChatBotResponse();
     }
 
     @ValidateMember
@@ -73,7 +73,7 @@ public class CustomerController {
     public ChatBotResponse getProfile(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        return customerChatBotResponseService.getCustomerProfileChatBotResponse(userKey);
+        return memberChatBotView.getCustomerProfileChatBotResponse(userKey);
     }
 
     @ValidateMember
@@ -82,7 +82,7 @@ public class CustomerController {
     public ChatBotResponse getSalesHistory(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        return customerChatBotResponseService.getSalesCategorySuccessChatBotResponse();
+        return memberChatBotView.getSalesCategorySuccessChatBotResponse();
     }
 
     @ValidateMember
@@ -92,7 +92,7 @@ public class CustomerController {
         String userKey = chatBotRequest.getUserKey();
         String updatePhoneNumber = chatBotRequest.getCustomerPhone();
 
-        return customerChatBotResponseService.updateCustomerPhoneNumberBotResponse(userKey, updatePhoneNumber);
+        return memberChatBotView.updateCustomerPhoneNumberBotResponse(userKey, updatePhoneNumber);
     }
 
     @ValidateMember
@@ -101,6 +101,6 @@ public class CustomerController {
     public ChatBotResponse withdrawalCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
 
-        return customerChatBotResponseService.withdrawalCustomerChatBotResponse(userKey);
+        return memberChatBotView.withdrawalCustomerChatBotResponse(userKey);
     }
 }

@@ -1,4 +1,4 @@
-package site.pointman.chatbot.service.chatbot.serviceImpl;
+package site.pointman.chatbot.view.kakaochatobotview.kakaochatbotviewimpl;
 
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
@@ -8,17 +8,17 @@ import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.service.MemberService;
-import site.pointman.chatbot.service.chatbot.CustomerChatBotResponseService;
+import site.pointman.chatbot.view.kakaochatobotview.MemberChatBotView;
 
 import java.util.Objects;
 
 @Service
-public class CustomerChatBotResponseServiceImpl implements CustomerChatBotResponseService {
+public class MemberChatBotViewImpl implements MemberChatBotView {
 
     MemberService memberService;
     ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
 
-    public CustomerChatBotResponseServiceImpl(MemberService memberService) {
+    public MemberChatBotViewImpl(MemberService memberService) {
         this.memberService = memberService;
     }
 

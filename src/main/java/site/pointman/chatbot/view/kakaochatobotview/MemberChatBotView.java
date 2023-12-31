@@ -1,9 +1,8 @@
-package site.pointman.chatbot.service.chatbot;
+package site.pointman.chatbot.view.kakaochatobotview;
 
-import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 
-public interface CustomerChatBotResponseService {
+public interface MemberChatBotView {
     ChatBotResponse joinChatBotResponse(String userKey, String name, String phoneNumber);
     ChatBotResponse getCustomerProfileChatBotResponse(String userKey);
     ChatBotResponse updateCustomerPhoneNumberBotResponse(String userKey, String updatePhoneNumber);

@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.service.NoticeService;
-import site.pointman.chatbot.service.chatbot.NoticeChatBotResponseService;
+import site.pointman.chatbot.view.kakaochatobotview.NoticeChatBotView;
 
 
 @Slf4j
@@ -16,9 +15,9 @@ import site.pointman.chatbot.service.chatbot.NoticeChatBotResponseService;
 @RequestMapping(value = "/kakaochatbot/notice")
 public class NoticeController {
 
-    NoticeChatBotResponseService noticeChatBotResponseService;
+    NoticeChatBotView noticeChatBotResponseService;
 
-    public NoticeController(NoticeChatBotResponseService noticeChatBotResponseService) {
+    public NoticeController(NoticeChatBotView noticeChatBotResponseService) {
         this.noticeChatBotResponseService = noticeChatBotResponseService;
     }
 
