@@ -74,7 +74,7 @@ public class OrderController {
     public ChatBotResponse updateTrackingNumber (@RequestBody ChatBotRequest chatBotRequest) {
         String trackingNumber = chatBotRequest.getTrackingNumber();
         String orderId = chatBotRequest.getOrderId();
-        return orderChatBotView.updateTrackingNumber(orderId,trackingNumber);
+        return orderChatBotView.updateTrackingNumberResultPage(orderId,trackingNumber);
     }
 
     @ResponseBody
@@ -82,7 +82,7 @@ public class OrderController {
     public ChatBotResponse purchaseSuccessReconfirm (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
-        return orderChatBotView.purchaseReconfirm(orderId);
+        return orderChatBotView.purchaseReconfirmPage(orderId);
     }
 
     @ResponseBody
@@ -90,7 +90,7 @@ public class OrderController {
     public ChatBotResponse purchaseSuccessConfirmation (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
-        return orderChatBotView.purchaseConfirm(orderId);
+        return orderChatBotView.purchaseConfirmResultPage(orderId);
     }
 
     @ResponseBody
@@ -98,7 +98,7 @@ public class OrderController {
     public ChatBotResponse saleSuccessReconfirm (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
-        return orderChatBotView.salesReconfirm(orderId);
+        return orderChatBotView.salesReconfirmPage(orderId);
     }
 
     @ResponseBody
@@ -106,7 +106,7 @@ public class OrderController {
     public ChatBotResponse saleSuccessConfirmation (@RequestBody ChatBotRequest chatBotRequest) {
         String orderId = chatBotRequest.getOrderId();
 
-        return orderChatBotView.salesConfirm(orderId);
+        return orderChatBotView.salesConfirmResultPage(orderId);
     }
 
 }

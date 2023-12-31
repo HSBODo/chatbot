@@ -23,7 +23,7 @@ public class OrderChatBotViewImpl implements OrderChatBotView {
     }
 
     @Override
-    public ChatBotResponse purchaseReconfirm(String orderId) {
+    public ChatBotResponse purchaseReconfirmPage(String orderId) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         StringBuilder text = new StringBuilder();
         text
@@ -41,7 +41,7 @@ public class OrderChatBotViewImpl implements OrderChatBotView {
     }
 
     @Override
-    public ChatBotResponse purchaseConfirm(String orderId) {
+    public ChatBotResponse purchaseConfirmResultPage(String orderId) {
         Response result = orderService.purchaseConfirm(orderId);
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
 
@@ -54,7 +54,7 @@ public class OrderChatBotViewImpl implements OrderChatBotView {
     }
 
     @Override
-    public ChatBotResponse salesReconfirm(String orderId) {
+    public ChatBotResponse salesReconfirmPage(String orderId) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         StringBuilder text = new StringBuilder();
         text
@@ -68,7 +68,7 @@ public class OrderChatBotViewImpl implements OrderChatBotView {
     }
 
     @Override
-    public ChatBotResponse salesConfirm(String orderId) {
+    public ChatBotResponse salesConfirmResultPage(String orderId) {
         Response result = orderService.salesConfirm(orderId);
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
 
@@ -81,7 +81,7 @@ public class OrderChatBotViewImpl implements OrderChatBotView {
     }
 
     @Override
-    public ChatBotResponse updateTrackingNumber(String orderId, String trackingNumber) {
+    public ChatBotResponse updateTrackingNumberResultPage(String orderId, String trackingNumber) {
         Response result = orderService.updateTrackingNumber(orderId, trackingNumber);
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
 
