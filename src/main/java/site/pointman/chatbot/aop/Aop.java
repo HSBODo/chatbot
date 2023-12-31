@@ -31,9 +31,10 @@ public class Aop {
         this.memberService = memberService;
     }
 
-    @Pointcut("execution(* site.pointman.chatbot.controller.kakaochatbot.*.*(..)) && !@annotation(site.pointman.chatbot.annotation.SkipLogging)") //Pointcut
+    @Pointcut("execution(* site.pointman.chatbot.controller.kakaochatbot.*.*(..)) && (!@annotation(site.pointman.chatbot.annotation.SkipLogging) ||  @annotation(site.pointman.chatbot.annotation.ValidateMember))") //Pointcut
     public void chatBotControllerPointcut() {
     }
+
     @Pointcut("execution(* site.pointman.chatbot.controller.kakaochatbot.*.*(..)) && @annotation(site.pointman.chatbot.annotation.ValidateMember)") //Pointcut
     public void chatBotControllerValidateMemberPointcut() {
     }
@@ -45,7 +46,7 @@ public class Aop {
         stopWatch.start();
         String controllerName = joinPoint.getSignature().getDeclaringType().getName();
         String methodName = joinPoint.getSignature().getName();
-        log.info("==== 3.AOP JOINPOINT ====");
+        log.info("==== 3.AOP Log JOINPOINT ====");
         log.info("{}",controllerName+"/"+methodName);
         //메서드에 들어가는 매개변수 배열을 읽어옴
         Object[] args = joinPoint.getArgs();
@@ -62,15 +63,15 @@ public class Aop {
         logService.insertChatBotResponseLog(logEntity,proceed);
 
         stopWatch.stop();
-        log.info("==== 4.AOP END {} ====",stopWatch.getTotalTimeSeconds());
+        log.info("==== 4.AOP Log END {} ====",stopWatch.getTotalTimeSeconds());
         return proceed;
     }
 
     @Around("chatBotControllerValidateMemberPointcut()")
-    public Object adminAuthentication(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object chatBotValidateMember(ProceedingJoinPoint joinPoint) throws Throwable {
         String controllerName = joinPoint.getSignature().getDeclaringType().getName();
         String methodName = joinPoint.getSignature().getName();
-        log.info("==== 3.AOP JOINPOINT ====");
+        log.info("==== 3.AOP ValidateMember JOINPOINT  ====");
         log.info("controllerName={}",controllerName);
         log.info("methodName={}",methodName);
 
@@ -78,15 +79,15 @@ public class Aop {
 
         for(Object obj : args) {
             System.out.println("type : "+obj.getClass().getSimpleName());
+
             ChatBotRequest chatBotRequest = (ChatBotRequest) obj;
             String userKey = chatBotRequest.getUserKey();
             if (!memberService.isCustomer(userKey)) return chatBotExceptionResponse.notCustomerException();
-
         }
 
         Object proceed = joinPoint.proceed();
 
-        log.info("==== 4.AOP END ====");
+        log.info("==== 4.AOP ValidateMember END ====");
         return proceed;
     }
 
