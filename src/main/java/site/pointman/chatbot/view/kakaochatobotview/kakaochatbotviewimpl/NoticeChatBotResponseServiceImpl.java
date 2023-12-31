@@ -1,6 +1,7 @@
 package site.pointman.chatbot.view.kakaochatobotview.kakaochatbotviewimpl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.*;
 import site.pointman.chatbot.domain.notice.Notice;
@@ -27,10 +28,11 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotView {
     }
 
     @Override
-    public ChatBotResponse noticeListPage() {
-        List<Notice> mainNotices = noticeService.getDefaultNotices();
+    public ChatBotResponse noticeListPage(int pageNumber) {
+        Page<Notice> mainNotices = noticeService.getDefaultNotices(pageNumber);
 
-        if (mainNotices.isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");
+
+        if (mainNotices.getContent().isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");
 
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
@@ -38,7 +40,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotView {
         ListCard listCard = new ListCard();
         listCard.setHeader("공지사항");
 
-        mainNotices.forEach(notice -> {
+        mainNotices.getContent().forEach(notice -> {
             String title = notice.getTitle();
             String writer = "작성자: " + notice.getMember().getName();
 
@@ -51,8 +53,11 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotView {
 
             listCard.setItem(listItem);
         });
-
         chatBotResponse.addListCard(listCard);
+        chatBotResponse.addQuickButton(ButtonName.메인메뉴.name(), ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
+        if (mainNotices.hasNext()){
+            chatBotResponse.addQuickButton(ButtonName.더보기.name(), ButtonAction.블럭이동,BlockId.FIND_NOTICES.getBlockId());
+        }
         return chatBotResponse;
     }
 

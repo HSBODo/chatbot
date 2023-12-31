@@ -1,9 +1,11 @@
 package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.constant.NoticeStatus;
+import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.Response;
@@ -13,7 +15,6 @@ import site.pointman.chatbot.repository.NoticeRepository;
 import site.pointman.chatbot.service.NoticeService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -53,8 +54,8 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public List<Notice> getDefaultNotices() {
-        List<Notice> notices = noticeRepository.findByStatusOrStatus(NoticeStatus.메인,NoticeStatus.작성,isUse);
+    public Page<Notice> getDefaultNotices(int pageNumber) {
+        Page<Notice> notices = noticeRepository.findByStatusOrStatus(NoticeStatus.메인,NoticeStatus.작성,isUse, PageRequest.of(pageNumber,5));
 
         return notices;
     }

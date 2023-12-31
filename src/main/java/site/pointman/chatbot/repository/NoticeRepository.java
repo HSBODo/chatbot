@@ -1,5 +1,7 @@
 package site.pointman.chatbot.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,11 +17,12 @@ public interface NoticeRepository extends JpaRepository<Notice,Long>, NoticeCust
     @Override
     List<Notice> findAll();
 
-    @Query("select n from Notice n where n.status =:firstStatus OR n.status =:secondStatus AND n.isUse =:isUse ORDER BY FIELD(n.status,:firstStatus,:secondStatus), n.createDate DESC")
-    List<Notice> findByStatusOrStatus(
+    @Query("select n from Notice n where (n.status =:firstStatus OR n.status =:secondStatus) AND n.isUse =:isUse ORDER BY FIELD(n.status,:firstStatus,:secondStatus), n.createDate DESC")
+    Page<Notice> findByStatusOrStatus(
             @Param("firstStatus") NoticeStatus firstNoticeStatus,
             @Param("secondStatus") NoticeStatus secondNoticeStatus,
-            @Param("isUse") boolean isUse
+            @Param("isUse") boolean isUse,
+            Pageable pageable
     );
 
     @Override
