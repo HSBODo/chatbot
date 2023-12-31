@@ -5,6 +5,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import site.pointman.chatbot.constant.ButtonAction;
 import site.pointman.chatbot.constant.ButtonParamKey;
 import site.pointman.chatbot.constant.NoticeStatus;
@@ -35,6 +38,10 @@ class NoticeRepositoryTest {
         List<Notice> notices = noticeRepository.findAll();
 
         Assertions.assertThat(notices.size()).isNotZero();
+
+        notices.forEach(notice -> {
+            log.info("{}",notice.getTitle());
+        });
     }
 
     @Test
@@ -43,9 +50,9 @@ class NoticeRepositoryTest {
         NoticeStatus secondStatus = NoticeStatus.작성;
         boolean isUse = true;
 
-        List<Notice> notices = noticeRepository.findByStatusOrStatus(firstStatus, secondStatus, isUse);
+        Page<Notice> notices = noticeRepository.findByStatusOrStatus(firstStatus, secondStatus, isUse, PageRequest.of(0,5));
 
-        notices.forEach(notice -> {
+        notices.getContent().forEach(notice -> {
             Assertions.assertThat(notice.getStatus()).isIn(firstStatus,secondStatus);
             Assertions.assertThat(notice.isUse()).isEqualTo(isUse);
         });

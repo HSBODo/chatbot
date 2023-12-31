@@ -2,6 +2,7 @@ package site.pointman.chatbot.domain.response.property.common;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.pointman.chatbot.constant.ButtonAction;
@@ -14,6 +15,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class Button {
     private String label;
     private String action;

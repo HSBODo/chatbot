@@ -3,6 +3,7 @@ package site.pointman.chatbot.domain.notice;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.constant.NoticeType;
@@ -48,7 +49,7 @@ public class Notice extends BaseEntity {
     private String imageUrl = "https://pbs.twimg.com/media/FVbk8XaaMAA2ux_?format=jpg&name=small";
 
     @Convert(converter = ButtonListConverter.class)
-    private List<Button> buttons;
+    private List<Button> buttons = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private NoticeStatus status;
