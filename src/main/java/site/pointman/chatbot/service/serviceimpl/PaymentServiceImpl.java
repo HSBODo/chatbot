@@ -11,7 +11,7 @@ import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.constant.PaymentStatus;
 import site.pointman.chatbot.constant.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.domain.order.PayMethod;
+import site.pointman.chatbot.constant.PayMethod;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.payment.kakaopay.*;
 import site.pointman.chatbot.domain.product.Product;

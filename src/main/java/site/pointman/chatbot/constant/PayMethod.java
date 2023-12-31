@@ -1,6 +1,4 @@
-package site.pointman.chatbot.domain.order;
-
-import site.pointman.chatbot.constant.Category;
+package site.pointman.chatbot.constant;
 
 import java.util.Arrays;
 

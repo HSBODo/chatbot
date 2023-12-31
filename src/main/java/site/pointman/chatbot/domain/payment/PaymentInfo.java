@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.constant.PaymentStatus;
-import site.pointman.chatbot.domain.order.PayMethod;
+import site.pointman.chatbot.constant.PayMethod;
 import site.pointman.chatbot.domain.product.Product;
 
 import javax.persistence.*;
@@ -25,25 +25,39 @@ public class PaymentInfo extends BaseEntity {
     private Long id ;
 
     private Long orderId;
+
     private String tid;
+
     private String aid;
+
     private String cid;
+
     @Enumerated(EnumType.STRING)
     private PayMethod paymentMethodType;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member buyerMember;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_Id")
     private Product product;
+
     private int quantity;
+
     private int taxFreeAmount;
+
     private int vatAmount;
+
     private String approvedAt;
+
     private String canceledAt;
+
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
+
     @Embedded
     private CardInfo cardInfo;
+
     @Embedded
     private Amount amountInfo;
 

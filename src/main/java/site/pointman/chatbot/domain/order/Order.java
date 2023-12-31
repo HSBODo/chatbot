@@ -26,10 +26,10 @@ public class Order extends BaseEntity {
     @Id
     private Long orderId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member buyerMember;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_Id")
     private Product product;
 
@@ -46,7 +46,7 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private PaymentInfo paymentInfo;
 
     @Builder
