@@ -1,8 +1,6 @@
-package site.pointman.chatbot.constant;
+package site.pointman.chatbot.constant.product;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public enum Category {
     패션_잡화("패션/잡화"),

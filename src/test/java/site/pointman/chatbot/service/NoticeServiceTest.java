@@ -2,14 +2,12 @@ package site.pointman.chatbot.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import site.pointman.chatbot.constant.NoticeType;
+import site.pointman.chatbot.constant.notice.NoticeType;
 import site.pointman.chatbot.constant.ResultCode;
-import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.dto.notice.NoticeDto;

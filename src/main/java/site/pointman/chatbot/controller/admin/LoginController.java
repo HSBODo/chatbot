@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.annotation.SkipAop;
 import site.pointman.chatbot.constant.ResultCode;
-import site.pointman.chatbot.domain.login.Login;
+import site.pointman.chatbot.dto.login.Login;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.service.AuthService;
 import site.pointman.chatbot.service.MemberService;

@@ -3,7 +3,7 @@ package site.pointman.chatbot.controller.admin;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import site.pointman.chatbot.constant.ProductStatus;
+import site.pointman.chatbot.constant.product.ProductStatus;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.Response;

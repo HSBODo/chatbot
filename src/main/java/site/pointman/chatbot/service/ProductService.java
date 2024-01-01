@@ -1,8 +1,8 @@
 package site.pointman.chatbot.service;
 
 import org.springframework.data.domain.Page;
-import site.pointman.chatbot.constant.Category;
-import site.pointman.chatbot.constant.ProductStatus;
+import site.pointman.chatbot.constant.product.Category;
+import site.pointman.chatbot.constant.product.ProductStatus;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.Response;
@@ -26,5 +26,4 @@ public interface ProductService {
     Optional<Product> getProduct(Long productId);
     Optional<Order> getSalesContractProduct(String userKey, Long orderId);
     Optional<Order> getPurchaseProduct(String userKey, Long orderId);
-
 }

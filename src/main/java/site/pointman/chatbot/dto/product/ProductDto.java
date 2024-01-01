@@ -3,8 +3,8 @@ package site.pointman.chatbot.dto.product;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import site.pointman.chatbot.constant.Category;
-import site.pointman.chatbot.constant.ProductStatus;
+import site.pointman.chatbot.constant.product.Category;
+import site.pointman.chatbot.constant.product.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.product.Product;
 

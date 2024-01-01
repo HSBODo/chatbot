@@ -1,7 +1,7 @@
 package site.pointman.chatbot.repository.customrepository.impl;
 
-import site.pointman.chatbot.constant.Category;
-import site.pointman.chatbot.constant.ProductStatus;
+import site.pointman.chatbot.constant.product.Category;
+import site.pointman.chatbot.constant.product.ProductStatus;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
 import site.pointman.chatbot.dto.product.ProductDto;

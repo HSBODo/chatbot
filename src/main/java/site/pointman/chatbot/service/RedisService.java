@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.dto.product.SpecialProduct;
+import site.pointman.chatbot.domain.product.SpecialProduct;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,15 +1,12 @@
 package site.pointman.chatbot.repository.customrepository.impl;
 
-import site.pointman.chatbot.constant.NoticeStatus;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.dto.notice.NoticeDto;
 import site.pointman.chatbot.repository.customrepository.NoticeCustomRepository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Transactional
 public class NoticeCustomRepositoryImpl implements NoticeCustomRepository {

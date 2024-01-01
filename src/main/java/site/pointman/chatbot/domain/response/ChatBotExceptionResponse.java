@@ -1,10 +1,8 @@
 package site.pointman.chatbot.domain.response;
 
 import site.pointman.chatbot.constant.BlockId;
-import site.pointman.chatbot.constant.ButtonAction;
-import site.pointman.chatbot.constant.ButtonName;
-import site.pointman.chatbot.domain.response.property.Component;
-import site.pointman.chatbot.domain.response.property.components.SimpleText;
+import site.pointman.chatbot.constant.button.ButtonAction;
+import site.pointman.chatbot.constant.button.ButtonName;
 
 public class ChatBotExceptionResponse {
 

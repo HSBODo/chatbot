@@ -6,7 +6,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.dto.product.SpecialProduct;
+import site.pointman.chatbot.domain.product.SpecialProduct;
 import site.pointman.chatbot.service.CrawlingService;
 
 import java.util.ArrayList;

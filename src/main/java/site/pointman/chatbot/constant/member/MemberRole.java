@@ -1,4 +1,4 @@
-package site.pointman.chatbot.constant;
+package site.pointman.chatbot.constant.member;
 
 import java.util.Arrays;
 

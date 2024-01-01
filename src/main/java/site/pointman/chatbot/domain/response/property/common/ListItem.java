@@ -2,9 +2,8 @@ package site.pointman.chatbot.domain.response.property.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-import lombok.Setter;
 import site.pointman.chatbot.constant.BlockId;
-import site.pointman.chatbot.constant.ButtonParamKey;
+import site.pointman.chatbot.constant.button.ButtonParamKey;
 
 import java.util.HashMap;
 import java.util.Map;

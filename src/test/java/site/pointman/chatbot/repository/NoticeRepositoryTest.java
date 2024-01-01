@@ -7,18 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import site.pointman.chatbot.constant.ButtonAction;
-import site.pointman.chatbot.constant.ButtonParamKey;
-import site.pointman.chatbot.constant.NoticeStatus;
-import site.pointman.chatbot.constant.NoticeType;
-import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.constant.notice.NoticeStatus;
 import site.pointman.chatbot.domain.notice.Notice;
-import site.pointman.chatbot.domain.response.property.common.Button;
 import site.pointman.chatbot.dto.notice.NoticeDto;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

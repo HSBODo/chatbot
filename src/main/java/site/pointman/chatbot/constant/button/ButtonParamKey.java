@@ -1,4 +1,4 @@
-package site.pointman.chatbot.constant;
+package site.pointman.chatbot.constant.button;
 
 public enum ButtonParamKey {
     productId,choice,noticeId,productStatus,orderId,pageNumber,firstNumber,lastNumber,searchWord
