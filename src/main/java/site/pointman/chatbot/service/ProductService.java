@@ -26,5 +26,4 @@ public interface ProductService {
     Optional<Product> getProduct(Long productId);
     Optional<Order> getSalesContractProduct(String userKey, Long orderId);
     Optional<Order> getPurchaseProduct(String userKey, Long orderId);
-
 }
