@@ -1,5 +1,6 @@
 package site.pointman.chatbot.repository.customrepository.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Transactional
+@Slf4j
 public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     private final EntityManager em;
 
@@ -41,7 +43,9 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
                 .setParameter("userKey", userKey)
                 .setParameter("isUse", isUse)
                 .getSingleResult();
+
         findMember.changePhoneNumber(phoneNumber);
+
         return findMember;
     }
 
@@ -51,25 +55,20 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
                 .setParameter("userKey", userKey)
                 .setParameter("isUse", isUse)
                 .getSingleResult();
+        removeMember.delete();
 
-        List<Product> removeProducts = em.createQuery("select p from Product p where p.member.userKey=:userKey AND p.isUse = :isUse", Product.class)
-                .setParameter("userKey", userKey)
+        List<Product> removeProducts = em.createQuery("SELECT p FROM Product p JOIN Fetch p.productImages WHERE p.member.userKey=:userKey AND p.isUse = :isUse", Product.class)
+                .setParameter("userKey", removeMember.getUserKey())
                 .setParameter("isUse", isUse)
                 .getResultList();
 
         removeProducts.forEach(removeProduct -> {
-            Long productImageId = removeProduct.getProductImages().getId();
-
-            ProductImage removeProductImage = em.createQuery("select p from ProductImage p where p.id=:id AND p.isUse = :isUse", ProductImage.class)
-                    .setParameter("id", productImageId)
-                    .setParameter("isUse", isUse)
-                    .getSingleResult();
-
-            removeProductImage.delete();
-            removeProduct.delete();
+            removeProduct.getProductImages().delete();
         });
 
-        removeMember.delete();
+        int resultCount = em.createQuery("UPDATE Product p SET p.isUse = false WHERE p.member.userKey = :userKey")
+                .setParameter("userKey", removeMember.getUserKey())
+                .executeUpdate();
     }
 
 }
