@@ -17,7 +17,9 @@ public interface NoticeRepository extends JpaRepository<Notice,Long>, NoticeCust
     @Override
     List<Notice> findAll();
 
-    @Query("select n from Notice n where (n.status =:firstStatus OR n.status =:secondStatus) AND n.isUse =:isUse ORDER BY FIELD(n.status,:firstStatus,:secondStatus), n.createDate DESC")
+    @Query(value = "SELECT n FROM Notice n  Join Fetch n.member WHERE (n.status =:firstStatus OR n.status =:secondStatus) AND n.isUse =:isUse ORDER BY FIELD(n.status,:firstStatus,:secondStatus), n.createDate DESC",
+            countQuery = "SELECT count(n) FROM Notice n WHERE (n.status =:firstStatus OR n.status =:secondStatus) AND n.isUse =:isUse ORDER BY FIELD(n.status,:firstStatus,:secondStatus), n.createDate DESC"
+    )
     Page<Notice> findByStatusOrStatus(
             @Param("firstStatus") NoticeStatus firstNoticeStatus,
             @Param("secondStatus") NoticeStatus secondNoticeStatus,
