@@ -1,5 +1,9 @@
 package site.pointman.chatbot.controller.admin;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +15,10 @@ import site.pointman.chatbot.dto.login.LoginDto;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.service.AuthService;
 import site.pointman.chatbot.service.MemberService;
+
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Objects;
 
 @Controller
 @RequestMapping(value = "login")
@@ -25,14 +33,18 @@ public class LoginController {
     }
 
     @ResponseBody
-    @SkipAop
     @PostMapping(value = "")
-    public Response login(@RequestBody LoginDto login){
+    public ResponseEntity login(@RequestBody LoginDto login){
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
         boolean isAdmin = memberService.isAdmin(login.getName(), login.getUserKey());
-        if (!isAdmin) return new Response(ResultCode.FAIL,"이름과 유저키가 옳바르지 않습니다.");
+        if (!isAdmin) return  new ResponseEntity<>("옳바르지 않은 정보입니다.",headers, HttpStatus.OK);
+
 
         String jwtToken = authService.createJwtToken(login.getName(), login.getUserKey());
+        Response response = new Response(ResultCode.OK,"로그인에 성공하였습니다",jwtToken);
 
-        return new Response(ResultCode.OK,"로그인 성공",jwtToken);
+        return new ResponseEntity<>(response,headers ,HttpStatus.OK);
     }
 }

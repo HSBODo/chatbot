@@ -8,12 +8,12 @@ import site.pointman.chatbot.constant.ResultCode;
 public class Response {
     private int code;
     private String message;
-    private Object result;
+    private Object data;
 
-    public Response(ResultCode code, String message, Object result) {
+    public Response(ResultCode code, String message, Object data) {
         this.code = code.getValue();
         this.message = message;
-        this.result = result;
+        this.data = data;
     }
 
     public Response(ResultCode code, String message) {
