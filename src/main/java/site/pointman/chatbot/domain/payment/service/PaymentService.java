@@ -1,4 +1,4 @@
-package site.pointman.chatbot.service;
+package site.pointman.chatbot.domain.payment.service;
 
 import site.pointman.chatbot.constant.payment.PaymentStatus;
 import site.pointman.chatbot.domain.payment.PaymentInfo;

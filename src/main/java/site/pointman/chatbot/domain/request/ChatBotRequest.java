@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import site.pointman.chatbot.domain.request.propery.*;
-import site.pointman.chatbot.dto.product.ProductDto;
+import site.pointman.chatbot.domain.product.dto.ProductDto;
 
 import java.util.List;
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package site.pointman.chatbot.service.serviceimpl;
+package site.pointman.chatbot.domain.product.service.serviceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,12 +14,12 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.dto.product.ProductDto;
-import site.pointman.chatbot.dto.product.ProductImageDto;
+import site.pointman.chatbot.domain.product.dto.ProductDto;
+import site.pointman.chatbot.domain.product.dto.ProductImageDto;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.service.ProductService;
+import site.pointman.chatbot.domain.product.service.ProductService;
 import site.pointman.chatbot.service.S3FileService;
 import site.pointman.chatbot.utill.CustomNumberUtils;
 

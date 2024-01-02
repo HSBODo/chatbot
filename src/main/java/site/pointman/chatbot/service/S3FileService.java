@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.dto.product.ProductImageDto;
+import site.pointman.chatbot.domain.product.dto.ProductImageDto;
 import site.pointman.chatbot.utill.CustomStringUtils;
 import site.pointman.chatbot.utill.UrlResourceDownloader;
 

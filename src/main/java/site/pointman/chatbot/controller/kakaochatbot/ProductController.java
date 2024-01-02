@@ -11,7 +11,7 @@ import site.pointman.chatbot.constant.product.Category;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.dto.product.ProductDto;
+import site.pointman.chatbot.domain.product.dto.ProductDto;
 import site.pointman.chatbot.domain.member.service.MemberService;
 import site.pointman.chatbot.view.kakaochatobotview.ProductChatBotView;
 

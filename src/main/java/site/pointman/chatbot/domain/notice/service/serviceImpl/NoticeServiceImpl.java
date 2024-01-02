@@ -1,4 +1,4 @@
-package site.pointman.chatbot.service.serviceimpl;
+package site.pointman.chatbot.domain.notice.service.serviceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -9,10 +9,10 @@ import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.dto.notice.NoticeDto;
+import site.pointman.chatbot.domain.notice.dto.NoticeDto;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.NoticeRepository;
-import site.pointman.chatbot.service.NoticeService;
+import site.pointman.chatbot.domain.notice.service.NoticeService;
 
 import java.util.List;
 import java.util.Optional;

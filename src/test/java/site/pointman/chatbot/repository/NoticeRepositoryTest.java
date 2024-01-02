@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import site.pointman.chatbot.constant.notice.NoticeStatus;
 import site.pointman.chatbot.domain.notice.Notice;
-import site.pointman.chatbot.dto.notice.NoticeDto;
+import site.pointman.chatbot.domain.notice.dto.NoticeDto;
 
 import javax.transaction.Transactional;
 import java.util.List;

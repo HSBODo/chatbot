@@ -15,7 +15,7 @@ import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.repository.PaymentRepository;
-import site.pointman.chatbot.service.OrderService;
+import site.pointman.chatbot.domain.order.service.OrderService;
 
 import java.nio.charset.Charset;
 import java.util.List;
