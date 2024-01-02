@@ -2,13 +2,12 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.constant.member.MemberRole;
 import site.pointman.chatbot.constant.order.OrderStatus;
-import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
-import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.response.property.common.Profile;
 import site.pointman.chatbot.dto.product.ProductImageDto;
@@ -34,14 +33,12 @@ public class MemberServiceImpl implements MemberService {
     ProductRepository productRepository;
 
     S3FileService s3FileService;
-    ChatBotExceptionResponse chatBotExceptionResponse;
 
     public MemberServiceImpl(MemberRepository memberRepository, OrderRepository orderRepository, ProductRepository productRepository, S3FileService s3FileService) {
         this.memberRepository = memberRepository;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.s3FileService = s3FileService;
-        this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
     @Override

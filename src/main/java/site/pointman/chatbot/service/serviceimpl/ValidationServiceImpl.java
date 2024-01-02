@@ -1,12 +1,9 @@
 package site.pointman.chatbot.service.serviceimpl;
 
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.service.ValidationService;
 import site.pointman.chatbot.utill.CustomNumberUtils;
-
-import java.util.Optional;
 
 @Service
 public class ValidationServiceImpl implements ValidationService {
