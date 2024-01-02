@@ -4,8 +4,8 @@ import site.pointman.chatbot.constant.product.Category;
 import site.pointman.chatbot.constant.product.ProductStatus;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
-import site.pointman.chatbot.dto.product.ProductDto;
-import site.pointman.chatbot.dto.product.ProductImageDto;
+import site.pointman.chatbot.domain.product.dto.ProductDto;
+import site.pointman.chatbot.domain.product.dto.ProductImageDto;
 
 import java.util.List;
 import java.util.Optional;

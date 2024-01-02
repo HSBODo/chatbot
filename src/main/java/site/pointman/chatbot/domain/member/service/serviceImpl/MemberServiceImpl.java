@@ -11,7 +11,7 @@ import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.response.property.common.Profile;
 import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
-import site.pointman.chatbot.dto.product.ProductImageDto;
+import site.pointman.chatbot.domain.product.dto.ProductImageDto;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.repository.ProductRepository;

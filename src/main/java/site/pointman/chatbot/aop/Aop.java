@@ -12,7 +12,7 @@ import site.pointman.chatbot.domain.log.ChatBotLog;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.service.AuthService;
-import site.pointman.chatbot.service.LogService;
+import site.pointman.chatbot.domain.log.service.LogService;
 import site.pointman.chatbot.domain.member.service.MemberService;
 
 @Aspect

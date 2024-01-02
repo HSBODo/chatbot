@@ -1,4 +1,4 @@
-package site.pointman.chatbot.service;
+package site.pointman.chatbot.domain.order.service;
 
 import site.pointman.chatbot.constant.order.OrderStatus;
 import site.pointman.chatbot.domain.order.Order;

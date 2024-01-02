@@ -15,7 +15,7 @@ import site.pointman.chatbot.domain.response.property.common.ListItem;
 import site.pointman.chatbot.domain.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.response.property.components.ListCard;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
-import site.pointman.chatbot.service.NoticeService;
+import site.pointman.chatbot.domain.notice.service.NoticeService;
 import site.pointman.chatbot.view.kakaochatobotview.NoticeChatBotView;
 
 import java.util.Optional;

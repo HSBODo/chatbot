@@ -9,8 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.constant.notice.NoticeType;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.notice.Notice;
+import site.pointman.chatbot.domain.notice.service.NoticeService;
 import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.dto.notice.NoticeDto;
+import site.pointman.chatbot.domain.notice.dto.NoticeDto;
 
 import java.util.List;
 import java.util.Optional;

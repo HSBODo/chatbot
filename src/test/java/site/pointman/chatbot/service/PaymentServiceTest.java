@@ -6,12 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentCancelResponse;
 import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentReadyResponse;
+import site.pointman.chatbot.domain.payment.service.PaymentService;
 
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 @SpringBootTest
 @Slf4j

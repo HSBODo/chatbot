@@ -9,7 +9,7 @@ import site.pointman.chatbot.constant.notice.NoticeType;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.property.common.Button;
-import site.pointman.chatbot.dto.notice.NoticeDto;
+import site.pointman.chatbot.domain.notice.dto.NoticeDto;
 import site.pointman.chatbot.utill.CustomStringUtils;
 
 import javax.persistence.*;

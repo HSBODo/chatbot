@@ -1,4 +1,4 @@
-package site.pointman.chatbot.service.serviceimpl;
+package site.pointman.chatbot.domain.order.service.serviceImpl;
 
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +15,8 @@ import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.service.OrderService;
-import site.pointman.chatbot.service.PaymentService;
+import site.pointman.chatbot.domain.order.service.OrderService;
+import site.pointman.chatbot.domain.payment.service.PaymentService;
 
 import javax.transaction.Transactional;
 import java.util.List;

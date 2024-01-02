@@ -1,4 +1,4 @@
-package site.pointman.chatbot.service.serviceimpl;
+package site.pointman.chatbot.domain.payment.service.serviceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +19,7 @@ import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.service.PaymentService;
+import site.pointman.chatbot.domain.payment.service.PaymentService;
 import site.pointman.chatbot.utill.CustomNumberUtils;
 
 import javax.transaction.Transactional;

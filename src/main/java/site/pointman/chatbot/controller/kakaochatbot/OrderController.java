@@ -11,8 +11,8 @@ import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentReadyResponse;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.service.OrderService;
-import site.pointman.chatbot.service.PaymentService;
+import site.pointman.chatbot.domain.order.service.OrderService;
+import site.pointman.chatbot.domain.payment.service.PaymentService;
 import site.pointman.chatbot.view.kakaochatobotview.OrderChatBotView;
 
 import java.io.UnsupportedEncodingException;

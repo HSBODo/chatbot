@@ -1,4 +1,4 @@
-package site.pointman.chatbot.service;
+package site.pointman.chatbot.domain.product.service;
 
 import org.springframework.data.domain.Page;
 import site.pointman.chatbot.constant.product.Category;
@@ -6,7 +6,7 @@ import site.pointman.chatbot.constant.product.ProductStatus;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.dto.product.ProductDto;
+import site.pointman.chatbot.domain.product.dto.ProductDto;
 
 import java.util.List;
 import java.util.Optional;

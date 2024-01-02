@@ -11,7 +11,7 @@ import site.pointman.chatbot.constant.product.ProductStatus;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.service.ProductService;
+import site.pointman.chatbot.domain.product.service.ProductService;
 
 import java.nio.charset.Charset;
 import java.util.List;

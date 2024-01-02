@@ -1,4 +1,4 @@
-package site.pointman.chatbot.service.serviceimpl;
+package site.pointman.chatbot.domain.log.service.serviceImpl;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.log.ChatBotLog;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.repository.LogRepository;
-import site.pointman.chatbot.service.LogService;
+import site.pointman.chatbot.domain.log.service.LogService;
 
 @Service
 @Slf4j

@@ -1,4 +1,4 @@
-package site.pointman.chatbot.service;
+package site.pointman.chatbot.domain.log.service;
 
 import site.pointman.chatbot.domain.log.ChatBotLog;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
