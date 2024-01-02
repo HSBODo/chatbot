@@ -1,5 +1,6 @@
 package site.pointman.chatbot.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.constant.member.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.dto.member.MemberDto;
+import site.pointman.chatbot.dto.member.MemberProfileDto;
 
 import java.util.Optional;
 
-
+@Slf4j
 @SpringBootTest
 class MemberRepositoryTest {
     @Autowired
@@ -61,10 +63,11 @@ class MemberRepositoryTest {
         String phoneNumber = "01011112222";
 
         //when
-        Member member = memberRepository.updateMemberPhoneNumber(userKey, phoneNumber, isUse);
+        Integer integer = memberRepository.updateMemberPhoneNumber(userKey, phoneNumber, isUse);
+
 
         //then
-        Assertions.assertThat(member.getPhoneNumber()).isEqualTo(phoneNumber);
+        Assertions.assertThat(integer.intValue()).isEqualTo(1);
     }
 
     @Test
@@ -96,4 +99,13 @@ class MemberRepositoryTest {
     }
 
 
+    @Test
+    void findMemberProfileDtoByUserKey() {
+
+        Optional<MemberProfileDto> memberProfileDtoByUserKey = memberRepository.findMemberProfileDtoByUserKey(userKey, isUse);
+
+        Assertions.assertThat(memberProfileDtoByUserKey.isEmpty()).isFalse();
+        Assertions.assertThat(memberProfileDtoByUserKey.get().getNickname()).isEqualTo(name);
+
+    }
 }

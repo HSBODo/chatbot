@@ -164,15 +164,17 @@ class ProductRepositoryTest {
     void findByCategory() {
         //give
         Category category = Category.getCategory("취미/게임/음반");
-        ProductStatus status = ProductStatus.판매중;
+        ProductStatus firstStatus = ProductStatus.판매중;
+        ProductStatus secondStatus = ProductStatus.예약;
 
         //when
-        List<Product> products = productRepository.findByCategory(category,status, isUse);
+        Page<Product> products = productRepository.findByCategory(isUse, category, firstStatus, secondStatus, PageRequest.of(0, 10));
+
 
         //then
-        products.forEach(product -> {
+        products.getContent().forEach(product -> {
             Assertions.assertThat(product.getCategory()).isEqualTo(category);
-            Assertions.assertThat(product.getStatus()).isEqualTo(status);
+            Assertions.assertThat(product.getStatus()).isIn(firstStatus, secondStatus);
         });
     }
 
@@ -203,5 +205,15 @@ class ProductRepositoryTest {
             log.info("{}",product.getCreateDate());
 
         });
+    }
+
+    @Test
+    void findMain() {
+        Page<Product> main = productRepository.findMain(true, ProductStatus.판매중, ProductStatus.예약, PageRequest.of(0, 10));
+        main.getContent().forEach(product -> {
+            log.info("{}",product.getId());
+            log.info("{}",product.getProductImages().getImageUrls());
+        });
+
     }
 }

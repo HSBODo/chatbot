@@ -10,6 +10,7 @@ import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.response.property.common.Profile;
+import site.pointman.chatbot.dto.member.MemberProfileDto;
 import site.pointman.chatbot.dto.product.ProductImageDto;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
@@ -73,6 +74,12 @@ public class MemberServiceImpl implements MemberService {
         Optional<Member> mayBeMember = memberRepository.findByUserKey(userKey,isUse);
 
         return mayBeMember;
+    }
+
+    @Override
+    public Optional<MemberProfileDto> getMemberProfileDto(String userKey) {
+        Optional<MemberProfileDto> mayBeMemberProfile = memberRepository.findMemberProfileDtoByUserKey(userKey, isUse);
+        return mayBeMemberProfile;
     }
 
     @Override

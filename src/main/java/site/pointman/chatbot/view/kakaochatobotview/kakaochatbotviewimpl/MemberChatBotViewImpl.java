@@ -12,6 +12,7 @@ import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.response.property.components.TextCard;
+import site.pointman.chatbot.dto.member.MemberProfileDto;
 import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.view.kakaochatobotview.MemberChatBotView;
 
@@ -43,17 +44,17 @@ public class MemberChatBotViewImpl implements MemberChatBotView {
 
     @Override
     public ChatBotResponse myProfilePage(String userKey) {
-        Optional<Member> mayBeMember = memberService.getMember(userKey);
+        Optional<MemberProfileDto> mayBeMemberProfile = memberService.getMemberProfileDto(userKey);
 
-        if (mayBeMember.isEmpty()) return chatBotExceptionResponse.createException("회원조회를 실패하였습니다.");
-        Member member = mayBeMember.get();
+        if (mayBeMemberProfile.isEmpty()) return chatBotExceptionResponse.createException("프로필 조회를 실패하였습니다.");
+        MemberProfileDto memberProfileDto = mayBeMemberProfile.get();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         String description =
-                "등급: "+member.getRole().getValue()+"\n\n"+
-                "닉네임: "+member.getName()+"\n\n"+
-                "연락처: "+member.getPhoneNumber()+"\n\n"+
-                "가입일자: "+member.getFormatCreateDate();
+                "등급: "+memberProfileDto.getRole().getValue()+"\n\n"+
+                "닉네임: "+memberProfileDto.getNickname()+"\n\n"+
+                "연락처: "+memberProfileDto.getPhoneNumber()+"\n\n"+
+                "가입일자: "+memberProfileDto.getJoinDate();
 
         TextCard textCard = new TextCard();
         textCard.setTitle("프로필");
