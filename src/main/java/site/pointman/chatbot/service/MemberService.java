@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface MemberService {
     Response join(String userKey, String name, String phoneNumber);
     List<Member> getMembers();
-    Member getMember(String userKey);
+    Optional<Member> getMember(String userKey);
     Optional<Member> getMemberByName(String name);
     Response updateMember(String userKey, Member member);
     Response updateMemberPhoneNumber(String userKey, String updatePhoneNumber);

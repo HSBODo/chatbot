@@ -1,7 +1,8 @@
 package site.pointman.chatbot.view.kakaochatobotview.kakaochatbotviewimpl;
 
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.*;
+import site.pointman.chatbot.constant.BlockId;
+import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.constant.button.ButtonAction;
 import site.pointman.chatbot.constant.button.ButtonName;
 import site.pointman.chatbot.constant.button.ButtonParamKey;
@@ -14,7 +15,7 @@ import site.pointman.chatbot.domain.response.property.components.TextCard;
 import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.view.kakaochatobotview.MemberChatBotView;
 
-import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class MemberChatBotViewImpl implements MemberChatBotView {
@@ -42,9 +43,10 @@ public class MemberChatBotViewImpl implements MemberChatBotView {
 
     @Override
     public ChatBotResponse myProfilePage(String userKey) {
-        Member member = memberService.getMember(userKey);
+        Optional<Member> mayBeMember = memberService.getMember(userKey);
 
-        if (Objects.isNull(member)) return chatBotExceptionResponse.createException("회원조회를 실패하였습니다.");
+        if (mayBeMember.isEmpty()) return chatBotExceptionResponse.createException("회원조회를 실패하였습니다.");
+        Member member = mayBeMember.get();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         String description =

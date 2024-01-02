@@ -64,19 +64,15 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public List<Member> getMembers(){
         List<Member> members = memberRepository.findAll();
-        if (members.isEmpty()) throw new NoSuchElementException("회원이 존재하지 않습니다;");
 
         return members;
     }
 
     @Override
-    public Member getMember(String userKey) {
-        Optional<Member> mayBeMember = Optional.ofNullable(memberRepository.findByUserKey(userKey,isUse)
-                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다.")));
+    public Optional<Member> getMember(String userKey) {
+        Optional<Member> mayBeMember = memberRepository.findByUserKey(userKey,isUse);
 
-        Member member = mayBeMember.get();
-
-        return member;
+        return mayBeMember;
     }
 
     @Override
