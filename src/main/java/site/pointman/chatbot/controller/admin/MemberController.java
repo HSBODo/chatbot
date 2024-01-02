@@ -6,12 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.dto.member.MemberDto;
-import site.pointman.chatbot.dto.member.MemberJoinDTO;
+import site.pointman.chatbot.dto.member.MemberJoinDto;
 import site.pointman.chatbot.service.MemberService;
 import site.pointman.chatbot.service.ValidationService;
-
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "admin/member")
@@ -28,7 +25,7 @@ public class MemberController {
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Response join(@RequestBody MemberJoinDTO memberJoinDTO){
+    public Response join(@RequestBody MemberJoinDto memberJoinDTO){
         String name = memberJoinDTO.getName();
         String userKey = memberJoinDTO.getUserKey();
         String phoneNumber = memberJoinDTO.getPhoneNumber();
