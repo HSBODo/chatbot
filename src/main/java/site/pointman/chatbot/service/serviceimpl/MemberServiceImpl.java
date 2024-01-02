@@ -83,6 +83,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public Optional<Member> getMemberByName(String name) {
+        Optional<Member> mayBeMember = memberRepository.findByName(name, isUse);
+        return mayBeMember;
+    }
+
+    @Override
     public Response updateMember(String userKey, Member member) {
         try {
             memberRepository.updateMember(userKey,member,isUse);
@@ -150,27 +156,36 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean isCustomer(String userKey) {
-        try {
-            Optional<Member> mayBeCustomer = memberRepository.findByUserKey(userKey,isUse);
+        Optional<Member> mayBeCustomer = memberRepository.findByUserKey(userKey,isUse);
 
-            if (mayBeCustomer.isEmpty()) return false;
+        if (mayBeCustomer.isEmpty()) return false;
 
-            return true;
-        } catch (Exception e){
-            return false;
-        }
+        return true;
     }
+
+    @Override
+    public boolean isCustomerByName(String name) {
+        Optional<Member> mayBeCustomer = memberRepository.findByName(name,isUse);
+
+        if (mayBeCustomer.isEmpty()) return false;
+
+        return true;
+    }
+
     @Override
     public boolean isAdmin(String name,String userKey) {
-        try {
-            Optional<Member> mayBeCustomer = memberRepository.findByRole(name,userKey,MemberRole.ADMIN,isUse);
+        Optional<Member> mayBeCustomer = memberRepository.findByRole(name,userKey,MemberRole.ADMIN,isUse);
 
-            if (mayBeCustomer.isEmpty()) return false;
+        if (mayBeCustomer.isEmpty()) return false;
 
-            return true;
-        } catch (Exception e){
-            return false;
-        }
+        return true;
     }
 
+    @Override
+    public boolean isDuplicationName(String name) {
+        Optional<Member> mayBeMember = memberRepository.findByName(name, isUse);
+        if (mayBeMember.isEmpty()) return false;
+
+        return true;
+    }
 }

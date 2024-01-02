@@ -5,6 +5,7 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotValidationResponse;
 import site.pointman.chatbot.repository.MemberRepository;
+import site.pointman.chatbot.service.ValidationService;
 import site.pointman.chatbot.view.kakaochatobotview.ValidationChatBotView;
 import site.pointman.chatbot.utill.CustomNumberUtils;
 
@@ -14,29 +15,26 @@ import java.util.Optional;
 public class ValidationChatBotViewImpl implements ValidationChatBotView {
     private final String KAKAO_OPEN_CHAT_URL_REQUIRED = "https://open.kakao.com/o";
 
-    MemberRepository memberRepository;
+    ValidationService validationService;
 
-    public ValidationChatBotViewImpl(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
+    public ValidationChatBotViewImpl(ValidationService validationService) {
+        this.validationService = validationService;
     }
 
     @Override
     public ChatBotValidationResponse validationMemberPhoneNumberResult(ChatBotRequest chatBotRequest) {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String inputPhone = chatBotRequest.getValidationData();
-        inputPhone = inputPhone.replaceAll("-", "");
 
-        if(!CustomNumberUtils.isNumber(inputPhone)){
-            chatBotValidationResponse.validationFail();
+        if(validationService.isValidMemberPhoneNumber(inputPhone)){
+
+            inputPhone = inputPhone.replaceAll("-", "");
+            chatBotValidationResponse.validationSuccess(inputPhone);
             return chatBotValidationResponse;
+
         }
 
-        if (inputPhone.length() != 11) {
-            chatBotValidationResponse.validationFail();
-            return chatBotValidationResponse;
-        }
-
-        chatBotValidationResponse.validationSuccess(inputPhone);
+        chatBotValidationResponse.validationFail();
         return chatBotValidationResponse;
     }
 
@@ -45,14 +43,13 @@ public class ValidationChatBotViewImpl implements ValidationChatBotView {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String inputName = chatBotRequest.getValidationData();
 
-        Optional<Member> mayBeMember = memberRepository.findByName(inputName,true);
+        if(validationService.isValidMemberName(inputName)){
 
-        if(!mayBeMember.isEmpty()){
-            chatBotValidationResponse.validationFail();
+            chatBotValidationResponse.validationSuccess(inputName);
             return chatBotValidationResponse;
         }
 
-        chatBotValidationResponse.validationSuccess(inputName);
+        chatBotValidationResponse.validationFail();
         return chatBotValidationResponse;
     }
 
@@ -60,11 +57,14 @@ public class ValidationChatBotViewImpl implements ValidationChatBotView {
     public ChatBotValidationResponse validationProductNameResult(ChatBotRequest chatBotRequest) {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String productName = chatBotRequest.getValidationData();
-        if(productName.length()>30){
-            chatBotValidationResponse.validationFail();
+
+        if(validationService.isValidProductName(productName)){
+
+            chatBotValidationResponse.validationSuccess(productName);
             return chatBotValidationResponse;
         }
-        chatBotValidationResponse.validationSuccess(productName);
+
+        chatBotValidationResponse.validationFail();
         return chatBotValidationResponse;
     }
 
@@ -73,12 +73,13 @@ public class ValidationChatBotViewImpl implements ValidationChatBotView {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String productPrice= chatBotRequest.getValidationData();
 
-        if(!CustomNumberUtils.isNumber(productPrice)){
-            chatBotValidationResponse.validationFail();
+        if(validationService.isValidProductPrice(productPrice)){
+            chatBotValidationResponse.validationSuccess(productPrice);
             return chatBotValidationResponse;
+
         }
 
-        chatBotValidationResponse.validationSuccess(productPrice);
+        chatBotValidationResponse.validationFail();
         return chatBotValidationResponse;
     }
 
@@ -87,12 +88,13 @@ public class ValidationChatBotViewImpl implements ValidationChatBotView {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String productDescription= chatBotRequest.getValidationData();
 
-        if(productDescription.length()>400){
-            chatBotValidationResponse.validationFail();
+        if(validationService.isValidProductDescription(productDescription)){
+
+            chatBotValidationResponse.validationSuccess(productDescription);
             return chatBotValidationResponse;
         }
 
-        chatBotValidationResponse.validationSuccess(productDescription);
+        chatBotValidationResponse.validationFail();
         return chatBotValidationResponse;
     }
 
@@ -101,7 +103,8 @@ public class ValidationChatBotViewImpl implements ValidationChatBotView {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String kakaoOpenChayUrl= chatBotRequest.getValidationData();
 
-        if(kakaoOpenChayUrl.contains(KAKAO_OPEN_CHAT_URL_REQUIRED)){
+        if(validationService.isValidKakaoOpenChatUrl(kakaoOpenChayUrl)){
+
             chatBotValidationResponse.validationSuccess(kakaoOpenChayUrl);
             return chatBotValidationResponse;
         }
@@ -123,13 +126,15 @@ public class ValidationChatBotViewImpl implements ValidationChatBotView {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String reservationCustomerName= chatBotRequest.getValidationData();
 
-        Optional<Member> mayBeMember = memberRepository.findByName(reservationCustomerName,true);
-        if(mayBeMember.isEmpty()){
-            chatBotValidationResponse.validationFail();
+
+        if(validationService.isValidReservationMember(reservationCustomerName)){
+            chatBotValidationResponse.validationSuccess(reservationCustomerName);
             return chatBotValidationResponse;
+
+
         }
 
-        chatBotValidationResponse.validationSuccess(reservationCustomerName);
+        chatBotValidationResponse.validationFail();
         return chatBotValidationResponse;
     }
 
@@ -138,7 +143,8 @@ public class ValidationChatBotViewImpl implements ValidationChatBotView {
         ChatBotValidationResponse chatBotValidationResponse = new ChatBotValidationResponse();
         String trackingNumber = chatBotRequest.getValidationData();
 
-        if(CustomNumberUtils.isNumber(trackingNumber)){
+        if(validationService.isValidTrackingNumber(trackingNumber)){
+
             chatBotValidationResponse.validationSuccess(trackingNumber);
             return chatBotValidationResponse;
         }
