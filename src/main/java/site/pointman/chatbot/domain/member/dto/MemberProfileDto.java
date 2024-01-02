@@ -1,4 +1,4 @@
-package site.pointman.chatbot.dto.member;
+package site.pointman.chatbot.domain.member.dto;
 
 
 import lombok.AllArgsConstructor;

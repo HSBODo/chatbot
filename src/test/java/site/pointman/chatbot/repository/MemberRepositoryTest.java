@@ -8,8 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.constant.member.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.dto.member.MemberDto;
-import site.pointman.chatbot.dto.member.MemberProfileDto;
+import site.pointman.chatbot.domain.member.dto.MemberDto;
+import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 
 import java.util.Optional;
 

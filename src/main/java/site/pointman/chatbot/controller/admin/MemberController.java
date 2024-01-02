@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.dto.member.MemberJoinDto;
-import site.pointman.chatbot.service.MemberService;
+import site.pointman.chatbot.domain.member.dto.MemberJoinDto;
+import site.pointman.chatbot.domain.member.service.MemberService;
 import site.pointman.chatbot.service.ValidationService;
 
 import java.nio.charset.Charset;

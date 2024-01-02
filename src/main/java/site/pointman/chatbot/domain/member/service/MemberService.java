@@ -1,8 +1,8 @@
-package site.pointman.chatbot.service;
+package site.pointman.chatbot.domain.member.service;
 
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.dto.member.MemberProfileDto;
+import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 
 import java.util.List;
 import java.util.Optional;

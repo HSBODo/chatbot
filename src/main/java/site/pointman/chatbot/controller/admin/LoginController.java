@@ -9,16 +9,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import site.pointman.chatbot.annotation.SkipAop;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.dto.login.LoginDto;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.service.AuthService;
-import site.pointman.chatbot.service.MemberService;
+import site.pointman.chatbot.domain.member.service.MemberService;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Objects;
 
 @Controller
 @RequestMapping(value = "login")
