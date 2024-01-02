@@ -14,6 +14,7 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.response.Response;
 
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 @Transactional
@@ -68,10 +69,11 @@ class MemberServiceTest {
         //give
 
         //when
-        Member member = memberService.getMember(userKey);
+        Optional<Member> mayBeMember = memberService.getMember(userKey);
+
 
         //then
-        Assertions.assertThat(member.getUserKey()).isEqualTo(userKey);
+        Assertions.assertThat(mayBeMember.get().getUserKey()).isEqualTo(userKey);
     }
 
     @Test
