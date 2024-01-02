@@ -25,7 +25,7 @@ public class Product extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_key")
+    @JoinColumn(name = "MEMBER_USERKEY")
     private Member member;
 
     @Column(name = "buyer_user_key")
@@ -50,7 +50,7 @@ public class Product extends BaseEntity {
     private ProductStatus status;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_images_id")
+    @JoinColumn(name = "PRODUCTIMAGE_ID")
     private ProductImage productImages;
 
     @Builder

@@ -3,6 +3,10 @@ package site.pointman.chatbot.controller.admin;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.constant.ResultCode;
@@ -13,6 +17,7 @@ import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.service.OrderService;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,52 +40,75 @@ public class OrderAdminController {
 
     @ResponseBody
     @GetMapping(value = "all")
-    public Object getOrders () {
-        List<Order> orders = orderService.getOrders();
-        if (orders.isEmpty()) return new Response(ResultCode.FAIL,"주문이 존재하지 않습니다.");
+    public ResponseEntity getOrders () {
+        HttpHeaders headers = getHeaders();
 
-        return orders;
+        List<Order> orders = orderService.getOrders();
+        if (orders.isEmpty()) return new ResponseEntity(new Response(ResultCode.EXCEPTION,"주문이 존재하지 않습니다."),headers, HttpStatus.OK);
+
+        return new ResponseEntity(orders,headers, HttpStatus.OK);
     }
 
     @ResponseBody
     @GetMapping(value = "")
-    public Object getOrdersByStatus (@RequestParam("status") OrderStatus orderStatus) {
+    public ResponseEntity getOrdersByStatus (@RequestParam("status") OrderStatus orderStatus) {
+        HttpHeaders headers = getHeaders();
+
         List<Order> orders = orderService.getOrdersByStatus(orderStatus);
-        if (orders.isEmpty()) return new Response(ResultCode.FAIL,"주문이 존재하지 않습니다.");
-        return orders;
+        if (orders.isEmpty()) return new ResponseEntity(new Response(ResultCode.EXCEPTION,"주문이 존재하지 않습니다."),headers, HttpStatus.OK);
+
+        return new ResponseEntity(orders,headers, HttpStatus.OK);
     }
 
     @ResponseBody
     @GetMapping(value = "{orderId}")
-    public Object getOrderByOrderId (@PathVariable("orderId") Long orderId) {
-        Optional<Order> order = orderService.getOrder(orderId);
-        if (order.isEmpty()) return new Response(ResultCode.FAIL,"주문이 존재하지 않습니다.");
-        return order.get();
+    public ResponseEntity getOrderByOrderId (@PathVariable("orderId") Long orderId) {
+        HttpHeaders headers = getHeaders();
+
+        Optional<Order> maybeOrder = orderService.getOrder(orderId);
+        if (maybeOrder.isEmpty()) return new ResponseEntity(new Response(ResultCode.EXCEPTION,"주문이 존재하지 않습니다."),headers, HttpStatus.OK);
+        Order order = maybeOrder.get();
+
+        return new ResponseEntity(order,headers, HttpStatus.OK);
     }
 
     @ResponseBody
     @GetMapping(value = "paymentInfo/{orderId}")
-    public Object getPaymentInfoByOrderId (@PathVariable("orderId") Long orderId) {
+    public ResponseEntity getPaymentInfoByOrderId (@PathVariable("orderId") Long orderId) {
+        HttpHeaders headers = getHeaders();
+
         Optional<PaymentInfo> mayBePaymentInfo = paymentRepository.findByOrderId(orderId);
-        if (mayBePaymentInfo.isEmpty()) return new Response(ResultCode.EXCEPTION,"결제정보가 없습니다.");
+        if (mayBePaymentInfo.isEmpty()) return new ResponseEntity(new Response(ResultCode.EXCEPTION,"결제 정보가 없습니다."),headers, HttpStatus.OK);
         PaymentInfo paymentInfo = mayBePaymentInfo.get();
 
-        return paymentInfo;
+        return new ResponseEntity(paymentInfo,headers, HttpStatus.OK);
     }
 
     @ResponseBody
     @PostMapping(value = "/success/{orderId}")
-    public Response orderSuccess (@PathVariable Long orderId) {
-        return orderService.successOrder(orderId);
+    public ResponseEntity orderSuccess (@PathVariable Long orderId) {
+        HttpHeaders headers = getHeaders();
+
+        Response response = orderService.successOrder(orderId);
+
+        return new ResponseEntity(response,headers, HttpStatus.OK);
     }
 
     @ResponseBody
     @PostMapping(value = "kakaopay-cancel/{orderId}")
-    public Response kakaoPayCancel (@PathVariable Long orderId) {
+    public ResponseEntity kakaoPayCancel (@PathVariable Long orderId) {
+        HttpHeaders headers = getHeaders();
         try {
-            return  orderService.cancelOrder(orderId);
+            Response response = orderService.cancelOrder(orderId);
+            return new ResponseEntity(response,headers, HttpStatus.OK);
         }catch (Exception e) {
-            return new Response(ResultCode.FAIL,"주문번호 "+orderId+"의 주문취소를 실패하였습니다.");
+            return new ResponseEntity( new Response(ResultCode.FAIL,"주문번호 "+orderId+"의 주문취소를 실패하였습니다."),headers, HttpStatus.OK);
         }
+    }
+
+    private HttpHeaders getHeaders(){
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+        return headers;
     }
 }

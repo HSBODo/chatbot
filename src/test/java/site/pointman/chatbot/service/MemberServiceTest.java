@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.constant.member.MemberRole;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.member.service.MemberService;
 import site.pointman.chatbot.domain.response.Response;
 
 import java.util.List;

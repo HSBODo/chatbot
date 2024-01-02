@@ -11,7 +11,7 @@ import site.pointman.chatbot.annotation.ValidateMember;
 import site.pointman.chatbot.domain.request.ChatBotRequest;
 import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.service.MemberService;
+import site.pointman.chatbot.domain.member.service.MemberService;
 import site.pointman.chatbot.view.kakaochatobotview.MemberChatBotView;
 
 

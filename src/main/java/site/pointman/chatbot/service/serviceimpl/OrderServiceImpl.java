@@ -42,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
     public Response addOrder(Long orderId, String pgToken) {
         Response result = paymentService.getPaymentInfoByStatus(orderId, PaymentStatus.결제준비);
         if (result.getCode() != ResultCode.OK.getValue()) return new Response(ResultCode.EXCEPTION, result.getMessage());
-        PaymentInfo paymentReadyInfo = (PaymentInfo) result.getResult();
+        PaymentInfo paymentReadyInfo = (PaymentInfo) result.getData();
 
         paymentService.kakaoPaymentApprove(pgToken,paymentReadyInfo);
         Order order;
@@ -101,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
         Response result = paymentService.getPaymentInfoByStatus(orderId, PaymentStatus.결제완료);
         if (result.getCode() != ResultCode.OK.getValue()) return result;
 
-        PaymentInfo successPaymentInfo = (PaymentInfo) result.getResult();
+        PaymentInfo successPaymentInfo = (PaymentInfo) result.getData();
 
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId);
         if (mayBeOrder.isEmpty()) throw new IllegalArgumentException("주문이 존재하지 않습니다.");
