@@ -16,7 +16,7 @@ public interface ProductChatBotView {
     ChatBotResponse productListByCategoryPage(Category category, int pageNumber);
     ChatBotResponse myProductListByStatusPage(String userKey, String productStatus, int pageNumber);
     ChatBotResponse addProductInfoPreviewPage(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl);
-    ChatBotResponse addProductResultPage(ProductDto productDto, String userKey, List<String> imageUrls);
+    ChatBotResponse addProductResultPage(ProductDto productDto, String userKey);
     ChatBotResponse productCategoryListPage(String requestBlockId);
     ChatBotResponse mySalesContractProductListPage(String userKey, int pageNumber);
     ChatBotResponse mySalesContractProductDetailInfoPage(String userKey, String orderId);

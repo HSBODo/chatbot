@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
-    Response addProduct(ProductDto productDto, String userKey, List<String> imageUrls);
+    Response addProduct(ProductDto productDto, String userKey);
     Response updateProductStatus(Long productId, ProductStatus status);
     Response deleteProduct(Long productId);
     Page<Product> getProductsByCategory(Category category, int pageNumber);
