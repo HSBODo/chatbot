@@ -63,10 +63,11 @@ class MemberRepositoryTest {
         String phoneNumber = "01011112222";
 
         //when
-        Member member = memberRepository.updateMemberPhoneNumber(userKey, phoneNumber, isUse);
+        Integer integer = memberRepository.updateMemberPhoneNumber(userKey, phoneNumber, isUse);
+
 
         //then
-        Assertions.assertThat(member.getPhoneNumber()).isEqualTo(phoneNumber);
+        Assertions.assertThat(integer.intValue()).isEqualTo(1);
     }
 
     @Test

@@ -35,20 +35,6 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
         return findMember;
     }
 
-
-
-    @Override
-    public Member updateMemberPhoneNumber(String userKey, String phoneNumber, boolean isUse) {
-        Member findMember = em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
-                .setParameter("userKey", userKey)
-                .setParameter("isUse", isUse)
-                .getSingleResult();
-
-        findMember.changePhoneNumber(phoneNumber);
-
-        return findMember;
-    }
-
     @Override
     public void delete(String userKey, boolean isUse) {
         Member removeMember = em.createQuery("select m from Member m where m.userKey=:userKey AND m.isUse = :isUse", Member.class)
@@ -66,7 +52,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
             removeProduct.getProductImages().delete();
         });
 
-        int resultCount = em.createQuery("UPDATE Product p SET p.isUse = false WHERE p.member.userKey = :userKey")
+        em.createQuery("UPDATE Product p SET p.isUse = false WHERE p.member.userKey = :userKey")
                 .setParameter("userKey", removeMember.getUserKey())
                 .executeUpdate();
     }
