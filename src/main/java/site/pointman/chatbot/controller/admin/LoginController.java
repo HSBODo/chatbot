@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import site.pointman.chatbot.annotation.SkipAop;
 import site.pointman.chatbot.constant.ResultCode;
-import site.pointman.chatbot.dto.login.Login;
+import site.pointman.chatbot.dto.login.LoginDTO;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.service.AuthService;
 import site.pointman.chatbot.service.MemberService;
@@ -27,7 +27,7 @@ public class LoginController {
     @ResponseBody
     @SkipAop
     @PostMapping(value = "")
-    public Response login(@RequestBody Login login){
+    public Response login(@RequestBody LoginDTO login){
         boolean isAdmin = memberService.isAdmin(login.getName(), login.getUserKey());
         if (!isAdmin) return new Response(ResultCode.FAIL,"이름과 유저키가 옳바르지 않습니다.");
 

@@ -2,13 +2,12 @@ package site.pointman.chatbot.service.serviceimpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.constant.member.MemberRole;
 import site.pointman.chatbot.constant.order.OrderStatus;
-import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
-import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.response.property.common.Profile;
 import site.pointman.chatbot.dto.product.ProductImageDto;
@@ -34,14 +33,12 @@ public class MemberServiceImpl implements MemberService {
     ProductRepository productRepository;
 
     S3FileService s3FileService;
-    ChatBotExceptionResponse chatBotExceptionResponse;
 
     public MemberServiceImpl(MemberRepository memberRepository, OrderRepository orderRepository, ProductRepository productRepository, S3FileService s3FileService) {
         this.memberRepository = memberRepository;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.s3FileService = s3FileService;
-        this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
     @Override
@@ -67,19 +64,21 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public List<Member> getMembers(){
         List<Member> members = memberRepository.findAll();
-        if (members.isEmpty()) throw new NoSuchElementException("회원이 존재하지 않습니다;");
 
         return members;
     }
 
     @Override
-    public Member getMember(String userKey) {
-        Optional<Member> mayBeMember = Optional.ofNullable(memberRepository.findByUserKey(userKey,isUse)
-                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다.")));
+    public Optional<Member> getMember(String userKey) {
+        Optional<Member> mayBeMember = memberRepository.findByUserKey(userKey,isUse);
 
-        Member member = mayBeMember.get();
+        return mayBeMember;
+    }
 
-        return member;
+    @Override
+    public Optional<Member> getMemberByName(String name) {
+        Optional<Member> mayBeMember = memberRepository.findByName(name, isUse);
+        return mayBeMember;
     }
 
     @Override
@@ -150,27 +149,36 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean isCustomer(String userKey) {
-        try {
-            Optional<Member> mayBeCustomer = memberRepository.findByUserKey(userKey,isUse);
+        Optional<Member> mayBeCustomer = memberRepository.findByUserKey(userKey,isUse);
 
-            if (mayBeCustomer.isEmpty()) return false;
+        if (mayBeCustomer.isEmpty()) return false;
 
-            return true;
-        } catch (Exception e){
-            return false;
-        }
+        return true;
     }
+
+    @Override
+    public boolean isCustomerByName(String name) {
+        Optional<Member> mayBeCustomer = memberRepository.findByName(name,isUse);
+
+        if (mayBeCustomer.isEmpty()) return false;
+
+        return true;
+    }
+
     @Override
     public boolean isAdmin(String name,String userKey) {
-        try {
-            Optional<Member> mayBeCustomer = memberRepository.findByRole(name,userKey,MemberRole.ADMIN,isUse);
+        Optional<Member> mayBeCustomer = memberRepository.findByRole(name,userKey,MemberRole.ADMIN,isUse);
 
-            if (mayBeCustomer.isEmpty()) return false;
+        if (mayBeCustomer.isEmpty()) return false;
 
-            return true;
-        } catch (Exception e){
-            return false;
-        }
+        return true;
     }
 
+    @Override
+    public boolean isDuplicationName(String name) {
+        Optional<Member> mayBeMember = memberRepository.findByName(name, isUse);
+        if (mayBeMember.isEmpty()) return false;
+
+        return true;
+    }
 }

@@ -41,16 +41,17 @@ public class Interceptor implements HandlerInterceptor {
         String token = request.getHeader("token");
 
         if(!authService.isTokenVerification(token)) {
+
             Response forbiddenResponse = new Response(ResultCode.FAIL,"토큰이 유효하지 않습니다.");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
+
             String forbiddenResponseAsString = objectMapper.writeValueAsString(forbiddenResponse);
             response.getWriter().write(forbiddenResponseAsString);
 
             return false;
         }
-
 
         return true;
     }
