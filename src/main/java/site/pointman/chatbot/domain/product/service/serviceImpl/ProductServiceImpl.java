@@ -47,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response addProduct(ProductDto productDto, String userKey, List<String> imageUrls) {
+    public Response addProduct(ProductDto productDto, String userKey) {
         try {
             Long productId = CustomNumberUtils.createNumberId();
 
@@ -58,6 +58,7 @@ public class ProductServiceImpl implements ProductService {
             productDto.setStatus(ProductStatus.판매중);
             productDto.setMember(member);
             productDto.setId(productId);
+            List<String> imageUrls = productDto.getImageUrls();
 
             ProductImageDto productImageDto = s3FileService.uploadImages(imageUrls, userKey,productName,"image");
 

@@ -333,8 +333,8 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse addProductResultPage(ProductDto productDto, String userKey, List<String> imageUrls) {
-        Response result = productService.addProduct(productDto, userKey, imageUrls);
+    public ChatBotResponse addProductResultPage(ProductDto productDto, String userKey) {
+        Response result = productService.addProduct(productDto, userKey);
         if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("상품등록을 실패하였습니다.");
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();

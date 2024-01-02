@@ -88,12 +88,10 @@ public class ProductController {
         ProductDto productDto = chatBotRequest.createProductDto();
         Category category = Category.getCategory(productCategory);
         productDto.setCategory(category);
-
+        productDto.setImageUrls(imageUrls);
         return productChatBotView.addProductResultPage(
                 productDto,
-                userKey,
-                imageUrls
-                );
+                userKey);
     }
 
     @ValidateMember

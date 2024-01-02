@@ -8,6 +8,9 @@ import site.pointman.chatbot.constant.product.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.product.Product;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 public class ProductDto {
@@ -19,6 +22,7 @@ public class ProductDto {
     private String tradingLocation;
     private String kakaoOpenChatUrl;
     private Category category;
+    private List<String> imageUrls = new ArrayList<>();
     private ProductStatus status;
 
     @Builder
