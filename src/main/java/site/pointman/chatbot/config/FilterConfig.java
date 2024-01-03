@@ -16,6 +16,7 @@ public class FilterConfig {
     @Bean
     public FilterRegistrationBean filterBean() {
         log.info("datasource={}",DATASOURCE_URL);
+
         FilterRegistrationBean registrationBean = new FilterRegistrationBean(new InitSettingFilter());
         registrationBean.addUrlPatterns("/*"); //전체 URL 포함
 //        registrationBean.addUrlPatterns("/test/*"); //특정 URL 포함
