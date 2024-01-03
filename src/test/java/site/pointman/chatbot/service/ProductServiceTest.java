@@ -63,7 +63,7 @@ class ProductServiceTest {
                 .build();
 
         //when
-        Response response = productService.addProduct(productDto, userKey, imageUrls);
+        Response response = productService.addProduct(productDto, userKey);
 
 
         //then
