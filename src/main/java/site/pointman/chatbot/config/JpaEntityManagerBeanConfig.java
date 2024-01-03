@@ -12,20 +12,15 @@ import javax.persistence.EntityManager;
 @Configuration
 @Slf4j
 public class JpaEntityManagerBeanConfig {
-    @Value("${spring.datasource.url}")
-    private String DATASOURCE_URL;
-
 //    private DataSource dataSource;
     private EntityManager em;
 
     public JpaEntityManagerBeanConfig(EntityManager em) {
-
         this.em = em;
     }
 
     @Bean
     public MemberCustomRepository memberCustomRepository(){
-        log.info("DATASOURCE_URL={}",DATASOURCE_URL);
         return new MemberCustomRepositoryImpl(em) ;
     }
     @Bean
