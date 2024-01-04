@@ -51,7 +51,7 @@ public class MemberChatBotViewImpl implements MemberChatBotView {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         String description =
                 "등급: "+memberProfileDto.getRole().getValue()+"\n\n"+
-                "닉네임: "+memberProfileDto.getNickname()+"\n\n"+
+                "닉네임: "+memberProfileDto.getName()+"\n\n"+
                 "연락처: "+memberProfileDto.getPhoneNumber()+"\n\n"+
                 "가입일자: "+memberProfileDto.getJoinDate();
 

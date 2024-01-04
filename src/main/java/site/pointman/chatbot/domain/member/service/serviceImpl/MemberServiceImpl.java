@@ -1,6 +1,8 @@
 package site.pointman.chatbot.domain.member.service.serviceImpl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.constant.member.MemberRole;
@@ -27,6 +29,7 @@ import java.util.Optional;
 @Service
 public class MemberServiceImpl implements MemberService {
     private boolean isUse = true;
+    private int pageSize = 5;
 
     MemberRepository memberRepository;
     OrderRepository orderRepository;
@@ -62,17 +65,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<Member> getMembers(){
-        List<Member> members = memberRepository.findAll();
+    public Page<MemberProfileDto> getMemberProfiles(int page){
+        page = page-1;
+
+        Page<MemberProfileDto> members = memberRepository.findAllMemberProfileDto(PageRequest.of(page,pageSize),isUse);
 
         return members;
-    }
-
-    @Override
-    public Optional<Member> getMember(String userKey) {
-        Optional<Member> mayBeMember = memberRepository.findByUserKey(userKey,isUse);
-
-        return mayBeMember;
     }
 
     @Override
@@ -82,15 +80,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Optional<Member> getMemberByName(String name) {
-        Optional<Member> mayBeMember = memberRepository.findByName(name, isUse);
+    public Optional<MemberProfileDto> getMemberProfileDtoByName(String name) {
+        Optional<MemberProfileDto> mayBeMember = memberRepository.findMemberProfileDtoByName(name, isUse);
         return mayBeMember;
     }
 
     @Override
-    public Response updateMember(String userKey, Member member) {
+    public Response updateMember(String name, MemberProfileDto memberProfileDto) {
         try {
-            memberRepository.updateMember(userKey,member,isUse);
+            memberRepository.updateMember(name,memberProfileDto,isUse);
             return new Response(ResultCode.OK,"회원정보 변경을 완료하였습니다.");
         }catch (Exception e){
             return new Response(ResultCode.FAIL,"회원정보 변경을 실패하였습니다.");
@@ -127,7 +125,7 @@ public class MemberServiceImpl implements MemberService {
                 if (!salesProduct.isEmpty()) return new Response(ResultCode.EXCEPTION,"거래가 체결된 상품이 있어 회원탈퇴가 불가능합니다.");
             }
 
-            memberRepository.delete(userKey,isUse);
+            memberRepository.delete(userKey);
 
             return new Response(ResultCode.OK,"회원탈퇴를 성공적으로 완료하였습니다.");
         }catch (Exception e) {
@@ -165,7 +163,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean isCustomerByName(String name) {
-        Optional<Member> mayBeCustomer = memberRepository.findByName(name,isUse);
+        Optional<MemberProfileDto> mayBeCustomer = memberRepository.findMemberProfileDtoByName(name,isUse);
 
         if (mayBeCustomer.isEmpty()) return false;
 
@@ -174,7 +172,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean isAdmin(String name,String userKey) {
-        Optional<Member> mayBeCustomer = memberRepository.findByRole(name,userKey,MemberRole.ADMIN,isUse);
+        Optional<MemberProfileDto> mayBeCustomer = memberRepository.findMemberProfileByRole(name,userKey,MemberRole.ADMIN,isUse);
 
         if (mayBeCustomer.isEmpty()) return false;
 
@@ -183,7 +181,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean isDuplicationName(String name) {
-        Optional<Member> mayBeMember = memberRepository.findByName(name, isUse);
+        Optional<MemberProfileDto> mayBeMember = memberRepository.findMemberProfileDtoByName(name, isUse);
         if (mayBeMember.isEmpty()) return false;
 
         return true;
