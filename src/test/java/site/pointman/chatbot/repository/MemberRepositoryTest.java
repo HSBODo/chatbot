@@ -49,11 +49,11 @@ class MemberRepositoryTest {
     void findByRole() {
         MemberRole admin = MemberRole.ADMIN;
 
-        Optional<Member> mayBeMember = memberRepository.findByRole(name, userKey,admin ,isUse);
+        Optional<MemberProfileDto> mayBeMember = memberRepository.findMemberProfileByRole(name, userKey,admin ,isUse);
 
         Assertions.assertThat(mayBeMember).isNotEmpty();
         Assertions.assertThat(mayBeMember.get().getName()).isEqualTo(name);
-        Assertions.assertThat(mayBeMember.get().getUserKey()).isEqualTo(userKey);
+
         Assertions.assertThat(mayBeMember.get().getRole()).isEqualTo(admin);
     }
 
@@ -94,7 +94,7 @@ class MemberRepositoryTest {
         String userKey = "userKey";
 
         //when
-        memberRepository.delete(userKey,isUse);
+        memberRepository.delete(userKey);
 
         //then
     }
