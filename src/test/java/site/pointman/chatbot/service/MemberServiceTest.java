@@ -7,14 +7,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.constant.member.MemberRole;
 import site.pointman.chatbot.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.domain.member.service.MemberService;
 import site.pointman.chatbot.domain.response.Response;
 
-import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
@@ -56,11 +57,11 @@ class MemberServiceTest {
         //give
 
         //when
-        List<Member> members = memberService.getMembers();
+        Page<MemberProfileDto> members = memberService.getMemberProfiles(1);
 
         //then
         members.forEach(member -> {
-            Assertions.assertThat(member.getUserKey()).isNotNull();
+            Assertions.assertThat(member.getName()).isNotNull();
         });
 
     }
@@ -70,20 +71,20 @@ class MemberServiceTest {
         //give
 
         //when
-        Optional<Member> mayBeMember = memberService.getMember(userKey);
+        Optional<MemberProfileDto> mayBeMember = memberService.getMemberProfileDto(name);
 
 
         //then
-        Assertions.assertThat(mayBeMember.get().getUserKey()).isEqualTo(userKey);
+        Assertions.assertThat(mayBeMember.get().getName()).isEqualTo(name);
     }
 
     @Test
     void updateMember() {
         //give
-        Member updateMember = Member.builder()
+        MemberProfileDto updateMember = MemberProfileDto.builder()
                 .name("변경")
                 .phoneNumber("01000000000")
-                .memberRole(MemberRole.CUSTOMER_PLATINUM)
+                .role(MemberRole.CUSTOMER_PLATINUM)
                 .build();
 
         //when

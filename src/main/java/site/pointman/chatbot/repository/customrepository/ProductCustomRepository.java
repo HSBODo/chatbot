@@ -17,12 +17,8 @@ public interface ProductCustomRepository {
     void updateStatus(Long productId, ProductStatus productStatus, boolean isUse);
     void deleteProduct(Long productId, boolean isUse);
     List<Product> findByUserKey(String userKey, boolean isUse);
-    List<Product> findByUserKey(String userKey, ProductStatus status, boolean isUse);
-    List<Product> findByCategory(Category category, ProductStatus status, boolean isUse);
-    List<Product> findByCategory(Category category, ProductStatus firstStatus,ProductStatus secondStatus, boolean isUse);
     Optional<Product> findByProductId(Long productId, boolean isUse);
     List<Product> findByAll();
-    List<Product> findByStatus(ProductStatus firstStatus, ProductStatus secondStatus, boolean isUse);
-    List<Product> findByStatus(ProductStatus firstStatus, boolean isUse);
+
 
 }

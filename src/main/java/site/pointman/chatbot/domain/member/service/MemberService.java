@@ -1,19 +1,17 @@
 package site.pointman.chatbot.domain.member.service;
 
-import site.pointman.chatbot.domain.member.Member;
+import org.springframework.data.domain.Page;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface MemberService {
     Response join(String userKey, String name, String phoneNumber);
-    List<Member> getMembers();
-    Optional<Member> getMember(String userKey);
+    Page<MemberProfileDto> getMemberProfiles(int page);
     Optional<MemberProfileDto> getMemberProfileDto(String userKey);
-    Optional<Member> getMemberByName(String name);
-    Response updateMember(String userKey, Member member);
+    Optional<MemberProfileDto> getMemberProfileDtoByName(String name);
+    Response updateMember(String name, MemberProfileDto memberProfileDto);
     Response updateMemberPhoneNumber(String userKey, String updatePhoneNumber);
     Response deleteMember(String userKey);
     Response updateMemberProfileImage(String userKey, String profileImageUrl);

@@ -1,5 +1,7 @@
 package site.pointman.chatbot.controller.admin;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -7,16 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.constant.ResultCode;
-import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.member.dto.MemberJoinDto;
 import site.pointman.chatbot.domain.member.service.MemberService;
 import site.pointman.chatbot.service.ValidationService;
 
 import java.nio.charset.Charset;
-import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Controller
 @RequestMapping(value = "admin/member")
 public class MemberController {
@@ -49,33 +51,35 @@ public class MemberController {
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.GET)
-    public ResponseEntity getMembers() {
+    public ResponseEntity getMembers(@RequestParam("page") int page) {
         HttpHeaders headers = getHeaders();
-        List<Member> members = memberService.getMembers();
 
-        if (members.isEmpty()) return new ResponseEntity<>(new Response(ResultCode.EXCEPTION,"회원이 존재하지 않습니다"),headers, HttpStatus.OK);
+        Page<MemberProfileDto> members = memberService.getMemberProfiles(page);
 
-        return new ResponseEntity<>(members,headers ,HttpStatus.OK);
+        if (members.getContent().isEmpty()) return new ResponseEntity<>(new Response(ResultCode.EXCEPTION,"회원이 존재하지 않습니다"),headers, HttpStatus.OK);
+
+        return new ResponseEntity<>(members.getContent(),headers ,HttpStatus.OK);
     }
 
     @ResponseBody
-    @RequestMapping(value = "{memberUserKey}",method = RequestMethod.GET)
-    public ResponseEntity getMember(@PathVariable String memberUserKey){
+    @RequestMapping(value = "{memberName}",method = RequestMethod.GET)
+    public ResponseEntity getMember(@PathVariable String memberName){
         HttpHeaders headers = getHeaders();
 
-        Optional<Member> mayBeMember = memberService.getMember(memberUserKey);
+        Optional<MemberProfileDto> mayBeMember = memberService.getMemberProfileDtoByName(memberName);
         if (mayBeMember.isEmpty()) return new ResponseEntity<>(new Response(ResultCode.EXCEPTION,"회원이 존재하지 않습니다."),headers, HttpStatus.OK);
-        Member member = mayBeMember.get();
+        MemberProfileDto memberProfileDto = mayBeMember.get();
 
-        return new ResponseEntity<>(member,headers ,HttpStatus.OK);
+
+        return new ResponseEntity<>(memberProfileDto,headers ,HttpStatus.OK);
     }
 
     @ResponseBody
-    @RequestMapping(value = "{memberUserKey}",method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> updateMember(@PathVariable String memberUserKey, @RequestBody Member member){
+    @RequestMapping(value = "{memberName}",method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> updateMember(@PathVariable String memberName, @RequestBody MemberProfileDto memberProfileDto){
         HttpHeaders headers = getHeaders();
 
-        Response response = memberService.updateMember(memberUserKey, member);
+        Response response = memberService.updateMember(memberName, memberProfileDto);
 
         return new ResponseEntity<>(response,headers ,HttpStatus.OK);
     }

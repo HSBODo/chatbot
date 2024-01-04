@@ -52,42 +52,12 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     }
 
     @Override
-    public List<Product> findByUserKey(String userKey, ProductStatus status, boolean isUse) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.member.userKey=:user_Key AND p.status =:status AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
-                .setParameter("user_Key", userKey)
-                .setParameter("status", status)
-                .setParameter("isUse", isUse)
-                .getResultList();
-    }
-
-    @Override
     public Optional<Product> findByProductId(Long productId, boolean isUse) {
         return em.createQuery("SELECT p FROM Product p WHERE p.id=:id AND p.isUse=:isUse", Product.class)
                 .setParameter("id", productId)
                 .setParameter("isUse", isUse)
                 .getResultList()
                 .stream().findAny();
-    }
-
-    @Override
-    public List<Product> findByCategory(Category category,ProductStatus status, boolean isUse) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.category=:category AND p.status =:status AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
-                .setParameter("category", category)
-                .setParameter("status", status)
-                .setParameter("isUse", isUse)
-                .setMaxResults(10)
-                .getResultList();
-    }
-
-    @Override
-    public List<Product> findByCategory(Category category, ProductStatus firstStatus, ProductStatus secondStatus, boolean isUse) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.category=:category AND (p.status =:firstStatus OR p.status =:secondStatus) AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
-                .setParameter("category", category)
-                .setParameter("firstStatus", firstStatus)
-                .setParameter("secondStatus", secondStatus)
-                .setParameter("isUse", isUse)
-                .setMaxResults(10)
-                .getResultList();
     }
 
     @Override
@@ -123,21 +93,4 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .getResultList();
     }
 
-    @Override
-    public List<Product> findByStatus(ProductStatus firstStatus,ProductStatus secondStatus, boolean isUse) {
-        return em.createQuery("SELECT p FROM Product p WHERE (p.status =:firstStatus OR p.status =:secondStatus) AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
-                .setParameter("firstStatus",firstStatus)
-                .setParameter("secondStatus",secondStatus)
-                .setParameter("isUse", isUse)
-                .getResultList();
-    }
-
-    @Override
-    public List<Product> findByStatus(ProductStatus firstStatus, boolean isUse) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.status =:firstStatus AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
-                .setParameter("firstStatus",firstStatus)
-                .setParameter("isUse", true)
-                .getResultList();
-
-    }
 }
