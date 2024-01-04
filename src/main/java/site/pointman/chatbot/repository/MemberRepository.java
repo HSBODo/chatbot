@@ -30,7 +30,7 @@ public interface MemberRepository extends JpaRepository<Member,String>, MemberCu
     @Query("select new site.pointman.chatbot.domain.member.dto.MemberProfileDto (m.name, m.phoneNumber, m.role, m.createDate) from Member m where m.name=:name AND m.isUse = :isUse")
     Optional<MemberProfileDto> findMemberProfileDtoByName(@Param("name") String name, @Param("isUse") boolean isUse);
 
-    @Query("select new site.pointman.chatbot.domain.member.dto.MemberProfileDto from Member m where m.userKey=:userKey AND m.name=:name AND m.role=:role AND m.isUse = :isUse")
+    @Query("select new site.pointman.chatbot.domain.member.dto.MemberProfileDto (m.name, m.phoneNumber, m.role, m.createDate) from Member m where m.userKey=:userKey AND m.name=:name AND m.role=:role AND m.isUse = :isUse")
     Optional<MemberProfileDto> findMemberProfileByRole(@Param("name") String name, @Param("userKey") String userKey, @Param("role") MemberRole role, @Param("isUse") boolean isUse);
 
     @Query("select count(m) from Member m where m.userKey=:userKey AND m.isUse = :isUse")
