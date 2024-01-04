@@ -51,10 +51,9 @@
 * **`Request 요청 횟수를 줄이고 응답속도를 개선하기 위해 Redis를 사용하기로 하였다`**
 * **`Redis를 활용하여 첫번째 조회 데이터를 메모리에 저장하고 똑같은 요청이 있으면 메모리에서 데이터를 가져와 응답 해주는 방식으로 이슈를 해결하였다.`**
 * 그 결과 Request 횟수를 **`6회 -> 1회`** 로 줄였고, 최종 응답시간을 **`5초 -> 0.35초`** 로 개선하였다.  
-![img_16.png](images/img_16.png)  
-![](images/KakaoTalk_20240104_144048836.jpg)
-![](images/KakaoTalk_20240104_144951134.jpg)
-![](images/KakaoTalk_20240104_144951415.jpg)
+![img_16.png](images/img_16.png)
+<img src="images/KakaoTalk_20240104_144048836.jpg" width="30%" height="20%"/><img src="images/KakaoTalk_20240104_144951134.jpg" width="30%" height="20%"/><img src="images/KakaoTalk_20240104_144951415.jpg" width="30%" height="20%"/>
+
 
 ### 2. 로그인 및 로그 기능 구현을 위한 Interceptor,AOP,JWT 사용 이유
 * 관리자 기능을 개발하였지만 아무나 사용해서는 안된다.
@@ -93,10 +92,8 @@
 * 결제정보 저장 또는 주문정보 저장 둘중에 어느 것이라도 실패하게 되면 결제는 실패해야한다.
 * 트랜잭션 원자성을 지키기 위해 트랜잭션 처리를 하였고,
 * 카카오페이 API가 성공 하는 순간 돈이 나가게 된다.
-* 결제정보 저장과 주문정보 저장을 try-catch 하여 catch에서 주문취소 메서드를 추가하여 문제를 해결하였다.  
-<img src="images/img_8.png" width="25%" height="25%"/>
-<img src="images/img_9.png" width="25%" height="25%"/>
-<img src="images/img_10.png" width="25%" height="25%"/>
+* 결제정보 저장과 주문정보 저장을 try-catch 하여 catch에서 주문취소 메서드를 추가하여 문제를 해결하였다.
+<img src="images/img_8.png" width="30%" height="20%"/><img src="images/img_9.png" width="30%" height="20%"/><img src="images/img_10.png" width="30%" height="20%"/>
 
 
 ## 🎯 기능 구현
