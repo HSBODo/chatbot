@@ -24,6 +24,8 @@ public interface MemberRepository extends JpaRepository<Member,String>, MemberCu
 
     @Query("select m from Member m where m.userKey=:userKey AND m.name=:name AND m.role=:role AND m.isUse = :isUse")
     Optional<Member> findByRole(@Param("name") String name, @Param("userKey") String userKey, @Param("role") MemberRole role, @Param("isUse") boolean isUse);
+    @Query("select count(m) from Member m where m.userKey=:userKey AND m.isUse = :isUse")
+    Integer findMemberCountByUserKey(@Param("userKey") String userKey, @Param("isUse") boolean isUse);
 
     @Modifying
     @Query("UPDATE Member m SET m.phoneNumber = :phoneNumber WHERE m.userKey = :userKey AND m.isUse = :isUse")

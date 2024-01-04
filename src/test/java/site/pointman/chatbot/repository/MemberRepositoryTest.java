@@ -108,4 +108,13 @@ class MemberRepositoryTest {
         Assertions.assertThat(memberProfileDtoByUserKey.get().getNickname()).isEqualTo(name);
 
     }
+
+    @Test
+    void findMemberCountByUserKey() {
+        Integer memberCountByUserKey = memberRepository.findMemberCountByUserKey(userKey, isUse);
+
+
+        Assertions.assertThat(memberCountByUserKey).isEqualTo(1);
+
+    }
 }

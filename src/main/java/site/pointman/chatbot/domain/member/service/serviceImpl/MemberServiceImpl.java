@@ -155,9 +155,10 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean isCustomer(String userKey) {
-        Optional<Member> mayBeCustomer = memberRepository.findByUserKey(userKey,isUse);
+        Integer memberCountByUserKey = memberRepository.findMemberCountByUserKey(userKey, isUse);
 
-        if (mayBeCustomer.isEmpty()) return false;
+
+        if (!memberCountByUserKey.equals(1)) return false;
 
         return true;
     }
