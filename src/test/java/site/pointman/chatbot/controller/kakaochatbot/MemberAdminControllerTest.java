@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 @AutoConfigureMockMvc
 @SpringBootTest
-class MemberControllerTest {
+class MemberAdminControllerTest {
     @Autowired
     MockMvc mockMvc;
 

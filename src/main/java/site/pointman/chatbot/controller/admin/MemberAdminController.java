@@ -21,13 +21,13 @@ import java.util.Optional;
 @Slf4j
 @Controller
 @RequestMapping(value = "admin/member")
-public class MemberController {
+public class MemberAdminController {
 
     MemberService memberService;
     ValidationService validationService;
 
 
-    public MemberController(MemberService memberService, ValidationService validationService) {
+    public MemberAdminController(MemberService memberService, ValidationService validationService) {
         this.memberService = memberService;
         this.validationService = validationService;
     }
