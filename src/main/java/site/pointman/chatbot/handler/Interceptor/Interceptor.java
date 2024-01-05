@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import site.pointman.chatbot.domain.response.constant.ResultCode;
-import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.domain.log.response.constant.ResultCode;
+import site.pointman.chatbot.domain.log.response.Response;
 import site.pointman.chatbot.globalservice.AuthService;
 
 import javax.servlet.http.HttpServletRequest;

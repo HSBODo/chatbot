@@ -1,4 +1,4 @@
-package site.pointman.chatbot.domain.response.constant;
+package site.pointman.chatbot.domain.log.response.constant;
 
 public enum ResultCode {
     OK(200,"성공"),

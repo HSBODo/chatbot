@@ -18,14 +18,14 @@ import site.pointman.chatbot.view.kakaochatobotview.MemberChatBotView;
 @Slf4j
 @Controller
 @RequestMapping(value = "/kakaochatbot/customer")
-public class CustomerController {
+public class MemberController {
 
     MemberService memberService;
     MemberChatBotView memberChatBotView;
 
     ChatBotExceptionResponse chatBotExceptionResponse;
 
-    public CustomerController(MemberService memberService, MemberChatBotView memberChatBotView) {
+    public MemberController(MemberService memberService, MemberChatBotView memberChatBotView) {
         this.memberService = memberService;
         this.chatBotExceptionResponse = new ChatBotExceptionResponse();
         this.memberChatBotView = memberChatBotView;

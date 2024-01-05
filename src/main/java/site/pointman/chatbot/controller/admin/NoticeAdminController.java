@@ -7,9 +7,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import site.pointman.chatbot.domain.response.constant.ResultCode;
+import site.pointman.chatbot.domain.log.response.constant.ResultCode;
 import site.pointman.chatbot.domain.notice.Notice;
-import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.domain.log.response.Response;
 import site.pointman.chatbot.domain.notice.dto.NoticeDto;
 import site.pointman.chatbot.domain.notice.service.NoticeService;
 

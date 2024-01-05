@@ -9,11 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import site.pointman.chatbot.domain.response.constant.ResultCode;
+import site.pointman.chatbot.domain.log.response.constant.ResultCode;
 import site.pointman.chatbot.domain.order.constatnt.OrderStatus;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
-import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.domain.log.response.Response;
 import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.domain.order.service.OrderService;
 

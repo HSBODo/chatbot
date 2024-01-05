@@ -1,4 +1,4 @@
-package site.pointman.chatbot.domain.product;
+package site.pointman.chatbot.domain.product.converter;
 
 import site.pointman.chatbot.domain.product.constatnt.Category;
 

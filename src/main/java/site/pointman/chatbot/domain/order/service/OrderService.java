@@ -2,7 +2,7 @@ package site.pointman.chatbot.domain.order.service;
 
 import site.pointman.chatbot.domain.order.constatnt.OrderStatus;
 import site.pointman.chatbot.domain.order.Order;
-import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.domain.log.response.Response;
 
 import java.util.List;
 import java.util.Optional;

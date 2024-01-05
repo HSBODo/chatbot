@@ -1,7 +1,7 @@
 package site.pointman.chatbot.domain.member.service;
 
 import org.springframework.data.domain.Page;
-import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.domain.log.response.Response;
 import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 
 import java.util.Optional;

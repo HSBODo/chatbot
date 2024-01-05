@@ -7,11 +7,11 @@ import site.pointman.chatbot.domain.chatbot.constatnt.button.ButtonName;
 import site.pointman.chatbot.domain.chatbot.constatnt.button.ButtonParamKey;
 import site.pointman.chatbot.domain.chatbot.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.chatbot.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.domain.log.response.Response;
 import site.pointman.chatbot.domain.chatbot.response.property.components.BasicCard;
 import site.pointman.chatbot.domain.chatbot.response.property.components.Carousel;
 import site.pointman.chatbot.domain.order.service.OrderService;
-import site.pointman.chatbot.domain.response.constant.ResultCode;
+import site.pointman.chatbot.domain.log.response.constant.ResultCode;
 import site.pointman.chatbot.view.kakaochatobotview.OrderChatBotView;
 
 import java.util.List;

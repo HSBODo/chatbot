@@ -10,10 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import site.pointman.chatbot.domain.member.constant.MemberRole;
-import site.pointman.chatbot.domain.response.constant.ResultCode;
+import site.pointman.chatbot.domain.log.response.constant.ResultCode;
 import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.domain.member.service.MemberService;
-import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.domain.log.response.Response;
 
 import java.util.Optional;
 

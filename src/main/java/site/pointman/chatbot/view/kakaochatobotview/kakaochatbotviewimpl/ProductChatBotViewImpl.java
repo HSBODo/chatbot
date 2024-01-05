@@ -20,7 +20,7 @@ import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.chatbot.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.chatbot.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.domain.log.response.Response;
 import site.pointman.chatbot.domain.chatbot.response.property.Context;
 import site.pointman.chatbot.domain.chatbot.response.property.common.Button;
 import site.pointman.chatbot.domain.chatbot.response.property.common.Link;
@@ -31,7 +31,7 @@ import site.pointman.chatbot.domain.chatbot.response.property.components.Commerc
 import site.pointman.chatbot.domain.chatbot.response.property.components.TextCard;
 import site.pointman.chatbot.domain.product.dto.ProductDto;
 import site.pointman.chatbot.domain.product.SpecialProduct;
-import site.pointman.chatbot.domain.response.constant.ResultCode;
+import site.pointman.chatbot.domain.log.response.constant.ResultCode;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.globalservice.CrawlingService;

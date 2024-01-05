@@ -8,6 +8,7 @@ import site.pointman.chatbot.domain.product.constatnt.Category;
 import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.product.converter.CategoryEnumConverter;
 import site.pointman.chatbot.utill.CustomStringUtils;
 
 import javax.persistence.*;

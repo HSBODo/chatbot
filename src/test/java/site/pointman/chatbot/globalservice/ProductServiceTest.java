@@ -17,9 +17,9 @@ import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.service.ProductService;
 import site.pointman.chatbot.domain.chatbot.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.domain.log.response.Response;
 import site.pointman.chatbot.domain.product.dto.ProductDto;
-import site.pointman.chatbot.domain.response.constant.ResultCode;
+import site.pointman.chatbot.domain.log.response.constant.ResultCode;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;

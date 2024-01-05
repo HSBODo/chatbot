@@ -1,4 +1,4 @@
-package site.pointman.chatbot.domain.notice;
+package site.pointman.chatbot.domain.notice.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

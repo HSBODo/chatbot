@@ -1,4 +1,4 @@
-package site.pointman.chatbot.domain.notice;
+package site.pointman.chatbot.domain.notice.converter;
 
 import site.pointman.chatbot.domain.notice.constant.NoticeType;
 

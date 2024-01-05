@@ -5,7 +5,7 @@ import site.pointman.chatbot.domain.product.constatnt.Category;
 import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
-import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.domain.log.response.Response;
 import site.pointman.chatbot.domain.product.dto.ProductDto;
 
 import java.util.List;
