@@ -5,17 +5,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import site.pointman.chatbot.constant.notice.NoticeStatus;
+import site.pointman.chatbot.domain.notice.constant.NoticeStatus;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.repository.customrepository.NoticeCustomRepository;
 
-import java.util.List;
-import java.util.Optional;
-
 public interface NoticeRepository extends JpaRepository<Notice,Long>, NoticeCustomRepository {
-
-    @Override
-    List<Notice> findAll();
 
     @Query(value = "SELECT n FROM Notice n  Join Fetch n.member WHERE (n.status =:firstStatus OR n.status =:secondStatus) AND n.isUse =:isUse ORDER BY FIELD(n.status,:firstStatus,:secondStatus), n.createDate DESC",
             countQuery = "SELECT count(n) FROM Notice n WHERE (n.status =:firstStatus OR n.status =:secondStatus) AND n.isUse =:isUse ORDER BY FIELD(n.status,:firstStatus,:secondStatus), n.createDate DESC")
@@ -25,10 +19,4 @@ public interface NoticeRepository extends JpaRepository<Notice,Long>, NoticeCust
             @Param("isUse") boolean isUse,
             Pageable pageable
     );
-
-    @Override
-    Optional<Notice> findById(Long noticeId);
-
-    @Override
-    void deleteById(Long noticeId);
 }

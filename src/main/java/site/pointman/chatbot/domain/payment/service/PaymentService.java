@@ -1,6 +1,6 @@
 package site.pointman.chatbot.domain.payment.service;
 
-import site.pointman.chatbot.constant.payment.PaymentStatus;
+import site.pointman.chatbot.domain.payment.constant.PaymentStatus;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentApproveResponse;
 import site.pointman.chatbot.domain.payment.kakaopay.KakaoPaymentCancelResponse;

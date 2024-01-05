@@ -1,10 +1,9 @@
 package site.pointman.chatbot.domain.member.dto;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import site.pointman.chatbot.constant.member.MemberRole;
+import site.pointman.chatbot.domain.member.constant.MemberRole;
 
 @Getter
 public class MemberProfileDto {

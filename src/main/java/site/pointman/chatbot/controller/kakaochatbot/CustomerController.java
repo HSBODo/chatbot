@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import site.pointman.chatbot.annotation.ValidateMember;
-import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.handler.annotation.ValidateMember;
+import site.pointman.chatbot.domain.chatbot.request.ChatBotRequest;
+import site.pointman.chatbot.domain.chatbot.response.ChatBotExceptionResponse;
+import site.pointman.chatbot.domain.chatbot.response.ChatBotResponse;
 import site.pointman.chatbot.domain.member.service.MemberService;
 import site.pointman.chatbot.view.kakaochatobotview.MemberChatBotView;
 

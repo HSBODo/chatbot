@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import site.pointman.chatbot.constant.member.MemberRole;
+import site.pointman.chatbot.domain.member.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.repository.customrepository.MemberCustomRepository;

@@ -4,11 +4,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import site.pointman.chatbot.constant.notice.NoticeStatus;
-import site.pointman.chatbot.constant.notice.NoticeType;
+import site.pointman.chatbot.domain.notice.constant.NoticeStatus;
+import site.pointman.chatbot.domain.notice.constant.NoticeType;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.domain.response.property.common.Button;
+import site.pointman.chatbot.domain.chatbot.response.property.common.Button;
 import site.pointman.chatbot.domain.notice.dto.NoticeDto;
 import site.pointman.chatbot.utill.CustomStringUtils;
 

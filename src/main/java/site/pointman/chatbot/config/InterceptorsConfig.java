@@ -1,14 +1,10 @@
 package site.pointman.chatbot.config;
 
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import site.pointman.chatbot.Interceptor.Interceptor;
-import site.pointman.chatbot.filter.InitSettingFilter;
-import site.pointman.chatbot.service.AuthService;
-import site.pointman.chatbot.service.serviceimpl.AuthServiceImpl;
+import site.pointman.chatbot.handler.Interceptor.Interceptor;
+import site.pointman.chatbot.globalservice.AuthService;
 
 @Configuration
 public class InterceptorsConfig implements WebMvcConfigurer {

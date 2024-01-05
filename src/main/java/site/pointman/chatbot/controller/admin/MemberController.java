@@ -8,12 +8,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import site.pointman.chatbot.constant.ResultCode;
+import site.pointman.chatbot.domain.response.constant.ResultCode;
 import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.domain.response.Response;
 import site.pointman.chatbot.domain.member.dto.MemberJoinDto;
 import site.pointman.chatbot.domain.member.service.MemberService;
-import site.pointman.chatbot.service.ValidationService;
+import site.pointman.chatbot.globalservice.ValidationService;
 
 import java.nio.charset.Charset;
 import java.util.Optional;

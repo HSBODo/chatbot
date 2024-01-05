@@ -1,16 +1,16 @@
 package site.pointman.chatbot.view.kakaochatobotview.kakaochatbotviewimpl;
 
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.BlockId;
-import site.pointman.chatbot.constant.ResultCode;
-import site.pointman.chatbot.constant.button.ButtonAction;
-import site.pointman.chatbot.constant.button.ButtonName;
-import site.pointman.chatbot.constant.button.ButtonParamKey;
-import site.pointman.chatbot.constant.product.ProductStatus;
-import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.chatbot.constatnt.block.BlockId;
+import site.pointman.chatbot.domain.response.constant.ResultCode;
+import site.pointman.chatbot.domain.chatbot.constatnt.button.ButtonAction;
+import site.pointman.chatbot.domain.chatbot.constatnt.button.ButtonName;
+import site.pointman.chatbot.domain.chatbot.constatnt.button.ButtonParamKey;
+import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
+import site.pointman.chatbot.domain.chatbot.response.ChatBotExceptionResponse;
+import site.pointman.chatbot.domain.chatbot.response.ChatBotResponse;
 import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.domain.response.property.components.TextCard;
+import site.pointman.chatbot.domain.chatbot.response.property.components.TextCard;
 import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.domain.member.service.MemberService;
 import site.pointman.chatbot.view.kakaochatobotview.MemberChatBotView;

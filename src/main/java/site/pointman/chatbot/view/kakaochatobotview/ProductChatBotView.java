@@ -1,7 +1,7 @@
 package site.pointman.chatbot.view.kakaochatobotview;
 
-import site.pointman.chatbot.constant.product.Category;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.product.constatnt.Category;
+import site.pointman.chatbot.domain.chatbot.response.ChatBotResponse;
 import site.pointman.chatbot.domain.product.dto.ProductDto;
 
 import java.util.List;

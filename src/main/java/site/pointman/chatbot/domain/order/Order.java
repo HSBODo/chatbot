@@ -5,9 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import site.pointman.chatbot.constant.order.OrderMemberConfirmStatus;
-import site.pointman.chatbot.constant.order.OrderStatus;
-import site.pointman.chatbot.constant.product.ProductStatus;
+import site.pointman.chatbot.domain.order.constatnt.OrderMemberConfirmStatus;
+import site.pointman.chatbot.domain.order.constatnt.OrderStatus;
+import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
@@ -23,6 +23,7 @@ import javax.persistence.*;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 public class Order extends BaseEntity {
+
     @Id
     private Long orderId;
 

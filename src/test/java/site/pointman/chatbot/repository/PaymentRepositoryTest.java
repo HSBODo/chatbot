@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import site.pointman.chatbot.constant.payment.PaymentStatus;
+import site.pointman.chatbot.domain.payment.constant.PaymentStatus;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.product.Product;

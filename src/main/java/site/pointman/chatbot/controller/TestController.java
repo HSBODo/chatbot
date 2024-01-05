@@ -6,14 +6,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import site.pointman.chatbot.annotation.SkipLogging;
-import site.pointman.chatbot.constant.button.ButtonAction;
-import site.pointman.chatbot.constant.button.ButtonName;
-import site.pointman.chatbot.constant.button.ButtonParamKey;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.property.common.Button;
-import site.pointman.chatbot.domain.response.property.common.ListItem;
-import site.pointman.chatbot.domain.response.property.components.*;
+import site.pointman.chatbot.domain.chatbot.response.property.components.*;
+import site.pointman.chatbot.handler.annotation.SkipLogging;
+import site.pointman.chatbot.domain.chatbot.constatnt.button.ButtonAction;
+import site.pointman.chatbot.domain.chatbot.constatnt.button.ButtonName;
+import site.pointman.chatbot.domain.chatbot.constatnt.button.ButtonParamKey;
+import site.pointman.chatbot.domain.chatbot.response.ChatBotResponse;
+import site.pointman.chatbot.domain.chatbot.response.property.common.Button;
+import site.pointman.chatbot.domain.chatbot.response.property.common.ListItem;
 
 @Slf4j
 @Controller

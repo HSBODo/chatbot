@@ -1,7 +1,7 @@
 package site.pointman.chatbot.domain.response;
 
 import lombok.Getter;
-import site.pointman.chatbot.constant.ResultCode;
+import site.pointman.chatbot.domain.response.constant.ResultCode;
 
 
 @Getter

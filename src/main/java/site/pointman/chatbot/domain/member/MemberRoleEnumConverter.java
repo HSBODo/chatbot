@@ -1,7 +1,7 @@
 package site.pointman.chatbot.domain.member;
 
 
-import site.pointman.chatbot.constant.member.MemberRole;
+import site.pointman.chatbot.domain.member.constant.MemberRole;
 
 import javax.persistence.AttributeConverter;
 

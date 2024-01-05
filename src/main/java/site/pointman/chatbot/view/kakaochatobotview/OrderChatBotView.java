@@ -1,6 +1,6 @@
 package site.pointman.chatbot.view.kakaochatobotview;
 
-import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.chatbot.response.ChatBotResponse;
 
 public interface OrderChatBotView {
     ChatBotResponse purchaseReconfirmPage(String orderId);

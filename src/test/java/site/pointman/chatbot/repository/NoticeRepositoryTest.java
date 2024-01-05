@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import site.pointman.chatbot.constant.notice.NoticeStatus;
+import site.pointman.chatbot.domain.notice.constant.NoticeStatus;
 import site.pointman.chatbot.domain.notice.Notice;
 import site.pointman.chatbot.domain.notice.dto.NoticeDto;
 

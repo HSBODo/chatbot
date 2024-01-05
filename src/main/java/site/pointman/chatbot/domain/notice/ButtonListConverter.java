@@ -3,7 +3,7 @@ package site.pointman.chatbot.domain.notice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import site.pointman.chatbot.domain.response.property.common.Button;
+import site.pointman.chatbot.domain.chatbot.response.property.common.Button;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Convert;

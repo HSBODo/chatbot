@@ -1,6 +1,6 @@
 package site.pointman.chatbot.domain.product;
 
-import site.pointman.chatbot.constant.product.Category;
+import site.pointman.chatbot.domain.product.constatnt.Category;
 
 import javax.persistence.AttributeConverter;
 
