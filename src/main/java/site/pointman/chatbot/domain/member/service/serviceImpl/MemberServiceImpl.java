@@ -8,16 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import site.pointman.chatbot.domain.chatbot.response.property.common.Profile;
-import site.pointman.chatbot.domain.log.response.Response;
-import site.pointman.chatbot.domain.log.response.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.member.constant.MemberRole;
 import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.domain.member.service.MemberService;
 import site.pointman.chatbot.domain.order.Order;
-import site.pointman.chatbot.domain.order.constatnt.OrderStatus;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.dto.ProductImageDto;
+import site.pointman.chatbot.exception.DuplicationMember;
 import site.pointman.chatbot.exception.NoSuchMember;
 import site.pointman.chatbot.globalservice.S3FileService;
 import site.pointman.chatbot.repository.MemberRepository;
@@ -46,6 +44,10 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public void join(String userKey, String name, String phoneNumber) {
+        Optional<Member> mayBeDuplicationMember = memberRepository.findByUserKey(userKey, isUse);
+
+        if (!mayBeDuplicationMember.isEmpty()) throw new DuplicationMember("중복되는 회원입니다.");
+
         Profile profile = new Profile(name);
 
         Member member = Member.builder()
@@ -126,10 +128,12 @@ public class MemberServiceImpl implements MemberService {
         }
 
         Member removeMember = memberRepository.findByUserKey(userKey, isUse).orElseThrow(() -> new NoSuchMember("회원이 존재하지 않습니다."));
+        //회원 isUse = false
         removeMember.delete();
 
         for (Product product : products) {
-            product.delete();
+            //상품 isUse = false
+            product.deleteProduct();
         }
     }
 
@@ -167,7 +171,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public boolean isAdmin(String name,String userKey) {
+    public boolean isAdmin(String userKey, String name) {
         Optional<MemberProfileDto> mayBeCustomer = memberRepository.findMemberProfileByRole(name,userKey,MemberRole.ADMIN,isUse);
 
         if (mayBeCustomer.isEmpty()) return false;

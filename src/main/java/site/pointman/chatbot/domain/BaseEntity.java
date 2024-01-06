@@ -41,6 +41,10 @@ public class BaseEntity {
         return lastModifiedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
+    public boolean getIsUse() {
+        return isUse;
+    }
+
     public void delete(){
         this.isUse = false;
     }

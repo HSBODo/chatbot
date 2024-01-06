@@ -23,15 +23,15 @@ import site.pointman.chatbot.view.kakaochatobotview.MemberChatBotView;
 @RequestMapping(value = "/kakaochatbot/customer")
 public class MemberController {
 
-    MemberService memberService;
-    MemberChatBotView memberChatBotView;
+    private final MemberService memberService;
+    private final MemberChatBotView memberChatBotView;
 
-    ChatBotExceptionResponse chatBotExceptionResponse;
+    private final ChatBotExceptionResponse chatBotExceptionResponse;
 
     public MemberController(MemberService memberService, MemberChatBotView memberChatBotView) {
         this.memberService = memberService;
-        this.chatBotExceptionResponse = new ChatBotExceptionResponse();
         this.memberChatBotView = memberChatBotView;
+        this.chatBotExceptionResponse = new ChatBotExceptionResponse();
     }
 
     /**
@@ -62,7 +62,9 @@ public class MemberController {
         try {
             String userKey = chatBotRequest.getUserKey();
             String customerProfileImage = chatBotRequest.getCustomerProfileImage();
+
             memberService.updateMemberProfileImage(userKey,customerProfileImage);
+
             return memberChatBotView.updateMemberProfileImageResultPage();
         }catch (Exception e) {
             return chatBotExceptionResponse.createException(e.getMessage());
@@ -73,7 +75,6 @@ public class MemberController {
     @ResponseBody
     @PostMapping(value = "GET/myPage" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getMyPage(@RequestBody ChatBotRequest chatBotRequest) {
-        String userKey = chatBotRequest.getUserKey();
 
         return memberChatBotView.myPage();
     }
@@ -97,7 +98,6 @@ public class MemberController {
     @ResponseBody
     @PostMapping(value = "GET/salesCategory" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getSalesHistory(@RequestBody ChatBotRequest chatBotRequest) {
-        String userKey = chatBotRequest.getUserKey();
 
         return memberChatBotView.mySalesCategoryListPage();
     }

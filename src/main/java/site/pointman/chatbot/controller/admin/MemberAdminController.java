@@ -8,16 +8,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import site.pointman.chatbot.domain.log.response.constant.ResultCode;
-import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.domain.log.response.Response;
+import site.pointman.chatbot.domain.log.response.constant.ResultCode;
 import site.pointman.chatbot.domain.member.dto.MemberJoinDto;
+import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.domain.member.service.MemberService;
 import site.pointman.chatbot.exception.NoSuchMember;
 import site.pointman.chatbot.globalservice.ValidationService;
 
 import java.nio.charset.Charset;
-import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -74,8 +73,6 @@ public class MemberAdminController {
         }catch (NoSuchMember e) {
             return new ResponseEntity<>(new Response<>(ResultCode.EXCEPTION,"회원 조회를 실패하였습니다",e.getMessage()),headers ,HttpStatus.OK);
         }
-
-
     }
 
     @ResponseBody

@@ -118,8 +118,8 @@ public class Product extends BaseEntity {
         return false;
     }
 
-    public void delete(){
-        delete();
+    public void deleteProduct(){
+        super.delete();
         productImages.delete();
     }
 
