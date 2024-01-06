@@ -1,15 +1,10 @@
 package site.pointman.chatbot.view.kakaochatobotview.kakaochatbotviewimpl;
 
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.ChatBotValidationResponse;
-import site.pointman.chatbot.repository.MemberRepository;
-import site.pointman.chatbot.service.ValidationService;
+import site.pointman.chatbot.domain.chatbot.request.ChatBotRequest;
+import site.pointman.chatbot.domain.chatbot.response.ChatBotValidationResponse;
+import site.pointman.chatbot.globalservice.ValidationService;
 import site.pointman.chatbot.view.kakaochatobotview.ValidationChatBotView;
-import site.pointman.chatbot.utill.CustomNumberUtils;
-
-import java.util.Optional;
 
 @Service
 public class ValidationChatBotViewImpl implements ValidationChatBotView {

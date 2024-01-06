@@ -3,10 +3,10 @@ package site.pointman.chatbot.domain.notice.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import site.pointman.chatbot.constant.notice.NoticeStatus;
-import site.pointman.chatbot.constant.notice.NoticeType;
+import site.pointman.chatbot.domain.notice.constant.NoticeStatus;
+import site.pointman.chatbot.domain.notice.constant.NoticeType;
 import site.pointman.chatbot.domain.notice.Notice;
-import site.pointman.chatbot.domain.response.property.common.Button;
+import site.pointman.chatbot.domain.chatbot.response.property.common.Button;
 
 import java.util.ArrayList;
 import java.util.List;

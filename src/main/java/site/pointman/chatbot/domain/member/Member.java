@@ -4,9 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import site.pointman.chatbot.constant.member.MemberRole;
+import site.pointman.chatbot.domain.member.constant.MemberRole;
 import site.pointman.chatbot.domain.BaseEntity;
-import site.pointman.chatbot.domain.response.property.common.Profile;
+import site.pointman.chatbot.domain.chatbot.response.property.common.Profile;
 import site.pointman.chatbot.utill.CustomStringUtils;
 
 import javax.persistence.*;
@@ -64,9 +64,6 @@ public class Member extends BaseEntity {
     }
     public void changeRole(MemberRole role){
         this.role = role;
-    }
-    public void changeUserKey(String userKey){
-        this.userKey = userKey;
     }
     public void changeName(String name){
         this.name = name;

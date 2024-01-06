@@ -1,16 +1,17 @@
 package site.pointman.chatbot.view.kakaochatobotview.kakaochatbotviewimpl;
 
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.*;
-import site.pointman.chatbot.constant.button.ButtonAction;
-import site.pointman.chatbot.constant.button.ButtonName;
-import site.pointman.chatbot.constant.button.ButtonParamKey;
-import site.pointman.chatbot.domain.response.ChatBotExceptionResponse;
-import site.pointman.chatbot.domain.response.ChatBotResponse;
-import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.domain.response.property.components.BasicCard;
-import site.pointman.chatbot.domain.response.property.components.Carousel;
+import site.pointman.chatbot.domain.chatbot.constatnt.block.BlockId;
+import site.pointman.chatbot.domain.chatbot.constatnt.button.ButtonAction;
+import site.pointman.chatbot.domain.chatbot.constatnt.button.ButtonName;
+import site.pointman.chatbot.domain.chatbot.constatnt.button.ButtonParamKey;
+import site.pointman.chatbot.domain.chatbot.response.ChatBotExceptionResponse;
+import site.pointman.chatbot.domain.chatbot.response.ChatBotResponse;
+import site.pointman.chatbot.domain.log.response.Response;
+import site.pointman.chatbot.domain.chatbot.response.property.components.BasicCard;
+import site.pointman.chatbot.domain.chatbot.response.property.components.Carousel;
 import site.pointman.chatbot.domain.order.service.OrderService;
+import site.pointman.chatbot.domain.log.response.constant.ResultCode;
 import site.pointman.chatbot.view.kakaochatobotview.OrderChatBotView;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class OrderChatBotViewImpl implements OrderChatBotView {
         ;
 
         chatBotResponse.addSimpleText(text.toString());
-        chatBotResponse.addQuickButton(ButtonName.구매확정.name(), ButtonAction.블럭이동,BlockId.PURCHASE_SUCCESS_CONFIRM.getBlockId(), ButtonParamKey.orderId,orderId);
+        chatBotResponse.addQuickButton(ButtonName.구매확정.name(), ButtonAction.블럭이동, BlockId.PURCHASE_SUCCESS_CONFIRM.getBlockId(), ButtonParamKey.orderId,orderId);
         chatBotResponse.addQuickButton(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
         return chatBotResponse;
     }

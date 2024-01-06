@@ -1,13 +1,14 @@
 package site.pointman.chatbot.view.kakaochatobotview;
 
-import site.pointman.chatbot.domain.response.ChatBotResponse;
+import site.pointman.chatbot.domain.chatbot.response.ChatBotResponse;
+import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 
 public interface MemberChatBotView {
-    ChatBotResponse joinMemberResultPage(String userKey, String name, String phoneNumber);
-    ChatBotResponse myProfilePage(String userKey);
-    ChatBotResponse updateMemberPhoneNumberResultPage(String userKey, String updatePhoneNumber);
-    ChatBotResponse withdrawalMemberResultPage(String userKey);
+    ChatBotResponse joinMemberResultPage();
+    ChatBotResponse myProfilePage(MemberProfileDto memberProfileDto);
+    ChatBotResponse updateMemberPhoneNumberResultPage();
+    ChatBotResponse withdrawalMemberResultPage();
     ChatBotResponse myPage();
     ChatBotResponse mySalesCategoryListPage();
-    ChatBotResponse updateMemberProfileImageResultPage(String userKey, String profileImageUrl);
+    ChatBotResponse updateMemberProfileImageResultPage();
 }

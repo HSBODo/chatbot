@@ -2,7 +2,7 @@ package site.pointman.chatbot.domain.notice.service;
 
 import org.springframework.data.domain.Page;
 import site.pointman.chatbot.domain.notice.Notice;
-import site.pointman.chatbot.domain.response.Response;
+import site.pointman.chatbot.domain.log.response.Response;
 import site.pointman.chatbot.domain.notice.dto.NoticeDto;
 
 import java.util.List;

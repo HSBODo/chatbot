@@ -1,67 +1,64 @@
 package site.pointman.chatbot.domain.member.service.serviceImpl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.constant.ResultCode;
-import site.pointman.chatbot.constant.member.MemberRole;
-import site.pointman.chatbot.constant.order.OrderStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import site.pointman.chatbot.domain.chatbot.response.property.common.Profile;
 import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.member.constant.MemberRole;
+import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
+import site.pointman.chatbot.domain.member.service.MemberService;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
-import site.pointman.chatbot.domain.response.Response;
-import site.pointman.chatbot.domain.response.property.common.Profile;
-import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.domain.product.dto.ProductImageDto;
+import site.pointman.chatbot.exception.DuplicationMember;
+import site.pointman.chatbot.exception.NoSuchMember;
+import site.pointman.chatbot.globalservice.S3FileService;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.domain.member.service.MemberService;
-import site.pointman.chatbot.service.S3FileService;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
-    private boolean isUse = true;
-    private int pageSize = 5;
+    private final boolean isUse = true;
+    private final int pageSize = 5;
 
-    MemberRepository memberRepository;
-    OrderRepository orderRepository;
-    ProductRepository productRepository;
+    private final MemberRepository memberRepository;
+    private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
+    private final S3FileService s3FileService;
 
-    S3FileService s3FileService;
 
-    public MemberServiceImpl(MemberRepository memberRepository, OrderRepository orderRepository, ProductRepository productRepository, S3FileService s3FileService) {
-        this.memberRepository = memberRepository;
-        this.orderRepository = orderRepository;
-        this.productRepository = productRepository;
-        this.s3FileService = s3FileService;
-    }
-
+    @Transactional
     @Override
-    public Response join(String userKey, String name, String phoneNumber) {
-        try {
+    public void join(String userKey, String name, String phoneNumber) {
+        Optional<Member> mayBeDuplicationMember = memberRepository.findByUserKey(userKey, isUse);
 
-            Member member = Member.builder()
-                    .userKey(userKey)
-                    .name(name)
-                    .phoneNumber(phoneNumber)
-                    .profile(new Profile(name))
-                    .memberRole(MemberRole.CUSTOMER_BRONZE)
-                    .build();
+        if (!mayBeDuplicationMember.isEmpty()) throw new DuplicationMember("중복되는 회원입니다.");
 
-            memberRepository.saveAndFlush(member);
+        Profile profile = new Profile(name);
 
-            return new Response(ResultCode.OK,"회원가입을 성공적으로 완료하였습니다.");
-        }catch (Exception e) {
-            return new Response(ResultCode.FAIL,"회원가입을 실패하였습니다. e= "+e.getMessage());
-        }
+        Member member = Member.builder()
+                .userKey(userKey)
+                .name(name)
+                .phoneNumber(phoneNumber)
+                .profile(profile)
+                .memberRole(MemberRole.CUSTOMER_BRONZE)
+                .build();
+
+        memberRepository.save(member);
     }
 
     @Override
@@ -74,81 +71,84 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Optional<MemberProfileDto> getMemberProfileDto(String userKey) {
-        Optional<MemberProfileDto> mayBeMemberProfile = memberRepository.findMemberProfileDtoByUserKey(userKey, isUse);
-        return mayBeMemberProfile;
+    public MemberProfileDto getMemberProfileDto(String userKey) {
+        MemberProfileDto memberProfileDto = memberRepository.findMemberProfileDtoByUserKey(userKey, isUse)
+                .orElseThrow(() -> new NoSuchMember("회원이 존재하지 않습니다."));
+
+        return memberProfileDto;
     }
 
     @Override
-    public Optional<MemberProfileDto> getMemberProfileDtoByName(String name) {
-        Optional<MemberProfileDto> mayBeMember = memberRepository.findMemberProfileDtoByName(name, isUse);
-        return mayBeMember;
+    public MemberProfileDto getMemberProfileDtoByName(String name) {
+        MemberProfileDto memberProfileDto = memberRepository.findMemberProfileDtoByName(name, isUse)
+                .orElseThrow(() -> new NoSuchMember("회원이 존재하지 않습니다."));
+
+        return memberProfileDto;
     }
 
-    @Override
-    public Response updateMember(String name, MemberProfileDto memberProfileDto) {
-        try {
-            memberRepository.updateMember(name,memberProfileDto,isUse);
-            return new Response(ResultCode.OK,"회원정보 변경을 완료하였습니다.");
-        }catch (Exception e){
-            return new Response(ResultCode.FAIL,"회원정보 변경을 실패하였습니다.");
-        }
-    }
-
-    @Override
-    public Response updateMemberPhoneNumber(String userKey, String updatePhoneNumber) {
-        try {
-            memberRepository.updateMemberPhoneNumber(userKey, updatePhoneNumber,isUse);
-
-            return new Response(ResultCode.OK,"연락처를 수정하였습니다.");
-        }catch (Exception e) {
-
-            return new Response(ResultCode.FAIL,"연락처 수정을 실패하였습니다. e= "+e.getMessage());
-        }
-    }
-
-    @Override
-    public Response deleteMember(String userKey) {
-        try {
-            List<Order> orders = orderRepository.findByBuyerUserKey(userKey);
-
-            for (Order order : orders) {
-                if (order.getStatus().equals(OrderStatus.주문체결)){
-                    return new Response(ResultCode.EXCEPTION,"구매중인 주문이 있어 회원탈퇴가 불가능합니다.");
-                }
-            }
-
-            List<Product> products = productRepository.findByUserKey(userKey, isUse);
-
-            for (Product product : products) {
-                Optional<Order> salesProduct = orderRepository.findByProductId(product.getId(), OrderStatus.주문체결);
-                if (!salesProduct.isEmpty()) return new Response(ResultCode.EXCEPTION,"거래가 체결된 상품이 있어 회원탈퇴가 불가능합니다.");
-            }
-
-            memberRepository.delete(userKey);
-
-            return new Response(ResultCode.OK,"회원탈퇴를 성공적으로 완료하였습니다.");
-        }catch (Exception e) {
-            return new Response(ResultCode.FAIL,"회원탈퇴를 실패하였습니다.");
-        }
-    }
-
-    @Override
     @Transactional
-    public Response updateMemberProfileImage(String userKey, String profileImageUrl) {
-        try {
-            Member member = memberRepository.findByUserKey(userKey,isUse).get();
-            List<String> uploadImages = new ArrayList<>();
-            uploadImages.add(profileImageUrl);
+    @Override
+    public void updateMemberProfile(String name, MemberProfileDto memberProfileDto) {
+        Member updateMember = memberRepository.findByName(name, isUse)
+                .orElseThrow(() -> new NoSuchMember("정보를 수정할 회원이 존재하지 않습니다."));
 
-            ProductImageDto productImageDto = s3FileService.uploadImages(uploadImages, userKey,member.getName(),"image/profile");
+        //이름 변경
+        if (StringUtils.hasText(memberProfileDto.getName())) updateMember.changeName(memberProfileDto.getName());
+        //연락처 변경
+        if (StringUtils.hasText(memberProfileDto.getPhoneNumber())) updateMember.changePhoneNumber(memberProfileDto.getPhoneNumber());
+        //등급 변경
+        if (Objects.nonNull(memberProfileDto.getRole())) updateMember.changeRole(memberProfileDto.getRole());
+    }
 
-            member.changeMemberProfileImage(productImageDto.getImageUrls().get(0));
+    @Transactional
+    @Override
+    public void updateMemberPhoneNumber(String userKey, String updatePhoneNumber) {
+        Member member = memberRepository.findByUserKey(userKey, isUse)
+                .orElseThrow(() -> new NoSuchMember("회원이 존재하지 않습니다."));
 
-            return new Response(ResultCode.OK,"성공적으로 프로필사진을 변경하였습니다.");
-        }catch (Exception e) {
-            return new Response(ResultCode.FAIL,"프로필사진 등록을 실패하였습니다.");
+        member.changePhoneNumber(updatePhoneNumber);
+    }
+
+    @Transactional
+    @Override
+    public void deleteMember(String userKey) {
+
+        List<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey);
+
+        for (Order order : purchaseOrders) {
+            if (order.isTrading()){
+                throw new IllegalStateException("구매중인 상품이 존재합니다.");
+            }
         }
+
+        List<Product> products = productRepository.findByUserKey(userKey, isUse);
+
+        for (Product product : products) {
+            if (product.isTrading()) throw new IllegalStateException("거래가 체결된 상품이 존재합니다.");
+        }
+
+        Member removeMember = memberRepository.findByUserKey(userKey, isUse).orElseThrow(() -> new NoSuchMember("회원이 존재하지 않습니다."));
+        //회원 isUse = false
+        removeMember.delete();
+
+        for (Product product : products) {
+            //상품 isUse = false
+            product.deleteProduct();
+        }
+    }
+
+    @Transactional
+    @Override
+    public void updateMemberProfileImage(String userKey, String profileImageUrl) {
+        Member member = memberRepository.findByUserKey(userKey,isUse)
+                .orElseThrow(() -> new NoSuchMember("회원이 존재하지 않습니다."));
+
+        List<String> uploadImages = new ArrayList<>();
+        uploadImages.add(profileImageUrl);
+
+        ProductImageDto productImageDto = s3FileService.uploadImages(uploadImages, userKey,member.getName(),"image/profile");
+
+        member.changeMemberProfileImage(productImageDto.getImageUrls().get(0));
     }
 
     @Override
@@ -171,7 +171,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public boolean isAdmin(String name,String userKey) {
+    public boolean isAdmin(String userKey, String name) {
         Optional<MemberProfileDto> mayBeCustomer = memberRepository.findMemberProfileByRole(name,userKey,MemberRole.ADMIN,isUse);
 
         if (mayBeCustomer.isEmpty()) return false;

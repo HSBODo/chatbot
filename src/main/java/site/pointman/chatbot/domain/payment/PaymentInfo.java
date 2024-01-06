@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.constant.payment.PaymentStatus;
-import site.pointman.chatbot.constant.payment.PayMethod;
+import site.pointman.chatbot.domain.payment.constant.PaymentStatus;
+import site.pointman.chatbot.domain.payment.constant.PayMethod;
 import site.pointman.chatbot.domain.product.Product;
 
 import javax.persistence.*;

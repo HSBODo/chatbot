@@ -1,7 +1,7 @@
 package site.pointman.chatbot.view.kakaochatobotview;
 
-import site.pointman.chatbot.domain.request.ChatBotRequest;
-import site.pointman.chatbot.domain.response.ChatBotValidationResponse;
+import site.pointman.chatbot.domain.chatbot.request.ChatBotRequest;
+import site.pointman.chatbot.domain.chatbot.response.ChatBotValidationResponse;
 
 public interface ValidationChatBotView {
     ChatBotValidationResponse validationMemberPhoneNumberResult(ChatBotRequest chatBotRequest);

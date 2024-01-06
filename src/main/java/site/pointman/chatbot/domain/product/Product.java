@@ -4,10 +4,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import site.pointman.chatbot.constant.product.Category;
-import site.pointman.chatbot.constant.product.ProductStatus;
+import site.pointman.chatbot.domain.product.constatnt.Category;
+import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.product.converter.CategoryEnumConverter;
 import site.pointman.chatbot.utill.CustomStringUtils;
 
 import javax.persistence.*;
@@ -112,4 +113,14 @@ public class Product extends BaseEntity {
                 .append("userKey="+buyerUserKey);
         return paymentUrl.toString();
     }
+    public boolean isTrading(){
+        if (status.equals(ProductStatus.판매대기)) return true;
+        return false;
+    }
+
+    public void deleteProduct(){
+        super.delete();
+        productImages.delete();
+    }
+
 }
