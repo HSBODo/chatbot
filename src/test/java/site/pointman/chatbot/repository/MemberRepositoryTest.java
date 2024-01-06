@@ -8,125 +8,104 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
-import site.pointman.chatbot.domain.member.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
+import site.pointman.chatbot.domain.member.constant.MemberRole;
 import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
+import site.pointman.chatbot.domain.member.dto.MemberSearchParamDto;
 
 import java.util.Optional;
 
 @Slf4j
 @SpringBootTest
+@Transactional
 class MemberRepositoryTest {
+
     @Autowired
     MemberRepository memberRepository;
 
     private boolean isUse = true;
     private String userKey = "QFJSyeIZbO77";
-    private String name = "라이언";
+    private String name = "관리자";
+
 
     @Test
-    @Transactional
-    void findByUserKey() {
+    void 회원프로필_전체_조회() {
+        //give
+        int size = 5;
+        int page = 0;
+
+        //when
+        Page<MemberProfileDto> allMemberProfileDto = memberRepository.findAllMemberProfileDto(PageRequest.of(page, size), isUse);
+
+        //then
+        Assertions.assertThat(allMemberProfileDto.getSize()).isLessThanOrEqualTo(size);
+    }
+
+    @Test
+    void 유저키로_회원조회() {
+        //give
+
+        //when
         Optional<Member> mayBeMember = memberRepository.findByUserKey(userKey, isUse);
 
+        //then
         Assertions.assertThat(mayBeMember).isNotEmpty();
-        Assertions.assertThat(mayBeMember.get().getName()).isEqualTo(name);
         Assertions.assertThat(mayBeMember.get().getUserKey()).isEqualTo(userKey);
     }
 
     @Test
-    @Transactional
-    void findByName() {
+    void 이름으로_회원조회() {
+
         Optional<Member> mayBeMember = memberRepository.findByName(name, isUse);
 
         Assertions.assertThat(mayBeMember).isNotEmpty();
         Assertions.assertThat(mayBeMember.get().getName()).isEqualTo(name);
+    }
+
+    @Test
+    void 이름_유저키_동적_회원조회() {
+        MemberSearchParamDto memberSearchParamDto = MemberSearchParamDto.builder()
+                .userKey(userKey)
+                .build();
+
+        Optional<Member> mayBeMember = memberRepository.findMember(memberSearchParamDto);
+
+        Assertions.assertThat(mayBeMember).isNotEmpty();
         Assertions.assertThat(mayBeMember.get().getUserKey()).isEqualTo(userKey);
     }
 
     @Test
-    @Transactional
-    void findByRole() {
-        MemberRole admin = MemberRole.ADMIN;
+    void 유저키로_회원프로필_DTO_조회() {
 
-        Optional<MemberProfileDto> mayBeMember = memberRepository.findMemberProfileByRole(name, userKey,admin ,isUse);
+        Optional<MemberProfileDto> memberProfileDtoByUserKey = memberRepository.findMemberProfileDtoByUserKey(userKey,isUse);
 
-        Assertions.assertThat(mayBeMember).isNotEmpty();
-        Assertions.assertThat(mayBeMember.get().getName()).isEqualTo(name);
-
-        Assertions.assertThat(mayBeMember.get().getRole()).isEqualTo(admin);
-    }
-
-    @Test
-    @Transactional
-    void updateCustomerPhoneNumber() {
-        //give
-        String phoneNumber = "01011112222";
-
-        //when
-        Integer integer = memberRepository.updateMemberPhoneNumber(userKey, phoneNumber, isUse);
-
-
-        //then
-        Assertions.assertThat(integer.intValue()).isEqualTo(1);
-    }
-
-//    @Test
-//    @Transactional
-//    void updateMember() {
-//       MemberJoinDto memberJoinDto = MemberJoinDto.builder()
-//               .name("이름")
-//               .phoneNumber("01000001111")
-//               .build();
-//        Member member = memberJoinDto.toEntity();
-//
-//        Member updateMember = memberRepository.updateMember(userKey, member, isUse);
-//
-//        //then
-//        Assertions.assertThat(updateMember.getPhoneNumber()).isEqualTo(memberJoinDto.getPhoneNumber());
-//        Assertions.assertThat(updateMember.getName()).isEqualTo(memberJoinDto.nickname());
-//    }
-
-    @Test
-    @Transactional
-    void delete() {
-        //give
-        String userKey = "userKey";
-
-        //when
-        memberRepository.delete(userKey);
-
-        //then
-    }
-
-
-    @Test
-    void findMemberProfileDtoByUserKey() {
-
-        Optional<MemberProfileDto> memberProfileDtoByUserKey = memberRepository.findMemberProfileDtoByUserKey(userKey, isUse);
-
-        Assertions.assertThat(memberProfileDtoByUserKey.isEmpty()).isFalse();
+        Assertions.assertThat(memberProfileDtoByUserKey).isNotEmpty();
         Assertions.assertThat(memberProfileDtoByUserKey.get().getName()).isEqualTo(name);
-
     }
 
     @Test
-    void findMemberCountByUserKey() {
+    void 이름으로_회원프로필_DTO_조회() {
+
+        Optional<MemberProfileDto> memberProfileDtoByName = memberRepository.findMemberProfileDtoByName(name, isUse);
+
+        Assertions.assertThat(memberProfileDtoByName).isNotEmpty();
+        Assertions.assertThat(memberProfileDtoByName.get().getName()).isEqualTo(name);
+    }
+
+    @Test
+    void 유저키_이름_등급_으로_회원프로필_조회() {
+        MemberRole role = MemberRole.ADMIN;
+        Optional<MemberProfileDto> memberProfileByRole = memberRepository.findMemberProfileByRole(name, userKey, role, isUse);
+
+        Assertions.assertThat(memberProfileByRole).isNotEmpty();
+        Assertions.assertThat(memberProfileByRole.get().getName()).isEqualTo(name);
+        Assertions.assertThat(memberProfileByRole.get().getRole()).isEqualTo(role);
+    }
+
+    @Test
+    void 유저키로_회원_수_조회() {
         Integer memberCountByUserKey = memberRepository.findMemberCountByUserKey(userKey, isUse);
 
-
         Assertions.assertThat(memberCountByUserKey).isEqualTo(1);
-
-    }
-
-    @Test
-    void findAll() {
-        int size =5;
-        int page = 0;
-
-        Page<MemberProfileDto> all = memberRepository.findAllMemberProfileDto(PageRequest.of(page, size), isUse);
-
-        Assertions.assertThat(all.getSize()).isLessThanOrEqualTo(size);
-
     }
 }

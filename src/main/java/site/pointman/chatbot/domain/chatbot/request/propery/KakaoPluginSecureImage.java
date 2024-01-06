@@ -14,7 +14,7 @@ public class KakaoPluginSecureImage {
     private String secureUrls;
     private String expire;
 
-    public List getImgUrlList(){
+    public List<String> getImgUrlList(){
         String secureUrls = this.secureUrls;
         secureUrls = secureUrls.substring(5, secureUrls.length() - 1);
         return Arrays.asList(secureUrls.split(","));

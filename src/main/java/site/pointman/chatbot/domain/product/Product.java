@@ -113,4 +113,14 @@ public class Product extends BaseEntity {
                 .append("userKey="+buyerUserKey);
         return paymentUrl.toString();
     }
+    public boolean isTrading(){
+        if (status.equals(ProductStatus.판매대기)) return true;
+        return false;
+    }
+
+    public void delete(){
+        delete();
+        productImages.delete();
+    }
+
 }

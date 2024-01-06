@@ -10,6 +10,8 @@ import site.pointman.chatbot.domain.member.constant.MemberRole;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.repository.customrepository.MemberCustomRepository;
+import site.pointman.chatbot.repository.customrepository.MemberCustomRepository2;
+import site.pointman.chatbot.repository.customrepository.impl.MemberCustomRepositoryImpl2;
 
 import java.util.Optional;
 
@@ -35,8 +37,4 @@ public interface MemberRepository extends JpaRepository<Member,String>, MemberCu
 
     @Query("select count(m) from Member m where m.userKey=:userKey AND m.isUse = :isUse")
     Integer findMemberCountByUserKey(@Param("userKey") String userKey, @Param("isUse") boolean isUse);
-
-    @Modifying
-    @Query("UPDATE Member m SET m.phoneNumber = :phoneNumber WHERE m.userKey = :userKey AND m.isUse = :isUse")
-    Integer updateMemberPhoneNumber(@Param("userKey") String userKey, @Param("phoneNumber") String phoneNumber, @Param("isUse") boolean isUse);
 }

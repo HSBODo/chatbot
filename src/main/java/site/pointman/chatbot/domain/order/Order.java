@@ -113,6 +113,11 @@ public class Order extends BaseEntity {
        return CustomStringUtils.dateFormat(paymentInfo.getCreateDate(),"yyyy-MM-dd hh:mm:ss","yyyy-MM-dd");
     }
 
+    public boolean isTrading(){
+        if (status.equals(OrderStatus.주문체결)) return  true;
+        return false;
+    }
+
     public void orderSuccessConfirm(){
         this.status = OrderStatus.거래완료;
         this.product.changeStatus(ProductStatus.판매완료);

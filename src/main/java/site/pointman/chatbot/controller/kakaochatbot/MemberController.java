@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import site.pointman.chatbot.domain.member.dto.MemberJoinDto;
+import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
+import site.pointman.chatbot.exception.NoSuchMember;
 import site.pointman.chatbot.handler.annotation.ValidateMember;
 import site.pointman.chatbot.domain.chatbot.request.ChatBotRequest;
 import site.pointman.chatbot.domain.chatbot.response.ChatBotExceptionResponse;
@@ -39,23 +42,31 @@ public class MemberController {
     @ResponseBody
     @PostMapping(value = "POST/join" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse join(@RequestBody ChatBotRequest chatBotRequest) {
-        String userKey = chatBotRequest.getUserKey();
-        String name = chatBotRequest.getCustomerName();
-        String phoneNumber = chatBotRequest.getCustomerPhone();
+        try {
+            MemberJoinDto memberJoinDto = chatBotRequest.getMemberJoinDto();
 
-        if (memberService.isCustomer(userKey)) return chatBotExceptionResponse.createException("이미 존재하는 회원입니다.");
+            if (memberService.isCustomer(memberJoinDto.getUserKey())) return chatBotExceptionResponse.createException("이미 존재하는 회원입니다.");
 
-        return memberChatBotView.joinMemberResultPage(userKey, name, phoneNumber);
+            memberService.join(memberJoinDto.getUserKey(), memberJoinDto.getName(), memberJoinDto.getPhoneNumber());
+
+            return memberChatBotView.joinMemberResultPage();
+        }catch (Exception e) {
+            return chatBotExceptionResponse.createException("회원가입에 실패하였습니다.");
+        }
     }
 
     @ValidateMember
     @ResponseBody
     @PostMapping(value = "PATCH/profileImage" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse updateProfileImage(@RequestBody ChatBotRequest chatBotRequest) {
-        String userKey = chatBotRequest.getUserKey();
-        String customerProfileImage = chatBotRequest.getCustomerProfileImages().get(0);
-
-        return memberChatBotView.updateMemberProfileImageResultPage(userKey,customerProfileImage);
+        try {
+            String userKey = chatBotRequest.getUserKey();
+            String customerProfileImage = chatBotRequest.getCustomerProfileImage();
+            memberService.updateMemberProfileImage(userKey,customerProfileImage);
+            return memberChatBotView.updateMemberProfileImageResultPage();
+        }catch (Exception e) {
+            return chatBotExceptionResponse.createException(e.getMessage());
+        }
     }
 
     @ValidateMember
@@ -71,9 +82,15 @@ public class MemberController {
     @ResponseBody
     @PostMapping(value = "GET/profile" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getProfile(@RequestBody ChatBotRequest chatBotRequest) {
-        String userKey = chatBotRequest.getUserKey();
+        try {
+            String userKey = chatBotRequest.getUserKey();
 
-        return memberChatBotView.myProfilePage(userKey);
+            MemberProfileDto memberProfileDto = memberService.getMemberProfileDto(userKey);
+
+            return memberChatBotView.myProfilePage(memberProfileDto);
+        }catch (NoSuchMember e) {
+            return chatBotExceptionResponse.createException(e.getMessage());
+        }
     }
 
     @ValidateMember
@@ -89,18 +106,30 @@ public class MemberController {
     @ResponseBody
     @PostMapping(value = "PATCH/phoneNumber" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse updatePhoneNumber(@RequestBody ChatBotRequest chatBotRequest) {
-        String userKey = chatBotRequest.getUserKey();
-        String updatePhoneNumber = chatBotRequest.getCustomerPhone();
+        try {
+            String userKey = chatBotRequest.getUserKey();
+            String updatePhoneNumber = chatBotRequest.getCustomerPhone();
 
-        return memberChatBotView.updateMemberPhoneNumberResultPage(userKey, updatePhoneNumber);
+            memberService.updateMemberPhoneNumber(userKey,updatePhoneNumber);
+
+            return memberChatBotView.updateMemberPhoneNumberResultPage();
+        }catch (NoSuchMember e) {
+           return chatBotExceptionResponse.createException(e.getMessage());
+        }
     }
 
     @ValidateMember
     @ResponseBody
     @PostMapping(value = "DELETE" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse withdrawalCustomer(@RequestBody ChatBotRequest chatBotRequest) {
-        String userKey = chatBotRequest.getUserKey();
+        try {
+            String userKey = chatBotRequest.getUserKey();
 
-        return memberChatBotView.withdrawalMemberResultPage(userKey);
+            memberService.deleteMember(userKey);
+
+            return memberChatBotView.withdrawalMemberResultPage();
+        }catch (Exception e) {
+            return chatBotExceptionResponse.createException(e.getMessage());
+        }
     }
 }

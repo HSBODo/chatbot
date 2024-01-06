@@ -1,7 +1,16 @@
+buildscript {
+	//querydsl(1)
+	ext {
+		queryDslVersion = "5.0.0"
+	}
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.6'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	//(2)
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'site.pointman'
@@ -63,6 +72,11 @@ dependencies {
 	// Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	//querydsl(3)
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+
 	//Swagger
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2' // swagger
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2' //swagger
@@ -71,6 +85,24 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// (4) queryDSL 추가 : QueryDSL 빌드 옵션
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets {
+	main.java.srcDir querydslDir
+}
+configurations {
+	querydsl.extendsFrom compileClasspath
+}
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}
+
 //d- jar 파일이 2개가 생기며 Docker Image 가 생성되지 않을 수 있다.  (Boot 2.5v 이후)
 jar {
 	enabled = false

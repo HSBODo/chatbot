@@ -13,6 +13,7 @@ import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.domain.log.response.Response;
 import site.pointman.chatbot.domain.member.dto.MemberJoinDto;
 import site.pointman.chatbot.domain.member.service.MemberService;
+import site.pointman.chatbot.exception.NoSuchMember;
 import site.pointman.chatbot.globalservice.ValidationService;
 
 import java.nio.charset.Charset;
@@ -45,8 +46,9 @@ public class MemberAdminController {
         if (!validationService.isValidMemberPhoneNumber(phoneNumber)) return new ResponseEntity<>(new Response(ResultCode.EXCEPTION,"연락처 형식이 옳바르지 않습니다."),headers, HttpStatus.OK);
         if (memberService.isCustomer(userKey)) return new ResponseEntity<>(new Response(ResultCode.EXCEPTION,"이미 회원가입된 유저입니다."),headers, HttpStatus.OK);
 
-        Response response = memberService.join(userKey, name, phoneNumber);
-        return new ResponseEntity<>(response,headers ,HttpStatus.OK);
+        memberService.join(userKey, name, phoneNumber);
+
+        return new ResponseEntity<>(new Response(ResultCode.OK,"성공적으로 회원가입을 완료하였습니다."),headers ,HttpStatus.OK);
     }
 
     @ResponseBody
@@ -65,33 +67,42 @@ public class MemberAdminController {
     @RequestMapping(value = "{memberName}",method = RequestMethod.GET)
     public ResponseEntity getMember(@PathVariable String memberName){
         HttpHeaders headers = getHeaders();
+        try {
+            MemberProfileDto memberProfileDtoByName = memberService.getMemberProfileDtoByName(memberName);
 
-        Optional<MemberProfileDto> mayBeMember = memberService.getMemberProfileDtoByName(memberName);
-        if (mayBeMember.isEmpty()) return new ResponseEntity<>(new Response(ResultCode.EXCEPTION,"회원이 존재하지 않습니다."),headers, HttpStatus.OK);
-        MemberProfileDto memberProfileDto = mayBeMember.get();
+            return new ResponseEntity<>(new Response<>(ResultCode.OK,"성공적으로 회원을 조회하였습니다.",memberProfileDtoByName),headers ,HttpStatus.OK);
+        }catch (NoSuchMember e) {
+            return new ResponseEntity<>(new Response<>(ResultCode.EXCEPTION,"회원 조회를 실패하였습니다",e.getMessage()),headers ,HttpStatus.OK);
+        }
 
 
-        return new ResponseEntity<>(memberProfileDto,headers ,HttpStatus.OK);
     }
 
     @ResponseBody
     @RequestMapping(value = "{memberName}",method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateMember(@PathVariable String memberName, @RequestBody MemberProfileDto memberProfileDto){
         HttpHeaders headers = getHeaders();
+        try {
+            memberService.updateMemberProfile(memberName, memberProfileDto);
 
-        Response response = memberService.updateMember(memberName, memberProfileDto);
-
-        return new ResponseEntity<>(response,headers ,HttpStatus.OK);
+            return new ResponseEntity<>("성공적으로 회원정보를 수정하였습니다.",headers ,HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(new Response<>(ResultCode.EXCEPTION,"회원정보 수정을 실패하였습니다.",e.getMessage()),headers ,HttpStatus.OK);
+        }
     }
 
     @ResponseBody
     @RequestMapping(value = "{memberUserKey}",method = RequestMethod.DELETE)
     public ResponseEntity deleteMember(@PathVariable String memberUserKey){
         HttpHeaders headers = getHeaders();
+        try {
+            memberService.deleteMember(memberUserKey);
 
-        Response response = memberService.deleteMember(memberUserKey);
+            return new ResponseEntity<>("성공적으로 회원탈퇴를 완료하였습니다.",headers ,HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(new Response<>(ResultCode.EXCEPTION,"회원탈퇴를 실패하였습니다",e.getMessage()),headers ,HttpStatus.OK);
+        }
 
-        return new ResponseEntity<>(response,headers ,HttpStatus.OK);
     }
 
     private HttpHeaders getHeaders(){

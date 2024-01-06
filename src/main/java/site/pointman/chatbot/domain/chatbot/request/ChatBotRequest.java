@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import site.pointman.chatbot.domain.chatbot.request.propery.*;
+import site.pointman.chatbot.domain.member.dto.MemberJoinDto;
 import site.pointman.chatbot.domain.product.dto.ProductDto;
 
 import java.util.List;
@@ -73,14 +74,22 @@ public class ChatBotRequest {
         }
     }
 
-    public List<String> getCustomerProfileImages(){
+    public MemberJoinDto getMemberJoinDto(){
+        return MemberJoinDto.builder()
+                .userKey(getUserKey())
+                .name(getCustomerName())
+                .phoneNumber(getCustomerPhone())
+                .build();
+    }
+
+    public String getCustomerProfileImage(){
         try {
             if (Objects.isNull(action.getParams().getCustomerProfileImage())) return null;
 
             ObjectMapper mapper = new ObjectMapper();
             String customerProfileImage = this.action.getParams().getCustomerProfileImage();
             KakaoPluginSecureImage kakaoPluginSecureImage = mapper.readValue(customerProfileImage, KakaoPluginSecureImage.class);
-            return kakaoPluginSecureImage.getImgUrlList();
+            return kakaoPluginSecureImage.getImgUrlList().get(0);
         }catch (Exception e){
             return null;
         }
