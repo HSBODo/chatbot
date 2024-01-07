@@ -90,6 +90,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findByProductId(productId, isUse)
                 .orElseThrow(() -> new NotFoundProduct("상품이 존재하지 않습니다."));
 
+        //상품 삭제, 상품 이미지 삭제
         product.deleteProduct();
     }
 
