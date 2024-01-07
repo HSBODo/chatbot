@@ -5,10 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import site.pointman.chatbot.domain.log.response.constant.ResultCode;
 import site.pointman.chatbot.domain.member.dto.LoginDto;
 import site.pointman.chatbot.domain.log.response.Response;
@@ -17,7 +14,7 @@ import site.pointman.chatbot.domain.member.service.MemberService;
 
 import java.nio.charset.Charset;
 
-@Controller
+@RestController
 @RequestMapping(value = "login")
 public class LoginController {
 
@@ -29,7 +26,6 @@ public class LoginController {
         this.authService = authService;
     }
 
-    @ResponseBody
     @PostMapping(value = "")
     public ResponseEntity login(@RequestBody LoginDto login){
         HttpHeaders headers= new HttpHeaders();

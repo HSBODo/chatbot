@@ -1,5 +1,6 @@
 package site.pointman.chatbot.domain.notice.service.serviceImpl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,17 +25,13 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class NoticeServiceImpl implements NoticeService {
     private boolean isUse = true;
 
-    NoticeRepository noticeRepository;
-    MemberRepository memberRepository;
-
-    public NoticeServiceImpl(NoticeRepository noticeRepository, MemberRepository memberRepository) {
-        this.noticeRepository = noticeRepository;
-        this.memberRepository = memberRepository;
-    }
+    private final NoticeRepository noticeRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     @Override

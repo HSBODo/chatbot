@@ -1,5 +1,6 @@
 package site.pointman.chatbot.controller.admin;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -19,20 +20,14 @@ import site.pointman.chatbot.globalservice.ValidationService;
 import java.nio.charset.Charset;
 
 @Slf4j
-@Controller
+@RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "admin/member")
 public class MemberAdminController {
 
-    MemberService memberService;
-    ValidationService validationService;
+    private final MemberService memberService;
+    private final ValidationService validationService;
 
-
-    public MemberAdminController(MemberService memberService, ValidationService validationService) {
-        this.memberService = memberService;
-        this.validationService = validationService;
-    }
-
-    @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity join(@RequestBody MemberJoinDto memberJoinDTO){
         HttpHeaders headers = getHeaders();
@@ -50,7 +45,7 @@ public class MemberAdminController {
         return new ResponseEntity<>(new Response(ResultCode.OK,"성공적으로 회원가입을 완료하였습니다."),headers ,HttpStatus.OK);
     }
 
-    @ResponseBody
+
     @RequestMapping(value = "",method = RequestMethod.GET)
     public ResponseEntity getMembers(@RequestParam(value = "page",defaultValue = "0") int page) {
         HttpHeaders headers = getHeaders();
@@ -62,7 +57,7 @@ public class MemberAdminController {
         return new ResponseEntity<>(members.getContent(),headers ,HttpStatus.OK);
     }
 
-    @ResponseBody
+
     @RequestMapping(value = "{memberName}",method = RequestMethod.GET)
     public ResponseEntity getMember(@PathVariable String memberName){
         HttpHeaders headers = getHeaders();
@@ -75,7 +70,6 @@ public class MemberAdminController {
         }
     }
 
-    @ResponseBody
     @RequestMapping(value = "{memberName}",method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateMember(@PathVariable String memberName, @RequestBody MemberProfileDto memberProfileDto){
         HttpHeaders headers = getHeaders();
@@ -88,7 +82,6 @@ public class MemberAdminController {
         }
     }
 
-    @ResponseBody
     @RequestMapping(value = "{memberUserKey}",method = RequestMethod.DELETE)
     public ResponseEntity deleteMember(@PathVariable String memberUserKey){
         HttpHeaders headers = getHeaders();

@@ -1,5 +1,6 @@
 package site.pointman.chatbot.controller.admin;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,16 +21,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Controller
+@RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "admin/notice")
 public class NoticeAdminController {
-    NoticeService noticeService;
 
-    public NoticeAdminController(NoticeService noticeService) {
-        this.noticeService = noticeService;
-    }
+    private final NoticeService noticeService;
 
-    @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity add(@RequestBody NoticeDto noticeDto){
 
@@ -46,7 +44,6 @@ public class NoticeAdminController {
 
     }
 
-    @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.GET)
     public ResponseEntity getNotices(){
         HttpHeaders headers = getHeaders();
@@ -61,7 +58,6 @@ public class NoticeAdminController {
         }
     }
 
-    @ResponseBody
     @RequestMapping(value = "{noticeId}",method = RequestMethod.GET)
     public ResponseEntity getNotice(@PathVariable Long noticeId){
         HttpHeaders headers = getHeaders();
@@ -75,7 +71,6 @@ public class NoticeAdminController {
         }
     }
 
-    @ResponseBody
     @RequestMapping(value = "{noticeId}",method = RequestMethod.DELETE)
     public ResponseEntity deleteNotice(@PathVariable Long noticeId){
         HttpHeaders headers = getHeaders();
@@ -89,7 +84,6 @@ public class NoticeAdminController {
         }
     }
 
-    @ResponseBody
     @RequestMapping(value = "{noticeId}",method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateNotice(@PathVariable Long noticeId, @RequestBody NoticeDto noticeDto){
         HttpHeaders headers = getHeaders();

@@ -1,6 +1,7 @@
 package site.pointman.chatbot.controller.admin;
 
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -22,23 +23,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Controller
+@RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "admin/order")
 public class OrderAdminController {
 
     @Value("${kakao.channel.url}")
     private String KAKAO_CHANNEL_URL;
 
+    private final OrderService orderService;
+    private final PaymentRepository paymentRepository;
 
-    OrderService orderService;
-    PaymentRepository paymentRepository;
-
-    public OrderAdminController(OrderService orderService, PaymentRepository paymentRepository) {
-        this.orderService = orderService;
-        this.paymentRepository = paymentRepository;
-    }
-
-    @ResponseBody
     @GetMapping(value = "all")
     public ResponseEntity getOrders () {
         HttpHeaders headers = getHeaders();
@@ -49,7 +44,6 @@ public class OrderAdminController {
         return new ResponseEntity(orders,headers, HttpStatus.OK);
     }
 
-    @ResponseBody
     @GetMapping(value = "")
     public ResponseEntity getOrdersByStatus (@RequestParam("status") OrderStatus orderStatus) {
         HttpHeaders headers = getHeaders();
@@ -60,7 +54,6 @@ public class OrderAdminController {
         return new ResponseEntity(orders,headers, HttpStatus.OK);
     }
 
-    @ResponseBody
     @GetMapping(value = "{orderId}")
     public ResponseEntity getOrderByOrderId (@PathVariable("orderId") Long orderId) {
         HttpHeaders headers = getHeaders();
@@ -72,7 +65,6 @@ public class OrderAdminController {
         return new ResponseEntity(order,headers, HttpStatus.OK);
     }
 
-    @ResponseBody
     @GetMapping(value = "paymentInfo/{orderId}")
     public ResponseEntity getPaymentInfoByOrderId (@PathVariable("orderId") Long orderId) {
         HttpHeaders headers = getHeaders();
@@ -84,7 +76,6 @@ public class OrderAdminController {
         return new ResponseEntity(paymentInfo,headers, HttpStatus.OK);
     }
 
-    @ResponseBody
     @PostMapping(value = "/success/{orderId}")
     public ResponseEntity orderSuccess (@PathVariable Long orderId) {
         HttpHeaders headers = getHeaders();
@@ -97,7 +88,6 @@ public class OrderAdminController {
         }
     }
 
-    @ResponseBody
     @PostMapping(value = "kakaopay-cancel/{orderId}")
     public ResponseEntity kakaoPayCancel (@PathVariable Long orderId) {
         HttpHeaders headers = getHeaders();

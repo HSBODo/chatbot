@@ -1,5 +1,6 @@
 package site.pointman.chatbot.domain.payment.service.serviceImpl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -26,6 +27,8 @@ import site.pointman.chatbot.utill.CustomNumberUtils;
 import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class PaymentServiceImpl implements PaymentService {
@@ -52,17 +55,11 @@ public class PaymentServiceImpl implements PaymentService {
     private final String KAKAO_PAY_APPROVE_API_URL ="https://kapi.kakao.com/v1/payment/approve";
     private final String KAKAO_PAY_CANCEL_API_URL ="https://kapi.kakao.com/v1/payment/cancel";
 
-    RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
 
-    MemberRepository memberRepository;
-    ProductRepository productRepository;
-    PaymentRepository paymentRepository;
-
-    public PaymentServiceImpl(MemberRepository memberRepository, ProductRepository productRepository, PaymentRepository paymentRepository) {
-        this.memberRepository = memberRepository;
-        this.productRepository = productRepository;
-        this.paymentRepository = paymentRepository;
-    }
+    private final MemberRepository memberRepository;
+    private final ProductRepository productRepository;
+    private final PaymentRepository paymentRepository;
 
     @Override
     @Transactional
@@ -82,8 +79,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         Long orderId = CustomNumberUtils.createNumberId();
         Member buyerMember = mayBeMember.get();
-
-
 
         KakaoPaymentReadyRequest kakaoPaymentReadyRequest = KakaoPaymentReadyRequest.builder()
                 .cid(CID)
@@ -213,7 +208,6 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public PaymentInfo getPaymentReady(Long orderId) {
         PaymentStatus paymentStatus = PaymentStatus.결제준비;
         PaymentInfo paymentReady = paymentRepository.findByPaymentStatus(orderId, paymentStatus)
