@@ -80,25 +80,20 @@ public class PaymentInfo extends BaseEntity {
         this.amountInfo = amountInfo;
     }
 
+    public void successPayment(String aid, String approvedAt, PayMethod paymentMethodType, CardInfo cardInfo, Amount amountInfo){
+        this.status = PaymentStatus.결제완료;
+        this.aid = aid;
+        this.approvedAt = approvedAt;
+        this.paymentMethodType = paymentMethodType;
+        this.cardInfo = cardInfo;
+        this.amountInfo = amountInfo;
+
+    }
+
     public void changeStatus(PaymentStatus status){
         this.status = status;
     }
-    public void changeApprovedAt(String approvedAt){
-        this.approvedAt = approvedAt;
-    }
     public void changeCancelAt(String cancelAt){
         this.canceledAt = cancelAt;
-    }
-    public void changeAid(String aid){
-        this.aid = aid;
-    }
-    public void changePayMethod(PayMethod payMethod){
-        this.paymentMethodType = payMethod;
-    }
-    public void changeCardInfo(CardInfo cardInfo){
-        this.cardInfo = cardInfo;
-    }
-    public void changeAmountInfo(Amount amount){
-        this.amountInfo = amount;
     }
 }

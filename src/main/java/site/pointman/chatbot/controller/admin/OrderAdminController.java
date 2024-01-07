@@ -88,10 +88,13 @@ public class OrderAdminController {
     @PostMapping(value = "/success/{orderId}")
     public ResponseEntity orderSuccess (@PathVariable Long orderId) {
         HttpHeaders headers = getHeaders();
+        try {
+            orderService.successOrder(orderId);
 
-        Response response = orderService.successOrder(orderId);
-
-        return new ResponseEntity(response,headers, HttpStatus.OK);
+            return new ResponseEntity(new Response<>(ResultCode.OK,"성공적으로 주문 거래 확정 하였습니다.",orderId),headers, HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity(new Response<>(ResultCode.EXCEPTION,"주문 거래 확정을 실패하였습니다",e.getMessage()),headers, HttpStatus.OK);
+        }
     }
 
     @ResponseBody
@@ -99,10 +102,11 @@ public class OrderAdminController {
     public ResponseEntity kakaoPayCancel (@PathVariable Long orderId) {
         HttpHeaders headers = getHeaders();
         try {
-            Response response = orderService.cancelOrder(orderId);
-            return new ResponseEntity(response,headers, HttpStatus.OK);
+            orderService.cancelOrder(orderId);
+
+            return new ResponseEntity(new Response<>(ResultCode.OK,"성공적으로 주문을 취소하였습니다.",orderId),headers, HttpStatus.OK);
         }catch (Exception e) {
-            return new ResponseEntity( new Response(ResultCode.FAIL,"주문번호 "+orderId+"의 주문취소를 실패하였습니다."),headers, HttpStatus.OK);
+            return new ResponseEntity(new Response(ResultCode.FAIL,"주문번호 "+orderId+"의 주문취소를 실패하였습니다.",e.getMessage()),headers, HttpStatus.OK);
         }
     }
 

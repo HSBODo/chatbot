@@ -45,10 +45,7 @@ public class OrderChatBotViewImpl implements OrderChatBotView {
     }
 
     @Override
-    public ChatBotResponse purchaseConfirmResultPage(String orderId) {
-        Response result = orderService.purchaseConfirm(orderId);
-        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
-
+    public ChatBotResponse purchaseConfirmResultPage() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("정상적으로 구매확정을 완료하였습니다.");
@@ -72,10 +69,7 @@ public class OrderChatBotViewImpl implements OrderChatBotView {
     }
 
     @Override
-    public ChatBotResponse salesConfirmResultPage(String orderId) {
-        Response result = orderService.salesConfirm(orderId);
-        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
-
+    public ChatBotResponse salesConfirmResultPage() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("정상적으로 판매확정을 완료하였습니다.");
@@ -85,10 +79,7 @@ public class OrderChatBotViewImpl implements OrderChatBotView {
     }
 
     @Override
-    public ChatBotResponse updateTrackingNumberResultPage(String orderId, String trackingNumber) {
-        Response result = orderService.updateTrackingNumber(orderId, trackingNumber);
-        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
-
+    public ChatBotResponse updateTrackingNumberResultPage() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("운송장번호를 정상적으로 등록하였습니다.");

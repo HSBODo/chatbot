@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import site.pointman.chatbot.domain.log.response.Response;
+import site.pointman.chatbot.domain.log.response.constant.ResultCode;
 import site.pointman.chatbot.domain.order.constatnt.OrderMemberConfirmStatus;
 import site.pointman.chatbot.domain.order.constatnt.OrderStatus;
 import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
@@ -61,8 +63,29 @@ public class Order extends BaseEntity {
         this.status = status;
     }
 
-    public void changeStatus(OrderStatus status){
-        this.status = status;
+    public static Order createOrder(Long orderId, Member buyerMember, Product product, PaymentInfo approvePaymentInfo) {
+        final int quantity = 1;
+        product.changeStatus(ProductStatus.판매대기);
+        return Order.builder()
+                .status(OrderStatus.주문체결)
+                .orderId(orderId)
+                .buyerMember(buyerMember)
+                .product(product)
+                .quantity(quantity)
+                .paymentInfo(approvePaymentInfo)
+                .build();
+
+    }
+
+    public void orderCancel(){
+        status = OrderStatus.주문취소;
+        product.changeStatus(ProductStatus.판매중);
+    }
+
+    public boolean isConfirm(){
+        if (buyerConfirmStatus.equals(OrderMemberConfirmStatus.구매확정) && sellerConfirmStatus.equals(OrderMemberConfirmStatus.판매확정)) return true;
+
+        return false;
     }
 
     public void changeTrackingNumber(String trackingNumber){
@@ -116,6 +139,11 @@ public class Order extends BaseEntity {
     public boolean isTrading(){
         if (status.equals(OrderStatus.주문체결)) return  true;
         return false;
+    }
+
+    public boolean isInputTrackingNumber(){
+        if(StringUtils.isNullOrEmpty(trackingNumber)) return false;
+        return true;
     }
 
     public void orderSuccessConfirm(){

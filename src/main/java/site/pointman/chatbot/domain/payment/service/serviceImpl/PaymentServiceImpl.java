@@ -16,6 +16,7 @@ import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.payment.kakaopay.*;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.log.response.Response;
+import site.pointman.chatbot.exception.NotFoundPaymentInfo;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.repository.ProductRepository;
@@ -132,7 +133,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public KakaoPaymentApproveResponse kakaoPaymentApprove(String pgToken, PaymentInfo paymentReadyInfo) {
+    public PaymentInfo kakaoPaymentApprove(String pgToken, PaymentInfo paymentReadyInfo) {
         Product product = paymentReadyInfo.getProduct();
         Member buyerMember = paymentReadyInfo.getBuyerMember();
 
@@ -163,19 +164,23 @@ public class PaymentServiceImpl implements PaymentService {
         PayMethod payMethod = PayMethod.getPayMethod(kakaoPaymentApproveResponse.getPaymentMethodType());
 
         //결제정보 상태변경
-        paymentReadyInfo.changeStatus(PaymentStatus.결제완료);
-        paymentReadyInfo.changeAid(kakaoPaymentApproveResponse.getAid());
-        paymentReadyInfo.changeApprovedAt(kakaoPaymentApproveResponse.getApprovedAt());
-        paymentReadyInfo.changePayMethod(payMethod);
-        paymentReadyInfo.changeCardInfo(kakaoPaymentApproveResponse.getCardInfo());
-        paymentReadyInfo.changeAmountInfo(kakaoPaymentApproveResponse.getAmount());
+        paymentReadyInfo.successPayment(
+                kakaoPaymentApproveResponse.getAid(),
+                kakaoPaymentApproveResponse.getApprovedAt(),
+                payMethod,
+                kakaoPaymentApproveResponse.getCardInfo(),
+                kakaoPaymentApproveResponse.getAmount()
+        );
 
-        return kakaoPaymentApproveResponse;
+        return paymentReadyInfo;
     }
 
     @Override
     @Transactional
-    public KakaoPaymentCancelResponse kakaoPaymentCancel(PaymentInfo successPaymentInfo){
+    public KakaoPaymentCancelResponse kakaoPaymentCancel(Long orderId){
+        Optional<PaymentInfo> mayBeSuccessPaymentInfo = paymentRepository.findByPaymentStatus(orderId, PaymentStatus.결제완료);
+        if (mayBeSuccessPaymentInfo.isEmpty()) throw new NotFoundPaymentInfo("결제완료된 결제정보가 존재하지 않습니다.");
+        PaymentInfo successPaymentInfo = mayBeSuccessPaymentInfo.get();
 
         KakaoPaymentCancelRequest kakaoPaymentCancelRequest = new KakaoPaymentCancelRequest(
                 successPaymentInfo.getCid(),
@@ -208,11 +213,12 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Response getPaymentInfoByStatus(Long orderId, PaymentStatus paymentStatus) {
-        Optional<PaymentInfo> maBePaymentInfo = paymentRepository.findByPaymentStatus(orderId, paymentStatus);
-        if (maBePaymentInfo.isEmpty()) return new Response(ResultCode.EXCEPTION,"결제정보가 존재하지 않습니다.");
-        PaymentInfo paymentInfo = maBePaymentInfo.get();
-        return new Response(ResultCode.OK,"결제정보를 조회하였습니다.",paymentInfo);
+    public PaymentInfo getPaymentReady(Long orderId) {
+        PaymentStatus paymentStatus = PaymentStatus.결제준비;
+        PaymentInfo paymentReady = paymentRepository.findByPaymentStatus(orderId, paymentStatus)
+                .orElseThrow(() -> new NotFoundPaymentInfo("결제 준비상태의 결제정보가 존재하지 않습니다."));
+
+        return paymentReady;
     }
 
     private HttpHeaders getKakaoPayRequestHeaders(){
