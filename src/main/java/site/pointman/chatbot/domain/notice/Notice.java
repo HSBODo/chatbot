@@ -116,7 +116,7 @@ public class Notice extends BaseEntity {
                 .append("\n\n")
                 .append(description)
                 .append("\n\n")
-                .append("등록일자: " + CustomStringUtils.dateFormat(getFormatCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd"));
+                .append("등록일자: " + getFormatCreateDate());
         return formatDescription.toString();
     }
 

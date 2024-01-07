@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 @Slf4j
-@RestController
+@Controller
 @RequestMapping(value = "order")
 @RequiredArgsConstructor
 public class OrderController {

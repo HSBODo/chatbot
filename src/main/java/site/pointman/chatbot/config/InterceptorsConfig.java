@@ -18,7 +18,7 @@ public class InterceptorsConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new Interceptor(authService))
-                .excludePathPatterns("/css/**", "/images/**", "/js/**","/kakaochatbot/**","/login")
+                .excludePathPatterns("/css/**", "/images/**", "/js/**","/kakaochatbot/**","/login","/order/**")
         ;
 //        addPathPatterns		Interceptor 적용 대상
 //        excludePathPatterns		Interceptor 제외 대상
