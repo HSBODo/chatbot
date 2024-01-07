@@ -54,7 +54,7 @@ public class Member extends BaseEntity {
     }
 
     public String getFormatCreateDate(){
-      return CustomStringUtils.dateFormat(getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
+      return getFormatCreateDate();
     }
     public void changeProfileNickname(String nickname){
         this.profile.changeProfileNickname(nickname);

@@ -11,9 +11,4 @@ import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.repository.customrepository.ProductCustomRepository;
 
 public interface ProductRepository extends JpaRepository<Product,Long>, ProductCustomRepository {
-    @Query(value = "SELECT p FROM Product p Join fetch p.member Join fetch p.productImages WHERE p.status=:status AND p.member.userKey=:userKey AND p.isUse=:isUse",
-        countQuery = "SELECT count(p) FROM Product p WHERE p.status=:status AND p.member.userKey=:userKey AND p.isUse=:isUse"
-    )
-    Page<Product> findByStatusAndUserKey(@Param("isUse") boolean isUse, @Param("status") ProductStatus status, @Param("userKey") String userKey, Pageable pageable);
-
 }

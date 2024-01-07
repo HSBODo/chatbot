@@ -1,18 +1,20 @@
 package site.pointman.chatbot.repository.customrepository.impl;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import site.pointman.chatbot.domain.member.QMember;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.ProductImage;
 import site.pointman.chatbot.domain.product.constatnt.Category;
 import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.domain.product.dto.ProductCondition;
+import site.pointman.chatbot.domain.product.dto.ProductDto;
 import site.pointman.chatbot.repository.customrepository.ProductCustomRepository;
 
 import javax.persistence.EntityManager;
@@ -23,7 +25,7 @@ import java.util.Optional;
 import static site.pointman.chatbot.domain.product.QProduct.product;
 import static site.pointman.chatbot.domain.product.QProductImage.productImage;
 
-
+@Transactional(readOnly = true)
 public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     private final EntityManager em;
     private final JPAQueryFactory query;
@@ -32,12 +34,12 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         this.em = em;
         this.query = new JPAQueryFactory(em);
     }
-
+    @Transactional
     @Override
     public void saveProduct(Product product) {
         em.persist(product);
     }
-
+    @Transactional
     @Override
     public void saveProductImage(ProductImage productImage) {
         em.persist(productImage);
@@ -53,27 +55,11 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     @Override
     public Optional<Product> findByProductId(Long productId, boolean isUse) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.id=:id AND p.isUse=:isUse", Product.class)
+        return em.createQuery("SELECT p FROM Product p Join Fetch p.productImages WHERE p.id=:id AND p.isUse=:isUse", Product.class)
                 .setParameter("id", productId)
                 .setParameter("isUse", isUse)
                 .getResultList()
                 .stream().findAny();
-    }
-
-    @Override
-    public void updateStatus(Long productId, ProductStatus productStatus, boolean isUse) {
-        Product product = em.createQuery("SELECT p FROM Product p WHERE p.id=:id AND p.isUse=:isUse", Product.class)
-                .setParameter("id", productId)
-                .setParameter("isUse", isUse)
-                .getSingleResult();
-
-        product.changeStatus(productStatus);
-    }
-
-    @Override
-    public List<Product> findByAll() {
-        return em.createQuery("SELECT p FROM Product p ORDER BY p.createDate DESC", Product.class)
-                .getResultList();
     }
 
     @Override
@@ -96,6 +82,43 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .fetchResults();
         List<Product> content = results.getResults();
         long total = results.getTotal();
+        return new PageImpl<>(content,pageable,total);
+    }
+
+    @Override
+    public Page<ProductDto> findDtoAll(ProductCondition productCondition, Pageable pageable) {
+        QueryResults<ProductDto> results = query
+                .select(Projections.constructor(
+                        ProductDto.class,
+                        product.id,
+                        product.member.userKey,
+                        product.member.name,
+                        product.name,
+                        product.price,
+                        product.description,
+                        product.tradingLocation,
+                        product.kakaoOpenChatUrl,
+                        product.category,
+                        product.productImages.imageUrls,
+                        product.status,
+                        product.createDate
+                        ))
+                .from(product)
+                .where(
+                        eqUserKey(productCondition.getUserKey()),
+                        eqProductStatus(productCondition.getFirstProductStatus(),productCondition.getSecondProductStatus()),
+                        eqProductCategory(productCondition.getProductCategory()),
+                        likeSearchWord(productCondition.getSearchWord()),
+                        isUseDefault()
+                )
+                .orderBy(product.createDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        List<ProductDto> content = results.getResults();
+        long total = results.getTotal();
+
         return new PageImpl<>(content,pageable,total);
     }
 

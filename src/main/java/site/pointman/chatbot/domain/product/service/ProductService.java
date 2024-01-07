@@ -16,8 +16,8 @@ public interface ProductService {
     void updateProductStatus(Long productId, ProductStatus updateStatus);
     void deleteProduct(Long productId);
     Page<Product> getProducts(ProductCondition productCondition, int pageNumber);
+    Page<ProductDto> getProductDtos(ProductCondition productCondition, int pageNumber);
     Page<Product> getSalesContractProducts(String userKey, int pageNumber);
-    List<Product> getProductsAll();
-    List<Product> getMemberProducts(String userKey);
-    Optional<Product> getProduct(Long productId);
+    Product getProduct(Long productId);
+    ProductDto getProductDto(Long productId);
 }

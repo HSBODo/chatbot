@@ -142,10 +142,19 @@ public class ProductController {
     @ResponseBody
     @PostMapping(value = "GET/profile" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
-        String productId = chatBotRequest.getProductId();
-        String userKey = chatBotRequest.getUserKey();
+        try {
+            Long productId = Long.parseLong(chatBotRequest.getProductId());
+            String userKey = chatBotRequest.getUserKey();
 
-        return productChatBotView.productDetailInfoPage(userKey, productId);
+            Product product = productService.getProduct(productId);
+
+            return productChatBotView.productDetailInfoPage(userKey, product);
+        }catch (NotFoundProduct e) {
+            return chatBotExceptionResponse.createException(e.getMessage());
+        }catch (Exception e) {
+            return chatBotExceptionResponse.createException();
+        }
+
     }
 
     @ValidateMember

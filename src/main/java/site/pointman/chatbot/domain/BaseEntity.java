@@ -33,11 +33,15 @@ public class BaseEntity {
         this.lastModifiedDate = LocalDateTime.now();
     }
 
-    public String getCreateDate() {
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
+    public String getFormatCreateDate() {
         return createDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
-    public String getLastModifiedDate() {
+    public String getFormatLastModifiedDate() {
         return lastModifiedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 

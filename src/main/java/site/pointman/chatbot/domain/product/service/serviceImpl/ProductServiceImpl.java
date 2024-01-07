@@ -44,7 +44,6 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
-    private final OrderRepository orderRepository;
 
     @Transactional
     @Override
@@ -70,12 +69,22 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public Optional<Product> getProduct(Long productId) {
-        Optional<Product> mayBeProduct = productRepository.findByProductId(productId,isUse);
+    public Product getProduct(Long productId) {
+        Product product = productRepository.findByProductId(productId, isUse)
+                .orElseThrow(() -> new NotFoundProduct("상품이 존재하지 않습니다."));
 
-        return mayBeProduct;
+        return product;
     }
 
+    @Override
+    public ProductDto getProductDto(Long productId) {
+        Product product = productRepository.findByProductId(productId, isUse)
+                .orElseThrow(() -> new NotFoundProduct("상품이 존재하지 않습니다."));
+
+        return product.toDto();
+    }
+
+    @Transactional
     @Override
     public void deleteProduct(Long productId) {
         Product product = productRepository.findByProductId(productId, isUse)
@@ -83,6 +92,7 @@ public class ProductServiceImpl implements ProductService {
 
         product.deleteProduct();
     }
+
     @Override
     public Page<Product> getSalesContractProducts(String userKey, int pageNumber) {
 
@@ -96,20 +106,6 @@ public class ProductServiceImpl implements ProductService {
         return contractProducts;
     }
 
-    @Override
-    public List<Product> getProductsAll() {
-        List<Product> products = productRepository.findByAll();
-
-        return products;
-    }
-
-    @Override
-    public List<Product> getMemberProducts(String userKey) {
-        List<Product> products = productRepository.findByUserKey(userKey, isUse);
-
-        return products;
-    }
-
     @Transactional
     @Override
     public void updateProductStatus(Long productId, ProductStatus updateStatus) {
@@ -117,5 +113,11 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new NotFoundProduct("상품이 존재하지 않습니다."));
 
         product.changeStatus(updateStatus);
+    }
+
+    @Override
+    public Page<ProductDto> getProductDtos(ProductCondition productCondition, int pageNumber) {
+        Page<ProductDto> productDtosPage = productRepository.findDtoAll(productCondition, PageRequest.of(pageNumber, size));
+        return productDtosPage;
     }
 }

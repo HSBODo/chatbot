@@ -14,6 +14,7 @@ import site.pointman.chatbot.utill.CustomNumberUtils;
 import site.pointman.chatbot.utill.CustomStringUtils;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 
 @Getter
@@ -87,6 +88,23 @@ public class Product extends BaseEntity {
                 .build();
     }
 
+    public ProductDto toDto(){
+        return ProductDto.builder()
+                .id(id)
+                .userKey(member.getUserKey())
+                .memberName(member.getName())
+                .name(name)
+                .price(price)
+                .description(description)
+                .tradingLocation(tradingLocation)
+                .kakaoOpenChatUrl(kakaoOpenChatUrl)
+                .category(category)
+                .imageUrls(productImages.getImageUrls())
+                .status(status)
+                .createDate(getCreateDate())
+                .build();
+    }
+
     public void changeProductImage(ProductImage productImage){
         this.productImages = productImage;
     }
@@ -116,7 +134,7 @@ public class Product extends BaseEntity {
                 .toString();
     }
     public String getFormatCreateDate() {
-        String createDate = getCreateDate();
+        String createDate = getFormatCreateDate();
         return CustomStringUtils.dateFormat(createDate, "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
     }
     public String getFormatPrice(){

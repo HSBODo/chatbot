@@ -15,7 +15,7 @@ public interface ProductChatBotView {
     ChatBotResponse updateProductStatusResultPage(ProductStatus productStatus);
     ChatBotResponse deleteProductResultPage();
     ChatBotResponse addProductReconfirmPage();
-    ChatBotResponse productDetailInfoPage(String userKey, String productId);
+    ChatBotResponse productDetailInfoPage(String userKey, Product product);
     ChatBotResponse ProductListBySearchWordPage(Page<Product> products, String searchWord, int pageNumber);
     ChatBotResponse productListByCategoryPage(Page<Product> products, Category productCategory,int pageNumber);
     ChatBotResponse myProductListByStatusPage(Page<Product> productPage, ProductStatus status, int pageNumber);

@@ -99,12 +99,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse productDetailInfoPage(String userKey, String productId) {
-        Optional<Product> mayBeProduct = productService.getProduct(Long.parseLong(productId));
-
-        if (mayBeProduct.isEmpty()) return chatBotExceptionResponse.createException("상품이 존재하지 않습니다.");
-        Product product = mayBeProduct.get();
-
+    public ChatBotResponse productDetailInfoPage(String userKey, Product product) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         TextCard textCard = new TextCard();
 
