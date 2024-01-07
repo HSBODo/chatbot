@@ -102,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
         if (mayBeOrder.isEmpty()) throw new IllegalArgumentException("주문이 존재하지 않습니다.");
 
         Order order = mayBeOrder.get();
-        if (!order.getStatus().equals(OrderStatus.주문체결)) throw new IllegalStateException("주문 체결상태 주문이 아닙니다.");
+        if (!order.isTrading()) throw new IllegalStateException("주문 체결상태 주문이 아닙니다.");
 
         //카카오페이 결제 취소 및 결제정보 상태변경
         paymentService.kakaoPaymentCancel(orderId);
