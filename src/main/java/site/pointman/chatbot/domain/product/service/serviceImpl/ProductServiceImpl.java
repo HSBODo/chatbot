@@ -97,28 +97,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Optional<Order> getSalesContractProduct(String userKey, Long orderId) {
-        Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId,OrderStatus.주문체결);
-        return mayBeOrder;
-    }
-
-    @Override
-    public Page<Order> getPurchaseProducts(String userKey, int pageNumber) {
-        Sort sort = Sort.by("createDate").descending();
-        Page<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey, OrderStatus.주문취소, PageRequest.of(pageNumber, 10, sort));
-
-        return purchaseOrders;
-    }
-
-    @Override
-    public Optional<Order> getPurchaseProduct(String userKey, Long orderId) {
-
-        Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId);
-
-        return mayBeOrder;
-    }
-
-    @Override
     public List<Product> getProductsAll() {
         List<Product> products = productRepository.findByAll();
 

@@ -1,6 +1,7 @@
 package site.pointman.chatbot.view.kakaochatobotview;
 
 import org.springframework.data.domain.Page;
+import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.constatnt.Category;
 import site.pointman.chatbot.domain.chatbot.response.ChatBotResponse;
@@ -22,9 +23,9 @@ public interface ProductChatBotView {
     ChatBotResponse addProductResultPage();
     ChatBotResponse productCategoryListPage(String requestBlockId);
     ChatBotResponse mySalesContractProductListPage(String userKey, int pageNumber);
-    ChatBotResponse mySalesContractProductOrderDetailInfoPage(String userKey, String orderId);
-    ChatBotResponse myPurchaseProductOrderListPage(String userKey,int pageNumber);
-    ChatBotResponse myPurchaseProductOrderDetailInfoPage(String userKey,String orderId);
+    ChatBotResponse mySalesContractProductOrderDetailInfoPage(Order salesContractProductOrder);
+    ChatBotResponse myPurchaseProductOrderListPage(Page<Order> purchaseProductOrders, int pageNumber);
+    ChatBotResponse myPurchaseProductOrderDetailInfoPage(Order purchaseProductOrder);
     ChatBotResponse specialProductListPage(int pageNumber, int firstNumber);
     ChatBotResponse mainSaleProductListPage(Page<Product> productPage,int currentPage);
 }

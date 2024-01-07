@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import site.pointman.chatbot.domain.order.Order;
+import site.pointman.chatbot.domain.order.service.OrderService;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.domain.product.dto.ProductCondition;
 import site.pointman.chatbot.domain.product.service.ProductService;
 import site.pointman.chatbot.exception.NotFoundMember;
+import site.pointman.chatbot.exception.NotFoundOrder;
 import site.pointman.chatbot.exception.NotFoundProduct;
 import site.pointman.chatbot.handler.annotation.ValidateMember;
 import site.pointman.chatbot.domain.product.constatnt.Category;
@@ -28,6 +31,7 @@ public class ProductController {
 
     private final ProductChatBotView productChatBotView;
     private final ProductService productService;
+    private final OrderService orderService;
     private final ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
 
 
@@ -216,16 +220,26 @@ public class ProductController {
         String userKey = chatBotRequest.getUserKey();
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.myPurchaseProductOrderListPage(userKey,pageNumber);
+        Page<Order> purchaseProductOrders = orderService.getPurchaseProducts(userKey, pageNumber);
+
+        return productChatBotView.myPurchaseProductOrderListPage(purchaseProductOrders,pageNumber);
     }
 
     @ResponseBody
     @PostMapping(value = "GET/purchaseProductProfile" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getPurchaseProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
-        String userKey = chatBotRequest.getUserKey();
-        String orderId = chatBotRequest.getOrderId();
+        try {
+            String userKey = chatBotRequest.getUserKey();
+            Long orderId = Long.parseLong(chatBotRequest.getOrderId());
 
-        return productChatBotView.myPurchaseProductOrderDetailInfoPage(userKey,orderId);
+            Order purchaseProductOrder = orderService.getPurchaseProduct(userKey, orderId);
+
+            return productChatBotView.myPurchaseProductOrderDetailInfoPage(purchaseProductOrder);
+        }catch (NotFoundOrder e) {
+            return chatBotExceptionResponse.createException(e.getMessage());
+        }catch (Exception e) {
+            return chatBotExceptionResponse.createException();
+        }
     }
 
     @ResponseBody
@@ -241,9 +255,11 @@ public class ProductController {
     @PostMapping(value = "GET/contractProduct/profile" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getContractProductProfile(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
-        String orderId = chatBotRequest.getOrderId();
+        Long orderId = Long.parseLong(chatBotRequest.getOrderId());
 
-        return productChatBotView.mySalesContractProductOrderDetailInfoPage(userKey,orderId);
+        Order salesContractProductOrder = orderService.getSalesContractProduct(userKey, orderId);
+
+        return productChatBotView.mySalesContractProductOrderDetailInfoPage(salesContractProductOrder);
     }
 
     @ResponseBody

@@ -3,6 +3,8 @@ package site.pointman.chatbot.domain.order.service.serviceImpl;
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.order.constatnt.OrderMemberConfirmStatus;
 import site.pointman.chatbot.domain.order.constatnt.OrderStatus;
@@ -14,6 +16,7 @@ import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.log.response.Response;
 import site.pointman.chatbot.domain.log.response.constant.ResultCode;
+import site.pointman.chatbot.exception.NotFoundOrder;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.domain.order.service.OrderService;
@@ -182,16 +185,25 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getSalesContractProduct(String userKey, Long orderId) {
-        return null;
+        Order order = orderRepository.findByOrderId(orderId, OrderStatus.주문체결)
+                .orElseThrow(() -> new NotFoundOrder("주문체결된 주문이 존재하지 않습니다."));
+
+        return order;
     }
 
     @Override
     public Page<Order> getPurchaseProducts(String userKey, int pageNumber) {
-        return null;
+        Sort sort = Sort.by("createDate").descending();
+        Page<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey, OrderStatus.주문취소, PageRequest.of(pageNumber, 10, sort));
+
+        return purchaseOrders;
     }
 
     @Override
     public Order getPurchaseProduct(String userKey, Long orderId) {
-        return null;
+        Order order = orderRepository.findByOrderId(orderId,OrderStatus.주문체결)
+                .orElseThrow(() -> new NotFoundOrder("주문체결된 주문이 존재하지 않습니다."));
+
+        return order;
     }
 }

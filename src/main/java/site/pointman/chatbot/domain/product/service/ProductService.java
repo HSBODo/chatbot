@@ -17,11 +17,7 @@ public interface ProductService {
     void deleteProduct(Long productId);
     Page<Product> getProducts(ProductCondition productCondition, int pageNumber);
     Page<Product> getSalesContractProducts(String userKey, int pageNumber);
-    Optional<Order> getSalesContractProduct(String userKey, Long orderId);
-    Page<Order> getPurchaseProducts(String userKey, int pageNumber);
-    Optional<Order> getPurchaseProduct(String userKey, Long orderId);
     List<Product> getProductsAll();
     List<Product> getMemberProducts(String userKey);
     Optional<Product> getProduct(Long productId);
-
 }
