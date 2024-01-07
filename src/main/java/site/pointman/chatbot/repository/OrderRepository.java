@@ -11,7 +11,8 @@ import site.pointman.chatbot.repository.customrepository.OrderCustomRepository;
 
 public interface OrderRepository extends JpaRepository<Order,Long>, OrderCustomRepository {
 
-    @Query("SELECT o FROM Order o WHERE o.buyerMember.userKey =:userKey AND o.status <>:status AND o.isUse=true")
+    @Query(value = "SELECT o FROM Order o JOIN FETCH o.buyerMember JOIN FETCH o.product JOIN FETCH o.paymentInfo WHERE o.buyerMember.userKey =:userKey AND o.status <>:status AND o.isUse=true",
+    countQuery = "SELECT Count(o) FROM Order o WHERE o.buyerMember.userKey =:userKey AND o.status <>:status AND o.isUse=true")
     Page<Order> findByBuyerUserKey(@Param("userKey") String userKey, @Param("status") OrderStatus status, Pageable pageable);
 
 }

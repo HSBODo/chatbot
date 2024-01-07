@@ -18,7 +18,13 @@ public class PaymentCustomRepositoryImpl implements PaymentCustomRepository {
 
     @Override
     public Optional<PaymentInfo> findByPaymentStatus(Long orderId, PaymentStatus status) {
-        return em.createQuery("select p from PaymentInfo p where p.status=:status AND p.orderId=:orderId", PaymentInfo.class)
+        return em.createQuery("select p " +
+                        "from PaymentInfo p " +
+                        "join fetch p.buyerMember " +
+                        "join fetch p.product " +
+                        "where status=:status " +
+                        "AND " +
+                        "p.orderId=:orderId", PaymentInfo.class)
                 .setParameter("status", status)
                 .setParameter("orderId",orderId)
                 .getResultList().stream().findAny();
@@ -26,7 +32,11 @@ public class PaymentCustomRepositoryImpl implements PaymentCustomRepository {
 
     @Override
     public Optional<PaymentInfo> findByOrderId(Long orderId) {
-        return em.createQuery("select p from PaymentInfo p where p.orderId=:orderId", PaymentInfo.class)
+        return em.createQuery("select p " +
+                        "from PaymentInfo p " +
+                        "join fetch p.buyerMember " +
+                        "join fetch p.product " +
+                        "where p.orderId=:orderId", PaymentInfo.class)
                 .setParameter("orderId",orderId)
                 .getResultList().stream().findAny();
     }
