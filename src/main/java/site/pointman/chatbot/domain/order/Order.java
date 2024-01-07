@@ -82,6 +82,13 @@ public class Order extends BaseEntity {
         product.changeStatus(ProductStatus.판매중);
     }
 
+
+    public void orderSuccessConfirm(){
+        this.status = OrderStatus.거래완료;
+        this.product.changeStatus(ProductStatus.판매완료);
+        this.product.changeBuyerMemberUserKey(buyerMember.getUserKey());
+    }
+
     public boolean isConfirm(){
         if (buyerConfirmStatus.equals(OrderMemberConfirmStatus.구매확정) && sellerConfirmStatus.equals(OrderMemberConfirmStatus.판매확정)) return true;
 
@@ -92,12 +99,12 @@ public class Order extends BaseEntity {
         this.trackingNumber = trackingNumber;
     }
 
-    public void changeBuyerConfirmStatus(OrderMemberConfirmStatus buyerConfirmStatus) {
-        this.buyerConfirmStatus = buyerConfirmStatus;
+    public void buyerConfirmStatus() {
+        this.buyerConfirmStatus = OrderMemberConfirmStatus.구매확정;
     }
 
-    public void changeSellerConfirmStatus(OrderMemberConfirmStatus sellerConfirmStatus) {
-        this.sellerConfirmStatus = sellerConfirmStatus;
+    public void sellerConfirmStatus() {
+        this.sellerConfirmStatus = OrderMemberConfirmStatus.판매확정;;
     }
 
     public String viewTackingNumber(){
@@ -146,9 +153,4 @@ public class Order extends BaseEntity {
         return true;
     }
 
-    public void orderSuccessConfirm(){
-        this.status = OrderStatus.거래완료;
-        this.product.changeStatus(ProductStatus.판매완료);
-        this.product.changeBuyerMemberUserKey(buyerMember.getUserKey());
-    }
 }

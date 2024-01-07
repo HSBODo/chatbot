@@ -143,7 +143,7 @@ public class OrderServiceImpl implements OrderService {
         if (mayBeOrder.isEmpty()) throw new NotFoundOrder("체결된 주문이 존재하지 않습니다.");
         Order order = mayBeOrder.get();
 
-        order.changeBuyerConfirmStatus(OrderMemberConfirmStatus.구매확정);
+        order.buyerConfirmStatus();
     }
 
     @Override
@@ -153,7 +153,7 @@ public class OrderServiceImpl implements OrderService {
         if (mayBeOrder.isEmpty()) throw new NotFoundOrder("체결된 주문이 존재하지 않습니다.");
         Order order = mayBeOrder.get();
 
-        order.changeSellerConfirmStatus(OrderMemberConfirmStatus.판매확정);
+        order.sellerConfirmStatus();
         order.orderSuccessConfirm();
     }
 

@@ -18,7 +18,6 @@ public interface OrderService {
     List<Order> getOrders();
     List<Order> getOrdersByStatus(OrderStatus status);
     Optional<Order> getOrder(Long orderId);
-
     Order getSalesContractProduct(String userKey, Long orderId);
     Page<Order> getPurchaseProducts(String userKey, int pageNumber);
     Order getPurchaseProduct(String userKey, Long orderId);
