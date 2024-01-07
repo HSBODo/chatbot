@@ -130,7 +130,7 @@ public class ProductController {
 
         ProductCondition productCondition = ProductCondition.builder()
                 .firstProductStatus(ProductStatus.판매중)
-                .firstProductStatus(ProductStatus.예약)
+                .secondProductStatus(ProductStatus.예약)
                 .build();
 
         Page<Product> products = productService.getProducts(productCondition, pageNumber);

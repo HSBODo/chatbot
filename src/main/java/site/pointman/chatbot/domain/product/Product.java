@@ -131,8 +131,7 @@ public class Product extends BaseEntity {
                 .toString();
     }
     public String getFormatCreateDate() {
-        String createDate = getFormatCreateDate();
-        return CustomStringUtils.dateFormat(createDate, "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
+        return super.getFormatCreateDate();
     }
     public String getKakaoPaymentUrl(String buyerUserKey,String hostUrl){
         StringBuilder paymentUrl = new StringBuilder(hostUrl);
