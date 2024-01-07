@@ -116,9 +116,7 @@ public class MemberServiceImpl implements MemberService {
         List<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey);
 
         for (Order order : purchaseOrders) {
-            if (order.isTrading()){
-                throw new IllegalStateException("구매중인 상품이 존재합니다.");
-            }
+            if (order.isTrading()) throw new IllegalStateException("구매중인 상품이 존재합니다.");
         }
 
         List<Product> products = productRepository.findByUserKey(userKey, isUse);

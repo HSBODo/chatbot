@@ -39,11 +39,6 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     public void saveProduct(Product product) {
         em.persist(product);
     }
-    @Transactional
-    @Override
-    public void saveProductImage(ProductImage productImage) {
-        em.persist(productImage);
-    }
 
     @Override
     public List<Product> findByUserKey(String userKey, boolean isUse) {
