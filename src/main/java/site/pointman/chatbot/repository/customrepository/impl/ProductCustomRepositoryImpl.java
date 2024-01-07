@@ -42,7 +42,14 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     @Override
     public List<Product> findByUserKey(String userKey, boolean isUse) {
-        return em.createQuery("SELECT p FROM Product p WHERE p.member.userKey=:user_Key AND p.isUse=:isUse ORDER BY p.createDate DESC", Product.class)
+        return em.createQuery("SELECT p " +
+                        "FROM Product p " +
+                        "JOIN FETCH p.member " +
+                        "JOIN FETCH p.productImages " +
+                        "WHERE p.member.userKey=:user_Key " +
+                        "AND " +
+                        "p.isUse=:isUse " +
+                        "ORDER BY p.createDate DESC", Product.class)
                 .setParameter("user_Key", userKey)
                 .setParameter("isUse", isUse)
                 .getResultList();
@@ -50,7 +57,13 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     @Override
     public Optional<Product> findByProductId(Long productId, boolean isUse) {
-        return em.createQuery("SELECT p FROM Product p Join Fetch p.productImages WHERE p.id=:id AND p.isUse=:isUse", Product.class)
+        return em.createQuery("SELECT p " +
+                        "FROM Product p " +
+                        "JOIN FETCH p.member " +
+                        "JOIN FETCH p.productImages " +
+                        "WHERE p.id=:id " +
+                        "AND " +
+                        "p.isUse=:isUse", Product.class)
                 .setParameter("id", productId)
                 .setParameter("isUse", isUse)
                 .getResultList()
