@@ -1,4 +1,4 @@
-package site.pointman.chatbot.repository.customrepository;
+package site.pointman.chatbot.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +12,6 @@ import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.domain.product.dto.ProductCondition;
 import site.pointman.chatbot.domain.product.dto.ProductDto;
-import site.pointman.chatbot.repository.MemberRepository;
-import site.pointman.chatbot.repository.ProductRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest
-class ProductCustomRepositoryTest {
+class ProductRepositoryTest {
 
     @Autowired
     ProductRepository productRepository;
