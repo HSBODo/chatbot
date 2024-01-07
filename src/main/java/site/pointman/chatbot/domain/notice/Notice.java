@@ -76,8 +76,8 @@ public class Notice extends BaseEntity {
                 .imageUrl(imageUrl)
                 .buttons(buttons)
                 .status(status)
-                .createDate(getCreateDate())
-                .modificationDate(getLastModifiedDate())
+                .createDate(getFormatCreateDate())
+                .modificationDate(getFormatLastModifiedDate())
                 .build();
     }
 
@@ -116,7 +116,7 @@ public class Notice extends BaseEntity {
                 .append("\n\n")
                 .append(description)
                 .append("\n\n")
-                .append("등록일자: " + CustomStringUtils.dateFormat(getCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd"));
+                .append("등록일자: " + CustomStringUtils.dateFormat(getFormatCreateDate(), "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd"));
         return formatDescription.toString();
     }
 

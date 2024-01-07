@@ -1,27 +1,31 @@
 package site.pointman.chatbot.view.kakaochatobotview;
 
+import org.springframework.data.domain.Page;
+import site.pointman.chatbot.domain.order.Order;
+import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.constatnt.Category;
 import site.pointman.chatbot.domain.chatbot.response.ChatBotResponse;
+import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.domain.product.dto.ProductDto;
 
 import java.util.List;
 
 public interface ProductChatBotView {
 
-    ChatBotResponse updateProductStatusResultPage(String productId, String utterance);
-    ChatBotResponse deleteProductResultPage(String productId, String utterance);
+    ChatBotResponse updateProductStatusResultPage(ProductStatus productStatus);
+    ChatBotResponse deleteProductResultPage();
     ChatBotResponse addProductReconfirmPage();
-    ChatBotResponse productDetailInfoPage(String userKey, String productId);
-    ChatBotResponse ProductListBySearchWordPage(String searchWord, int pageNumber);
-    ChatBotResponse productListByCategoryPage(Category category, int pageNumber);
-    ChatBotResponse myProductListByStatusPage(String userKey, String productStatus, int pageNumber);
+    ChatBotResponse productDetailInfoPage(String userKey, Product product);
+    ChatBotResponse ProductListBySearchWordPage(Page<Product> products, String searchWord, int pageNumber);
+    ChatBotResponse productListByCategoryPage(Page<Product> products, Category productCategory,int pageNumber);
+    ChatBotResponse myProductListByStatusPage(Page<Product> productPage, ProductStatus status, int pageNumber);
     ChatBotResponse addProductInfoPreviewPage(List<String> imageUrls, String category, String productName, String productDescription, String productPrice, String tradingLocation, String kakaoOpenChatUrl);
-    ChatBotResponse addProductResultPage(ProductDto productDto, String userKey);
+    ChatBotResponse addProductResultPage();
     ChatBotResponse productCategoryListPage(String requestBlockId);
     ChatBotResponse mySalesContractProductListPage(String userKey, int pageNumber);
-    ChatBotResponse mySalesContractProductDetailInfoPage(String userKey, String orderId);
-    ChatBotResponse myPurchaseProductListPage(String userKey,int pageNumber);
-    ChatBotResponse myPurchaseProductDetailInfoPage(String userKey,String orderId);
+    ChatBotResponse mySalesContractProductOrderDetailInfoPage(Order salesContractProductOrder);
+    ChatBotResponse myPurchaseProductOrderListPage(Page<Order> purchaseProductOrders, int pageNumber);
+    ChatBotResponse myPurchaseProductOrderDetailInfoPage(Order purchaseProductOrder);
     ChatBotResponse specialProductListPage(int pageNumber, int firstNumber);
-    ChatBotResponse mainSaleProductListPage(int currentPage);
+    ChatBotResponse mainSaleProductListPage(Page<Product> productPage,int currentPage);
 }

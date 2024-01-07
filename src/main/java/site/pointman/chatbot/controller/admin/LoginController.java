@@ -35,7 +35,7 @@ public class LoginController {
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        boolean isAdmin = memberService.isAdmin(login.getName(), login.getUserKey());
+        boolean isAdmin = memberService.isAdmin( login.getUserKey(), login.getName());
         if (!isAdmin) return  new ResponseEntity<>("옳바르지 않은 정보입니다.",headers, HttpStatus.OK);
 
 

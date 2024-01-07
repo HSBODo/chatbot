@@ -30,7 +30,7 @@ public class Order extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member buyerMember;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "product_Id")
     private Product product;
 
@@ -47,7 +47,7 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private PaymentInfo paymentInfo;
 
     @Builder
@@ -110,7 +110,7 @@ public class Order extends BaseEntity {
     }
 
     public String getFormatApproveDate(){
-       return CustomStringUtils.dateFormat(paymentInfo.getCreateDate(),"yyyy-MM-dd hh:mm:ss","yyyy-MM-dd");
+       return paymentInfo.getFormatCreateDate();
     }
 
     public boolean isTrading(){

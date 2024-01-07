@@ -2,6 +2,9 @@ package site.pointman.chatbot.domain.order.service.serviceImpl;
 
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.order.constatnt.OrderMemberConfirmStatus;
 import site.pointman.chatbot.domain.order.constatnt.OrderStatus;
@@ -13,6 +16,7 @@ import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.log.response.Response;
 import site.pointman.chatbot.domain.log.response.constant.ResultCode;
+import site.pointman.chatbot.exception.NotFoundOrder;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.domain.order.service.OrderService;
@@ -71,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     private void addOrderTransactional(Order order, Product product){
         orderRepository.save(order);
-        productRepository.updateStatus(product.getId(), ProductStatus.판매대기, isUse);
+        product.changeStatus(ProductStatus.판매대기);
     }
 
     @Override
@@ -104,8 +108,11 @@ public class OrderServiceImpl implements OrderService {
         PaymentInfo successPaymentInfo = (PaymentInfo) result.getData();
 
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId);
+
         if (mayBeOrder.isEmpty()) throw new IllegalArgumentException("주문이 존재하지 않습니다.");
+
         Order order = mayBeOrder.get();
+        Product product = order.getProduct();
         OrderStatus status = order.getStatus();
         if(!status.equals(OrderStatus.주문체결)) return new Response(ResultCode.EXCEPTION,"주문체결된 주문이 아닙니다.");
 
@@ -119,9 +126,9 @@ public class OrderServiceImpl implements OrderService {
          * 1. 상품(product)은 판매중 상태로 변경
          * 2. 결제정보(paymentInfo)는 결제취소 상태로 변경
          */
-        productRepository.updateStatus(productId, ProductStatus.판매중, isUse);
-        order.changeStatus(OrderStatus.주문취소);
 
+        product.changeStatus(ProductStatus.판매중);
+        order.changeStatus(OrderStatus.주문취소);
         return new Response(ResultCode.OK,"주문번호 "+orderId+"의 주문을 정상적으로 취소하였습니다.",order);
     }
 
@@ -176,5 +183,30 @@ public class OrderServiceImpl implements OrderService {
         order.changeTrackingNumber(trackingNumber);
 
         return new Response(ResultCode.OK,"정상적으로 운송장번호를 변경 하였습니다.",trackingNumber);
+    }
+
+
+    @Override
+    public Order getSalesContractProduct(String userKey, Long orderId) {
+        Order order = orderRepository.findByOrderId(orderId, OrderStatus.주문체결)
+                .orElseThrow(() -> new NotFoundOrder("주문체결된 주문이 존재하지 않습니다."));
+
+        return order;
+    }
+
+    @Override
+    public Page<Order> getPurchaseProducts(String userKey, int pageNumber) {
+        Sort sort = Sort.by("createDate").descending();
+        Page<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey, OrderStatus.주문취소, PageRequest.of(pageNumber, 10, sort));
+
+        return purchaseOrders;
+    }
+
+    @Override
+    public Order getPurchaseProduct(String userKey, Long orderId) {
+        Order order = orderRepository.findByOrderId(orderId,OrderStatus.주문체결)
+                .orElseThrow(() -> new NotFoundOrder("주문체결된 주문이 존재하지 않습니다."));
+
+        return order;
     }
 }

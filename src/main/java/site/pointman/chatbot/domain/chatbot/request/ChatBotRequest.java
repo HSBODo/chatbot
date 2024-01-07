@@ -1,11 +1,13 @@
 package site.pointman.chatbot.domain.chatbot.request;
 
 
+import antlr.StringUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import site.pointman.chatbot.domain.chatbot.request.propery.*;
 import site.pointman.chatbot.domain.member.dto.MemberJoinDto;
+import site.pointman.chatbot.domain.product.constatnt.Category;
 import site.pointman.chatbot.domain.product.dto.ProductDto;
 
 import java.util.List;
@@ -23,13 +25,26 @@ public class ChatBotRequest {
     private List<Context> contexts;
 
     public ProductDto createProductDto(){
+
         return ProductDto.builder()
+                .userKey(getUserKey())
                 .name(getProductName())
                 .price(Long.parseLong(getProductPrice()))
                 .description(getProductDescription())
                 .tradingLocation(getTradingLocation())
                 .kakaoOpenChatUrl(getKakaoOpenChatUrl())
+                .category(getCategory())
+                .imageUrls(getProductImages())
                 .build();
+    }
+
+    public Category getCategory(){
+        if (Objects.nonNull(getContexts().get(0).getParams().get("productCategory").getValue())) {
+            String productCategory =getContexts().get(0).getParams().get("productCategory").getValue();
+
+            return Category.getCategory(productCategory);
+        }
+        return null;
     }
 
     public String getUserKey(){

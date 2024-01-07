@@ -1,6 +1,7 @@
 package site.pointman.chatbot.view.kakaochatobotview.kakaochatbotviewimpl;
 
 import com.mysql.cj.util.StringUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -47,41 +48,28 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProductChatBotViewImpl implements ProductChatBotView {
 
     @Value("${host.url}")
     private String HOST_URL;
+
     private boolean isUse = true;
-    private ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
+    private final ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
 
-    MemberRepository memberRepository;
-    OrderRepository orderRepository;
+    private final MemberRepository memberRepository;
+    private final OrderRepository orderRepository;
 
-    ProductService productService;
-    CrawlingService crawlingService;
-    RedisService redisService;
-
-
-
-    public ProductChatBotViewImpl(MemberRepository memberRepository, OrderRepository orderRepository, ProductService productService, CrawlingService crawlingService, RedisService redisService) {
-        this.memberRepository = memberRepository;
-        this.orderRepository = orderRepository;
-        this.productService = productService;
-        this.crawlingService = crawlingService;
-        this.redisService = redisService;
-    }
+    private final ProductService productService;
+    private final CrawlingService crawlingService;
+    private final RedisService redisService;
 
     @Override
-    public ChatBotResponse updateProductStatusResultPage(String productId, String utterance) {
-        ProductStatus productStatus = ProductStatus.getProductStatus(utterance);
+    public ChatBotResponse updateProductStatusResultPage(ProductStatus productStatus) {
+        ChatBotResponse chatBotResponse = new ChatBotResponse();
         if (productStatus.equals(ProductStatus.예약취소)) productStatus = ProductStatus.판매중;
 
-        Response result = productService.updateProductStatus(Long.parseLong(productId), productStatus);
-        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("상품의 상태변경을 실패하였습니다.");
-
-        ChatBotResponse chatBotResponse = new ChatBotResponse();
-
-        if (utterance.equals(ProductStatus.삭제.name())) {
+        if (productStatus.equals(ProductStatus.삭제.name())) {
             chatBotResponse.addSimpleText("상품을 삭제하였습니다.");
         }else {
             chatBotResponse.addSimpleText("상품을 "+productStatus.getValue()+" 상태로 변경하였습니다.");
@@ -92,11 +80,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse deleteProductResultPage(String productId, String utterance) {
-        if(!ProductStatus.삭제.name().equals(utterance)) return chatBotExceptionResponse.createException("상품 삭제를 실패하였습니다.");
-
-        Response result = productService.deleteProduct(Long.parseLong(productId));
-        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException(result.getMessage());
+    public ChatBotResponse deleteProductResultPage() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("상품을 정상적으로 삭제하였습니다.");
@@ -115,12 +99,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse productDetailInfoPage(String userKey, String productId) {
-        Optional<Product> mayBeProduct = productService.getProduct(Long.parseLong(productId));
-
-        if (mayBeProduct.isEmpty()) return chatBotExceptionResponse.createException("상품이 존재하지 않습니다.");
-        Product product = mayBeProduct.get();
-
+    public ChatBotResponse productDetailInfoPage(String userKey, Product product) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         TextCard textCard = new TextCard();
 
@@ -155,15 +134,13 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse productListByCategoryPage(Category category, int pageNumber) {
-        Page<Product> productsByCategory = productService.getProductsByCategory(category, pageNumber);
-
-        if (productsByCategory.isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
+    public ChatBotResponse productListByCategoryPage(Page<Product> products, Category productCategory,int pageNumber) {
+        if (products.getContent().isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<CommerceCard> carousel = new Carousel<>();
 
-        productsByCategory.getContent().forEach(product -> {
+        products.getContent().forEach(product -> {
             CommerceCard commerceCard = new CommerceCard();
 
             String productName = product.getName();
@@ -193,9 +170,9 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
         chatBotResponse.addCarousel(carousel);
         chatBotResponse.addQuickButton(ButtonName.카테고리.name(), ButtonAction.블럭이동, BlockId.PRODUCT_GET_CATEGORIES.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.메인메뉴.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
-        if (productsByCategory.hasNext()){
+        if (products.hasNext()){
             Button nextButton = new Button(ButtonName.더보기.name(), ButtonAction.블럭이동, BlockId.FIND_PRODUCTS_BY_CATEGORY.getBlockId());
-            nextButton.setExtra(ButtonParamKey.choice,category.getValue());
+            nextButton.setExtra(ButtonParamKey.choice,productCategory.getValue());
             nextButton.setExtra(ButtonParamKey.pageNumber,String.valueOf(++pageNumber));
             chatBotResponse.addQuickButton(nextButton);
         }
@@ -203,17 +180,13 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse ProductListBySearchWordPage(String searchWord, int pageNumber) {
-        Page<Product> productsBySearchWord = productService.getProductsBySearchWord(searchWord, pageNumber);
-
-        if (productsBySearchWord.getContent().isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 존재하지 않습니다.");
-
-
+    public ChatBotResponse ProductListBySearchWordPage(Page<Product> products, String searchWord,int pageNumber) {
+        if (products.getContent().isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 존재하지 않습니다.");
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<CommerceCard> carousel = new Carousel<>();
 
-        productsBySearchWord.getContent().forEach(product -> {
+        products.getContent().forEach(product -> {
             CommerceCard commerceCard = new CommerceCard();
 
             String productName = product.getName();
@@ -243,7 +216,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
         chatBotResponse.addCarousel(carousel);
         chatBotResponse.addQuickButton(ButtonName.상품검색.name(), ButtonAction.블럭이동, BlockId.PRODUCT_SEARCH.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.메인메뉴.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
-        if (productsBySearchWord.hasNext()) {
+        if (products.hasNext()) {
             Button nextButton = new Button(ButtonName.더보기.name(), ButtonAction.블럭이동, BlockId.PRODUCT_SEARCH_NEXT.getBlockId());
             nextButton.setExtra(ButtonParamKey.pageNumber,String.valueOf(++pageNumber));
             nextButton.setExtra(ButtonParamKey.searchWord,searchWord);
@@ -253,14 +226,10 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse myProductListByStatusPage(String userKey, String findStatus, int pageNumber) {
-        ProductStatus status = ProductStatus.getProductStatus(findStatus);
+    public ChatBotResponse myProductListByStatusPage(Page<Product> productPage, ProductStatus status, int pageNumber) {
+        if (productPage.getContent().isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
 
-        Page<Product> memberProductsByStatus = productService.getMemberProductsByStatus(userKey, status, pageNumber);
-
-        if (memberProductsByStatus.getContent().isEmpty()) return chatBotExceptionResponse.createException("등록된 상품이 없습니다.");
-
-        List<Product> products = memberProductsByStatus.getContent();
+        List<Product> products = productPage.getContent();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<CommerceCard> carousel = new Carousel<>();
@@ -295,7 +264,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
         chatBotResponse.addCarousel(carousel);
         chatBotResponse.addQuickButton(ButtonName.이전으로.name(), ButtonAction.블럭이동, BlockId.SALES_HISTORY_PAGE.getBlockId());
         chatBotResponse.addQuickButton(ButtonName.메인메뉴.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId());
-        if (memberProductsByStatus.hasNext()) {
+        if (productPage.hasNext()) {
             Button nextButton = new Button(ButtonName.더보기.name(), ButtonAction.블럭이동, BlockId.CUSTOMER_GET_PRODUCTS.getBlockId());
             nextButton.setExtra(ButtonParamKey.pageNumber,String.valueOf(++pageNumber));
             nextButton.setExtra(ButtonParamKey.productStatus,status.getValue());
@@ -334,10 +303,7 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse addProductResultPage(ProductDto productDto, String userKey) {
-        Response result = productService.addProduct(productDto, userKey);
-        if (result.getCode() != ResultCode.OK.getValue()) return chatBotExceptionResponse.createException("상품등록을 실패하였습니다.");
-
+    public ChatBotResponse addProductResultPage() {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         chatBotResponse.addSimpleText("상품을 정상적으로 등록하였습니다.");
@@ -408,43 +374,38 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse mySalesContractProductDetailInfoPage(String userKey, String orderId) {
-        Optional<Order> mayBeSalesContractProduct = productService.getSalesContractProduct(userKey, Long.parseLong(orderId));
-
-        if (mayBeSalesContractProduct.isEmpty()) return chatBotExceptionResponse.createException("체결된 주문이 없습니다.");
-        Order order = mayBeSalesContractProduct.get();
-
-        Product product = order.getProduct();
+    public ChatBotResponse mySalesContractProductOrderDetailInfoPage(Order salesContractProductOrder) {
+        Product saleProduct = salesContractProductOrder.getProduct();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         TextCard textCard = new TextCard();
 
-        Carousel<BasicCard> carouselImage = createCarouselImage(product.getProductImages().getImageUrls());
+        Carousel<BasicCard> carouselImage = createCarouselImage(saleProduct.getProductImages().getImageUrls());
         chatBotResponse.addCarousel(carouselImage);
 
         StringBuilder productDescription = new StringBuilder();
         productDescription
-                .append(order.getProduct().getProductProfileTypeOfChatBot())
+                .append(salesContractProductOrder.getProduct().getProductProfileTypeOfChatBot())
                 .append("\n\n")
-                .append("주문번호: " + order.getOrderId())
+                .append("주문번호: " + salesContractProductOrder.getOrderId())
                 .append("\n\n")
-                .append("운송장번호: " + order.viewTackingNumber())
+                .append("운송장번호: " + salesContractProductOrder.viewTackingNumber())
                 .append("\n\n")
-                .append("구매자: " + order.getBuyerMember().getName())
+                .append("구매자: " + salesContractProductOrder.getBuyerMember().getName())
                 .append("\n")
-                .append("결제일자: " + order.getFormatApproveDate());
+                .append("결제일자: " + salesContractProductOrder.getFormatApproveDate());
 
-        textCard.setTitle(product.getName());
+        textCard.setTitle(saleProduct.getName());
         textCard.setDescription(productDescription.toString());
 
         chatBotResponse.addTextCard(textCard);
 
-        if (order.getBuyerConfirmStatus().equals(OrderMemberConfirmStatus.구매확정)) {
-            chatBotResponse.addQuickButton(ButtonName.판매확정.name(),ButtonAction.블럭이동,BlockId.SALE_SUCCESS_RECONFIRM.getBlockId(),ButtonParamKey.orderId,String.valueOf(order.getOrderId()));
+        if (salesContractProductOrder.getBuyerConfirmStatus().equals(OrderMemberConfirmStatus.구매확정)) {
+            chatBotResponse.addQuickButton(ButtonName.판매확정.name(),ButtonAction.블럭이동,BlockId.SALE_SUCCESS_RECONFIRM.getBlockId(),ButtonParamKey.orderId,String.valueOf(salesContractProductOrder.getOrderId()));
         }else {
             String buttonName = "운송장번호 등록";
-            if (!StringUtils.isNullOrEmpty(order.getTrackingNumber())) buttonName = "운송장번호 변경";
-            chatBotResponse.addQuickButton(buttonName, ButtonAction.블럭이동, BlockId.ORDER_ADD_TRACKING_NUMBER.getBlockId(), ButtonParamKey.orderId, String.valueOf(order.getOrderId()));
+            if (!StringUtils.isNullOrEmpty(salesContractProductOrder.getTrackingNumber())) buttonName = "운송장번호 변경";
+            chatBotResponse.addQuickButton(buttonName, ButtonAction.블럭이동, BlockId.ORDER_ADD_TRACKING_NUMBER.getBlockId(), ButtonParamKey.orderId, String.valueOf(salesContractProductOrder.getOrderId()));
         }
         chatBotResponse.addQuickButton(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
 
@@ -524,15 +485,13 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
     }
 
     @Override
-    public ChatBotResponse mainSaleProductListPage(int currentPage) {
-        Page<Product> mainProducts = productService.getMainProducts(currentPage);
-
-        if (mainProducts.getContent().isEmpty()) return chatBotExceptionResponse.createException("상품조회를 실패하였습니다.");
+    public ChatBotResponse mainSaleProductListPage(Page<Product> productPage, int currentPage) {
+        if (productPage.getContent().isEmpty()) return chatBotExceptionResponse.createException("상품조회를 실패하였습니다.");
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<CommerceCard> commerceCardCarousel = new Carousel<>();
 
-        mainProducts.getContent().forEach(product -> {
+        productPage.getContent().forEach(product -> {
             CommerceCard commerceCard = new CommerceCard();
 
             String productName = product.getName();
@@ -561,36 +520,35 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
         });
 
         chatBotResponse.addQuickButton(ButtonName.메인메뉴.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
-        if (mainProducts.hasNext()) chatBotResponse.addQuickButton(ButtonName.더보기.name(),ButtonAction.블럭이동,BlockId.PRODUCT_GET_MAIN.getBlockId(),ButtonParamKey.pageNumber,String.valueOf(currentPage+1));
+        if (productPage.hasNext()) chatBotResponse.addQuickButton(ButtonName.더보기.name(),ButtonAction.블럭이동,BlockId.PRODUCT_GET_MAIN.getBlockId(),ButtonParamKey.pageNumber,String.valueOf(currentPage+1));
         chatBotResponse.addCarousel(commerceCardCarousel);
         return chatBotResponse;
     }
 
     @Override
-    public ChatBotResponse myPurchaseProductListPage(String userKey, int pageNumber) {
-        Page<Order> purchaseProducts = productService.getPurchaseProducts(userKey, pageNumber);
+    public ChatBotResponse myPurchaseProductOrderListPage(Page<Order> purchaseProductOrders, int pageNumber) {
 
-        if (purchaseProducts.getContent().isEmpty()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
+        if (purchaseProductOrders.getContent().isEmpty()) return chatBotExceptionResponse.createException("구매내역이 없습니다.");
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         Carousel<CommerceCard> basicCardCarousel = new Carousel<>();
 
-        purchaseProducts.getContent().forEach(order -> {
+        purchaseProductOrders.getContent().forEach(order -> {
             CommerceCard commerceCard = new CommerceCard();
 
-            Product product = order.getProduct();
+            Product purchaseProduct = order.getProduct();
 
             String orderId = String.valueOf(order.getOrderId());
-            String status = product.getStatus().getOppositeValue();
+            String status = purchaseProduct.getStatus().getOppositeValue();
 
-            String title = product.getName();
+            String title = purchaseProduct.getName();
             String description = new StringBuilder()
                     .append("상품상태: "+status)
                     .append("\n")
                     .append("운송장번호: "+order.viewTackingNumber())
                     .toString();
 
-            commerceCard.setThumbnails(product.getProductImages().getImageUrls().get(0),true);
+            commerceCard.setThumbnails(purchaseProduct.getProductImages().getImageUrls().get(0),true);
             commerceCard.setProfile(order.getProduct().getMember().getProfile());
             commerceCard.setPrice(order.getProduct().getPrice().intValue());
             commerceCard.setTitle(title);
@@ -603,20 +561,17 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
         chatBotResponse.addCarousel(basicCardCarousel);
         chatBotResponse.addQuickButton(new Button(ButtonName.이전으로.name(), ButtonAction.블럭이동, BlockId.MY_PAGE.getBlockId()));
         chatBotResponse.addQuickButton(new Button(ButtonName.메인메뉴.name(), ButtonAction.블럭이동, BlockId.MAIN.getBlockId()));
-        if (purchaseProducts.hasNext()) {
+        if (purchaseProductOrders.hasNext()) {
             chatBotResponse.addQuickButton(new Button(ButtonName.더보기.name(), ButtonAction.블럭이동, BlockId.PRODUCT_GET_PURCHASE.getBlockId(),ButtonParamKey.pageNumber,String.valueOf(++pageNumber)));
         }
         return chatBotResponse;
     }
 
     @Override
-    public ChatBotResponse myPurchaseProductDetailInfoPage(String userKey, String orderId) {
-        Optional<Order> mayBePurchaseProduct = productService.getPurchaseProduct(userKey, Long.parseLong(orderId));
+    public ChatBotResponse myPurchaseProductOrderDetailInfoPage(Order purchaseProductOrder) {
 
-        if (mayBePurchaseProduct.isEmpty()) return chatBotExceptionResponse.createException("구매상품이 존재하지 않습니다.");
-        Order order = mayBePurchaseProduct.get();
 
-        Product product = order.getProduct();
+        Product product = purchaseProductOrder.getProduct();
 
         ChatBotResponse chatBotResponse = new ChatBotResponse();
         TextCard textCard = new TextCard();
@@ -626,14 +581,14 @@ public class ProductChatBotViewImpl implements ProductChatBotView {
         chatBotResponse.addCarousel(carouselImage);
 
         textCard.setTitle(product.getName());
-        textCard.setDescription(order.getPurchaseProductProfile());
+        textCard.setDescription(purchaseProductOrder.getPurchaseProductProfile());
 
         chatBotResponse.addTextCard(textCard);
 
-        if(!StringUtils.isNullOrEmpty(order.getTrackingNumber()) &&
-                !order.getStatus().equals(OrderStatus.거래완료) &&
-                !order.getBuyerConfirmStatus().equals(OrderMemberConfirmStatus.구매확정))
-            chatBotResponse.addQuickButton(new Button(ButtonName.구매확정.name(), ButtonAction.블럭이동, BlockId.PURCHASE_SUCCESS_RECONFIRM.getBlockId(), ButtonParamKey.orderId,orderId));
+        if(!StringUtils.isNullOrEmpty(purchaseProductOrder.getTrackingNumber()) &&
+                !purchaseProductOrder.getStatus().equals(OrderStatus.거래완료) &&
+                !purchaseProductOrder.getBuyerConfirmStatus().equals(OrderMemberConfirmStatus.구매확정))
+            chatBotResponse.addQuickButton(new Button(ButtonName.구매확정.name(), ButtonAction.블럭이동, BlockId.PURCHASE_SUCCESS_RECONFIRM.getBlockId(), ButtonParamKey.orderId,String.valueOf(purchaseProductOrder.getOrderId())));
 
         chatBotResponse.addQuickButton(new Button(ButtonName.처음으로.name(),ButtonAction.블럭이동,BlockId.MAIN.getBlockId()));
         return chatBotResponse;
