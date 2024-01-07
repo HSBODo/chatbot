@@ -29,8 +29,7 @@ class NoticeServiceTest {
 
     @Test
     void getNotice() {
-        Optional<Notice> mayBeNotice = noticeService.getNotice(noticeId);
-        Notice notice = mayBeNotice.get();
+        Notice notice = noticeService.getNotice(noticeId);
 
         Assertions.assertThat(notice.getId()).isEqualTo(noticeId);
     }
@@ -45,11 +44,10 @@ class NoticeServiceTest {
                 .description("테스트중")
                 .build();
         //when
-        Response response = noticeService.addNotice(noticeDto);
+        noticeService.addNotice(noticeDto);
 
 
         //then
-        Assertions.assertThat(response.getCode()).isEqualTo(ResultCode.OK);
 
     }
 
@@ -63,9 +61,8 @@ class NoticeServiceTest {
 
     @Test
     void removeNotice() {
-        Response response = noticeService.removeNotice(noticeId);
+       noticeService.removeNotice(noticeId);
 
-        Assertions.assertThat(response.getCode()).isEqualTo(200);
     }
 
     @Test
@@ -75,9 +72,8 @@ class NoticeServiceTest {
                 .description("본문 변경")
                 .build();
 
-        Response response = noticeService.updateNotice(noticeId, noticeDto);
+        noticeService.updateNotice(noticeId, noticeDto);
 
-        Assertions.assertThat(response.getCode()).isEqualTo(ResultCode.OK.getValue());
 
     }
 }

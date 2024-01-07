@@ -5,25 +5,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import site.pointman.chatbot.domain.log.response.constant.ResultCode;
-import site.pointman.chatbot.domain.payment.constant.PaymentStatus;
-import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.domain.payment.constant.PayMethod;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
+import site.pointman.chatbot.domain.payment.constant.PayMethod;
+import site.pointman.chatbot.domain.payment.constant.PaymentStatus;
 import site.pointman.chatbot.domain.payment.kakaopay.*;
+import site.pointman.chatbot.domain.payment.service.PaymentService;
 import site.pointman.chatbot.domain.product.Product;
-import site.pointman.chatbot.domain.log.response.Response;
+import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.exception.NotFoundPaymentInfo;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.domain.payment.service.PaymentService;
 import site.pointman.chatbot.utill.CustomNumberUtils;
 
-import javax.transaction.Transactional;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
@@ -66,6 +65,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public KakaoPaymentReadyResponse kakaoPaymentReady(Long productId, String userKey) throws UnsupportedEncodingException {
         final int quantity = 1;
         final int taxFreeAmount = 0;
@@ -213,6 +213,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PaymentInfo getPaymentReady(Long orderId) {
         PaymentStatus paymentStatus = PaymentStatus.결제준비;
         PaymentInfo paymentReady = paymentRepository.findByPaymentStatus(orderId, paymentStatus)
@@ -220,6 +221,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         return paymentReady;
     }
+
 
     private HttpHeaders getKakaoPayRequestHeaders(){
         HttpHeaders headers = new HttpHeaders();
