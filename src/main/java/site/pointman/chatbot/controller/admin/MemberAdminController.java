@@ -52,7 +52,7 @@ public class MemberAdminController {
 
     @ResponseBody
     @RequestMapping(value = "",method = RequestMethod.GET)
-    public ResponseEntity getMembers(@RequestParam("page") int page) {
+    public ResponseEntity getMembers(@RequestParam(value = "page",defaultValue = "0") int page) {
         HttpHeaders headers = getHeaders();
 
         Page<MemberProfileDto> members = memberService.getMemberProfiles(page);

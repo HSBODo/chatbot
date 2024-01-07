@@ -63,7 +63,6 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Page<MemberProfileDto> getMemberProfiles(int page){
-        page = page-1;
 
         Page<MemberProfileDto> members = memberRepository.findAllMemberProfileDto(PageRequest.of(page,pageSize),isUse);
 
