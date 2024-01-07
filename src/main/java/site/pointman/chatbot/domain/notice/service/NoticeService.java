@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface NoticeService {
-    Response addNotice(NoticeDto noticeDto);
+    void addNotice(NoticeDto noticeDto);
     List<Notice> getNoticeAll();
+    List<NoticeDto> getNoticeDtoAll();
     Page<Notice> getDefaultNotices(int pageNumber);
-    Optional<Notice> getNotice(Long noticeId);
-    Response removeNotice(Long noticeId);
-    Response updateNotice(Long noticeId, NoticeDto noticeDto);
+    Notice getNotice(Long noticeId);
+    NoticeDto getNoticeDto(Long noticeId);
+    void removeNotice(Long noticeId);
+    void updateNotice(Long noticeId, NoticeDto noticeDto);
 }

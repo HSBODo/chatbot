@@ -110,6 +110,8 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public void updateProductStatus(Long productId, ProductStatus updateStatus) {
+        if (updateStatus.equals(ProductStatus.예약취소)) updateStatus = ProductStatus.판매중;
+
         Product product = productRepository.findByProductId(productId, isUse)
                 .orElseThrow(() -> new NotFoundProduct("상품이 존재하지 않습니다."));
 

@@ -31,19 +31,15 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotView {
     }
 
     @Override
-    public ChatBotResponse noticeListPage(int pageNumber) {
-        Page<Notice> mainNotices = noticeService.getDefaultNotices(pageNumber);
-
-
-        if (mainNotices.getContent().isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");
-
-
+    public ChatBotResponse noticeListPage(Page<Notice> mainNoticePage, int pageNumber) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
+
+        if (mainNoticePage.getContent().isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");
 
         ListCard listCard = new ListCard();
         listCard.setHeader("공지사항");
 
-        mainNotices.getContent().forEach(notice -> {
+        mainNoticePage.getContent().forEach(notice -> {
             String title = notice.getTitle();
             String writer = "작성자: " + notice.getMember().getName();
 
@@ -58,7 +54,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotView {
         });
         chatBotResponse.addListCard(listCard);
         chatBotResponse.addQuickButton(ButtonName.메인메뉴.name(), ButtonAction.블럭이동,BlockId.MAIN.getBlockId());
-        if (mainNotices.hasNext()){
+        if (mainNoticePage.hasNext()){
             chatBotResponse.addQuickButton(ButtonName.더보기.name(), ButtonAction.블럭이동,BlockId.FIND_NOTICES.getBlockId(),ButtonParamKey.pageNumber,String.valueOf(++pageNumber));
         }
 
@@ -66,13 +62,7 @@ public class NoticeChatBotResponseServiceImpl implements NoticeChatBotView {
     }
 
     @Override
-    public ChatBotResponse noticeDetailPage(String noticeId) {
-        Optional<Notice> mayBeNotice = noticeService.getNotice(Long.parseLong(noticeId));
-
-        if (mayBeNotice.isEmpty()) return chatBotExceptionResponse.createException("게시글이 존재하지 않습니다.");
-
-        Notice notice = mayBeNotice.get();
-
+    public ChatBotResponse noticeDetailPage(Notice notice) {
         ChatBotResponse chatBotResponse = new ChatBotResponse();
 
         String title = notice.getTitle();

@@ -1,32 +1,34 @@
 package site.pointman.chatbot.domain.payment.service.serviceImpl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import site.pointman.chatbot.domain.log.response.constant.ResultCode;
-import site.pointman.chatbot.domain.payment.constant.PaymentStatus;
-import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
-import site.pointman.chatbot.domain.payment.constant.PayMethod;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
+import site.pointman.chatbot.domain.payment.constant.PayMethod;
+import site.pointman.chatbot.domain.payment.constant.PaymentStatus;
 import site.pointman.chatbot.domain.payment.kakaopay.*;
+import site.pointman.chatbot.domain.payment.service.PaymentService;
 import site.pointman.chatbot.domain.product.Product;
-import site.pointman.chatbot.domain.log.response.Response;
+import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.exception.NotFoundPaymentInfo;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.repository.ProductRepository;
-import site.pointman.chatbot.domain.payment.service.PaymentService;
 import site.pointman.chatbot.utill.CustomNumberUtils;
 
-import javax.transaction.Transactional;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class PaymentServiceImpl implements PaymentService {
@@ -53,19 +55,14 @@ public class PaymentServiceImpl implements PaymentService {
     private final String KAKAO_PAY_APPROVE_API_URL ="https://kapi.kakao.com/v1/payment/approve";
     private final String KAKAO_PAY_CANCEL_API_URL ="https://kapi.kakao.com/v1/payment/cancel";
 
-    RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
 
-    MemberRepository memberRepository;
-    ProductRepository productRepository;
-    PaymentRepository paymentRepository;
-
-    public PaymentServiceImpl(MemberRepository memberRepository, ProductRepository productRepository, PaymentRepository paymentRepository) {
-        this.memberRepository = memberRepository;
-        this.productRepository = productRepository;
-        this.paymentRepository = paymentRepository;
-    }
+    private final MemberRepository memberRepository;
+    private final ProductRepository productRepository;
+    private final PaymentRepository paymentRepository;
 
     @Override
+    @Transactional
     public KakaoPaymentReadyResponse kakaoPaymentReady(Long productId, String userKey) throws UnsupportedEncodingException {
         final int quantity = 1;
         final int taxFreeAmount = 0;
@@ -82,8 +79,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         Long orderId = CustomNumberUtils.createNumberId();
         Member buyerMember = mayBeMember.get();
-
-
 
         KakaoPaymentReadyRequest kakaoPaymentReadyRequest = KakaoPaymentReadyRequest.builder()
                 .cid(CID)
@@ -220,6 +215,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         return paymentReady;
     }
+
 
     private HttpHeaders getKakaoPayRequestHeaders(){
         HttpHeaders headers = new HttpHeaders();

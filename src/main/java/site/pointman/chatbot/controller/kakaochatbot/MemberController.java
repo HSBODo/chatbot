@@ -1,6 +1,7 @@
 package site.pointman.chatbot.controller.kakaochatbot;
 
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,25 +20,19 @@ import site.pointman.chatbot.view.kakaochatobotview.MemberChatBotView;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/kakaochatbot/customer")
 public class MemberController {
 
     private final MemberService memberService;
     private final MemberChatBotView memberChatBotView;
 
-    private final ChatBotExceptionResponse chatBotExceptionResponse;
-
-    public MemberController(MemberService memberService, MemberChatBotView memberChatBotView) {
-        this.memberService = memberService;
-        this.memberChatBotView = memberChatBotView;
-        this.chatBotExceptionResponse = new ChatBotExceptionResponse();
-    }
+    private final ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
 
     /**
      *  카카오 챗봇 특성상 HTTP Request의 HTTP Method가 POST로 고정되어 변경이 불가능하다.
      *  REST API를 구현하기 위해서 URL의 구성을 "자원(Resource)/행위(HTTP Method)"로 구성하였다.
      */
-
 
     @PostMapping(value = "POST/join" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse join(@RequestBody ChatBotRequest chatBotRequest) {

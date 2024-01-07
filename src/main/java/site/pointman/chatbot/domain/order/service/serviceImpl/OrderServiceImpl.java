@@ -7,11 +7,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import site.pointman.chatbot.domain.log.response.Response;
-import site.pointman.chatbot.domain.log.response.constant.ResultCode;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
-import site.pointman.chatbot.domain.order.constatnt.OrderMemberConfirmStatus;
 import site.pointman.chatbot.domain.order.constatnt.OrderStatus;
 import site.pointman.chatbot.domain.order.service.OrderService;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
@@ -75,6 +72,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Order> getOrders() {
         List<Order> orders = orderRepository.findByAll();
 
@@ -82,6 +80,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Order> getOrdersByStatus(OrderStatus status) {
         List<Order> orders = orderRepository.findByOrderStatus(status);
 
@@ -89,6 +88,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Order> getOrder(Long orderId) {
         Optional<Order> mayBeOrder = orderRepository.findByOrderId(orderId);
 
@@ -140,7 +140,7 @@ public class OrderServiceImpl implements OrderService {
         if (mayBeOrder.isEmpty()) throw new NotFoundOrder("체결된 주문이 존재하지 않습니다.");
         Order order = mayBeOrder.get();
 
-        order.changeBuyerConfirmStatus(OrderMemberConfirmStatus.구매확정);
+        order.buyerConfirmStatus();
     }
 
     @Override
@@ -150,7 +150,7 @@ public class OrderServiceImpl implements OrderService {
         if (mayBeOrder.isEmpty()) throw new NotFoundOrder("체결된 주문이 존재하지 않습니다.");
         Order order = mayBeOrder.get();
 
-        order.changeSellerConfirmStatus(OrderMemberConfirmStatus.판매확정);
+        order.sellerConfirmStatus();
         order.orderSuccessConfirm();
     }
 
@@ -167,6 +167,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public Order getSalesContractProduct(String userKey, Long orderId) {
         Order order = orderRepository.findByOrderId(orderId, OrderStatus.주문체결)
                 .orElseThrow(() -> new NotFoundOrder("주문체결된 주문이 존재하지 않습니다."));
@@ -175,6 +176,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<Order> getPurchaseProducts(String userKey, int pageNumber) {
         Sort sort = Sort.by("createDate").descending();
         Page<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey, OrderStatus.주문취소, PageRequest.of(pageNumber, 10, sort));
@@ -183,8 +185,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Order getPurchaseProduct(String userKey, Long orderId) {
-        Order order = orderRepository.findByOrderId(orderId,OrderStatus.주문체결)
+        Order order = orderRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new NotFoundOrder("주문체결된 주문이 존재하지 않습니다."));
 
         return order;
