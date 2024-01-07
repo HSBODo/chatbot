@@ -11,7 +11,7 @@ import java.io.UnsupportedEncodingException;
 
 public interface PaymentService {
     KakaoPaymentReadyResponse kakaoPaymentReady(Long productId, String userKey) throws UnsupportedEncodingException;
-    KakaoPaymentApproveResponse kakaoPaymentApprove(String pgToken, PaymentInfo paymentReadyInfo);
-    KakaoPaymentCancelResponse kakaoPaymentCancel(PaymentInfo successPaymentInfo);
-    Response getPaymentInfoByStatus(Long orderId, PaymentStatus paymentStatus);
+    PaymentInfo kakaoPaymentApprove(String pgToken, PaymentInfo paymentReadyInfo);
+    KakaoPaymentCancelResponse kakaoPaymentCancel(Long orderId);
+    PaymentInfo getPaymentReady(Long orderId);
 }

@@ -105,9 +105,6 @@ public class Product extends BaseEntity {
                 .build();
     }
 
-    public void changeProductImage(ProductImage productImage){
-        this.productImages = productImage;
-    }
     public void changeStatus(ProductStatus productStatus){
         this.status = productStatus;
     }
@@ -136,9 +133,6 @@ public class Product extends BaseEntity {
     public String getFormatCreateDate() {
         String createDate = getFormatCreateDate();
         return CustomStringUtils.dateFormat(createDate, "yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd");
-    }
-    public String getFormatPrice(){
-        return CustomStringUtils.formatPrice(price);
     }
     public String getKakaoPaymentUrl(String buyerUserKey,String hostUrl){
         StringBuilder paymentUrl = new StringBuilder(hostUrl);
