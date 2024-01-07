@@ -13,7 +13,7 @@ import site.pointman.chatbot.domain.log.response.constant.ResultCode;
 import site.pointman.chatbot.domain.member.dto.MemberJoinDto;
 import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.domain.member.service.MemberService;
-import site.pointman.chatbot.exception.NoSuchMember;
+import site.pointman.chatbot.exception.NotFoundMember;
 import site.pointman.chatbot.globalservice.ValidationService;
 
 import java.nio.charset.Charset;
@@ -70,7 +70,7 @@ public class MemberAdminController {
             MemberProfileDto memberProfileDtoByName = memberService.getMemberProfileDtoByName(memberName);
 
             return new ResponseEntity<>(new Response<>(ResultCode.OK,"성공적으로 회원을 조회하였습니다.",memberProfileDtoByName),headers ,HttpStatus.OK);
-        }catch (NoSuchMember e) {
+        }catch (NotFoundMember e) {
             return new ResponseEntity<>(new Response<>(ResultCode.EXCEPTION,"회원 조회를 실패하였습니다",e.getMessage()),headers ,HttpStatus.OK);
         }
     }

@@ -65,10 +65,16 @@ public class ProductAdminController {
     @PatchMapping(value = "{productId}")
     public ResponseEntity updateProductStatus(@PathVariable Long productId, @RequestParam String status){
         HttpHeaders headers = getHeaders();
+        try {
+            ProductStatus productStatus = ProductStatus.getProductStatus(status);
 
-        ProductStatus productStatus = ProductStatus.getProductStatus(status);
-        Response response = productService.updateProductStatus(productId, productStatus);
-        return new ResponseEntity(response,headers, HttpStatus.OK);
+            productService.updateProductStatus(productId, productStatus);
+
+            return new ResponseEntity(new Response<>(ResultCode.OK,"성공적으로 상품의 상태를 변경하였습니다. 상품 = "+ productId,productStatus),headers, HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity(new Response<>(ResultCode.EXCEPTION,"상품 상태변경을 실패하였습니다",e.getMessage()),headers, HttpStatus.OK);
+        }
+
     }
 
     private HttpHeaders getHeaders(){

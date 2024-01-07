@@ -2,24 +2,23 @@ package site.pointman.chatbot.controller.kakaochatbot;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import site.pointman.chatbot.domain.member.dto.MemberJoinDto;
-import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
-import site.pointman.chatbot.exception.NoSuchMember;
-import site.pointman.chatbot.handler.annotation.ValidateMember;
+import org.springframework.web.bind.annotation.RestController;
 import site.pointman.chatbot.domain.chatbot.request.ChatBotRequest;
 import site.pointman.chatbot.domain.chatbot.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.chatbot.response.ChatBotResponse;
+import site.pointman.chatbot.domain.member.dto.MemberJoinDto;
+import site.pointman.chatbot.domain.member.dto.MemberProfileDto;
 import site.pointman.chatbot.domain.member.service.MemberService;
+import site.pointman.chatbot.exception.NotFoundMember;
+import site.pointman.chatbot.handler.annotation.ValidateMember;
 import site.pointman.chatbot.view.kakaochatobotview.MemberChatBotView;
 
 
 @Slf4j
-@Controller
+@RestController
 @RequestMapping(value = "/kakaochatbot/customer")
 public class MemberController {
 
@@ -39,7 +38,7 @@ public class MemberController {
      *  REST API를 구현하기 위해서 URL의 구성을 "자원(Resource)/행위(HTTP Method)"로 구성하였다.
      */
 
-    @ResponseBody
+
     @PostMapping(value = "POST/join" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse join(@RequestBody ChatBotRequest chatBotRequest) {
         try {
@@ -56,7 +55,6 @@ public class MemberController {
     }
 
     @ValidateMember
-    @ResponseBody
     @PostMapping(value = "PATCH/profileImage" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse updateProfileImage(@RequestBody ChatBotRequest chatBotRequest) {
         try {
@@ -72,7 +70,6 @@ public class MemberController {
     }
 
     @ValidateMember
-    @ResponseBody
     @PostMapping(value = "GET/myPage" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getMyPage(@RequestBody ChatBotRequest chatBotRequest) {
 
@@ -80,7 +77,6 @@ public class MemberController {
     }
 
     @ValidateMember
-    @ResponseBody
     @PostMapping(value = "GET/profile" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getProfile(@RequestBody ChatBotRequest chatBotRequest) {
         try {
@@ -89,13 +85,12 @@ public class MemberController {
             MemberProfileDto memberProfileDto = memberService.getMemberProfileDto(userKey);
 
             return memberChatBotView.myProfilePage(memberProfileDto);
-        }catch (NoSuchMember e) {
+        }catch (NotFoundMember e) {
             return chatBotExceptionResponse.createException(e.getMessage());
         }
     }
 
     @ValidateMember
-    @ResponseBody
     @PostMapping(value = "GET/salesCategory" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getSalesHistory(@RequestBody ChatBotRequest chatBotRequest) {
 
@@ -103,7 +98,6 @@ public class MemberController {
     }
 
     @ValidateMember
-    @ResponseBody
     @PostMapping(value = "PATCH/phoneNumber" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse updatePhoneNumber(@RequestBody ChatBotRequest chatBotRequest) {
         try {
@@ -113,13 +107,12 @@ public class MemberController {
             memberService.updateMemberPhoneNumber(userKey,updatePhoneNumber);
 
             return memberChatBotView.updateMemberPhoneNumberResultPage();
-        }catch (NoSuchMember e) {
+        }catch (NotFoundMember e) {
            return chatBotExceptionResponse.createException(e.getMessage());
         }
     }
 
     @ValidateMember
-    @ResponseBody
     @PostMapping(value = "DELETE" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse withdrawalCustomer(@RequestBody ChatBotRequest chatBotRequest) {
         try {

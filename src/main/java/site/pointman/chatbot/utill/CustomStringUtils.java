@@ -37,10 +37,10 @@ public class CustomStringUtils {
         return formatDate;
     }
 
-    public static String createImgFileName(String userKey, String productName){
+    public static String createImgFileName(String firstValue, String secondValue){
         String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String currentTimeStamp = String.valueOf(System.currentTimeMillis());
-        String imgFileName = userKey+"_"+productName+"_"+currentDate+"_"+currentTimeStamp;
+        String imgFileName = firstValue+"_"+secondValue+"_"+currentDate+"_"+currentTimeStamp;
         return imgFileName;
     }
 

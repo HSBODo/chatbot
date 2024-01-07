@@ -29,4 +29,8 @@ public class ProductImage extends BaseEntity {
     public ProductImage(List<String> imageUrls) {
         this.imageUrls = imageUrls;
     }
+
+    public void delete() {
+        super.delete();
+    }
 }

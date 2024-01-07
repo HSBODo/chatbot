@@ -16,7 +16,7 @@ import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.dto.ProductImageDto;
 import site.pointman.chatbot.exception.DuplicationMember;
-import site.pointman.chatbot.exception.NoSuchMember;
+import site.pointman.chatbot.exception.NotFoundMember;
 import site.pointman.chatbot.globalservice.S3FileService;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
@@ -73,7 +73,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberProfileDto getMemberProfileDto(String userKey) {
         MemberProfileDto memberProfileDto = memberRepository.findMemberProfileDtoByUserKey(userKey, isUse)
-                .orElseThrow(() -> new NoSuchMember("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundMember("회원이 존재하지 않습니다."));
 
         return memberProfileDto;
     }
@@ -81,7 +81,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberProfileDto getMemberProfileDtoByName(String name) {
         MemberProfileDto memberProfileDto = memberRepository.findMemberProfileDtoByName(name, isUse)
-                .orElseThrow(() -> new NoSuchMember("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundMember("회원이 존재하지 않습니다."));
 
         return memberProfileDto;
     }
@@ -90,7 +90,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void updateMemberProfile(String name, MemberProfileDto memberProfileDto) {
         Member updateMember = memberRepository.findByName(name, isUse)
-                .orElseThrow(() -> new NoSuchMember("정보를 수정할 회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundMember("정보를 수정할 회원이 존재하지 않습니다."));
 
         //이름 변경
         if (StringUtils.hasText(memberProfileDto.getName())) updateMember.changeName(memberProfileDto.getName());
@@ -104,7 +104,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void updateMemberPhoneNumber(String userKey, String updatePhoneNumber) {
         Member member = memberRepository.findByUserKey(userKey, isUse)
-                .orElseThrow(() -> new NoSuchMember("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundMember("회원이 존재하지 않습니다."));
 
         member.changePhoneNumber(updatePhoneNumber);
     }
@@ -127,12 +127,13 @@ public class MemberServiceImpl implements MemberService {
             if (product.isTrading()) throw new IllegalStateException("거래가 체결된 상품이 존재합니다.");
         }
 
-        Member removeMember = memberRepository.findByUserKey(userKey, isUse).orElseThrow(() -> new NoSuchMember("회원이 존재하지 않습니다."));
+        Member removeMember = memberRepository.findByUserKey(userKey, isUse).orElseThrow(() -> new NotFoundMember("회원이 존재하지 않습니다."));
         //회원 isUse = false
         removeMember.delete();
 
         for (Product product : products) {
             //상품 isUse = false
+            //상품이미지 isUse = false
             product.deleteProduct();
         }
     }
@@ -141,7 +142,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void updateMemberProfileImage(String userKey, String profileImageUrl) {
         Member member = memberRepository.findByUserKey(userKey,isUse)
-                .orElseThrow(() -> new NoSuchMember("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundMember("회원이 존재하지 않습니다."));
 
         List<String> uploadImages = new ArrayList<>();
         uploadImages.add(profileImageUrl);

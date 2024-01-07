@@ -23,12 +23,12 @@ public class S3FileService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public ProductImageDto uploadImages(List<String> imgUrlList, String userKey, String name, String dir){
+    public ProductImageDto uploadImages(List<String> imgUrlList, String firstValue, String secondValue, String dir){
         final String EXT = ".jpg";
 
         ProductImageDto productImageDto = new ProductImageDto();
         imgUrlList.forEach(imgUrl -> {
-            final String fileName = CustomStringUtils.createImgFileName(userKey,name);
+            final String fileName = CustomStringUtils.createImgFileName(firstValue,secondValue);
 
             UrlResourceDownloader urlResourceDownloader = new UrlResourceDownloader( dir+"/"+fileName+EXT);
             urlResourceDownloader.download(imgUrl);

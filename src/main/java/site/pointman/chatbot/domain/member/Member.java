@@ -71,4 +71,7 @@ public class Member extends BaseEntity {
     public void changeMemberProfileImage(String profileImage){
         this.profile.changeProfileImage(profileImage);
     }
+    public void delete(){
+        super.delete();
+    }
 }

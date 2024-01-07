@@ -2,6 +2,7 @@ package site.pointman.chatbot.domain.order.service.serviceImpl;
 
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import site.pointman.chatbot.domain.order.constatnt.OrderMemberConfirmStatus;
 import site.pointman.chatbot.domain.order.constatnt.OrderStatus;
@@ -176,5 +177,21 @@ public class OrderServiceImpl implements OrderService {
         order.changeTrackingNumber(trackingNumber);
 
         return new Response(ResultCode.OK,"정상적으로 운송장번호를 변경 하였습니다.",trackingNumber);
+    }
+
+
+    @Override
+    public Order getSalesContractProduct(String userKey, Long orderId) {
+        return null;
+    }
+
+    @Override
+    public Page<Order> getPurchaseProducts(String userKey, int pageNumber) {
+        return null;
+    }
+
+    @Override
+    public Order getPurchaseProduct(String userKey, Long orderId) {
+        return null;
     }
 }

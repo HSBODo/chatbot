@@ -44,8 +44,7 @@ public class BaseEntity {
     public boolean getIsUse() {
         return isUse;
     }
-
-    public void delete(){
+    protected void delete(){
         this.isUse = false;
     }
 }

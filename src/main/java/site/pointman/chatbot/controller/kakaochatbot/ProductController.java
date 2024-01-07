@@ -1,37 +1,35 @@
 package site.pointman.chatbot.controller.kakaochatbot;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
+import site.pointman.chatbot.domain.product.Product;
+import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
+import site.pointman.chatbot.domain.product.dto.ProductCondition;
+import site.pointman.chatbot.domain.product.service.ProductService;
+import site.pointman.chatbot.exception.NotFoundMember;
+import site.pointman.chatbot.exception.NotFoundProduct;
 import site.pointman.chatbot.handler.annotation.ValidateMember;
 import site.pointman.chatbot.domain.product.constatnt.Category;
 import site.pointman.chatbot.domain.chatbot.request.ChatBotRequest;
 import site.pointman.chatbot.domain.chatbot.response.ChatBotExceptionResponse;
 import site.pointman.chatbot.domain.chatbot.response.ChatBotResponse;
 import site.pointman.chatbot.domain.product.dto.ProductDto;
-import site.pointman.chatbot.domain.member.service.MemberService;
 import site.pointman.chatbot.view.kakaochatobotview.ProductChatBotView;
 
 import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
 @RequestMapping(value = "/kakaochatbot/product")
+@RequiredArgsConstructor
 public class ProductController {
 
+    private final ProductChatBotView productChatBotView;
+    private final ProductService productService;
+    private final ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
 
-    ProductChatBotView productChatBotView;
-    MemberService memberService;
-
-    ChatBotExceptionResponse chatBotExceptionResponse = new ChatBotExceptionResponse();
-
-    public ProductController(ProductChatBotView productChatBotView, MemberService memberService) {
-        this.productChatBotView = productChatBotView;
-        this.memberService = memberService;
-    }
 
     /**
      *  카카오 챗봇 특성상 HTTP Request의 HTTP Method가 POST로 고정되어 변경이 불가능하다.
@@ -75,34 +73,50 @@ public class ProductController {
         Category category = Category.getCategory(chatBotRequest.getChoiceParam());
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.productListByCategoryPage(category,pageNumber);
+        ProductCondition productCondition = ProductCondition.builder()
+                .productCategory(category)
+                .build();
+
+        Page<Product> products = productService.getProducts(productCondition, pageNumber);
+
+        return productChatBotView.productListByCategoryPage(products,category,pageNumber);
     }
 
     @ValidateMember
     @ResponseBody
     @PostMapping(value = "POST" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse add(@RequestBody ChatBotRequest chatBotRequest){
-        String userKey = chatBotRequest.getUserKey();
-        List<String> imageUrls = chatBotRequest.getProductImages();
-        String productCategory = chatBotRequest.getContexts().get(0).getParams().get("productCategory").getValue();
-        ProductDto productDto = chatBotRequest.createProductDto();
-        Category category = Category.getCategory(productCategory);
-        productDto.setCategory(category);
-        productDto.setImageUrls(imageUrls);
-        return productChatBotView.addProductResultPage(
-                productDto,
-                userKey);
-    }
+        try {
+            ProductDto productDto = chatBotRequest.createProductDto();
+
+            productService.addProduct(productDto);
+
+            return productChatBotView.addProductResultPage();
+        }catch (NotFoundMember e) {
+            return chatBotExceptionResponse.createException(e.getMessage());
+        }catch (Exception e) {
+            return chatBotExceptionResponse.createException();
+        }
+     }
 
     @ValidateMember
     @ResponseBody
     @PostMapping(value = "GET/myProductsByStatus" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse getMyProducts(@RequestBody ChatBotRequest chatBotRequest) {
         String userKey = chatBotRequest.getUserKey();
-        String productStatus = chatBotRequest.getProductStatus();
+        String searchProductStatus = chatBotRequest.getProductStatus();
+        ProductStatus status = ProductStatus.getProductStatus(searchProductStatus);
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.myProductListByStatusPage(userKey,productStatus,pageNumber);
+
+        ProductCondition productCondition = ProductCondition.builder()
+                .userKey(userKey)
+                .firstProductStatus(status)
+                .build();
+
+        Page<Product> products = productService.getProducts(productCondition, pageNumber);
+
+        return productChatBotView.myProductListByStatusPage(products,status,pageNumber);
     }
 
     @ResponseBody
@@ -110,7 +124,14 @@ public class ProductController {
     public ChatBotResponse getMainProducts(@RequestBody ChatBotRequest chatBotRequest) {
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.mainSaleProductListPage(pageNumber);
+        ProductCondition productCondition = ProductCondition.builder()
+                .firstProductStatus(ProductStatus.판매중)
+                .firstProductStatus(ProductStatus.예약)
+                .build();
+
+        Page<Product> products = productService.getProducts(productCondition, pageNumber);
+
+        return productChatBotView.mainSaleProductListPage(products,pageNumber);
     }
 
     @ValidateMember
@@ -127,22 +148,35 @@ public class ProductController {
     @ResponseBody
     @PostMapping(value = "PATCH/status" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse updateProductStatus(@RequestBody ChatBotRequest chatBotRequest) {
-        String userKey = chatBotRequest.getUserKey();
-        String productId = chatBotRequest.getProductId();
-        String utterance = chatBotRequest.getUtterance();
+        try {
+            Long productId = Long.parseLong(chatBotRequest.getProductId());
+            String utterance = chatBotRequest.getUtterance();
+            ProductStatus updateProductStatus = ProductStatus.getProductStatus(utterance);
 
-        return productChatBotView.updateProductStatusResultPage(productId,utterance);
+            productService.updateProductStatus(productId, updateProductStatus);
+
+            return productChatBotView.updateProductStatusResultPage(updateProductStatus);
+        }catch (NotFoundProduct e) {
+            return chatBotExceptionResponse.createException(e.getMessage());
+        }catch (Exception e) {
+            return chatBotExceptionResponse.createException();
+        }
     }
 
     @ValidateMember
-    @ResponseBody
     @PostMapping(value = "DELETE" , headers = {"Accept=application/json; UTF-8"})
     public ChatBotResponse delete(@RequestBody ChatBotRequest chatBotRequest) {
-        String userKey = chatBotRequest.getUserKey();
-        String productId = chatBotRequest.getProductId();
-        String utterance = chatBotRequest.getUtterance();
+        try {
+            Long productId = Long.parseLong(chatBotRequest.getProductId());
 
-        return productChatBotView.deleteProductResultPage(productId,utterance);
+            productService.deleteProduct(productId);
+
+            return productChatBotView.deleteProductResultPage();
+        }catch (NotFoundProduct e) {
+            return chatBotExceptionResponse.createException(e.getMessage());
+        }catch (Exception e) {
+            return chatBotExceptionResponse.createException();
+        }
     }
 
     @ResponseBody
@@ -151,7 +185,13 @@ public class ProductController {
         String searchWord = chatBotRequest.getSearchWord();
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.ProductListBySearchWordPage(searchWord,pageNumber);
+        ProductCondition productCondition = ProductCondition.builder()
+                .searchWord(searchWord)
+                .build();
+
+        Page<Product> products = productService.getProducts(productCondition, pageNumber);
+
+        return productChatBotView.ProductListBySearchWordPage(products,searchWord,pageNumber);
     }
 
     @ResponseBody
@@ -160,7 +200,14 @@ public class ProductController {
         String searchWord = chatBotRequest.getSearchWord();
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.ProductListBySearchWordPage(searchWord,pageNumber);
+
+        ProductCondition productCondition = ProductCondition.builder()
+                .searchWord(searchWord)
+                .build();
+
+        Page<Product> products = productService.getProducts(productCondition, pageNumber);
+
+        return productChatBotView.ProductListBySearchWordPage(products,searchWord,pageNumber);
     }
 
     @ResponseBody
@@ -169,7 +216,7 @@ public class ProductController {
         String userKey = chatBotRequest.getUserKey();
         int pageNumber = chatBotRequest.getPageNumber();
 
-        return productChatBotView.myPurchaseProductListPage(userKey,pageNumber);
+        return productChatBotView.myPurchaseProductOrderListPage(userKey,pageNumber);
     }
 
     @ResponseBody
@@ -178,7 +225,7 @@ public class ProductController {
         String userKey = chatBotRequest.getUserKey();
         String orderId = chatBotRequest.getOrderId();
 
-        return productChatBotView.myPurchaseProductDetailInfoPage(userKey,orderId);
+        return productChatBotView.myPurchaseProductOrderDetailInfoPage(userKey,orderId);
     }
 
     @ResponseBody
@@ -196,7 +243,7 @@ public class ProductController {
         String userKey = chatBotRequest.getUserKey();
         String orderId = chatBotRequest.getOrderId();
 
-        return productChatBotView.mySalesContractProductDetailInfoPage(userKey,orderId);
+        return productChatBotView.mySalesContractProductOrderDetailInfoPage(userKey,orderId);
     }
 
     @ResponseBody

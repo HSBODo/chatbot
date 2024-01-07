@@ -1,99 +1,73 @@
 package site.pointman.chatbot.domain.product.service.serviceImpl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import site.pointman.chatbot.domain.log.response.constant.ResultCode;
+import org.springframework.transaction.annotation.Transactional;
+import site.pointman.chatbot.domain.product.ProductImage;
 import site.pointman.chatbot.domain.product.constatnt.Category;
 import site.pointman.chatbot.domain.order.constatnt.OrderStatus;
 import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.order.Order;
 import site.pointman.chatbot.domain.product.Product;
-import site.pointman.chatbot.domain.log.response.Response;
 import site.pointman.chatbot.domain.product.dto.ProductDto;
 import site.pointman.chatbot.domain.product.dto.ProductImageDto;
+import site.pointman.chatbot.domain.product.dto.ProductCondition;
+import site.pointman.chatbot.exception.NotFoundMember;
+import site.pointman.chatbot.exception.NotFoundProduct;
 import site.pointman.chatbot.repository.MemberRepository;
 import site.pointman.chatbot.repository.OrderRepository;
 import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.domain.product.service.ProductService;
 import site.pointman.chatbot.globalservice.S3FileService;
-import site.pointman.chatbot.utill.CustomNumberUtils;
 
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
+@Transactional(readOnly = true)
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     @Value("${host.url}")
     private String HOST_URL;
-    private boolean isUse = true;
 
-    S3FileService s3FileService;
+    private final boolean isUse = true;
+    private final int size = 10;
 
-    ProductRepository productRepository;
-    MemberRepository memberRepository;
-    OrderRepository orderRepository;
+    private final S3FileService s3FileService;
 
-    public ProductServiceImpl(S3FileService s3FileService, ProductRepository productRepository, MemberRepository memberRepository, OrderRepository orderRepository) {
-        this.s3FileService = s3FileService;
-        this.productRepository = productRepository;
-        this.memberRepository = memberRepository;
-        this.orderRepository = orderRepository;
+    private final ProductRepository productRepository;
+    private final MemberRepository memberRepository;
+    private final OrderRepository orderRepository;
+
+    @Transactional
+    @Override
+    public void addProduct(ProductDto productDto) {
+        Member member = memberRepository.findByUserKey(productDto.getUserKey(),isUse)
+                .orElseThrow(() -> new NotFoundMember("회원이 존재하지 않습니다."));
+
+        List<String> imageUrls = productDto.getImageUrls();
+        ProductImageDto productImageDto = s3FileService.uploadImages(imageUrls, productDto.getUserKey(),productDto.getName(),"image");
+        ProductImage productImage = productImageDto.toEntity();
+
+        Product product = Product.createProduct(productDto,member,productImage);
+
+        productRepository.saveProduct(product);
     }
 
     @Override
-    public Response addProduct(ProductDto productDto, String userKey) {
-        try {
-            Long productId = CustomNumberUtils.createNumberId();
+    public Page<Product> getProducts(ProductCondition productCondition, int pageNumber) {
+        Page<Product> Products = productRepository.findAll(productCondition, PageRequest.of(pageNumber, size));
 
-
-            Member member = memberRepository.findByUserKey(userKey,isUse).get();
-            String productName = productDto.getName();
-
-            productDto.setStatus(ProductStatus.판매중);
-            productDto.setMember(member);
-            productDto.setId(productId);
-            List<String> imageUrls = productDto.getImageUrls();
-
-            ProductImageDto productImageDto = s3FileService.uploadImages(imageUrls, userKey,productName,"image");
-
-            productRepository.insertProduct(productDto,productImageDto);
-
-            return new Response(ResultCode.OK,"성공적으로 상품을 등록하였습니다.");
-        }catch (Exception e){
-            return  new Response(ResultCode.FAIL,"상품등록을 실패하였습니다.");
-        }
+        return Products;
     }
 
-    @Override
-    public Page<Product> getProductsByCategory(Category category, int pageNumber) {
-        Sort sort = Sort.by("createDate").descending();
-
-        Page<Product> products = productRepository.findByCategory(isUse,category, ProductStatus.판매중, ProductStatus.예약, PageRequest.of(pageNumber, 10, sort));
-
-        return products;
-    }
-
-    @Override
-    public Page<Product> getMemberProductsByStatus(String userKey, ProductStatus productStatus, int pageNumber) {
-        Sort sort = Sort.by("createDate").descending();
-        Page<Product> products = productRepository.findByStatusAndUserKey(isUse,productStatus, userKey, PageRequest.of(pageNumber, 10, sort));
-
-        return products;
-    }
-
-    @Override
-    public Page<Product> getMainProducts(int pageNumber) {
-        Sort sort = Sort.by("createDate").descending();
-        Page<Product> mainProducts = productRepository.findMain(isUse,ProductStatus.판매중, ProductStatus.예약, PageRequest.of(pageNumber, 10, sort));
-
-        return mainProducts;
-    }
 
     @Override
     public Optional<Product> getProduct(Long productId) {
@@ -103,32 +77,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Response deleteProduct(Long productId) {
-        try {
-            Optional<Product> mayBeProduct = productRepository.findByProductId(productId,isUse);
-            if(mayBeProduct.isEmpty()) return new Response(ResultCode.EXCEPTION,"상품이 존재하지 않습니다.");
+    public void deleteProduct(Long productId) {
+        Product product = productRepository.findByProductId(productId, isUse)
+                .orElseThrow(() -> new NotFoundProduct("상품이 존재하지 않습니다."));
 
-            productRepository.deleteProduct(productId,isUse);
-            return new Response(ResultCode.OK,"상품을 정상적으로 삭제하였습니다.");
-
-        }catch (Exception e){
-            return new Response(ResultCode.FAIL,"상품 삭제를 실패하였습니다.");
-        }
+        product.deleteProduct();
     }
-
-    @Override
-    public Page<Product> getProductsBySearchWord(String searchWord, int pageNumber) {
-
-        Sort sort = Sort.by("createDate").descending();
-        Page<Product> products = productRepository.findBySearchWord(isUse,searchWord, ProductStatus.판매중, ProductStatus.예약,PageRequest.of(pageNumber,10,sort));
-
-        return products;
-    }
-
     @Override
     public Page<Product> getSalesContractProducts(String userKey, int pageNumber) {
-        Sort sort = Sort.by("createDate").descending();
-        Page<Product> contractProducts = productRepository.findByStatusAndUserKey(isUse,ProductStatus.판매대기, userKey, PageRequest.of(pageNumber, 10, sort));
+
+        ProductCondition productCondition = ProductCondition.builder()
+                .userKey(userKey)
+                .firstProductStatus(ProductStatus.판매대기)
+                .build();
+
+        Page<Product> contractProducts = getProducts(productCondition ,pageNumber);
 
         return contractProducts;
     }
@@ -169,17 +132,12 @@ public class ProductServiceImpl implements ProductService {
         return products;
     }
 
+    @Transactional
     @Override
-    public Response updateProductStatus(Long productId, ProductStatus status) {
-        try {
-            Optional<Product> mayBeProduct = productRepository.findByProductId(productId,isUse);
-            if(mayBeProduct.isEmpty()) return new Response(ResultCode.EXCEPTION ,"상품이 존재하지 않습니다.");
+    public void updateProductStatus(Long productId, ProductStatus updateStatus) {
+        Product product = productRepository.findByProductId(productId, isUse)
+                .orElseThrow(() -> new NotFoundProduct("상품이 존재하지 않습니다."));
 
-            productRepository.updateStatus(productId,status,isUse);
-
-            return new Response(ResultCode.OK,"상품 "+productId+"를 "+status+"상태로 변경하였습니다.");
-        }catch (Exception e){
-            return new Response(ResultCode.FAIL ,"상품 상태변경을 실패하였습니다.");
-        }
+        product.changeStatus(updateStatus);
     }
 }

@@ -9,6 +9,8 @@ import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
 import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.product.converter.CategoryEnumConverter;
+import site.pointman.chatbot.domain.product.dto.ProductDto;
+import site.pointman.chatbot.utill.CustomNumberUtils;
 import site.pointman.chatbot.utill.CustomStringUtils;
 
 import javax.persistence.*;
@@ -55,7 +57,7 @@ public class Product extends BaseEntity {
     private ProductImage productImages;
 
     @Builder
-    public Product(Long id, Member member, String buyerUserKey, String reservation, String name, Long price, String description, String tradingLocation, String kakaoOpenChatUrl, Category category, ProductStatus status) {
+    public Product(Long id, Member member, String buyerUserKey, String reservation, String name, Long price, String description, String tradingLocation, String kakaoOpenChatUrl, Category category, ProductStatus status, ProductImage productImage) {
         this.id = id;
         this.member = member;
         this.buyerUserKey = buyerUserKey;
@@ -67,6 +69,22 @@ public class Product extends BaseEntity {
         this.kakaoOpenChatUrl = kakaoOpenChatUrl;
         this.category = category;
         this.status = status;
+        this.productImages = productImage;
+    }
+    public static Product createProduct(ProductDto productDto,Member member,ProductImage productImage) {
+        final Long productId = CustomNumberUtils.createNumberId();
+        return Product.builder()
+                .id(productId)
+                .member(member)
+                .name(productDto.getName())
+                .price(productDto.getPrice())
+                .description(productDto.getDescription())
+                .tradingLocation(productDto.getTradingLocation())
+                .kakaoOpenChatUrl(productDto.getKakaoOpenChatUrl())
+                .category(productDto.getCategory())
+                .status(ProductStatus.판매중)
+                .productImage(productImage)
+                .build();
     }
 
     public void changeProductImage(ProductImage productImage){
@@ -117,7 +135,6 @@ public class Product extends BaseEntity {
         if (status.equals(ProductStatus.판매대기)) return true;
         return false;
     }
-
     public void deleteProduct(){
         super.delete();
         productImages.delete();
