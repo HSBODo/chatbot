@@ -32,13 +32,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void addOrder(Long orderId, String pgToken) {
-        //결제시도
+        //결제 승인
         PaymentInfo approvePaymentInfo = attemptPayment(orderId, pgToken);
 
         try {
             //주문 정보 저장
             saveOrder(approvePaymentInfo);
-
         }catch (Exception e) {
             //주문저장 실패시 결제 취소 로직
             paymentService.kakaoPaymentCancel(approvePaymentInfo.getOrderId());
