@@ -1,4 +1,4 @@
-package site.pointman.chatbot.domain.payment.kakaopay;
+package site.pointman.chatbot.domain.payment.kakaopay.response;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

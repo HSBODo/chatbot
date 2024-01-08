@@ -8,6 +8,7 @@ import site.pointman.chatbot.domain.BaseEntity;
 import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.payment.constant.PaymentStatus;
 import site.pointman.chatbot.domain.payment.constant.PayMethod;
+import site.pointman.chatbot.domain.payment.kakaopay.request.KakaoPaymentCancelRequest;
 import site.pointman.chatbot.domain.product.Product;
 
 import javax.persistence.*;
@@ -80,6 +81,21 @@ public class PaymentInfo extends BaseEntity {
         this.amountInfo = amountInfo;
     }
 
+    public static PaymentInfo createPaymentReady(Long orderId, String cid, String tid, Member buyerMember, Product product,int taxFreeAmount, int vatAmount, int quantity){
+        final PaymentStatus paymentStatus = PaymentStatus.결제준비;
+        return PaymentInfo.builder()
+                .orderId(orderId)
+                .cid(cid)
+                .tid(tid)
+                .buyerMember(buyerMember)
+                .product(product)
+                .taxFreeAmount(taxFreeAmount)
+                .vatAmount(vatAmount)
+                .quantity(quantity)
+                .status(paymentStatus)
+                .build();
+    }
+
     public void successPayment(String aid, String approvedAt, PayMethod paymentMethodType, CardInfo cardInfo, Amount amountInfo){
         this.status = PaymentStatus.결제완료;
         this.aid = aid;
@@ -90,10 +106,21 @@ public class PaymentInfo extends BaseEntity {
 
     }
 
-    public void changeStatus(PaymentStatus status){
-        this.status = status;
+    public KakaoPaymentCancelRequest getKakaoPaymentCancelRequest () {
+        return new KakaoPaymentCancelRequest(
+                cid,
+                tid,
+                product.getPrice().intValue(),
+                taxFreeAmount,
+                vatAmount,
+                product.getPrice().intValue()
+        );
     }
-    public void changeCancelAt(String cancelAt){
-        this.canceledAt = cancelAt;
+
+    public void cancelPayment(String canceledAt) {
+        this.status = PaymentStatus.결제취소;
+        this.canceledAt = canceledAt;
     }
+
+
 }

@@ -113,18 +113,18 @@ public class MemberServiceImpl implements MemberService {
     public void deleteMember(String userKey) {
 
         List<Order> purchaseOrders = orderRepository.findByBuyerUserKey(userKey);
-
-        for (Order order : purchaseOrders) {
+        purchaseOrders.stream().forEach(order -> {
             if (order.isTrading()) throw new IllegalStateException("구매중인 상품이 존재합니다.");
-        }
+        });
 
         List<Product> products = productRepository.findByUserKey(userKey, isUse);
-
-        for (Product product : products) {
+        products.stream().forEach(product -> {
             if (product.isTrading()) throw new IllegalStateException("거래가 체결된 상품이 존재합니다.");
-        }
+        });
 
-        Member removeMember = memberRepository.findByUserKey(userKey, isUse).orElseThrow(() -> new NotFoundMember("회원이 존재하지 않습니다."));
+        Member removeMember = memberRepository.findByUserKey(userKey, isUse)
+                .orElseThrow(() -> new NotFoundMember("회원이 존재하지 않습니다."));
+
         //회원 isUse = false
         removeMember.delete();
 

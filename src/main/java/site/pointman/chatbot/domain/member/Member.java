@@ -54,23 +54,25 @@ public class Member extends BaseEntity {
     }
 
     public String getFormatCreateDate(){
-      return getFormatCreateDate();
+      return super.getFormatCreateDate();
     }
-    public void changeProfileNickname(String nickname){
-        this.profile.changeProfileNickname(nickname);
-    }
+
     public void changePhoneNumber(String updatePhoneNumber){
         this.phoneNumber = updatePhoneNumber;
     }
+
     public void changeRole(MemberRole role){
         this.role = role;
     }
+
     public void changeName(String name){
         this.name = name;
     }
+
     public void changeMemberProfileImage(String profileImage){
         this.profile.changeProfileImage(profileImage);
     }
+
     public void delete(){
         super.delete();
     }
