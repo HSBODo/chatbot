@@ -13,7 +13,12 @@ import site.pointman.chatbot.domain.member.Member;
 import site.pointman.chatbot.domain.payment.PaymentInfo;
 import site.pointman.chatbot.domain.payment.constant.PayMethod;
 import site.pointman.chatbot.domain.payment.constant.PaymentStatus;
-import site.pointman.chatbot.domain.payment.kakaopay.*;
+import site.pointman.chatbot.domain.payment.kakaopay.request.KakaoPaymentApproveRequest;
+import site.pointman.chatbot.domain.payment.kakaopay.request.KakaoPaymentCancelRequest;
+import site.pointman.chatbot.domain.payment.kakaopay.request.KakaoPaymentReadyRequest;
+import site.pointman.chatbot.domain.payment.kakaopay.response.KakaoPaymentApproveResponse;
+import site.pointman.chatbot.domain.payment.kakaopay.response.KakaoPaymentCancelResponse;
+import site.pointman.chatbot.domain.payment.kakaopay.response.KakaoPaymentReadyResponse;
 import site.pointman.chatbot.domain.payment.service.PaymentService;
 import site.pointman.chatbot.domain.product.Product;
 import site.pointman.chatbot.domain.product.constatnt.ProductStatus;
@@ -23,8 +28,6 @@ import site.pointman.chatbot.repository.PaymentRepository;
 import site.pointman.chatbot.repository.ProductRepository;
 import site.pointman.chatbot.utill.CustomNumberUtils;
 
-
-import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
@@ -63,7 +66,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public KakaoPaymentReadyResponse kakaoPaymentReady(Long productId, String userKey) throws UnsupportedEncodingException {
+    public KakaoPaymentReadyResponse kakaoPaymentReady(Long productId, String userKey) {
         final int quantity = 1;
         final int taxFreeAmount = 0;
         final int vatAmount = 0;
@@ -75,7 +78,7 @@ public class PaymentServiceImpl implements PaymentService {
         if (mayBeProduct.isEmpty()) throw new IllegalArgumentException("상품이 존재하지 않습니다");
 
         Product product = mayBeProduct.get();
-        if (!product.getStatus().equals(ProductStatus.판매중))throw new IllegalArgumentException("판매중인 상품이 아닙니다.");
+        if (!product.isAvailablePurchase())throw new IllegalArgumentException("판매중인 상품이 아닙니다.");
 
         Long orderId = CustomNumberUtils.createNumberId();
         Member buyerMember = mayBeMember.get();
@@ -94,32 +97,23 @@ public class PaymentServiceImpl implements PaymentService {
                 .failUrl(KAKAO_FAIL_HOST_URL+"/"+orderId)
                 .build();
 
-        //헤더
-        HttpHeaders kakaoPayRequestHeaders = getKakaoPayRequestHeaders();
 
         //파라미터
         MultiValueMap<String, String> convertRequestEntity = kakaoPaymentReadyRequest.getConvertRequestEntity();
 
-        // 파라미터, 헤더
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(convertRequestEntity,kakaoPayRequestHeaders);
+        //카카오페이 API 요청
+        KakaoPaymentReadyResponse kakaoPaymentReadyResponse = requestKakaPayment(KAKAO_PAY_READY_API_URL, convertRequestEntity, KakaoPaymentReadyResponse.class);
 
-        // 외부에 보낼 url
-        KakaoPaymentReadyResponse kakaoPaymentReadyResponse = restTemplate.postForObject(
-                KAKAO_PAY_READY_API_URL,
-                requestEntity,
-                KakaoPaymentReadyResponse.class);
+        PaymentInfo paymentReady = PaymentInfo.createPaymentReady(
+                orderId,
+                CID,
+                kakaoPaymentReadyResponse.getTid(),
+                buyerMember,
+                product,
+                taxFreeAmount,
+                vatAmount,
+                quantity);
 
-        PaymentInfo paymentReady = PaymentInfo.builder()
-                .orderId(orderId)
-                .cid(CID)
-                .tid(kakaoPaymentReadyResponse.getTid())
-                .buyerMember(buyerMember)
-                .product(product)
-                .taxFreeAmount(taxFreeAmount)
-                .vatAmount(vatAmount)
-                .quantity(quantity)
-                .status(PaymentStatus.결제준비)
-                .build();
 
         paymentRepository.save(paymentReady);
 
@@ -141,20 +135,11 @@ public class PaymentServiceImpl implements PaymentService {
                 .totalAmount(product.getPrice().intValue())
                 .build();
 
-        //헤더
-        HttpHeaders kakaoPayRequestHeaders = getKakaoPayRequestHeaders();
-
         // 파라미터
         MultiValueMap<String, String> convertRequestEntity = kakaoPaymentApproveRequest.getConvertRequestEntity();
 
-        // 파라미터, 헤더
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(convertRequestEntity,kakaoPayRequestHeaders);
-
-        // 외부에 보낼 url
-        KakaoPaymentApproveResponse kakaoPaymentApproveResponse = restTemplate.postForObject(
-                KAKAO_PAY_APPROVE_API_URL,
-                requestEntity,
-                KakaoPaymentApproveResponse.class);
+        //카카오페이 API 요청
+        KakaoPaymentApproveResponse kakaoPaymentApproveResponse = requestKakaPayment(KAKAO_PAY_APPROVE_API_URL, convertRequestEntity, KakaoPaymentApproveResponse.class);
 
         PayMethod payMethod = PayMethod.getPayMethod(kakaoPaymentApproveResponse.getPaymentMethodType());
 
@@ -177,33 +162,17 @@ public class PaymentServiceImpl implements PaymentService {
         if (mayBeSuccessPaymentInfo.isEmpty()) throw new NotFoundPaymentInfo("결제완료된 결제정보가 존재하지 않습니다.");
         PaymentInfo successPaymentInfo = mayBeSuccessPaymentInfo.get();
 
-        KakaoPaymentCancelRequest kakaoPaymentCancelRequest = new KakaoPaymentCancelRequest(
-                successPaymentInfo.getCid(),
-                successPaymentInfo.getTid(),
-                successPaymentInfo.getProduct().getPrice().intValue(),
-                successPaymentInfo.getTaxFreeAmount(),
-                successPaymentInfo.getVatAmount(),
-                successPaymentInfo.getProduct().getPrice().intValue()
-        );
-
-        //헤더
-        HttpHeaders kakaoPayRequestHeaders = getKakaoPayRequestHeaders();
+        KakaoPaymentCancelRequest kakaoPaymentCancelRequest = successPaymentInfo.getKakaoPaymentCancelRequest();
 
         //파라미터
         MultiValueMap<String, String> convertRequestEntity = kakaoPaymentCancelRequest.getConvertRequestEntity();
 
-        // 파라미터, 헤더
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(convertRequestEntity,kakaoPayRequestHeaders);
+        //카카오페이 API 요청
+        KakaoPaymentCancelResponse kakaoPaymentCancelResponse = requestKakaPayment(KAKAO_PAY_CANCEL_API_URL, convertRequestEntity, KakaoPaymentCancelResponse.class);
 
-        // 외부에 보낼 url
-        KakaoPaymentCancelResponse kakaoPaymentCancelResponse = restTemplate.postForObject(
-                KAKAO_PAY_CANCEL_API_URL,
-                requestEntity,
-                KakaoPaymentCancelResponse.class);
+        //결제취소
+        successPaymentInfo.cancelPayment(kakaoPaymentCancelResponse.getCanceledAt());
 
-        //결제정보 상태변경
-        successPaymentInfo.changeStatus(PaymentStatus.결제취소);
-        successPaymentInfo.changeCancelAt(kakaoPaymentCancelResponse.getCanceledAt());
         return kakaoPaymentCancelResponse;
     }
 
@@ -216,6 +185,19 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentReady;
     }
 
+    private <T> T requestKakaPayment(String requestUrl, MultiValueMap<String, String> convertRequestEntity, Class<T> responseType){
+        //헤더
+        HttpHeaders kakaoPayRequestHeaders = getKakaoPayRequestHeaders();
+
+        // 파라미터, 헤더
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(convertRequestEntity,kakaoPayRequestHeaders);
+
+        // 외부에 보낼 url
+        return restTemplate.postForObject(
+                requestUrl,
+                requestEntity,
+                responseType);
+    }
 
     private HttpHeaders getKakaoPayRequestHeaders(){
         HttpHeaders headers = new HttpHeaders();

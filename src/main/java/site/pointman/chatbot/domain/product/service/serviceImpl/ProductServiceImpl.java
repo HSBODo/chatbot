@@ -52,7 +52,9 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new NotFoundMember("회원이 존재하지 않습니다."));
 
         List<String> imageUrls = productDto.getImageUrls();
+
         ProductImageDto productImageDto = s3FileService.uploadImages(imageUrls, productDto.getUserKey(),productDto.getName(),"image");
+
         ProductImage productImage = productImageDto.toEntity();
 
         Product product = Product.createProduct(productDto,member,productImage);

@@ -72,6 +72,7 @@ public class Product extends BaseEntity {
         this.status = status;
         this.productImages = productImage;
     }
+
     public static Product createProduct(ProductDto productDto,Member member,ProductImage productImage) {
         final Long productId = CustomNumberUtils.createNumberId();
         return Product.builder()
@@ -108,9 +109,11 @@ public class Product extends BaseEntity {
     public void changeStatus(ProductStatus productStatus){
         this.status = productStatus;
     }
-    public void changeBuyerMemberUserKey(String buyerUserKey){
+
+    public void orderSuccessBuyerMemberUserKey(String buyerUserKey){
         this.buyerUserKey = buyerUserKey;
     }
+
     public String getProductProfileTypeOfChatBot(){
         StringBuilder productProfile = new StringBuilder();
         String formatPrice = CustomStringUtils.formatPrice(price);
@@ -130,6 +133,7 @@ public class Product extends BaseEntity {
                 .append("등록일자: " + getFormatCreateDate())
                 .toString();
     }
+
     public String getFormatCreateDate() {
         return super.getFormatCreateDate();
     }
@@ -142,10 +146,17 @@ public class Product extends BaseEntity {
                 .append("userKey="+buyerUserKey);
         return paymentUrl.toString();
     }
+
     public boolean isTrading(){
         if (status.equals(ProductStatus.판매대기)) return true;
         return false;
     }
+
+    public boolean isAvailablePurchase(){
+        if (status.equals(ProductStatus.판매중)) return true;
+        return false;
+    }
+
     public void deleteProduct(){
         super.delete();
         productImages.delete();

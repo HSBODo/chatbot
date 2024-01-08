@@ -86,12 +86,11 @@ public class Order extends BaseEntity {
     public void orderSuccessConfirm(){
         this.status = OrderStatus.거래완료;
         this.product.changeStatus(ProductStatus.판매완료);
-        this.product.changeBuyerMemberUserKey(buyerMember.getUserKey());
+        this.product.orderSuccessBuyerMemberUserKey(buyerMember.getUserKey());
     }
 
     public boolean isConfirm(){
         if (buyerConfirmStatus.equals(OrderMemberConfirmStatus.구매확정) && sellerConfirmStatus.equals(OrderMemberConfirmStatus.판매확정)) return true;
-
         return false;
     }
 
@@ -104,12 +103,27 @@ public class Order extends BaseEntity {
     }
 
     public void sellerConfirmStatus() {
-        this.sellerConfirmStatus = OrderMemberConfirmStatus.판매확정;;
+        this.sellerConfirmStatus = OrderMemberConfirmStatus.판매확정;
     }
 
     public String viewTackingNumber(){
         if (StringUtils.isNullOrEmpty(trackingNumber)) return "미입력";
         return this.trackingNumber;
+    }
+
+
+    public String getFormatApproveDate(){
+       return paymentInfo.getFormatCreateDate();
+    }
+
+    public boolean isTrading(){
+        if (status.equals(OrderStatus.주문체결)) return  true;
+        return false;
+    }
+
+    public boolean isInputTrackingNumber(){
+        if(StringUtils.isNullOrEmpty(trackingNumber)) return false;
+        return true;
     }
 
     public String getPurchaseProductProfile(){
@@ -137,20 +151,6 @@ public class Order extends BaseEntity {
                 .append("\n\n")
                 .append("결제일자: " + getFormatApproveDate())
                 .toString();
-    }
-
-    public String getFormatApproveDate(){
-       return paymentInfo.getFormatCreateDate();
-    }
-
-    public boolean isTrading(){
-        if (status.equals(OrderStatus.주문체결)) return  true;
-        return false;
-    }
-
-    public boolean isInputTrackingNumber(){
-        if(StringUtils.isNullOrEmpty(trackingNumber)) return false;
-        return true;
     }
 
 }
