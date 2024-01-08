@@ -22,7 +22,7 @@ public class PaymentCustomRepositoryImpl implements PaymentCustomRepository {
                         "from PaymentInfo p " +
                         "join fetch p.buyerMember " +
                         "join fetch p.product " +
-                        "where status=:status " +
+                        "where p.status=:status " +
                         "AND " +
                         "p.orderId=:orderId", PaymentInfo.class)
                 .setParameter("status", status)
